@@ -13,3 +13,22 @@ src/app/globals.css
 src/lib/utils.ts
 PROJECT_TREE.md
 .env.local
+# Next.js build cache
+.next/cache/
+.next/server/
+.next/static/
+.next/types/
+.next/trace
+.next/build-manifest.json
+.next/app-build-manifest.json
+.next/react-loadable-manifest.json
+.next/interception-route-rewrite-manifest.js
+.next/middleware-build-manifest.js
+.next/middleware-manifest.json
+.next/middleware-react-loadable-manifest.js
+.next/next-font-manifest.js
+.next/next-font-manifest.json
+.next/server-reference-manifest.js
+.next/server-reference-manifest.json
+.next/pages-manifest.json
+.next/interception-route-rewrite-manifest.js

@@ -620,7 +620,7 @@ export function ReviewStats({
                     </div>
                     <div className="w-full bg-muted rounded-t h-[60px] relative overflow-hidden">
                       <div 
-                        className="bg-primary rounded-t absolute bottom-0 w-full transition-all duration-300"
+                        className="bg-primary rounded-t absolute bottom-0 w-full"
                         style={{ 
                           height: `${height}%`,
                           '--chart-height': `${height}%` 

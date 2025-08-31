@@ -13,7 +13,11 @@
     "db:migrate": "supabase db push",
     "db:seed": "supabase db seed",
     "db:reset": "supabase db reset",
-    "types:generate": "./scripts/generate-types.sh"
+    "types:generate": "./scripts/generate-types.sh",
+    "git:watch": "./scripts/auto-commit.sh",
+    "git:save": "git add . && git commit -m \"Manual save: $(date '+%Y-%m-%d %H:%M:%S')\"",
+    "git:status": "git status",
+    "git:log": "git log --oneline -10"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",

@@ -13,6 +13,17 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from '@/components/ui/hover-card'
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from '@/components/ui/context-menu'
 import { Search, ChevronLeft, ChevronRight, Trophy, Star, Award, Coins } from 'lucide-react'
 import PointsAdjustmentDialog from './points-adjustment-dialog'
 
@@ -147,19 +158,39 @@ export default function CustomerPointsTable({ salonId }: CustomerPointsTableProp
                 const tierInfo = getTierInfo(points)
                 
                 return (
-                  <TableRow key={customer.id}>
-                    <TableCell>
-                      <div>
-                        <p className="font-medium">
-                          {customer.first_name} {customer.last_name}
-                        </p>
-                        {customer.preferred_name && (
-                          <p className="text-xs text-muted-foreground">
-                            Prefers: {customer.preferred_name}
-                          </p>
-                        )}
-                      </div>
-                    </TableCell>
+                  <ContextMenu>
+                    <ContextMenuTrigger asChild>
+                      <TableRow key={customer.id}>
+                        <TableCell>
+                          <HoverCard>
+                            <HoverCardTrigger asChild>
+                              <div className="cursor-pointer">
+                                <p className="font-medium">
+                                  {customer.first_name} {customer.last_name}
+                                </p>
+                                {customer.preferred_name && (
+                                  <p className="text-xs text-muted-foreground">
+                                    Prefers: {customer.preferred_name}
+                                  </p>
+                                )}
+                              </div>
+                            </HoverCardTrigger>
+                            <HoverCardContent className="w-80">
+                              <div className="space-y-2">
+                                <h4 className="text-sm font-semibold">{customer.first_name} {customer.last_name}</h4>
+                                <div className="text-sm text-muted-foreground">
+                                  <p><strong>Email:</strong> {customer.email}</p>
+                                  {customer.phone && <p><strong>Phone:</strong> {customer.phone}</p>}
+                                  <p><strong>Points:</strong> {points}</p>
+                                  <p><strong>Tier:</strong> {tierInfo.name}</p>
+                                  {customer.date_of_birth && (
+                                    <p><strong>Birthday:</strong> {new Date(customer.date_of_birth).toLocaleDateString()}</p>
+                                  )}
+                                </div>
+                              </div>
+                            </HoverCardContent>
+                          </HoverCard>
+                        </TableCell>
                     <TableCell>
                       <div className="text-sm">
                         <p>{customer.email}</p>
@@ -195,7 +226,23 @@ export default function CustomerPointsTable({ salonId }: CustomerPointsTableProp
                         </Button>
                       </PointsAdjustmentDialog>
                     </TableCell>
-                  </TableRow>
+                      </TableRow>
+                    </ContextMenuTrigger>
+                    <ContextMenuContent>
+                      <ContextMenuItem>
+                        View Full Profile
+                      </ContextMenuItem>
+                      <ContextMenuItem>
+                        View Booking History
+                      </ContextMenuItem>
+                      <ContextMenuItem>
+                        Send Message
+                      </ContextMenuItem>
+                      <ContextMenuItem>
+                        Export Data
+                      </ContextMenuItem>
+                    </ContextMenuContent>
+                  </ContextMenu>
                 )
               })
             )}

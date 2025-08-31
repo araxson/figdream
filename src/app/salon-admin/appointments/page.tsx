@@ -19,7 +19,28 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { MoreHorizontal, Calendar, Clock, User, DollarSign, CheckCircle, XCircle, AlertCircle } from "lucide-react"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
+import { AppointmentsFilter } from './appointments-filter'
+import { MoreHorizontal, Calendar, Clock, User, DollarSign, CheckCircle, XCircle, AlertCircle, AlertTriangle, Info } from "lucide-react"
 import Link from "next/link"
 
 export default async function AppointmentsPage() {
@@ -135,6 +156,41 @@ export default async function AppointmentsPage() {
           </Link>
         </Button>
       </div>
+
+      {pendingCount > 0 && (
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Action Required</AlertTitle>
+          <AlertDescription>
+            You have {pendingCount} pending appointment{pendingCount > 1 ? 's' : ''} waiting for confirmation. 
+            Please review and confirm them to secure the bookings.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {upcomingToday === 0 && (
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>No Appointments Today</AlertTitle>
+          <AlertDescription>
+            You don't have any appointments scheduled for today. 
+            Consider running a promotion or reaching out to regular customers.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {upcomingToday > 5 && (
+        <Alert>
+          <Info className="h-4 w-4" />
+          <AlertTitle>Busy Day Ahead</AlertTitle>
+          <AlertDescription>
+            You have {upcomingToday} appointments scheduled for today. 
+            Make sure all staff members are prepared and supplies are stocked.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      <AppointmentsFilter />
 
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
@@ -264,9 +320,31 @@ export default async function AppointmentsPage() {
                               Send reminder
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-destructive">
-                              Cancel appointment
-                            </DropdownMenuItem>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <DropdownMenuItem 
+                                  className="text-destructive"
+                                  onSelect={(e) => e.preventDefault()}
+                                >
+                                  Cancel appointment
+                                </DropdownMenuItem>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Cancel Appointment?</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    This action cannot be undone. The customer will be notified
+                                    of the cancellation and may need to reschedule.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Keep appointment</AlertDialogCancel>
+                                  <AlertDialogAction className="bg-destructive hover:bg-destructive/90">
+                                    Cancel appointment
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
@@ -275,6 +353,31 @@ export default async function AppointmentsPage() {
                 })}
               </TableBody>
             </Table>
+            
+            {/* Pagination */}
+            {appointments && appointments.length > 0 && (
+              <div className="flex justify-center mt-6">
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious href="#" />
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink href="#" isActive>1</PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink href="#" >2</PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink href="#">3</PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationNext href="#" />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
+            )}
           ) : (
             <div className="text-center py-12">
               <Calendar className="mx-auto h-12 w-12 text-muted-foreground mb-4" />

@@ -23,10 +23,11 @@ import {
   BarChart3
 } from 'lucide-react'
 
-import { Button } from '@/src/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card'
-import { Input } from '@/src/components/ui/input'
-import { Badge } from '@/src/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
 import { 
   Table, 
   TableBody, 
@@ -34,7 +35,7 @@ import {
   TableHead, 
   TableHeader, 
   TableRow 
-} from '@/src/components/ui/table'
+} from '@/components/ui/table'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,14 +43,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/src/components/ui/dropdown-menu'
+} from '@/components/ui/dropdown-menu'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/src/components/ui/select'
+} from '@/components/ui/select'
 import {
   Dialog,
   DialogContent,
@@ -57,10 +58,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/src/components/ui/dialog'
-import { Alert, AlertDescription } from '@/src/components/ui/alert'
-import { Progress } from '@/src/components/ui/progress'
-import { cn } from '@/src/lib/utils'
+} from '@/components/ui/dialog'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Progress } from '@/components/ui/progress'
+import { cn } from '@/lib/utils'
 
 import type { Database } from '@/types/database'
 
@@ -142,7 +143,7 @@ export function CampaignList({
 
   // Filter and sort campaigns
   const filteredCampaigns = React.useMemo(() => {
-    let filtered = campaigns.filter(campaign => {
+    const filtered = campaigns.filter(campaign => {
       const matchesSearch = campaign.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                            campaign.description?.toLowerCase().includes(searchQuery.toLowerCase())
       const matchesStatus = statusFilter === 'all' || campaign.status === statusFilter
@@ -333,9 +334,9 @@ export function CampaignList({
   if (isLoading) {
     return (
       <div className={cn("space-y-4", className)}>
-        <div className="animate-pulse space-y-4">
-          <div className="h-10 bg-muted rounded-lg" />
-          <div className="h-96 bg-muted rounded-lg" />
+        <div className="space-y-4">
+          <Skeleton className="h-10" />
+          <Skeleton className="h-96" />
         </div>
       </div>
     )

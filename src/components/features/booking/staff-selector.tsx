@@ -1,17 +1,18 @@
 'use client'
 
 import * as React from 'react'
-import { Button } from '@/src/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card'
-import { Badge } from '@/src/components/ui/badge'
-import { ScrollArea } from '@/src/components/ui/scroll-area'
-import { Skeleton } from '@/src/components/ui/skeleton'
-import { Alert, AlertDescription } from '@/src/components/ui/alert'
-import { Input } from '@/src/components/ui/input'
-import { Avatar, AvatarFallback, AvatarImage } from '@/src/components/ui/avatar'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/src/components/ui/select'
-import { RadioGroup, RadioGroupItem } from '@/src/components/ui/radio-group'
-import { Label } from '@/src/components/ui/label'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Input } from '@/components/ui/input'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Label } from '@/components/ui/label'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import { 
   Search, 
   Star, 
@@ -24,7 +25,7 @@ import {
   Award,
   Shuffle
 } from 'lucide-react'
-import { cn } from '@/src/lib/utils'
+import { cn } from '@/lib/utils'
 import { format, addHours, isToday, isTomorrow } from 'date-fns'
 
 export interface StaffMember {
@@ -239,12 +240,56 @@ export function StaffSelector({
       >
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
-            <Avatar className="h-12 w-12">
-              <AvatarImage src={member.avatar_url || undefined} />
-              <AvatarFallback>
-                {getInitials(member.first_name, member.last_name)}
-              </AvatarFallback>
-            </Avatar>
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <Avatar className="h-12 w-12 cursor-pointer">
+                  <AvatarImage src={member.avatar_url || undefined} />
+                  <AvatarFallback>
+                    {getInitials(member.first_name, member.last_name)}
+                  </AvatarFallback>
+                </Avatar>
+              </HoverCardTrigger>
+              <HoverCardContent className="w-80" side="right">
+                <div className="flex justify-between space-x-4">
+                  <Avatar className="h-16 w-16">
+                    <AvatarImage src={member.avatar_url || undefined} />
+                    <AvatarFallback className="text-lg">
+                      {getInitials(member.first_name, member.last_name)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="space-y-1 flex-1">
+                    <h4 className="text-sm font-semibold">{member.first_name} {member.last_name}</h4>
+                    <p className="text-sm text-muted-foreground">{member.role}</p>
+                    {member.bio && (
+                      <p className="text-sm">{member.bio}</p>
+                    )}
+                    <div className="flex items-center gap-4 pt-2">
+                      {member.rating && (
+                        <div className="flex items-center gap-1">
+                          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                          <span className="text-xs font-medium">{member.rating.toFixed(1)}</span>
+                        </div>
+                      )}
+                      {member.years_experience && (
+                        <div className="flex items-center gap-1">
+                          <Award className="h-3 w-3" />
+                          <span className="text-xs">{member.years_experience}y exp</span>
+                        </div>
+                      )}
+                    </div>
+                    {member.specialties && member.specialties.length > 0 && (
+                      <div className="flex flex-wrap gap-1 pt-2">
+                        {member.specialties.map((specialty, idx) => (
+                          <Badge key={idx} variant="secondary" className="text-xs">
+                            {specialty}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
 
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">

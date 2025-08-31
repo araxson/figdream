@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
+import { Progress } from '@/components/ui/progress'
 import { toast } from 'sonner'
 import { 
   Loader2, CheckCircle, XCircle, AlertTriangle, 
@@ -195,12 +196,7 @@ export default function OAuthCallbackPage() {
                 Redirecting to your dashboard in {countdown} seconds...
               </p>
               <div className="flex justify-center">
-                <div className="w-32 h-1 bg-muted rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-primary transition-all duration-1000"
-                    style={{ width: `${((3 - countdown) / 3) * 100}%` }}
-                  />
-                </div>
+                <Progress value={((3 - countdown) / 3) * 100} className="w-32" />
               </div>
             </div>
             

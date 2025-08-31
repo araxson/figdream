@@ -1,517 +1,344 @@
-'use client'
-
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { ArrowLeft, Download, Calendar, FileText, BarChart3, PieChart, TrendingUp, Users, DollarSign, Clock, Filter, Eye, Share2, Printer, Mail, Plus } from 'lucide-react'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel'
+import { 
+  Sparkles, 
+  Calendar, 
+  Users, 
+  Star, 
+  Clock, 
+  Shield,
+  ArrowRight,
+  CheckCircle
+} from 'lucide-react'
 
-interface Report {
-  id: string
-  name: string
-  type: 'revenue' | 'bookings' | 'customers' | 'staff' | 'services' | 'marketing' | 'custom'
-  frequency: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly' | 'one-time'
-  lastGenerated: string
-  nextScheduled?: string
-  status: 'ready' | 'generating' | 'scheduled' | 'failed'
-  size?: string
-  recipients?: string[]
-  createdBy: string
-  createdDate: string
-}
-
-interface ReportTemplate {
-  id: string
-  name: string
-  description: string
-  category: string
-  icon: React.ReactNode
-  fields: string[]
-}
-
-export default function ReportsPage() {
-  const router = useRouter()
-  const [searchTerm, setSearchTerm] = useState('')
-  const [typeFilter, setTypeFilter] = useState('all')
-  const [frequencyFilter, setFrequencyFilter] = useState('all')
-  const [selectedReports, setSelectedReports] = useState<string[]>([])
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
-  const [newReportType, setNewReportType] = useState('revenue')
-  const [newReportFrequency, setNewReportFrequency] = useState('monthly')
-
-  // Mock data
-  const reports: Report[] = [
-    {
-      id: '1',
-      name: 'Monthly Revenue Report',
-      type: 'revenue',
-      frequency: 'monthly',
-      lastGenerated: '2024-01-01',
-      nextScheduled: '2024-02-01',
-      status: 'ready',
-      size: '2.4 MB',
-      recipients: ['owner@salon.com', 'manager@salon.com'],
-      createdBy: 'Sarah Johnson',
-      createdDate: '2023-12-15'
-    },
-    {
-      id: '2',
-      name: 'Weekly Booking Summary',
-      type: 'bookings',
-      frequency: 'weekly',
-      lastGenerated: '2024-01-08',
-      nextScheduled: '2024-01-15',
-      status: 'ready',
-      size: '1.2 MB',
-      recipients: ['manager@salon.com'],
-      createdBy: 'Mike Chen',
-      createdDate: '2023-11-20'
-    },
-    {
-      id: '3',
-      name: 'Customer Analytics Q4 2023',
-      type: 'customers',
-      frequency: 'quarterly',
-      lastGenerated: '2024-01-01',
-      nextScheduled: '2024-04-01',
-      status: 'ready',
-      size: '5.8 MB',
-      recipients: ['owner@salon.com'],
-      createdBy: 'Emily Davis',
-      createdDate: '2023-10-01'
-    },
-    {
-      id: '4',
-      name: 'Staff Performance Report',
-      type: 'staff',
-      frequency: 'monthly',
-      lastGenerated: '2024-01-01',
-      nextScheduled: '2024-02-01',
-      status: 'ready',
-      size: '3.1 MB',
-      createdBy: 'Sarah Johnson',
-      createdDate: '2023-12-01'
-    },
-    {
-      id: '5',
-      name: 'Service Utilization Analysis',
-      type: 'services',
-      frequency: 'monthly',
-      lastGenerated: '2024-01-05',
-      status: 'generating',
-      createdBy: 'James Wilson',
-      createdDate: '2024-01-05'
-    },
-    {
-      id: '6',
-      name: 'Marketing Campaign ROI',
-      type: 'marketing',
-      frequency: 'one-time',
-      lastGenerated: '2023-12-28',
-      status: 'ready',
-      size: '1.8 MB',
-      createdBy: 'Maria Garcia',
-      createdDate: '2023-12-28'
-    },
-    {
-      id: '7',
-      name: 'Daily Sales Report',
-      type: 'revenue',
-      frequency: 'daily',
-      lastGenerated: '2024-01-14',
-      nextScheduled: '2024-01-15',
-      status: 'scheduled',
-      recipients: ['owner@salon.com', 'manager@salon.com', 'accountant@salon.com'],
-      createdBy: 'Sarah Johnson',
-      createdDate: '2023-12-10'
-    },
-    {
-      id: '8',
-      name: 'Yearly Business Overview',
-      type: 'custom',
-      frequency: 'yearly',
-      lastGenerated: '2024-01-01',
-      nextScheduled: '2025-01-01',
-      status: 'ready',
-      size: '12.4 MB',
-      recipients: ['owner@salon.com', 'investors@salon.com'],
-      createdBy: 'Sarah Johnson',
-      createdDate: '2023-01-01'
-    }
-  ]
-
-  const reportTemplates: ReportTemplate[] = [
-    {
-      id: '1',
-      name: 'Revenue Analysis',
-      description: 'Comprehensive revenue breakdown by service, location, and time period',
-      category: 'Financial',
-      icon: <DollarSign className="h-5 w-5" />,
-      fields: ['Total Revenue', 'Revenue by Service', 'Revenue by Location', 'Revenue Trends', 'Payment Methods']
-    },
-    {
-      id: '2',
-      name: 'Booking Analytics',
-      description: 'Detailed analysis of booking patterns and trends',
-      category: 'Operations',
-      icon: <Calendar className="h-5 w-5" />,
-      fields: ['Total Bookings', 'Bookings by Service', 'Peak Times', 'Cancellation Rate', 'No-show Rate']
-    },
-    {
-      id: '3',
-      name: 'Customer Insights',
-      description: 'Customer behavior, retention, and lifetime value analysis',
-      category: 'Customers',
-      icon: <Users className="h-5 w-5" />,
-      fields: ['New Customers', 'Returning Customers', 'Customer Lifetime Value', 'Retention Rate', 'Churn Analysis']
-    },
-    {
-      id: '4',
-      name: 'Staff Performance',
-      description: 'Individual and team performance metrics',
-      category: 'Staff',
-      icon: <TrendingUp className="h-5 w-5" />,
-      fields: ['Revenue per Staff', 'Bookings per Staff', 'Utilization Rate', 'Customer Ratings', 'Commission Summary']
-    }
-  ]
-
-  // Filter reports
-  const filteredReports = reports.filter(report => {
-    const matchesSearch = report.name.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesType = typeFilter === 'all' || report.type === typeFilter
-    const matchesFrequency = frequencyFilter === 'all' || report.frequency === frequencyFilter
-    
-    return matchesSearch && matchesType && matchesFrequency
-  })
-
-  const getStatusColor = (status: Report['status']) => {
-    switch (status) {
-      case 'ready': return 'default'
-      case 'generating': return 'secondary'
-      case 'scheduled': return 'outline'
-      case 'failed': return 'destructive'
-      default: return 'outline'
-    }
-  }
-
-  const getTypeIcon = (type: Report['type']) => {
-    switch (type) {
-      case 'revenue': return <DollarSign className="h-4 w-4" />
-      case 'bookings': return <Calendar className="h-4 w-4" />
-      case 'customers': return <Users className="h-4 w-4" />
-      case 'staff': return <TrendingUp className="h-4 w-4" />
-      case 'services': return <BarChart3 className="h-4 w-4" />
-      case 'marketing': return <Mail className="h-4 w-4" />
-      case 'custom': return <FileText className="h-4 w-4" />
-      default: return <FileText className="h-4 w-4" />
-    }
-  }
-
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      setSelectedReports(filteredReports.map(r => r.id))
-    } else {
-      setSelectedReports([])
-    }
-  }
-
-  const handleSelectReport = (reportId: string, checked: boolean) => {
-    if (checked) {
-      setSelectedReports([...selectedReports, reportId])
-    } else {
-      setSelectedReports(selectedReports.filter(id => id !== reportId))
-    }
-  }
-
+export default function HomePage() {
   return (
-    <div className="container mx-auto p-6 max-w-7xl">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => router.back()}
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <section className="relative py-20 px-6">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center space-y-6">
+            <h1 className="text-5xl md:text-6xl font-bold tracking-tight">
+              Transform Your Salon Business
+            </h1>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              All-in-one platform for salon management. Book appointments, manage staff, 
+              track loyalty programs, and grow your business with powerful tools.
+            </p>
+            <div className="flex gap-4 justify-center pt-4">
+              <Button size="lg" asChild>
+                <Link href="/register/salon">
+                  Get Started
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild>
+                <Link href="/login">
+                  Sign In
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-20 px-6 bg-muted/50">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">
+              Everything You Need to Run Your Salon
+            </h2>
+            <p className="text-muted-foreground text-lg">
+              Streamline operations and enhance customer experience
+            </p>
+          </div>
+          
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full max-w-5xl mx-auto"
           >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold">Reports</h1>
-            <p className="text-muted-foreground">Generate and manage business reports</p>
+            <CarouselContent>
+              <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                <Card className="h-full">
+                  <CardHeader>
+                    <Calendar className="h-10 w-10 mb-4 text-primary" />
+                    <CardTitle>Smart Booking System</CardTitle>
+                    <CardDescription>
+                      Online booking with real-time availability and automated reminders
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2 text-sm">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-4 w-4 text-primary mt-0.5" />
+                        <span>24/7 online booking</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-4 w-4 text-primary mt-0.5" />
+                        <span>SMS & email reminders</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-4 w-4 text-primary mt-0.5" />
+                        <span>Calendar synchronization</span>
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              </CarouselItem>
+              <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+
+                <Card className="h-full">
+                  <CardHeader>
+                    <Users className="h-10 w-10 mb-4 text-primary" />
+                    <CardTitle>Staff Management</CardTitle>
+                    <CardDescription>
+                      Manage schedules, track performance, and streamline operations
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2 text-sm">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-4 w-4 text-primary mt-0.5" />
+                        <span>Schedule management</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-4 w-4 text-primary mt-0.5" />
+                        <span>Performance tracking</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-4 w-4 text-primary mt-0.5" />
+                        <span>Commission calculation</span>
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              </CarouselItem>
+              <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+
+                <Card className="h-full">
+                  <CardHeader>
+                    <Sparkles className="h-10 w-10 mb-4 text-primary" />
+                    <CardTitle>Loyalty Programs</CardTitle>
+                    <CardDescription>
+                      Reward customers and build lasting relationships
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2 text-sm">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-4 w-4 text-primary mt-0.5" />
+                        <span>Points & rewards</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-4 w-4 text-primary mt-0.5" />
+                        <span>Gift cards</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-4 w-4 text-primary mt-0.5" />
+                        <span>Referral bonuses</span>
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              </CarouselItem>
+              <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+
+                <Card className="h-full">
+                  <CardHeader>
+                    <Star className="h-10 w-10 mb-4 text-primary" />
+                    <CardTitle>Review Management</CardTitle>
+                    <CardDescription>
+                      Collect and showcase customer reviews to build trust
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2 text-sm">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-4 w-4 text-primary mt-0.5" />
+                        <span>Automated review requests</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-4 w-4 text-primary mt-0.5" />
+                        <span>Review moderation</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-4 w-4 text-primary mt-0.5" />
+                        <span>Performance insights</span>
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              </CarouselItem>
+              <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+
+                <Card className="h-full">
+                  <CardHeader>
+                    <Clock className="h-10 w-10 mb-4 text-primary" />
+                    <CardTitle>Real-Time Analytics</CardTitle>
+                    <CardDescription>
+                      Track business performance with comprehensive dashboards
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2 text-sm">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-4 w-4 text-primary mt-0.5" />
+                        <span>Revenue tracking</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-4 w-4 text-primary mt-0.5" />
+                        <span>Customer insights</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-4 w-4 text-primary mt-0.5" />
+                        <span>Service analytics</span>
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              </CarouselItem>
+              <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+
+                <Card className="h-full">
+                  <CardHeader>
+                    <Shield className="h-10 w-10 mb-4 text-primary" />
+                    <CardTitle>Secure & Reliable</CardTitle>
+                    <CardDescription>
+                      Enterprise-grade security with 99.9% uptime guarantee
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2 text-sm">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-4 w-4 text-primary mt-0.5" />
+                        <span>Data encryption</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-4 w-4 text-primary mt-0.5" />
+                        <span>Daily backups</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="h-4 w-4 text-primary mt-0.5" />
+                        <span>GDPR compliant</span>
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              </CarouselItem>
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 px-6">
+        <div className="container mx-auto max-w-4xl text-center">
+          <h2 className="text-3xl font-bold mb-4">
+            Ready to Grow Your Salon Business?
+          </h2>
+          <p className="text-muted-foreground text-lg mb-8">
+            Join thousands of salons using our platform to streamline operations and delight customers
+          </p>
+          <div className="flex gap-4 justify-center">
+            <Button size="lg" asChild>
+              <Link href="/register/salon">
+                Start Free Trial
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+            <Button size="lg" variant="outline" asChild>
+              <Link href="/pricing">
+                View Pricing
+              </Link>
+            </Button>
           </div>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline">
-            <Download className="h-4 w-4 mr-2" />
-            Export All
-          </Button>
-          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Create Report
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>Create New Report</DialogTitle>
-                <DialogDescription>
-                  Choose a template or create a custom report
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <Label>Report Type</Label>
-                  <RadioGroup value={newReportType} onValueChange={setNewReportType}>
-                    <div className="grid grid-cols-2 gap-4 mt-2">
-                      {reportTemplates.map((template) => (
-                        <div key={template.id} className="flex items-start space-x-2">
-                          <RadioGroupItem value={template.name.toLowerCase().replace(' ', '-')} id={template.id} />
-                          <Label htmlFor={template.id} className="cursor-pointer">
-                            <div className="flex items-start gap-3">
-                              <div className="p-2 bg-muted rounded">
-                                {template.icon}
-                              </div>
-                              <div>
-                                <p className="font-medium">{template.name}</p>
-                                <p className="text-sm text-muted-foreground">{template.description}</p>
-                              </div>
-                            </div>
-                          </Label>
-                        </div>
-                      ))}
-                    </div>
-                  </RadioGroup>
-                </div>
-                <div>
-                  <Label>Frequency</Label>
-                  <Select value={newReportFrequency} onValueChange={setNewReportFrequency}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="daily">Daily</SelectItem>
-                      <SelectItem value="weekly">Weekly</SelectItem>
-                      <SelectItem value="monthly">Monthly</SelectItem>
-                      <SelectItem value="quarterly">Quarterly</SelectItem>
-                      <SelectItem value="yearly">Yearly</SelectItem>
-                      <SelectItem value="one-time">One-time</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label>Email Recipients (optional)</Label>
-                  <Input placeholder="Enter email addresses separated by commas" />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={() => setIsCreateDialogOpen(false)}>
-                  Create Report
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </div>
+      </section>
 
-      {/* Report Templates */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
-        {reportTemplates.map((template) => (
-          <Card key={template.id} className="cursor-pointer hover:shadow-md transition-shadow">
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-between">
-                <div className="p-2 bg-muted rounded">
-                  {template.icon}
-                </div>
-                <Badge variant="secondary">{template.category}</Badge>
-              </div>
-              <CardTitle className="text-lg mt-3">{template.name}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground mb-3">{template.description}</p>
-              <Button variant="outline" className="w-full" size="sm">
-                Use Template
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {/* Filters */}
-      <Card className="mb-6">
-        <CardContent className="p-4">
-          <div className="flex flex-wrap gap-4 items-end">
-            <div className="flex-1 min-w-[250px]">
-              <Label htmlFor="search">Search</Label>
-              <Input
-                id="search"
-                placeholder="Search reports..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+      {/* Footer Links */}
+      <footer className="border-t py-12 px-6">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid md:grid-cols-4 gap-8">
+            <div>
+              <h3 className="font-semibold mb-3">Product</h3>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>
+                  <Link href="/features" className="hover:text-foreground">
+                    Features
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/pricing" className="hover:text-foreground">
+                    Pricing
+                  </Link>
+                </li>
+              </ul>
             </div>
-            <div className="min-w-[150px]">
-              <Label>Type</Label>
-              <Select value={typeFilter} onValueChange={setTypeFilter}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="revenue">Revenue</SelectItem>
-                  <SelectItem value="bookings">Bookings</SelectItem>
-                  <SelectItem value="customers">Customers</SelectItem>
-                  <SelectItem value="staff">Staff</SelectItem>
-                  <SelectItem value="services">Services</SelectItem>
-                  <SelectItem value="marketing">Marketing</SelectItem>
-                  <SelectItem value="custom">Custom</SelectItem>
-                </SelectContent>
-              </Select>
+            <div>
+              <h3 className="font-semibold mb-3">Company</h3>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>
+                  <Link href="/about" className="hover:text-foreground">
+                    About
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/contact" className="hover:text-foreground">
+                    Contact
+                  </Link>
+                </li>
+              </ul>
             </div>
-            <div className="min-w-[150px]">
-              <Label>Frequency</Label>
-              <Select value={frequencyFilter} onValueChange={setFrequencyFilter}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Frequencies</SelectItem>
-                  <SelectItem value="daily">Daily</SelectItem>
-                  <SelectItem value="weekly">Weekly</SelectItem>
-                  <SelectItem value="monthly">Monthly</SelectItem>
-                  <SelectItem value="quarterly">Quarterly</SelectItem>
-                  <SelectItem value="yearly">Yearly</SelectItem>
-                  <SelectItem value="one-time">One-time</SelectItem>
-                </SelectContent>
-              </Select>
+            <div>
+              <h3 className="font-semibold mb-3">For Customers</h3>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>
+                  <Link href="/book" className="hover:text-foreground">
+                    Book Appointment
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/login/customer" className="hover:text-foreground">
+                    Customer Login
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-3">For Salons</h3>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>
+                  <Link href="/login/salon-owner" className="hover:text-foreground">
+                    Salon Login
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/login/staff" className="hover:text-foreground">
+                    Staff Login
+                  </Link>
+                </li>
+              </ul>
             </div>
           </div>
-          {selectedReports.length > 0 && (
-            <div className="flex items-center gap-4 mt-4 p-3 bg-muted rounded-lg">
-              <span className="text-sm font-medium">{selectedReports.length} selected</span>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm">
-                  <Download className="h-4 w-4 mr-2" />
-                  Download
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Share2 className="h-4 w-4 mr-2" />
-                  Share
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Printer className="h-4 w-4 mr-2" />
-                  Print
-                </Button>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Reports Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>All Reports</CardTitle>
-          <CardDescription>{filteredReports.length} reports available</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-12">
-                  <Checkbox
-                    checked={selectedReports.length === filteredReports.length && filteredReports.length > 0}
-                    onCheckedChange={handleSelectAll}
-                  />
-                </TableHead>
-                <TableHead>Report Name</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Frequency</TableHead>
-                <TableHead>Last Generated</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Size</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredReports.map((report) => (
-                <TableRow key={report.id}>
-                  <TableCell>
-                    <Checkbox
-                      checked={selectedReports.includes(report.id)}
-                      onCheckedChange={(checked) => handleSelectReport(report.id, checked as boolean)}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <p className="font-medium">{report.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        Created by {report.createdBy}
-                      </p>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      {getTypeIcon(report.type)}
-                      <span className="capitalize">{report.type}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className="capitalize">
-                      {report.frequency}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <p>{report.lastGenerated}</p>
-                      {report.nextScheduled && (
-                        <p className="text-sm text-muted-foreground">
-                          Next: {report.nextScheduled}
-                        </p>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={getStatusColor(report.status)}>
-                      {report.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{report.size || '-'}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      {report.status === 'ready' && (
-                        <>
-                          <Button variant="ghost" size="icon">
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon">
-                            <Download className="h-4 w-4" />
-                          </Button>
-                        </>
-                      )}
-                      <Button variant="ghost" size="icon">
-                        <Share2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+          <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
+            © 2024 FigDream. All rights reserved.
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }

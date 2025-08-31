@@ -9,10 +9,16 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+  InputOTPSeparator,
+} from '@/components/ui/input-otp'
 import { toast } from 'sonner'
 import { 
   Mail, Phone, ArrowLeft, Lock, CheckCircle, 
-  Info, Loader2, Send, KeyRound, User, Building
+  Info, Loader2, Send, KeyRound, User, Building, Shield
 } from 'lucide-react'
 
 export default function ForgotPasswordPage() {
@@ -22,6 +28,9 @@ export default function ForgotPasswordPage() {
   const [emailSent, setEmailSent] = useState(false)
   const [smsSent, setSmsSent] = useState(false)
   const [resetMethod, setResetMethod] = useState<'email' | 'sms'>('email')
+  const [smsOtp, setSmsOtp] = useState('')
+  const [otpError, setOtpError] = useState(false)
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false)
   
   // Get role from URL params if navigated from a specific login page
   const role = searchParams.get('role') || 'customer'
@@ -141,15 +150,16 @@ export default function ForgotPasswordPage() {
               <Info className="h-4 w-4" />
               <AlertDescription>
                 Didn&apos;t receive the email? Check your spam folder or{' '}
-                <button
+                <Button
+                  variant="link"
+                  className="h-auto p-0 font-normal"
                   onClick={() => {
                     setEmailSent(false)
                     setFormData({ email: '', phone: '', staffId: '' })
                   }}
-                  className="text-primary hover:underline"
                 >
                   try again
-                </button>
+                </Button>
               </AlertDescription>
             </Alert>
           </CardContent>
@@ -166,6 +176,52 @@ export default function ForgotPasswordPage() {
         </Card>
       </div>
     )
+  }
+
+  const handleOtpChange = (value: string) => {
+    setSmsOtp(value)
+    setOtpError(false)
+    
+    // Auto-submit when all fields are filled
+    if (value.length === 6) {
+      handleOtpVerify(value)
+    }
+  }
+
+  const handleOtpVerify = async (code?: string) => {
+    const verificationCode = code || smsOtp
+    
+    if (verificationCode.length !== 6) {
+      setOtpError(true)
+      toast.error('Please enter the complete 6-digit code')
+      return
+    }
+    
+    setIsVerifyingOtp(true)
+    
+    try {
+      // Simulate OTP verification
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      
+      // Simulate verification logic (in real app, call API)
+      const isValid = verificationCode === '123456' || Math.random() > 0.3
+      
+      if (isValid) {
+        toast.success('Code verified! Redirecting to reset password...')
+        // In real app, navigate to password reset form with verified token
+        setTimeout(() => {
+          router.push(`/auth/reset-password?token=verified&phone=${formData.phone}&role=${role}`)
+        }, 1500)
+      } else {
+        setOtpError(true)
+        toast.error('Invalid verification code. Please try again.')
+      }
+    } catch (error) {
+      console.error('OTP verification error:', error)
+      toast.error('Failed to verify code. Please try again.')
+    } finally {
+      setIsVerifyingOtp(false)
+    }
   }
 
   // Success state - SMS sent
@@ -193,31 +249,65 @@ export default function ForgotPasswordPage() {
               </AlertDescription>
             </Alert>
             
-            <div className="space-y-2">
-              <Label htmlFor="code">Enter Verification Code</Label>
-              <Input
-                id="code"
-                placeholder="000000"
-                maxLength={6}
-                className="text-center text-2xl tracking-widest"
-              />
+            <div className="space-y-4">
+              <Label className="text-center block">Enter Verification Code</Label>
+              <div className="flex justify-center">
+                <InputOTP
+                  maxLength={6}
+                  value={smsOtp}
+                  onChange={handleOtpChange}
+                  className={otpError ? 'error' : ''}
+                >
+                  <InputOTPGroup>
+                    <InputOTPSlot index={0} />
+                    <InputOTPSlot index={1} />
+                    <InputOTPSlot index={2} />
+                  </InputOTPGroup>
+                  <InputOTPSeparator />
+                  <InputOTPGroup>
+                    <InputOTPSlot index={3} />
+                    <InputOTPSlot index={4} />
+                    <InputOTPSlot index={5} />
+                  </InputOTPGroup>
+                </InputOTP>
+              </div>
+              {otpError && (
+                <p className="text-sm text-destructive text-center">
+                  Invalid verification code. Please try again.
+                </p>
+              )}
             </div>
 
-            <Button className="w-full">
-              Verify Code
+            <Button 
+              className="w-full" 
+              onClick={() => handleOtpVerify()}
+              disabled={isVerifyingOtp || smsOtp.length < 6}
+            >
+              {isVerifyingOtp ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Verifying...
+                </>
+              ) : (
+                <>
+                  <Shield className="mr-2 h-4 w-4" />
+                  Verify Code
+                </>
+              )}
             </Button>
 
             <div className="text-center text-sm text-muted-foreground">
               Didn&apos;t receive the code?{' '}
-              <button
+              <Button
+                variant="link"
+                className="h-auto p-0 font-normal"
                 onClick={() => {
                   setSmsSent(false)
                   setFormData({ email: '', phone: '', staffId: '' })
                 }}
-                className="text-primary hover:underline"
               >
                 Send again
-              </button>
+              </Button>
             </div>
           </CardContent>
           <CardFooter>

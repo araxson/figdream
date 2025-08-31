@@ -8,6 +8,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+  InputOTPSeparator,
+} from '@/components/ui/input-otp'
 import { Separator } from '@/components/ui/separator'
 import { toast } from 'sonner'
 import { 
@@ -32,7 +38,7 @@ export default function VerifyEmailPage() {
   const role = searchParams.get('role') || 'customer'
   
   // OTP verification
-  const [otp, setOtp] = useState(['', '', '', '', '', ''])
+  const [otp, setOtp] = useState('')
   const [otpError, setOtpError] = useState(false)
 
   useEffect(() => {
@@ -78,36 +84,18 @@ export default function VerifyEmailPage() {
     }
   }
 
-  const handleOtpChange = (index: number, value: string) => {
-    if (value.length > 1) return // Prevent pasting multiple chars
-    
-    const newOtp = [...otp]
-    newOtp[index] = value
-    setOtp(newOtp)
+  const handleOtpChange = (value: string) => {
+    setOtp(value)
     setOtpError(false)
     
-    // Auto-focus next input
-    if (value && index < 5) {
-      const nextInput = document.getElementById(`otp-${index + 1}`)
-      nextInput?.focus()
-    }
-    
     // Auto-submit when all fields are filled
-    if (newOtp.every(digit => digit) && index === 5) {
-      handleOtpSubmit(newOtp.join(''))
-    }
-  }
-
-  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent) => {
-    // Handle backspace
-    if (e.key === 'Backspace' && !otp[index] && index > 0) {
-      const prevInput = document.getElementById(`otp-${index - 1}`)
-      prevInput?.focus()
+    if (value.length === 6) {
+      handleOtpSubmit(value)
     }
   }
 
   const handleOtpSubmit = async (code?: string) => {
-    const verificationCode = code || otp.join('')
+    const verificationCode = code || otp
     
     if (verificationCode.length !== 6) {
       setOtpError(true)
@@ -153,7 +141,7 @@ export default function VerifyEmailPage() {
       toast.success('Verification email resent!')
       
       // Clear OTP on resend
-      setOtp(['', '', '', '', '', ''])
+      setOtp('')
       setOtpError(false)
     } catch (error) {
       console.error('Resend error:', error)
@@ -355,23 +343,25 @@ export default function VerifyEmailPage() {
           {/* OTP Input */}
           <div className="space-y-4">
             <Label className="text-center block">Verification Code</Label>
-            <div className="flex gap-2 justify-center">
-              {otp.map((digit, index) => (
-                <Input
-                  key={index}
-                  id={`otp-${index}`}
-                  type="text"
-                  inputMode="numeric"
-                  maxLength={1}
-                  value={digit}
-                  onChange={(e) => handleOtpChange(index, e.target.value)}
-                  onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                  className={`w-12 h-12 text-center text-lg font-semibold ${
-                    otpError ? 'border-destructive' : ''
-                  }`}
-                  autoFocus={index === 0}
-                />
-              ))}
+            <div className="flex justify-center">
+              <InputOTP
+                maxLength={6}
+                value={otp}
+                onChange={handleOtpChange}
+                className={otpError ? 'error' : ''}
+              >
+                <InputOTPGroup>
+                  <InputOTPSlot index={0} />
+                  <InputOTPSlot index={1} />
+                  <InputOTPSlot index={2} />
+                </InputOTPGroup>
+                <InputOTPSeparator />
+                <InputOTPGroup>
+                  <InputOTPSlot index={3} />
+                  <InputOTPSlot index={4} />
+                  <InputOTPSlot index={5} />
+                </InputOTPGroup>
+              </InputOTP>
             </div>
             {otpError && (
               <p className="text-sm text-destructive text-center">
@@ -383,7 +373,7 @@ export default function VerifyEmailPage() {
           <Button
             className="w-full"
             onClick={() => handleOtpSubmit()}
-            disabled={isLoading || otp.some(d => !d)}
+            disabled={isLoading || otp.length < 6}
           >
             {isLoading ? (
               <>

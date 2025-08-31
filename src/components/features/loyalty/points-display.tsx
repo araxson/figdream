@@ -1,12 +1,12 @@
 'use client'
 
 import * as React from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/ui/card'
-import { Button } from '@/src/components/ui/button'
-import { Badge } from '@/src/components/ui/badge'
-import { Progress } from '@/src/components/ui/progress'
-import { Skeleton } from '@/src/components/ui/skeleton'
-import { Alert, AlertDescription } from '@/src/components/ui/alert'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import {
   Sparkles,
   TrendingUp,
@@ -28,7 +28,7 @@ import {
   CheckCircle,
   AlertCircle,
 } from 'lucide-react'
-import { cn } from '@/src/lib/utils'
+import { cn } from '@/lib/utils'
 import { format, formatDistanceToNow, isAfter } from 'date-fns'
 import { getCustomerLoyalty, getPointsHistory } from '@/lib/data-access/loyalty/loyalty-program'
 import type { CustomerLoyalty, PointsTransaction } from '@/lib/data-access/loyalty/loyalty-program'

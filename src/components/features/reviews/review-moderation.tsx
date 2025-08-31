@@ -1,19 +1,20 @@
 'use client'
 
 import * as React from 'react'
-import { Button } from '@/src/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/src/components/ui/tabs'
-import { Badge } from '@/src/components/ui/badge'
-import { Input } from '@/src/components/ui/input'
-import { Label } from '@/src/components/ui/label'
-import { Textarea } from '@/src/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/src/components/ui/select'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/ui/dialog'
-import { Alert, AlertDescription } from '@/src/components/ui/alert'
-import { Checkbox } from '@/src/components/ui/checkbox'
-import { Separator } from '@/src/components/ui/separator'
-import { ScrollArea } from '@/src/components/ui/scroll-area'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Separator } from '@/components/ui/separator'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Skeleton } from '@/components/ui/skeleton'
 import { 
   Shield,
   CheckCircle,
@@ -42,7 +43,7 @@ import {
   X,
   AlertCircle
 } from 'lucide-react'
-import { cn } from '@/src/lib/utils'
+import { cn } from '@/lib/utils'
 import { format, formatDistanceToNow } from 'date-fns'
 import { moderateReview, getReviews } from '@/lib/data-access/reviews/reviews'
 import type { ReviewFilterInput } from '@/lib/validations/review-schema'
@@ -509,12 +510,12 @@ export function ReviewModeration({
           {[...Array(3)].map((_, i) => (
             <Card key={i}>
               <CardContent className="p-6">
-                <div className="animate-pulse space-y-3">
+                <div className="space-y-3">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-muted rounded-full"></div>
+                    <Skeleton className="w-12 h-12 rounded-full" />
                     <div className="space-y-2 flex-1">
-                      <div className="h-4 bg-muted rounded w-1/4"></div>
-                      <div className="h-3 bg-muted rounded w-1/3"></div>
+                      <Skeleton className="h-4 w-1/4" />
+                      <Skeleton className="h-3 w-1/3" />
                     </div>
                   </div>
                   <div className="space-y-2">

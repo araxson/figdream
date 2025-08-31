@@ -22,6 +22,7 @@ import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Loader2, CreditCard, Shield, AlertCircle } from 'lucide-react'
 import { 
   createElementsOptions, 
@@ -330,30 +331,30 @@ export function CheckoutFormSkeleton() {
     <div className="max-w-md mx-auto">
       <Card className="mb-6">
         <CardHeader>
-          <div className="h-6 bg-gray-200 rounded animate-pulse" />
+          <Skeleton className="h-6 w-32" />
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex justify-between">
-            <div className="h-4 bg-gray-200 rounded w-24 animate-pulse" />
-            <div className="h-4 bg-gray-200 rounded w-16 animate-pulse" />
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-4 w-16" />
           </div>
-          <div className="h-px bg-gray-200" />
+          <Separator />
           <div className="flex gap-2">
-            <div className="h-5 bg-gray-200 rounded-full w-16 animate-pulse" />
-            <div className="h-5 bg-gray-200 rounded-full w-12 animate-pulse" />
+            <Skeleton className="h-5 w-16 rounded-full" />
+            <Skeleton className="h-5 w-12 rounded-full" />
           </div>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <div className="h-6 bg-gray-200 rounded animate-pulse" />
+          <Skeleton className="h-6 w-32" />
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="h-12 bg-gray-200 rounded animate-pulse" />
-          <div className="h-20 bg-gray-200 rounded animate-pulse" />
-          <div className="h-16 bg-gray-200 rounded animate-pulse" />
-          <div className="h-10 bg-gray-200 rounded animate-pulse" />
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-20 w-full" />
+          <Skeleton className="h-16 w-full" />
+          <Skeleton className="h-10 w-full" />
         </CardContent>
       </Card>
     </div>

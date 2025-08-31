@@ -10,6 +10,13 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Skeleton } from '@/components/ui/skeleton'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import {
   Dialog,
   DialogContent,
@@ -186,17 +193,25 @@ function PaymentMethodCard({
             {!allowSelection && (
               <div className="flex items-center gap-1">
                 {!isDefault && onSetDefault && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      onSetDefault(paymentMethod.id)
-                    }}
-                    title="Set as default"
-                  >
-                    <StarOff className="w-4 h-4" />
-                  </Button>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onSetDefault(paymentMethod.id)
+                          }}
+                        >
+                          <StarOff className="w-4 h-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Set as default</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 )}
                 
                 {onDelete && (
@@ -251,15 +266,15 @@ function PaymentMethodSkeleton() {
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-5 h-5 bg-gray-200 rounded animate-pulse" />
+            <Skeleton className="w-5 h-5 rounded" />
             <div className="space-y-2">
-              <div className="h-4 bg-gray-200 rounded w-24 animate-pulse" />
-              <div className="h-3 bg-gray-200 rounded w-32 animate-pulse" />
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-3 w-32" />
             </div>
           </div>
           <div className="flex gap-2">
-            <div className="w-8 h-8 bg-gray-200 rounded animate-pulse" />
-            <div className="w-8 h-8 bg-gray-200 rounded animate-pulse" />
+            <Skeleton className="w-8 h-8" />
+            <Skeleton className="w-8 h-8" />
           </div>
         </div>
       </CardContent>

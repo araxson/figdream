@@ -1,14 +1,14 @@
 'use client'
 
 import * as React from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card'
-import { Progress } from '@/src/components/ui/progress'
-import { Badge } from '@/src/components/ui/badge'
-import { Button } from '@/src/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/src/components/ui/select'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/src/components/ui/tabs'
-import { Alert, AlertDescription } from '@/src/components/ui/alert'
-import { Skeleton } from '@/src/components/ui/skeleton'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Skeleton } from '@/components/ui/skeleton'
 import { 
   Star,
   TrendingUp,
@@ -34,7 +34,7 @@ import {
   ArrowDown,
   Minus
 } from 'lucide-react'
-import { cn } from '@/src/lib/utils'
+import { cn } from '@/lib/utils'
 import { format, subDays, subMonths, subYears, startOfMonth, endOfMonth, startOfYear, endOfYear } from 'date-fns'
 import { getReviews } from '@/lib/data-access/reviews/reviews'
 import type { ReviewFilterInput } from '@/lib/validations/review-schema'
@@ -333,8 +333,8 @@ export function ReviewStats({
                   )}
                 </div>
               </div>
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <MessageSquare className="h-4 w-4 text-blue-600" />
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <MessageSquare className="h-4 w-4 text-primary" />
               </div>
             </div>
           </CardContent>
@@ -377,7 +377,7 @@ export function ReviewStats({
                   ))}
                 </div>
               </div>
-              <div className="p-2 bg-yellow-100 rounded-lg">
+              <div className="p-2 bg-yellow-500/10 rounded-lg">
                 <Star className="h-4 w-4 text-yellow-600" />
               </div>
             </div>
@@ -394,7 +394,7 @@ export function ReviewStats({
                   {stats.reviewsWithResponses} of {stats.totalReviews} reviews
                 </p>
               </div>
-              <div className="p-2 bg-green-100 rounded-lg">
+              <div className="p-2 bg-green-500/10 rounded-lg">
                 <MessageSquare className="h-4 w-4 text-green-600" />
               </div>
             </div>
@@ -411,7 +411,7 @@ export function ReviewStats({
                   reviews this week
                 </p>
               </div>
-              <div className="p-2 bg-purple-100 rounded-lg">
+              <div className="p-2 bg-purple-500/10 rounded-lg">
                 <Activity className="h-4 w-4 text-purple-600" />
               </div>
             </div>
@@ -534,7 +534,7 @@ export function ReviewStats({
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-100 rounded-lg">
+              <div className="p-2 bg-green-500/10 rounded-lg">
                 <CheckCircle className="h-4 w-4 text-green-600" />
               </div>
               <div>
@@ -554,8 +554,8 @@ export function ReviewStats({
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Camera className="h-4 w-4 text-blue-600" />
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <Camera className="h-4 w-4 text-primary" />
               </div>
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Reviews with Photos</p>
@@ -574,7 +574,7 @@ export function ReviewStats({
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-purple-100 rounded-lg">
+              <div className="p-2 bg-purple-500/10 rounded-lg">
                 <ThumbsUp className="h-4 w-4 text-purple-600" />
               </div>
               <div>
@@ -618,10 +618,13 @@ export function ReviewStats({
                     <div className="text-xs text-muted-foreground mb-1">
                       {data.reviews}
                     </div>
-                    <div className="w-full bg-muted rounded-t" style={{ height: '60px', position: 'relative' }}>
+                    <div className="w-full bg-muted rounded-t h-[60px] relative overflow-hidden">
                       <div 
-                        className="bg-primary rounded-t absolute bottom-0 w-full" 
-                        style={{ height: `${height}%` }}
+                        className="bg-primary rounded-t absolute bottom-0 w-full transition-all duration-300"
+                        style={{ 
+                          height: `${height}%`,
+                          '--chart-height': `${height}%` 
+                        } as React.CSSProperties}
                       />
                     </div>
                     <div className="text-xs font-medium mt-1">{data.month}</div>

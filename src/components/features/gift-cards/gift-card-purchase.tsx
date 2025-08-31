@@ -1,19 +1,20 @@
 'use client'
 
 import * as React from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/ui/card'
-import { Button } from '@/src/components/ui/button'
-import { Input } from '@/src/components/ui/input'
-import { Label } from '@/src/components/ui/label'
-import { Textarea } from '@/src/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/src/components/ui/select'
-import { RadioGroup, RadioGroupItem } from '@/src/components/ui/radio-group'
-import { Separator } from '@/src/components/ui/separator'
-import { Alert, AlertDescription } from '@/src/components/ui/alert'
-import { Badge } from '@/src/components/ui/badge'
-import { Calendar } from '@/src/components/ui/calendar'
-import { Popover, PopoverContent, PopoverTrigger } from '@/src/components/ui/popover'
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/src/components/ui/form'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Separator } from '@/components/ui/separator'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { AspectRatio } from '@/components/ui/aspect-ratio'
+import { Calendar } from '@/components/ui/calendar'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import {
   Gift,
   CreditCard,
@@ -31,7 +32,7 @@ import {
   Camera,
   Upload,
 } from 'lucide-react'
-import { cn } from '@/src/lib/utils'
+import { cn } from '@/lib/utils'
 import { format, addDays } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -538,9 +539,11 @@ export function GiftCardPurchase({
                 )}
                 onClick={() => setSelectedDesign(design.id)}
               >
-                <div className="aspect-[1.6/1] bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg mb-3 flex items-center justify-center">
-                  <Gift className="h-8 w-8 text-gray-400" />
-                </div>
+                <AspectRatio ratio={16 / 10} className="mb-3">
+                  <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center">
+                    <Gift className="h-8 w-8 text-gray-400" />
+                  </div>
+                </AspectRatio>
                 <p className="font-medium text-sm">{design.name}</p>
                 {selectedDesign === design.id && (
                   <div className="absolute top-2 right-2">
@@ -568,17 +571,19 @@ export function GiftCardPurchase({
                 className="absolute inset-0 opacity-0 cursor-pointer"
                 id="custom-image"
               />
-              <div className="aspect-[1.6/1] flex items-center justify-center mb-3">
-                {customImage ? (
-                  <img
-                    src={URL.createObjectURL(customImage)}
-                    alt="Custom design"
-                    className="max-w-full max-h-full object-contain rounded"
-                  />
-                ) : (
-                  <Upload className="h-8 w-8 text-gray-400" />
-                )}
-              </div>
+              <AspectRatio ratio={16 / 10} className="mb-3">
+                <div className="w-full h-full flex items-center justify-center">
+                  {customImage ? (
+                    <img
+                      src={URL.createObjectURL(customImage)}
+                      alt="Custom design"
+                      className="w-full h-full object-contain rounded"
+                    />
+                  ) : (
+                    <Upload className="h-8 w-8 text-gray-400" />
+                  )}
+                </div>
+              </AspectRatio>
               <p className="font-medium text-sm text-center">
                 {customImage ? 'Custom Image' : 'Upload Custom'}
               </p>

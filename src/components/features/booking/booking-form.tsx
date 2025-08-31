@@ -4,18 +4,19 @@ import * as React from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { Button } from '@/src/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card'
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/src/components/ui/form'
-import { Input } from '@/src/components/ui/input'
-import { Textarea } from '@/src/components/ui/textarea'
-import { Separator } from '@/src/components/ui/separator'
-import { Badge } from '@/src/components/ui/badge'
-import { Alert, AlertDescription } from '@/src/components/ui/alert'
-import { Checkbox } from '@/src/components/ui/checkbox'
-import { RadioGroup, RadioGroupItem } from '@/src/components/ui/radio-group'
-import { Label } from '@/src/components/ui/label'
-import { Progress } from '@/src/components/ui/progress'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Separator } from '@/components/ui/separator'
+import { Badge } from '@/components/ui/badge'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Checkbox } from '@/components/ui/checkbox'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Label } from '@/components/ui/label'
+import { Progress } from '@/components/ui/progress'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { 
   CalendarIcon, 
   Clock, 
@@ -28,10 +29,11 @@ import {
   Loader2,
   Receipt,
   Phone,
+  HelpCircle,
   Mail,
   MessageSquare
 } from 'lucide-react'
-import { cn } from '@/src/lib/utils'
+import { cn } from '@/lib/utils'
 import { format, addMinutes } from 'date-fns'
 
 // Import our booking components
@@ -432,7 +434,31 @@ export function BookingForm({
                   name="special_requests"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Special Requests</FormLabel>
+                      <FormLabel className="flex items-center gap-2">
+                        Special Requests
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-4 w-4">
+                              <HelpCircle className="h-3 w-3" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-80">
+                            <div className="space-y-2">
+                              <h4 className="font-medium">Special Requests Guide</h4>
+                              <p className="text-sm text-muted-foreground">
+                                Use this field to communicate any specific needs:
+                              </p>
+                              <ul className="text-sm space-y-1">
+                                <li>• Accessibility requirements</li>
+                                <li>• Allergies or sensitivities</li>
+                                <li>• Preferred products or techniques</li>
+                                <li>• Styling preferences</li>
+                                <li>• Time constraints</li>
+                              </ul>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      </FormLabel>
                       <FormControl>
                         <Textarea 
                           placeholder="Any special requests or accommodations needed..."
@@ -637,7 +663,8 @@ export function BookingForm({
                         <span>Deposit ({businessRules.deposit_percentage}%)</span>
                         <span>-${totals.depositAmount}</span>
                       </div>
-                      <div className="flex justify-between items-center font-medium border-t pt-2">
+                      <Separator className="my-2" />
+                      <div className="flex justify-between items-center font-medium pt-2">
                         <span>Due at service</span>
                         <span>${totals.finalAmount}</span>
                       </div>
@@ -697,23 +724,22 @@ export function BookingForm({
               const isDisabled = disabled
 
               return (
-                <button
+                <Button
                   key={step.id}
                   onClick={() => !isDisabled && goToStep(index)}
                   disabled={isDisabled}
+                  variant={isActive ? "default" : isComplete ? "secondary" : "ghost"}
+                  size="sm"
                   className={cn(
-                    "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                    "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary",
-                    isActive && "bg-primary text-primary-foreground",
-                    isComplete && !isActive && "bg-muted text-muted-foreground hover:bg-muted/80",
-                    !isActive && !isComplete && "text-muted-foreground hover:text-foreground",
-                    isDisabled && "cursor-not-allowed opacity-50"
+                    "gap-2",
+                    isActive && "pointer-events-none",
+                    !isActive && !isComplete && "text-muted-foreground hover:text-foreground"
                   )}
                 >
                   <StepIcon className="h-4 w-4" />
                   <span className="hidden sm:inline">{step.title}</span>
                   {isComplete && <CheckCircle className="h-3 w-3" />}
-                </button>
+                </Button>
               )
             })}
           </div>

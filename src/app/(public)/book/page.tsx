@@ -1,83 +1,70 @@
-'use client'
-
-import { useState } from 'react'
-import Link from 'next/link'
+import { Suspense } from 'react'
+import { getSalonsForBooking } from '@/lib/data-access/bookings/public-booking'
+import { createServerClient } from '@/lib/database/supabase/server'
+import { Database } from '@/types/database.types'
+import SalonBookingList from './salon-booking-list'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { MapPin, Search } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { MapPin, Search, Star, Clock, Phone } from 'lucide-react'
+import { Skeleton } from '@/components/ui/skeleton'
 
-// Mock data for demonstration
-const mockSalons = [
-  {
-    id: '1',
-    name: 'Glamour Studio',
-    slug: 'glamour-studio',
-    description: 'Premier beauty salon specializing in hair, nails, and spa treatments',
-    rating: 4.8,
-    reviewCount: 234,
-    address: '123 Main St, San Francisco, CA',
-    distance: '0.8 miles',
-    image: '/api/placeholder/400/250',
-    services: ['Hair', 'Nails', 'Spa', 'Makeup'],
-    priceRange: '$$$',
-    nextAvailable: '10:30 AM',
-  },
-  {
-    id: '2',
-    name: 'The Beauty Bar',
-    slug: 'beauty-bar',
-    description: 'Modern salon offering cutting-edge beauty treatments',
-    rating: 4.9,
-    reviewCount: 189,
-    address: '456 Oak Ave, San Francisco, CA',
-    distance: '1.2 miles',
-    image: '/api/placeholder/400/250',
-    services: ['Hair', 'Nails', 'Lashes', 'Brows'],
-    priceRange: '$$',
-    nextAvailable: '11:00 AM',
-  },
-  {
-    id: '3',
-    name: 'Serenity Spa & Salon',
-    slug: 'serenity-spa',
-    description: 'Relax and rejuvenate at our full-service spa and salon',
-    rating: 4.7,
-    reviewCount: 156,
-    address: '789 Pine Blvd, San Francisco, CA',
-    distance: '2.1 miles',
-    image: '/api/placeholder/400/250',
-    services: ['Spa', 'Massage', 'Facials', 'Hair'],
-    priceRange: '$$$$',
-    nextAvailable: '2:00 PM',
-  },
-  {
-    id: '4',
-    name: 'Urban Hair Studio',
-    slug: 'urban-hair',
-    description: 'Trendy hair salon with expert stylists',
-    rating: 4.6,
-    reviewCount: 98,
-    address: '321 Market St, San Francisco, CA',
-    distance: '0.5 miles',
-    image: '/api/placeholder/400/250',
-    services: ['Hair', 'Color', 'Extensions'],
-    priceRange: '$$',
-    nextAvailable: '9:00 AM',
-  },
-]
+type Salon = Database['public']['Tables']['salons']['Row']
 
-export default function BookingPage() {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedService, setSelectedService] = useState('all')
+export default async function BookingPage() {
+  // Fetch real salon data from database
+  const salons = await getSalonsForBooking()
   
-  const filteredSalons = mockSalons.filter(salon => {
-    const matchesSearch = salon.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          salon.description.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesService = selectedService === 'all' || 
-                           salon.services.some(s => s.toLowerCase() === selectedService.toLowerCase())
-    return matchesSearch && matchesService
+  // Get aggregated stats for each salon
+  const supabase = await createServerClient()
+  
+  // Fetch review stats and service categories for all salons
+  const salonIds = salons.map(s => s.id)
+  
+  const [reviewStats, services] = await Promise.all([
+    // Get review statistics
+    supabase
+      .from('reviews')
+      .select('salon_id, rating')
+      .in('salon_id', salonIds)
+      .eq('is_published', true),
+    
+    // Get services grouped by salon
+    supabase
+      .from('services')
+      .select(`
+        salon_id,
+        name,
+        service_categories (
+          name
+        )
+      `)
+      .in('salon_id', salonIds)
+      .eq('is_active', true)
+  ])
+  
+  // Process salon data with stats
+  const salonsWithStats = salons.map(salon => {
+    // Calculate average rating
+    const salonReviews = reviewStats.data?.filter(r => r.salon_id === salon.id) || []
+    const avgRating = salonReviews.length > 0
+      ? salonReviews.reduce((sum, r) => sum + r.rating, 0) / salonReviews.length
+      : 0
+    
+    // Get unique service categories
+    const salonServices = services.data?.filter(s => s.salon_id === salon.id) || []
+    const categories = [...new Set(salonServices
+      .map(s => s.service_categories?.name)
+      .filter(Boolean)
+    )]
+    
+    return {
+      ...salon,
+      rating: Math.round(avgRating * 10) / 10,
+      reviewCount: salonReviews.length,
+      serviceCategories: categories
+    }
   })
 
   return (
@@ -90,141 +77,42 @@ export default function BookingPage() {
         </p>
       </section>
 
-      {/* Search and Filters */}
-      <section className="mb-8 space-y-4">
-        <div className="flex gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search salons, services, or locations..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <Button variant="outline">
-            <MapPin className="h-4 w-4 mr-2" />
-            San Francisco, CA
-          </Button>
-        </div>
-        
-        <div className="flex gap-2 flex-wrap">
-          <Badge 
-            variant={selectedService === 'all' ? 'default' : 'outline'}
-            className="cursor-pointer"
-            onClick={() => setSelectedService('all')}
-          >
-            All Services
-          </Badge>
-          {['Hair', 'Nails', 'Spa', 'Makeup', 'Lashes'].map((service) => (
-            <Badge
-              key={service}
-              variant={selectedService === service ? 'default' : 'outline'}
-              className="cursor-pointer"
-              onClick={() => setSelectedService(service)}
-            >
-              {service}
-            </Badge>
-          ))}
-        </div>
-      </section>
-
       {/* Results Count */}
       <section className="mb-6">
         <p className="text-sm text-muted-foreground">
-          {filteredSalons.length} salons found near you
+          {salonsWithStats.length} salons available for booking
         </p>
       </section>
 
-      {/* Salon Grid */}
-      <section className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredSalons.map((salon) => (
-          <Card key={salon.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-            <div className="aspect-video bg-muted relative">
-              <div className="absolute top-2 right-2">
-                <Badge className="bg-background/90">{salon.priceRange}</Badge>
-              </div>
-            </div>
-            <CardHeader>
-              <div className="flex justify-between items-start">
-                <div>
-                  <CardTitle className="text-xl">{salon.name}</CardTitle>
-                  <CardDescription className="mt-1">
-                    <span className="flex items-center gap-1">
-                      <MapPin className="h-3 w-3" />
-                      {salon.distance}
-                    </span>
-                  </CardDescription>
-                </div>
-                <div className="text-right">
-                  <div className="flex items-center gap-1">
-                    <Star className="h-4 w-4 fill-primary text-primary" />
-                    <span className="font-semibold">{salon.rating}</span>
-                  </div>
-                  <span className="text-xs text-muted-foreground">
-                    ({salon.reviewCount})
-                  </span>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground mb-3">
-                {salon.description}
-              </p>
-              <div className="flex flex-wrap gap-1 mb-3">
-                {salon.services.slice(0, 3).map((service) => (
-                  <Badge key={service} variant="secondary" className="text-xs">
-                    {service}
-                  </Badge>
-                ))}
-                {salon.services.length > 3 && (
-                  <Badge variant="secondary" className="text-xs">
-                    +{salon.services.length - 3}
-                  </Badge>
-                )}
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <Clock className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">Next available:</span>
-                <span className="font-medium text-primary">{salon.nextAvailable}</span>
-              </div>
-            </CardContent>
-            <CardFooter className="gap-2">
-              <Button className="flex-1" asChild>
-                <Link href={`/book/${salon.slug}`}>
-                  Book Now
-                </Link>
-              </Button>
-              <Button variant="outline" size="icon">
-                <Phone className="h-4 w-4" />
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
-      </section>
+      {/* Salon List with Client-Side Filtering */}
+      <Suspense fallback={<SalonListSkeleton />}>
+        <SalonBookingList salons={salonsWithStats} />
+      </Suspense>
+    </div>
+  )
+}
 
-      {/* Empty State */}
-      {filteredSalons.length === 0 && (
-        <Card className="p-8 text-center">
+// Loading skeleton component
+function SalonListSkeleton() {
+  return (
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {[1, 2, 3, 4, 5, 6].map((i) => (
+        <Card key={i} className="overflow-hidden">
+          <Skeleton className="aspect-video" />
           <CardHeader>
-            <CardTitle>No salons found</CardTitle>
-            <CardDescription>
-              Try adjusting your search or filters to find more results
-            </CardDescription>
+            <Skeleton className="h-6 mb-2" />
+            <Skeleton className="h-4 w-2/3" />
           </CardHeader>
           <CardContent>
-            <Button 
-              variant="outline" 
-              onClick={() => {
-                setSearchQuery('')
-                setSelectedService('all')
-              }}
-            >
-              Clear filters
-            </Button>
+            <Skeleton className="h-4 mb-2" />
+            <Skeleton className="h-4 mb-2" />
+            <div className="flex gap-2">
+              <Skeleton className="h-6 w-16" />
+              <Skeleton className="h-6 w-16" />
+            </div>
           </CardContent>
         </Card>
-      )}
+      ))}
     </div>
   )
 }

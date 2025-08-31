@@ -1,14 +1,14 @@
 'use client'
 
 import * as React from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/ui/card'
-import { Button } from '@/src/components/ui/button'
-import { Badge } from '@/src/components/ui/badge'
-import { Progress } from '@/src/components/ui/progress'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/src/components/ui/tabs'
-import { Alert, AlertDescription } from '@/src/components/ui/alert'
-import { Avatar, AvatarFallback, AvatarImage } from '@/src/components/ui/avatar'
-import { Skeleton } from '@/src/components/ui/skeleton'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Gift,
   Award,
@@ -33,7 +33,7 @@ import {
   Zap,
   Loader2,
 } from 'lucide-react'
-import { cn } from '@/src/lib/utils'
+import { cn } from '@/lib/utils'
 import { format, formatDistanceToNow } from 'date-fns'
 import { getCustomerLoyalty, getPointsHistory } from '@/lib/data-access/loyalty/loyalty-program'
 import type { CustomerLoyalty, PointsTransaction } from '@/lib/data-access/loyalty/loyalty-program'
@@ -87,34 +87,34 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
   const getTierIcon = (tier: string) => {
     switch (tier) {
       case 'bronze':
-        return <Medal className="h-5 w-5 text-amber-700" />
+        return <Medal className="h-5 w-5 text-orange-600 dark:text-orange-400" />
       case 'silver':
-        return <Award className="h-5 w-5 text-gray-500" />
+        return <Award className="h-5 w-5 text-muted-foreground" />
       case 'gold':
-        return <Trophy className="h-5 w-5 text-yellow-500" />
+        return <Trophy className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
       case 'platinum':
-        return <Crown className="h-5 w-5 text-purple-500" />
+        return <Crown className="h-5 w-5 text-purple-600 dark:text-purple-400" />
       case 'diamond':
-        return <Gem className="h-5 w-5 text-blue-500" />
+        return <Gem className="h-5 w-5 text-blue-600 dark:text-blue-400" />
       default:
-        return <Star className="h-5 w-5 text-gray-400" />
+        return <Star className="h-5 w-5 text-muted-foreground/60" />
     }
   }
 
   const getTierColor = (tier: string) => {
     switch (tier) {
       case 'bronze':
-        return 'from-amber-100 to-amber-200 border-amber-300'
+        return 'from-orange-50 to-orange-100 border-orange-200 dark:from-orange-950/30 dark:to-orange-900/30 dark:border-orange-800'
       case 'silver':
-        return 'from-gray-100 to-gray-200 border-gray-300'
+        return 'from-muted to-muted/50 border-border'
       case 'gold':
-        return 'from-yellow-100 to-yellow-200 border-yellow-300'
+        return 'from-yellow-50 to-yellow-100 border-yellow-200 dark:from-yellow-950/30 dark:to-yellow-900/30 dark:border-yellow-800'
       case 'platinum':
-        return 'from-purple-100 to-purple-200 border-purple-300'
+        return 'from-purple-50 to-purple-100 border-purple-200 dark:from-purple-950/30 dark:to-purple-900/30 dark:border-purple-800'
       case 'diamond':
-        return 'from-blue-100 to-blue-200 border-blue-300'
+        return 'from-blue-50 to-blue-100 border-blue-200 dark:from-blue-950/30 dark:to-blue-900/30 dark:border-blue-800'
       default:
-        return 'from-gray-50 to-gray-100 border-gray-200'
+        return 'from-muted/50 to-muted/30 border-border'
     }
   }
 
@@ -122,22 +122,22 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
     if (type.startsWith('earned_')) {
       switch (type) {
         case 'earned_booking':
-          return <Calendar className="h-4 w-4 text-green-600" />
+          return <Calendar className="h-4 w-4 text-green-600 dark:text-green-400" />
         case 'earned_referral':
-          return <Users className="h-4 w-4 text-blue-600" />
+          return <Users className="h-4 w-4 text-blue-600 dark:text-blue-400" />
         case 'earned_review':
-          return <Star className="h-4 w-4 text-yellow-600" />
+          return <Star className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
         case 'earned_bonus':
-          return <Gift className="h-4 w-4 text-purple-600" />
+          return <Gift className="h-4 w-4 text-purple-600 dark:text-purple-400" />
         default:
-          return <TrendingUp className="h-4 w-4 text-green-600" />
+          return <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
       }
     } else if (type.startsWith('redeemed_')) {
-      return <CheckCircle className="h-4 w-4 text-orange-600" />
+      return <CheckCircle className="h-4 w-4 text-orange-600 dark:text-orange-400" />
     } else if (type === 'expired') {
-      return <Clock className="h-4 w-4 text-red-600" />
+      return <Clock className="h-4 w-4 text-destructive" />
     }
-    return <Target className="h-4 w-4 text-gray-600" />
+    return <Target className="h-4 w-4 text-muted-foreground" />
   }
 
   const formatTransactionType = (type: string) => {
@@ -237,8 +237,8 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Sparkles className="h-5 w-5 text-blue-600" />
+              <div className="p-2 bg-blue-100 dark:bg-blue-950/50 rounded-lg">
+                <Sparkles className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
                 <p className="text-2xl font-bold">{loyaltyData.current_points.toLocaleString()}</p>
@@ -251,8 +251,8 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <TrendingUp className="h-5 w-5 text-green-600" />
+              <div className="p-2 bg-green-100 dark:bg-green-950/50 rounded-lg">
+                <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
               </div>
               <div>
                 <p className="text-2xl font-bold">{loyaltyData.total_earned.toLocaleString()}</p>
@@ -265,8 +265,8 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-orange-100 rounded-lg">
-                <Gift className="h-5 w-5 text-orange-600" />
+              <div className="p-2 bg-orange-100 dark:bg-orange-950/50 rounded-lg">
+                <Gift className="h-5 w-5 text-orange-600 dark:text-orange-400" />
               </div>
               <div>
                 <p className="text-2xl font-bold">{loyaltyData.total_redeemed.toLocaleString()}</p>
@@ -279,7 +279,7 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-purple-100 rounded-lg">
+              <div className="p-2 bg-purple-100 dark:bg-purple-950/50 rounded-lg">
                 {getTierIcon(loyaltyData.current_tier)}
               </div>
               <div>
@@ -314,20 +314,20 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
             <CardContent>
               <div className="space-y-3">
                 <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
                   <span className="text-sm">Earn 1 point for every $1 spent</span>
                 </div>
                 <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
                   <span className="text-sm">Birthday bonus points</span>
                 </div>
                 <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
                   <span className="text-sm">Exclusive member promotions</span>
                 </div>
                 {loyaltyData.current_tier !== 'bronze' && (
                   <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
                     <span className="text-sm">Priority booking access</span>
                   </div>
                 )}
@@ -409,7 +409,7 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
                       <div className="text-right">
                         <p className={cn(
                           "font-semibold",
-                          transaction.points > 0 ? "text-green-600" : "text-red-600"
+                          transaction.points > 0 ? "text-green-600 dark:text-green-400" : "text-destructive"
                         )}>
                           {transaction.points > 0 ? '+' : ''}{transaction.points.toLocaleString()}
                         </p>

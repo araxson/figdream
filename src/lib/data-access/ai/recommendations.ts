@@ -214,7 +214,7 @@ async function recommendServices(
     // Score services
     services.forEach(service => {
       let score = 0
-      let reasons = []
+      const reasons = []
       
       // Boost score for frequently booked services
       if (serviceFrequency[service.id]) {
@@ -302,7 +302,7 @@ async function recommendStaff(
     // Score staff
     staffList.forEach(staff => {
       let score = 0
-      let reasons = []
+      const reasons = []
       
       // Boost score for frequently booked staff
       if (staffFrequency[staff.id]) {

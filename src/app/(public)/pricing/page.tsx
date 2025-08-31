@@ -2,6 +2,12 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
 import { Check, X } from 'lucide-react'
 
 const plans = [
@@ -122,58 +128,38 @@ export default function PricingPage() {
         <h2 className="text-3xl font-bold text-center mb-8">
           Frequently Asked Questions
         </h2>
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Is there a free trial?</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">
-                Yes! All plans come with a 14-day free trial. No credit card required to start.
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Can I change plans anytime?</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">
-                Absolutely. You can upgrade or downgrade your plan at any time. Changes take effect immediately.
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">What payment methods do you accept?</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">
-                We accept all major credit cards, debit cards, and ACH bank transfers for annual plans.
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Is there a setup fee?</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">
-                No setup fees, no hidden charges. The price you see is the price you pay.
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Do you offer discounts for annual billing?</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">
-                Yes! Save 20% when you choose annual billing. That&apos;s two months free every year.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+        <Accordion type="single" collapsible className="w-full">
+          <AccordionItem value="trial">
+            <AccordionTrigger>Is there a free trial?</AccordionTrigger>
+            <AccordionContent>
+              Yes! All plans come with a 14-day free trial. No credit card required to start.
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="change-plans">
+            <AccordionTrigger>Can I change plans anytime?</AccordionTrigger>
+            <AccordionContent>
+              Absolutely. You can upgrade or downgrade your plan at any time. Changes take effect immediately.
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="payment-methods">
+            <AccordionTrigger>What payment methods do you accept?</AccordionTrigger>
+            <AccordionContent>
+              We accept all major credit cards, debit cards, and ACH bank transfers for annual plans.
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="setup-fee">
+            <AccordionTrigger>Is there a setup fee?</AccordionTrigger>
+            <AccordionContent>
+              No setup fees, no hidden charges. The price you see is the price you pay.
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="annual-discount">
+            <AccordionTrigger>Do you offer discounts for annual billing?</AccordionTrigger>
+            <AccordionContent>
+              Yes! Save 20% when you choose annual billing. That&apos;s two months free every year.
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </section>
 
       {/* CTA Section */}

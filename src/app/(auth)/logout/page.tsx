@@ -91,7 +91,7 @@ export default function LogoutPage() {
           <CardContent className="pt-6">
             <div className="flex flex-col items-center justify-center py-8 space-y-4">
               <div className="relative">
-                <LogOut className="h-12 w-12 text-primary animate-pulse" />
+                <LogOut className="h-12 w-12 text-primary" />
               </div>
               <div className="text-center space-y-2">
                 <p className="text-lg font-medium">Signing you out...</p>

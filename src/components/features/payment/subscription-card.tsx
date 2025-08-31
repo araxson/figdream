@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Separator } from '@/components/ui/separator'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Dialog,
   DialogContent,
@@ -479,34 +480,34 @@ export function SubscriptionCardSkeleton() {
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-5 h-5 bg-gray-200 rounded animate-pulse" />
-            <div className="h-6 bg-gray-200 rounded w-32 animate-pulse" />
+            <Skeleton className="w-5 h-5 rounded" />
+            <Skeleton className="h-6 w-32" />
           </div>
-          <div className="h-6 bg-gray-200 rounded-full w-16 animate-pulse" />
+          <Skeleton className="h-6 rounded-full w-16" />
         </div>
       </CardHeader>
 
       <CardContent className="space-y-4">
         <div className="text-center py-4 space-y-2">
-          <div className="h-8 bg-gray-200 rounded w-24 mx-auto animate-pulse" />
-          <div className="h-4 bg-gray-200 rounded w-16 mx-auto animate-pulse" />
+          <Skeleton className="h-8 w-24 mx-auto" />
+          <Skeleton className="h-4 w-16 mx-auto" />
         </div>
 
         <div className="space-y-3">
-          <div className="h-4 bg-gray-200 rounded w-20 animate-pulse" />
-          <div className="h-4 bg-gray-200 rounded w-32 animate-pulse" />
+          <Skeleton className="h-4 w-20" />
+          <Skeleton className="h-4 w-32" />
         </div>
 
         <div className="space-y-3">
-          <div className="h-4 bg-gray-200 rounded w-24 animate-pulse" />
-          <div className="h-4 bg-gray-200 rounded w-28 animate-pulse" />
+          <Skeleton className="h-4 w-24" />
+          <Skeleton className="h-4 w-28" />
         </div>
 
         <div className="grid gap-2">
-          <div className="h-10 bg-gray-200 rounded animate-pulse" />
+          <Skeleton className="h-10" />
           <div className="grid grid-cols-2 gap-2">
-            <div className="h-8 bg-gray-200 rounded animate-pulse" />
-            <div className="h-8 bg-gray-200 rounded animate-pulse" />
+            <Skeleton className="h-8" />
+            <Skeleton className="h-8" />
           </div>
         </div>
       </CardContent>

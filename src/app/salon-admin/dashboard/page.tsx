@@ -1,7 +1,26 @@
 import { createClient } from "@/lib/database/supabase/server"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Users, Calendar, DollarSign, TrendingUp, Clock, UserCheck, Package, Star } from "lucide-react"
+import { RevenueSection } from './revenue-section'
+import { DashboardPanels } from './dashboard-panels'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarSeparator,
+  MenubarTrigger,
+} from "@/components/ui/menubar"
+import { Users, Calendar, DollarSign, TrendingUp, Clock, UserCheck, Package, Star, Plus, Settings, BarChart3 } from "lucide-react"
 import { redirect } from "next/navigation"
+import Link from "next/link"
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -163,6 +182,20 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link href="/salon-admin">Admin</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Dashboard</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground">
@@ -189,6 +222,18 @@ export default async function DashboardPage() {
         ))}
       </div>
 
+      <RevenueSection salonId={salon.id} />
+
+      <DashboardPanels 
+        stats={{
+          todayAppointments: todayAppointments.data?.length || 0,
+          pendingAppointments: pendingAppointments.data?.length || 0,
+          activeStaff: activeStaff.data?.length || 0,
+          activeServices: totalServices.data?.length || 0
+        }}
+        salonName={salon.name}
+      />
+
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
@@ -205,23 +250,92 @@ export default async function DashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>Common tasks and shortcuts</CardDescription>
+            <CardDescription>Access common tasks and shortcuts</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="text-sm space-y-2">
-              <a href="/salon-admin/appointments/new" className="block p-2 hover:bg-secondary rounded">
-                + New Appointment
-              </a>
-              <a href="/salon-admin/customers/new" className="block p-2 hover:bg-secondary rounded">
-                + Add Customer
-              </a>
-              <a href="/salon-admin/staff/new" className="block p-2 hover:bg-secondary rounded">
-                + Add Staff Member
-              </a>
-              <a href="/salon-admin/services/new" className="block p-2 hover:bg-secondary rounded">
-                + Add Service
-              </a>
-            </div>
+          <CardContent>
+            <Menubar>
+              <MenubarMenu>
+                <MenubarTrigger>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create
+                </MenubarTrigger>
+                <MenubarContent>
+                  <MenubarItem asChild>
+                    <Link href="/salon-admin/appointments/new">
+                      <Calendar className="mr-2 h-4 w-4" />
+                      New Appointment
+                    </Link>
+                  </MenubarItem>
+                  <MenubarItem asChild>
+                    <Link href="/salon-admin/staff?action=add">
+                      <Users className="mr-2 h-4 w-4" />
+                      Add Staff Member
+                    </Link>
+                  </MenubarItem>
+                  <MenubarItem asChild>
+                    <Link href="/salon-admin/services?action=add">
+                      <Package className="mr-2 h-4 w-4" />
+                      New Service
+                    </Link>
+                  </MenubarItem>
+                </MenubarContent>
+              </MenubarMenu>
+              
+              <MenubarMenu>
+                <MenubarTrigger>
+                  <Settings className="mr-2 h-4 w-4" />
+                  Manage
+                </MenubarTrigger>
+                <MenubarContent>
+                  <MenubarItem asChild>
+                    <Link href="/salon-admin/appointments">
+                      <Calendar className="mr-2 h-4 w-4" />
+                      Appointments
+                    </Link>
+                  </MenubarItem>
+                  <MenubarItem asChild>
+                    <Link href="/salon-admin/staff">
+                      <Users className="mr-2 h-4 w-4" />
+                      Staff
+                    </Link>
+                  </MenubarItem>
+                  <MenubarSeparator />
+                  <MenubarItem asChild>
+                    <Link href="/salon-admin/services">
+                      <Package className="mr-2 h-4 w-4" />
+                      Services
+                    </Link>
+                  </MenubarItem>
+                  <MenubarItem asChild>
+                    <Link href="/salon-admin/settings">
+                      <Settings className="mr-2 h-4 w-4" />
+                      Settings
+                    </Link>
+                  </MenubarItem>
+                </MenubarContent>
+              </MenubarMenu>
+
+              <MenubarMenu>
+                <MenubarTrigger>
+                  <BarChart3 className="mr-2 h-4 w-4" />
+                  Reports
+                </MenubarTrigger>
+                <MenubarContent>
+                  <MenubarItem asChild>
+                    <Link href="/salon-admin/analytics">
+                      <BarChart3 className="mr-2 h-4 w-4" />
+                      Analytics
+                    </Link>
+                  </MenubarItem>
+                  <MenubarItem asChild>
+                    <Link href="/salon-admin/reports">
+                      <DollarSign className="mr-2 h-4 w-4" />
+                      Financial Reports
+                    </Link>
+                  </MenubarItem>
+                </MenubarContent>
+              </MenubarMenu>
+            </Menubar>
           </CardContent>
         </Card>
       </div>

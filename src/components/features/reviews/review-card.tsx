@@ -1,15 +1,16 @@
 'use client'
 
 import * as React from 'react'
-import { Button } from '@/src/components/ui/button'
-import { Card, CardContent } from '@/src/components/ui/card'
-import { Badge } from '@/src/components/ui/badge'
-import { Avatar, AvatarFallback, AvatarImage } from '@/src/components/ui/avatar'
-import { Separator } from '@/src/components/ui/separator'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/src/components/ui/dialog'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/src/components/ui/dropdown-menu'
-import { Textarea } from '@/src/components/ui/textarea'
-import { Alert, AlertDescription } from '@/src/components/ui/alert'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { AspectRatio } from '@/components/ui/aspect-ratio'
+import { Separator } from '@/components/ui/separator'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Textarea } from '@/components/ui/textarea'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { 
   Star,
   ThumbsUp,
@@ -34,7 +35,7 @@ import {
   Eye,
   Loader2
 } from 'lucide-react'
-import { cn } from '@/src/lib/utils'
+import { cn } from '@/lib/utils'
 import { format, formatDistanceToNow } from 'date-fns'
 import { voteReview, createReviewResponse, moderateReview } from '@/lib/data-access/reviews/reviews'
 import type { Database } from '@/types/database'
@@ -305,23 +306,25 @@ export function ReviewCard({
                 setSelectedImageIndex(index)
                 setShowImageDialog(true)
               }}
-              className="relative flex-shrink-0 w-20 h-20 bg-muted rounded-lg overflow-hidden hover:opacity-80 transition-opacity group"
+              className="relative flex-shrink-0 w-20 bg-muted rounded-lg overflow-hidden hover:opacity-80 transition-opacity group"
             >
-              <img 
-                src={photo.url} 
-                alt={photo.caption || `Review photo ${index + 1}`}
-                className="w-full h-full object-cover"
-              />
-              {index === 3 && photos.length > 4 && (
-                <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                  <span className="text-white text-xs font-medium">
-                    +{photos.length - 3}
-                  </span>
+              <AspectRatio ratio={1}>
+                <img 
+                  src={photo.url} 
+                  alt={photo.caption || `Review photo ${index + 1}`}
+                  className="w-full h-full object-cover"
+                />
+                {index === 3 && photos.length > 4 && (
+                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                    <span className="text-white text-xs font-medium">
+                      +{photos.length - 3}
+                    </span>
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                  <ExternalLink className="h-4 w-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
-              )}
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                <ExternalLink className="h-4 w-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-              </div>
+              </AspectRatio>
             </button>
           ))}
         </div>
@@ -685,11 +688,15 @@ export function ReviewCard({
           {photos.length > 0 && (
             <div className="space-y-4">
               <div className="flex justify-center">
-                <img 
-                  src={photos[selectedImageIndex]?.url} 
-                  alt={photos[selectedImageIndex]?.caption || 'Review photo'}
-                  className="max-h-96 object-contain rounded-lg"
-                />
+                <div className="w-full max-w-2xl">
+                  <AspectRatio ratio={16 / 9}>
+                    <img 
+                      src={photos[selectedImageIndex]?.url} 
+                      alt={photos[selectedImageIndex]?.caption || 'Review photo'}
+                      className="w-full h-full object-contain rounded-lg"
+                    />
+                  </AspectRatio>
+                </div>
               </div>
               
               {photos[selectedImageIndex]?.caption && (
@@ -705,17 +712,19 @@ export function ReviewCard({
                       key={index}
                       onClick={() => setSelectedImageIndex(index)}
                       className={cn(
-                        "flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2",
+                        "flex-shrink-0 w-16 rounded-lg overflow-hidden border-2",
                         index === selectedImageIndex 
                           ? "border-primary" 
                           : "border-transparent hover:border-muted-foreground/50"
                       )}
                     >
-                      <img 
-                        src={photo.url} 
-                        alt={`Thumbnail ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
+                      <AspectRatio ratio={1}>
+                        <img 
+                          src={photo.url} 
+                          alt={`Thumbnail ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </AspectRatio>
                     </button>
                   ))}
                 </div>

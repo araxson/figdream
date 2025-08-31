@@ -6,6 +6,19 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { AppSidebar } from "./components/app-sidebar"
+import { CommandTrigger } from '@/components/features/command-trigger'
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarSeparator,
+  MenubarShortcut,
+  MenubarSub,
+  MenubarSubContent,
+  MenubarSubTrigger,
+  MenubarTrigger,
+} from "@/components/ui/menubar"
 
 export default async function SalonAdminLayout({
   children,
@@ -40,11 +53,77 @@ export default async function SalonAdminLayout({
     <SidebarProvider>
       <AppSidebar user={user} profile={profile} />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-          <SidebarTrigger className="-ml-1" />
-          <div className="flex items-center gap-2 px-3">
-            <span className="font-semibold">Salon Admin</span>
+        <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b px-4">
+          <div className="flex items-center gap-2">
+            <SidebarTrigger className="-ml-1" />
+            <div className="flex items-center gap-2 px-3">
+              <span className="font-semibold">Salon Admin</span>
+            </div>
+            <Menubar className="ml-4">
+              <MenubarMenu>
+                <MenubarTrigger>File</MenubarTrigger>
+                <MenubarContent>
+                  <MenubarItem>
+                    New Service <MenubarShortcut>⌘N</MenubarShortcut>
+                  </MenubarItem>
+                  <MenubarItem>
+                    New Staff Member <MenubarShortcut>⌘S</MenubarShortcut>
+                  </MenubarItem>
+                  <MenubarSeparator />
+                  <MenubarSub>
+                    <MenubarSubTrigger>Export</MenubarSubTrigger>
+                    <MenubarSubContent>
+                      <MenubarItem>Export Services</MenubarItem>
+                      <MenubarItem>Export Staff List</MenubarItem>
+                      <MenubarItem>Export Appointments</MenubarItem>
+                    </MenubarSubContent>
+                  </MenubarSub>
+                  <MenubarSeparator />
+                  <MenubarItem>
+                    Print <MenubarShortcut>⌘P</MenubarShortcut>
+                  </MenubarItem>
+                </MenubarContent>
+              </MenubarMenu>
+              <MenubarMenu>
+                <MenubarTrigger>Edit</MenubarTrigger>
+                <MenubarContent>
+                  <MenubarItem>
+                    Undo <MenubarShortcut>⌘Z</MenubarShortcut>
+                  </MenubarItem>
+                  <MenubarItem>
+                    Redo <MenubarShortcut>⇧⌘Z</MenubarShortcut>
+                  </MenubarItem>
+                  <MenubarSeparator />
+                  <MenubarItem>Bulk Edit Services</MenubarItem>
+                  <MenubarItem>Bulk Update Prices</MenubarItem>
+                </MenubarContent>
+              </MenubarMenu>
+              <MenubarMenu>
+                <MenubarTrigger>View</MenubarTrigger>
+                <MenubarContent>
+                  <MenubarItem>Calendar View</MenubarItem>
+                  <MenubarItem>List View</MenubarItem>
+                  <MenubarItem>Grid View</MenubarItem>
+                  <MenubarSeparator />
+                  <MenubarItem>Show Archived</MenubarItem>
+                  <MenubarItem>Show Inactive Staff</MenubarItem>
+                </MenubarContent>
+              </MenubarMenu>
+              <MenubarMenu>
+                <MenubarTrigger>Tools</MenubarTrigger>
+                <MenubarContent>
+                  <MenubarItem>Bulk SMS</MenubarItem>
+                  <MenubarItem>Email Campaign</MenubarItem>
+                  <MenubarSeparator />
+                  <MenubarItem>Import Data</MenubarItem>
+                  <MenubarItem>Sync Calendar</MenubarItem>
+                  <MenubarSeparator />
+                  <MenubarItem>Settings</MenubarItem>
+                </MenubarContent>
+              </MenubarMenu>
+            </Menubar>
           </div>
+          <CommandTrigger userRole="salon_admin" />
         </header>
         <main className="flex-1 overflow-y-auto p-4">
           {children}

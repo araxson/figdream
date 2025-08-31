@@ -22,13 +22,14 @@ import {
   Settings
 } from 'lucide-react'
 
-import { Button } from '@/src/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card'
-import { Input } from '@/src/components/ui/input'
-import { Label } from '@/src/components/ui/label'
-import { Textarea } from '@/src/components/ui/textarea'
-import { Switch } from '@/src/components/ui/switch'
-import { Badge } from '@/src/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { Switch } from '@/components/ui/switch'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Badge } from '@/components/ui/badge'
 import { 
   Form, 
   FormControl, 
@@ -37,30 +38,30 @@ import {
   FormItem, 
   FormLabel, 
   FormMessage 
-} from '@/src/components/ui/form'
+} from '@/components/ui/form'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/src/components/ui/select'
+} from '@/components/ui/select'
 import { 
   Tabs, 
   TabsContent, 
   TabsList, 
   TabsTrigger 
-} from '@/src/components/ui/tabs'
+} from '@/components/ui/tabs'
 import { 
   Popover, 
   PopoverContent, 
   PopoverTrigger 
-} from '@/src/components/ui/popover'
-import { Calendar as CalendarComponent } from '@/src/components/ui/calendar'
-import { Alert, AlertDescription } from '@/src/components/ui/alert'
-import { Progress } from '@/src/components/ui/progress'
-import { Separator } from '@/src/components/ui/separator'
-import { cn } from '@/src/lib/utils'
+} from '@/components/ui/popover'
+import { Calendar as CalendarComponent } from '@/components/ui/calendar'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Progress } from '@/components/ui/progress'
+import { Separator } from '@/components/ui/separator'
+import { cn } from '@/lib/utils'
 
 import { 
   createCampaignSchema, 
@@ -633,19 +634,17 @@ export function CampaignForm({
                 <div className="space-y-2">
                   {locationIds.map((locationId) => (
                     <div key={locationId} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
+                      <Checkbox
                         id={locationId}
                         checked={field.value?.includes(locationId) || false}
-                        onChange={(e) => {
+                        onCheckedChange={(checked) => {
                           const current = field.value || []
-                          if (e.target.checked) {
+                          if (checked) {
                             field.onChange([...current, locationId])
                           } else {
                             field.onChange(current.filter(id => id !== locationId))
                           }
                         }}
-                        className="rounded border-gray-300"
                       />
                       <Label htmlFor={locationId}>
                         Location {locationId.slice(-8)}

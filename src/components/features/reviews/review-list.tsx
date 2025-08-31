@@ -1,17 +1,27 @@
 'use client'
 
 import * as React from 'react'
-import { Button } from '@/src/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card'
-import { Input } from '@/src/components/ui/input'
-import { Label } from '@/src/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/src/components/ui/select'
-import { Separator } from '@/src/components/ui/separator'
-import { Badge } from '@/src/components/ui/badge'
-import { Checkbox } from '@/src/components/ui/checkbox'
-import { Alert, AlertDescription } from '@/src/components/ui/alert'
-import { Skeleton } from '@/src/components/ui/skeleton'
-import { ScrollArea } from '@/src/components/ui/scroll-area'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { DatePicker } from '@/components/ui/date-picker'
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Separator } from '@/components/ui/separator'
+import { Badge } from '@/components/ui/badge'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Skeleton } from '@/components/ui/skeleton'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { 
   Search,
   Filter,
@@ -30,7 +40,7 @@ import {
   Clock,
   Eye
 } from 'lucide-react'
-import { cn } from '@/src/lib/utils'
+import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { getReviews } from '@/lib/data-access/reviews/reviews'
 import type { ReviewFilterInput } from '@/lib/validations/review-schema'
@@ -223,8 +233,8 @@ export function ReviewList({
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <MessageSquare className="h-4 w-4 text-blue-600" />
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <MessageSquare className="h-4 w-4 text-primary" />
               </div>
               <div>
                 <p className="text-2xl font-bold">{total}</p>
@@ -237,7 +247,7 @@ export function ReviewList({
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-yellow-100 rounded-lg">
+              <div className="p-2 bg-yellow-500/10 rounded-lg">
                 <Star className="h-4 w-4 text-yellow-600" />
               </div>
               <div>
@@ -263,7 +273,7 @@ export function ReviewList({
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-100 rounded-lg">
+              <div className="p-2 bg-green-500/10 rounded-lg">
                 <CheckCircle className="h-4 w-4 text-green-600" />
               </div>
               <div>
@@ -279,7 +289,7 @@ export function ReviewList({
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-purple-100 rounded-lg">
+              <div className="p-2 bg-purple-500/10 rounded-lg">
                 <Camera className="h-4 w-4 text-purple-600" />
               </div>
               <div>
@@ -443,25 +453,25 @@ export function ReviewList({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>From Date</Label>
-              <Input
-                type="date"
-                value={dateFrom}
-                onChange={(e) => {
-                  setDateFrom(e.target.value)
+              <DatePicker
+                date={dateFrom ? new Date(dateFrom) : undefined}
+                onDateChange={(date) => {
+                  setDateFrom(date ? format(date, 'yyyy-MM-dd') : '')
                   handleFilterChange()
                 }}
+                placeholder="Select start date"
               />
             </div>
 
             <div className="space-y-2">
               <Label>To Date</Label>
-              <Input
-                type="date"
-                value={dateTo}
-                onChange={(e) => {
-                  setDateTo(e.target.value)
+              <DatePicker
+                date={dateTo ? new Date(dateTo) : undefined}
+                onDateChange={(date) => {
+                  setDateTo(date ? format(date, 'yyyy-MM-dd') : '')
                   handleFilterChange()
                 }}
+                placeholder="Select end date"
               />
             </div>
           </div>
@@ -477,51 +487,101 @@ export function ReviewList({
     const startItem = (currentPage - 1) * itemsPerPage + 1
     const endItem = Math.min(currentPage * itemsPerPage, total)
 
+    const renderPageNumbers = () => {
+      const pages = []
+      const showEllipsisStart = currentPage > 3
+      const showEllipsisEnd = currentPage < totalPages - 2
+
+      if (totalPages <= 7) {
+        // Show all pages if 7 or fewer
+        for (let i = 1; i <= totalPages; i++) {
+          pages.push(i)
+        }
+      } else {
+        // Always show first page
+        pages.push(1)
+        
+        if (showEllipsisStart) {
+          pages.push('ellipsis-start')
+        }
+        
+        // Show pages around current page
+        const start = Math.max(2, currentPage - 1)
+        const end = Math.min(totalPages - 1, currentPage + 1)
+        
+        for (let i = start; i <= end; i++) {
+          if (!pages.includes(i)) {
+            pages.push(i)
+          }
+        }
+        
+        if (showEllipsisEnd) {
+          pages.push('ellipsis-end')
+        }
+        
+        // Always show last page
+        if (!pages.includes(totalPages)) {
+          pages.push(totalPages)
+        }
+      }
+      
+      return pages
+    }
+
     return (
-      <div className="flex items-center justify-between mt-6">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
         <p className="text-sm text-muted-foreground">
           Showing {startItem} to {endItem} of {total} reviews
         </p>
         
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setCurrentPage(currentPage - 1)}
-            disabled={currentPage === 1 || isLoading}
-          >
-            Previous
-          </Button>
-          
-          <div className="flex items-center gap-1">
-            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-              const pageNum = Math.max(1, currentPage - 2) + i
-              if (pageNum > totalPages) return null
-              
-              return (
-                <Button
-                  key={pageNum}
-                  variant={pageNum === currentPage ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setCurrentPage(pageNum)}
-                  disabled={isLoading}
-                  className="w-8 h-8"
-                >
-                  {pageNum}
-                </Button>
-              )
-            })}
-          </div>
-          
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setCurrentPage(currentPage + 1)}
-            disabled={currentPage === totalPages || isLoading}
-          >
-            Next
-          </Button>
-        </div>
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious 
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault()
+                  if (currentPage > 1) setCurrentPage(currentPage - 1)
+                }}
+                className={cn(
+                  currentPage === 1 && "pointer-events-none opacity-50"
+                )}
+              />
+            </PaginationItem>
+            
+            {renderPageNumbers().map((pageNum, index) => (
+              <PaginationItem key={index}>
+                {pageNum === 'ellipsis-start' || pageNum === 'ellipsis-end' ? (
+                  <PaginationEllipsis />
+                ) : (
+                  <PaginationLink
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      setCurrentPage(pageNum as number)
+                    }}
+                    isActive={pageNum === currentPage}
+                  >
+                    {pageNum}
+                  </PaginationLink>
+                )}
+              </PaginationItem>
+            ))}
+            
+            <PaginationItem>
+              <PaginationNext
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault()
+                  if (currentPage < totalPages) setCurrentPage(currentPage + 1)
+                }}
+                className={cn(
+                  currentPage === totalPages && "pointer-events-none opacity-50"
+                )}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
     )
   }

@@ -637,7 +637,8 @@ export function AnalyticsDashboard({ data, onRefresh, onExport }: AnalyticsDashb
                       <span className="font-bold text-green-600">$7,914</span>
                     </div>
                   </div>
-                </CardContent>
+                </div>
+              </CardContent>
             </Card>
           </div>
         </TabsContent>

@@ -22,10 +22,10 @@ import {
   TrendingUp
 } from 'lucide-react'
 
-import { Button } from '@/src/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card'
-import { Input } from '@/src/components/ui/input'
-import { Label } from '@/src/components/ui/label'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { 
   Form, 
   FormControl, 
@@ -34,14 +34,14 @@ import {
   FormItem, 
   FormLabel, 
   FormMessage 
-} from '@/src/components/ui/form'
+} from '@/components/ui/form'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/src/components/ui/select'
+} from '@/components/ui/select'
 import {
   Dialog,
   DialogContent,
@@ -50,13 +50,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/src/components/ui/dialog'
-import { Badge } from '@/src/components/ui/badge'
-import { Switch } from '@/src/components/ui/switch'
-import { Alert, AlertDescription } from '@/src/components/ui/alert'
-import { Progress } from '@/src/components/ui/progress'
-import { Separator } from '@/src/components/ui/separator'
-import { cn } from '@/src/lib/utils'
+} from '@/components/ui/dialog'
+import { Badge } from '@/components/ui/badge'
+import { Switch } from '@/components/ui/switch'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Progress } from '@/components/ui/progress'
+import { Separator } from '@/components/ui/separator'
+import { cn } from '@/lib/utils'
 
 import { 
   createSegmentSchema,

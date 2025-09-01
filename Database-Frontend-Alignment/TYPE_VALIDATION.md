@@ -169,7 +169,7 @@ const stylistName = customer.preferred_stylist_id?.name ?? 'No preference'
 ```typescript
 // From database.types.ts
 type AppointmentStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed' | 'no_show'
-type UserRole = 'customer' | 'staff' | 'salon_admin' | 'super_admin'
+type UserRole = 'customer' | 'staff' | 'salon_owner' | 'super_admin'
 type PaymentStatus = 'pending' | 'processing' | 'succeeded' | 'failed' | 'refunded'
 ```
 

@@ -95,7 +95,7 @@ interface StaffFormData {
   selected_services: string[];
 }
 
-export default function SalonAdminStaffPage() {
+export default function SalonOwnerStaffPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [staff, setStaff] = useState<StaffMember[]>([]);

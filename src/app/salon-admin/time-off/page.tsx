@@ -253,7 +253,7 @@ export default async function TimeOffManagementPage() {
                         </div>
                       </div>
                       
-                      {userRole.role === 'salon_admin' && (
+                      {userRole.role === 'salon_owner' && (
                         <TimeOffApprovalActions requestId={request.id} />
                       )}
                     </div>

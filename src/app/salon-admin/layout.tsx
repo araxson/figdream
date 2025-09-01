@@ -20,7 +20,7 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar"
 
-export default async function SalonAdminLayout({
+export default async function SalonOwnerLayout({
   children,
 }: {
   children: React.ReactNode
@@ -39,7 +39,7 @@ export default async function SalonAdminLayout({
     .eq("user_id", user.id)
     .single()
 
-  if (!userRole || (userRole.role !== "salon_admin" && userRole.role !== "salon_owner")) {
+  if (!userRole || (userRole.role !== "salon_owner" && userRole.role !== "salon_owner")) {
     redirect("/403")
   }
 
@@ -123,7 +123,7 @@ export default async function SalonAdminLayout({
               </MenubarMenu>
             </Menubar>
           </div>
-          <CommandTrigger userRole="salon_admin" />
+          <CommandTrigger userRole="salon_owner" />
         </header>
         <main className="flex-1 overflow-y-auto p-4">
           {children}

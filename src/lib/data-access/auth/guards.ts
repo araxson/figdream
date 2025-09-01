@@ -89,7 +89,7 @@ export async function protectRouteWithRoles(
  */
 export async function protectAdminRoute(redirectTo?: string): Promise<void> {
   await protectRouteWithRoles(
-    ['super_admin', 'salon_admin', 'location_admin'],
+    ['super_admin', 'salon_owner', 'location_manager'],
     redirectTo
   )
 }
@@ -104,15 +104,15 @@ export async function protectSuperAdminRoute(redirectTo?: string): Promise<void>
 /**
  * Route guard for salon admin pages
  */
-export async function protectSalonAdminRoute(redirectTo?: string): Promise<void> {
-  await protectRouteWithRole('salon_admin', redirectTo)
+export async function protectSalonOwnerRoute(redirectTo?: string): Promise<void> {
+  await protectRouteWithRole('salon_owner', redirectTo)
 }
 
 /**
  * Route guard for location admin pages
  */
-export async function protectLocationAdminRoute(redirectTo?: string): Promise<void> {
-  await protectRouteWithRole('location_admin', redirectTo)
+export async function protectLocationManagerRoute(redirectTo?: string): Promise<void> {
+  await protectRouteWithRole('location_manager', redirectTo)
 }
 
 /**
@@ -209,47 +209,47 @@ export async function canPerformAction(
   const permissions: Record<string, UserRole[]> = {
     // Salon management
     'create_salon': ['super_admin'],
-    'edit_salon': ['super_admin', 'salon_admin'],
+    'edit_salon': ['super_admin', 'salon_owner'],
     'delete_salon': ['super_admin'],
-    'view_salon': ['super_admin', 'salon_admin', 'location_admin', 'staff'],
+    'view_salon': ['super_admin', 'salon_owner', 'location_manager', 'staff'],
     
     // Location management
-    'create_location': ['super_admin', 'salon_admin'],
-    'edit_location': ['super_admin', 'salon_admin', 'location_admin'],
-    'delete_location': ['super_admin', 'salon_admin'],
-    'view_location': ['super_admin', 'salon_admin', 'location_admin', 'staff'],
+    'create_location': ['super_admin', 'salon_owner'],
+    'edit_location': ['super_admin', 'salon_owner', 'location_manager'],
+    'delete_location': ['super_admin', 'salon_owner'],
+    'view_location': ['super_admin', 'salon_owner', 'location_manager', 'staff'],
     
     // Staff management
-    'create_staff': ['super_admin', 'salon_admin', 'location_admin'],
-    'edit_staff': ['super_admin', 'salon_admin', 'location_admin'],
-    'delete_staff': ['super_admin', 'salon_admin'],
-    'view_staff': ['super_admin', 'salon_admin', 'location_admin', 'staff'],
+    'create_staff': ['super_admin', 'salon_owner', 'location_manager'],
+    'edit_staff': ['super_admin', 'salon_owner', 'location_manager'],
+    'delete_staff': ['super_admin', 'salon_owner'],
+    'view_staff': ['super_admin', 'salon_owner', 'location_manager', 'staff'],
     
     // Service management
-    'create_service': ['super_admin', 'salon_admin', 'location_admin'],
-    'edit_service': ['super_admin', 'salon_admin', 'location_admin'],
-    'delete_service': ['super_admin', 'salon_admin'],
-    'view_service': ['super_admin', 'salon_admin', 'location_admin', 'staff', 'customer'],
+    'create_service': ['super_admin', 'salon_owner', 'location_manager'],
+    'edit_service': ['super_admin', 'salon_owner', 'location_manager'],
+    'delete_service': ['super_admin', 'salon_owner'],
+    'view_service': ['super_admin', 'salon_owner', 'location_manager', 'staff', 'customer'],
     
     // Booking management
-    'create_booking': ['super_admin', 'salon_admin', 'location_admin', 'staff', 'customer'],
-    'edit_booking': ['super_admin', 'salon_admin', 'location_admin', 'staff'],
-    'cancel_booking': ['super_admin', 'salon_admin', 'location_admin', 'staff', 'customer'],
-    'view_booking': ['super_admin', 'salon_admin', 'location_admin', 'staff', 'customer'],
+    'create_booking': ['super_admin', 'salon_owner', 'location_manager', 'staff', 'customer'],
+    'edit_booking': ['super_admin', 'salon_owner', 'location_manager', 'staff'],
+    'cancel_booking': ['super_admin', 'salon_owner', 'location_manager', 'staff', 'customer'],
+    'view_booking': ['super_admin', 'salon_owner', 'location_manager', 'staff', 'customer'],
     
     // Review management
     'create_review': ['customer'],
     'edit_review': ['super_admin', 'customer'],
     'delete_review': ['super_admin'],
-    'view_review': ['super_admin', 'salon_admin', 'location_admin', 'staff', 'customer'],
+    'view_review': ['super_admin', 'salon_owner', 'location_manager', 'staff', 'customer'],
     
     // Analytics
-    'view_analytics': ['super_admin', 'salon_admin', 'location_admin'],
-    'export_analytics': ['super_admin', 'salon_admin'],
+    'view_analytics': ['super_admin', 'salon_owner', 'location_manager'],
+    'export_analytics': ['super_admin', 'salon_owner'],
     
     // Settings
-    'manage_settings': ['super_admin', 'salon_admin', 'location_admin'],
-    'manage_billing': ['super_admin', 'salon_admin'],
+    'manage_settings': ['super_admin', 'salon_owner', 'location_manager'],
+    'manage_billing': ['super_admin', 'salon_owner'],
   }
   
   const allowedRoles = permissions[action]
@@ -284,7 +284,7 @@ export async function ensureResourceAccess(
   
   switch (resourceType) {
     case 'salon':
-      if (role === 'salon_admin') {
+      if (role === 'salon_owner') {
         const userSalonId = user.app_metadata?.salon_id
         if (userSalonId !== resourceId) {
           redirect('/403')
@@ -293,7 +293,7 @@ export async function ensureResourceAccess(
       break
       
     case 'location':
-      if (role === 'location_admin') {
+      if (role === 'location_manager') {
         const userLocationId = user.app_metadata?.location_id
         if (userLocationId !== resourceId) {
           redirect('/403')

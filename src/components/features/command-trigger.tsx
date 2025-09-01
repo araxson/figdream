@@ -6,7 +6,7 @@ import { Search } from 'lucide-react'
 import { CommandSearch } from './command-search'
 
 interface CommandTriggerProps {
-  userRole?: 'customer' | 'staff' | 'salon_admin' | 'super_admin'
+  userRole?: 'customer' | 'staff' | 'salon_owner' | 'super_admin'
 }
 
 export function CommandTrigger({ userRole = 'customer' }: CommandTriggerProps) {

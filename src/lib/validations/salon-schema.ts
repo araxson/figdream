@@ -329,7 +329,7 @@ export const salonStaffSchema = z.object({
   salon_id: salonIdSchema,
   location_id: locationIdSchema.optional(),
   user_id: userIdSchema,
-  role: z.enum(['salon_admin', 'location_admin', 'staff'], {
+  role: z.enum(['salon_owner', 'location_manager', 'staff'], {
     errorMap: () => ({ message: 'Invalid staff role' })
   }),
   employee_id: z

@@ -214,7 +214,7 @@ export async function createServiceCategory(
   categoryData: ServiceCategoryInsert
 ): Promise<CategoryResult> {
   try {
-    const { hasRole: hasPermission, error: roleError } = await hasMinimumRoleLevel('salon_admin')
+    const { hasRole: hasPermission, error: roleError } = await hasMinimumRoleLevel('salon_owner')
     
     if (roleError) {
       return { data: null, error: roleError }
@@ -264,7 +264,7 @@ export async function updateServiceCategory(
   updates: ServiceCategoryUpdate
 ): Promise<CategoryResult> {
   try {
-    const { hasRole: hasPermission, error: roleError } = await hasMinimumRoleLevel('salon_admin')
+    const { hasRole: hasPermission, error: roleError } = await hasMinimumRoleLevel('salon_owner')
     
     if (roleError) {
       return { data: null, error: roleError }
@@ -320,7 +320,7 @@ export async function deleteServiceCategory(
   reassignToCategoryId?: string
 ): Promise<CategoryDeleteResult> {
   try {
-    const { hasRole: hasPermission, error: roleError } = await hasMinimumRoleLevel('salon_admin')
+    const { hasRole: hasPermission, error: roleError } = await hasMinimumRoleLevel('salon_owner')
     
     if (roleError) {
       return { success: false, error: roleError }
@@ -400,7 +400,7 @@ export async function reorderCategories(
   categoryOrders: Array<{ id: string; display_order: number }>
 ): Promise<{ success: boolean; error: string | null }> {
   try {
-    const { hasRole: hasPermission, error: roleError } = await hasMinimumRoleLevel('salon_admin')
+    const { hasRole: hasPermission, error: roleError } = await hasMinimumRoleLevel('salon_owner')
     
     if (roleError) {
       return { success: false, error: roleError }
@@ -443,7 +443,7 @@ export async function assignServicesToCategory(
   serviceIds: string[]
 ): Promise<{ success: boolean; error: string | null; updated_count: number }> {
   try {
-    const { hasRole: hasPermission, error: roleError } = await hasMinimumRoleLevel('salon_admin')
+    const { hasRole: hasPermission, error: roleError } = await hasMinimumRoleLevel('salon_owner')
     
     if (roleError) {
       return { success: false, error: roleError, updated_count: 0 }

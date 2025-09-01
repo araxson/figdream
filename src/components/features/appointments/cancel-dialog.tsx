@@ -18,6 +18,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
 import { X, AlertTriangle } from 'lucide-react'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 
 type Appointment = Database['public']['Tables']['appointments']['Row']
 
@@ -159,15 +160,14 @@ export default function CancelAppointmentDialog({
 
           {/* Cancellation Policy Warning */}
           {!isWithinCancellationWindow && (
-            <div className="bg-destructive/10 border border-destructive/20 p-3 rounded-lg flex gap-2">
-              <AlertTriangle className="h-5 w-5 text-destructive mt-0.5" />
-              <div className="text-sm">
-                <p className="font-medium text-destructive">Late Cancellation</p>
-                <p className="text-muted-foreground">
-                  This appointment is within 24 hours. A cancellation fee may apply.
-                </p>
-              </div>
-            </div>
+            <Alert variant="destructive">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>
+                <span className="font-medium">Late Cancellation</span>
+                <br />
+                This appointment is within 24 hours. A cancellation fee may apply.
+              </AlertDescription>
+            </Alert>
           )}
 
           {/* Cancellation Reason */}

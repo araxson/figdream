@@ -232,11 +232,11 @@ export async function getUserPayments(
       filteredPayments = filteredPayments.filter(p => 
         (p.bookings as any)?.customer_id === user.user_id
       )
-    } else if (user.role === 'staff' || user.role === 'location_admin') {
+    } else if (user.role === 'staff' || user.role === 'location_manager') {
       // Staff and location admins can see payments for their locations
       // This requires additional logic to check staff assignments
       // For now, we'll implement this in a separate function
-    } else if (user.role === 'salon_admin') {
+    } else if (user.role === 'salon_owner') {
       // Salon admins can see payments for their salons
       filteredPayments = filteredPayments.filter(p => 
         (p.bookings as any)?.locations?.salons?.owner_id === user.user_id
@@ -448,7 +448,7 @@ export async function refundPayment(
       return { data: null, error: 'Refund amount cannot exceed original payment amount' }
     }
 
-    const { hasRole: hasPermission, error: roleError } = await hasMinimumRoleLevel('location_admin')
+    const { hasRole: hasPermission, error: roleError } = await hasMinimumRoleLevel('location_manager')
     
     if (roleError) {
       return { data: null, error: roleError }

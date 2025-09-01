@@ -3,26 +3,24 @@
 # Claude Code Hook: Runs before each user prompt submission
 # This hook generates the project tree and prepares context for Claude
 
-# Check if this is the first message in the conversation
-if [ "$CLAUDE_CONVERSATION_MESSAGE_COUNT" = "0" ]; then
-    echo "📊 Generating fresh project tree for Claude..."
-    
-    # Generate the project tree
-    python3 generate_project_tree.py 2>/dev/null || {
-        echo "⚠️ Could not generate project tree. Python script may be missing."
-    }
-    
-    # Check if PROJECT_TREE.md exists and remind Claude to read it
-    if [ -f "PROJECT_TREE.md" ]; then
-        echo ""
-        echo "📋 IMPORTANT: Read PROJECT_TREE.md first to understand the project structure."
-        echo "   This file contains:"
-        echo "   • Total files and lines of code"
-        echo "   • File distribution by extension"
-        echo "   • Largest files in the project"
-        echo "   • Complete project tree structure"
-        echo ""
-    fi
+# Always generate fresh project tree (whether new or continuing conversation)
+echo "📊 Generating fresh project tree for Claude..."
+
+# Generate the project tree
+python3 generate_project_tree.py 2>/dev/null || {
+    echo "⚠️ Could not generate project tree. Python script may be missing."
+}
+
+# Check if PROJECT_TREE.md exists and remind Claude to read it
+if [ -f "PROJECT_TREE.md" ]; then
+    echo ""
+    echo "📋 IMPORTANT: Read PROJECT_TREE.md first to understand the project structure."
+    echo "   This file contains:"
+    echo "   • Total files and lines of code"
+    echo "   • File distribution by extension"
+    echo "   • Largest files in the project"
+    echo "   • Complete project tree structure"
+    echo ""
 fi
 
 # Always allow the prompt to continue

@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import {
   Dialog,
   DialogContent,
@@ -446,27 +447,25 @@ export function SubscriptionCard({
 
         {/* Status Messages */}
         {subscription.status === 'past_due' && (
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-amber-700">
-              <AlertCircle className="w-4 h-4" />
-              <span className="text-sm font-medium">Payment Past Due</span>
-            </div>
-            <p className="text-sm text-amber-600 mt-1">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              <span className="font-medium">Payment Past Due</span>
+              <br />
               Please update your payment method to avoid service interruption.
-            </p>
-          </div>
+            </AlertDescription>
+          </Alert>
         )}
 
         {subscription.status === 'unpaid' && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-red-700">
-              <XCircle className="w-4 h-4" />
-              <span className="text-sm font-medium">Payment Failed</span>
-            </div>
-            <p className="text-sm text-red-600 mt-1">
+          <Alert variant="destructive">
+            <XCircle className="h-4 w-4" />
+            <AlertDescription>
+              <span className="font-medium">Payment Failed</span>
+              <br />
               Your subscription is suspended. Please update your payment method.
-            </p>
-          </div>
+            </AlertDescription>
+          </Alert>
         )}
       </CardContent>
     </Card>

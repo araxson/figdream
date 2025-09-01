@@ -400,7 +400,7 @@ export function ServiceSelector({
             </div>
 
             {selected && allowMultiple && (
-              <div className="flex items-center gap-2 ml-4" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center gap-2 ml-4" onMouseDown={(e) => e.stopPropagation()}>
                 <Button
                   variant="outline"
                   size="icon"

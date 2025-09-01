@@ -12,6 +12,16 @@ import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
 import { 
@@ -98,6 +108,8 @@ export default function SubscriptionManagementPage() {
   const [showCreatePlanDialog, setShowCreatePlanDialog] = useState(false);
   const [editingPlan, setEditingPlan] = useState<SubscriptionPlanExtended | null>(null);
   const [selectedSubscription, setSelectedSubscription] = useState<PlatformSubscriptionExtended | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   
   // ULTRA-STATS: Real-time metrics
   const [metrics, setMetrics] = useState({
@@ -259,16 +271,19 @@ export default function SubscriptionManagementPage() {
 
   // ULTRA-HANDLER: Delete subscription plan
   const handleDeletePlan = async (planId: string) => {
-    if (!confirm('Are you sure you want to delete this plan? Active subscriptions will not be affected.')) {
-      return;
-    }
+    setPendingDeleteId(planId);
+    setDeleteConfirmOpen(true);
+  };
+
+  const confirmDeletePlan = async () => {
+    if (!pendingDeleteId) return;
 
     try {
       const supabase = createClient();
       const { error } = await supabase
         .from('platform_subscription_plans')
         .update({ is_active: false })
-        .eq('id', planId);
+        .eq('id', pendingDeleteId);
 
       if (error) throw error;
       
@@ -277,6 +292,9 @@ export default function SubscriptionManagementPage() {
     } catch (error) {
       console.error('Error deleting plan:', error);
       toast.error('Failed to delete plan');
+    } finally {
+      setDeleteConfirmOpen(false);
+      setPendingDeleteId(null);
     }
   };
 
@@ -727,6 +745,34 @@ export default function SubscriptionManagementPage() {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Delete Plan Confirmation Dialog */}
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Deactivate Subscription Plan</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to deactivate this subscription plan? This will prevent new subscriptions 
+              from being created, but existing active subscriptions will not be affected and will continue 
+              until their next billing cycle.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => {
+              setDeleteConfirmOpen(false);
+              setPendingDeleteId(null);
+            }}>
+              Keep Active
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmDeletePlan}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Deactivate Plan
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

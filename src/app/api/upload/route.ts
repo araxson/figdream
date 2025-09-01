@@ -101,7 +101,7 @@ async function checkUploadPermissions(
       
     case 'logos':
       // Only salon owners and admins can upload logos
-      if (!['salon_admin', 'location_admin', 'super_admin'].includes(userRole || '')) {
+      if (!['salon_owner', 'location_manager', 'super_admin'].includes(userRole || '')) {
         return { 
           allowed: false, 
           reason: 'Insufficient permissions to upload logos' 
@@ -115,7 +115,7 @@ async function checkUploadPermissions(
       
     case 'gallery':
       // Staff and above can upload gallery images
-      if (!['staff', 'location_admin', 'salon_admin', 'super_admin'].includes(userRole || '')) {
+      if (!['staff', 'location_manager', 'salon_owner', 'super_admin'].includes(userRole || '')) {
         return { 
           allowed: false, 
           reason: 'Insufficient permissions to upload gallery images' 

@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Claude Code Hook: Runs after Claude completes a response
+# This hook plays a notification sound to alert the user
+
+# Play notification sound based on OS
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS - use afplay or say command
+    # Try to play system sound first
+    afplay /System/Library/Sounds/Glass.aiff 2>/dev/null || \
+    afplay /System/Library/Sounds/Hero.aiff 2>/dev/null || \
+    # Fallback to voice notification
+    say "Claude has completed the task" 2>/dev/null || \
+    # Final fallback to terminal bell
+    echo -e "\a"
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    # Linux - use paplay, aplay, or speaker-test
+    paplay /usr/share/sounds/freedesktop/stereo/complete.oga 2>/dev/null || \
+    aplay /usr/share/sounds/sound-icons/glass-water-1.wav 2>/dev/null || \
+    speaker-test -t sine -f 1000 -l 1 2>/dev/null || \
+    # Fallback to terminal bell
+    echo -e "\a"
+elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "cygwin" ]] || [[ "$OSTYPE" == "win32" ]]; then
+    # Windows - use PowerShell
+    powershell -c "[console]::beep(1000,500)" 2>/dev/null || \
+    # Fallback to terminal bell
+    echo -e "\a"
+else
+    # Unknown OS - use terminal bell
+    echo -e "\a"
+fi
+
+# Optional: Display notification message
+echo ""
+echo "✅ Claude has completed the task!"
+echo ""
+
+# Always allow the response to complete
+exit 0

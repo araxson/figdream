@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     if (userId && userId !== user.id) {
       // Check if user is admin or staff that can view other's notifications
       const role = user.raw_app_meta_data?.role
-      if (!['super_admin', 'salon_admin', 'location_admin'].includes(role)) {
+      if (!['super_admin', 'salon_owner', 'location_manager'].includes(role)) {
         return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
       }
     }
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
 
     // Check if user has permission to send notifications
     const role = user.raw_app_meta_data?.role
-    if (!['super_admin', 'salon_admin', 'location_admin', 'staff'].includes(role)) {
+    if (!['super_admin', 'salon_owner', 'location_manager', 'staff'].includes(role)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 

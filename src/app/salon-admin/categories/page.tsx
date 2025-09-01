@@ -11,6 +11,16 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -93,6 +103,8 @@ export default function ServiceCategoriesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTab, setSelectedTab] = useState('categories');
   const [draggedItem, setDraggedItem] = useState<DragItem | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<CategoryWithServices | null>(null);
 
   // ULTRA-FORM: Category form state
   const [categoryForm, setCategoryForm] = useState({
@@ -223,9 +235,12 @@ export default function ServiceCategoriesPage() {
       if (!reassignTo) return;
     }
 
-    if (!confirm(`Are you sure you want to delete "${category.name}"?`)) {
-      return;
-    }
+    setPendingDelete(category);
+    setDeleteConfirmOpen(true);
+  };
+
+  const confirmDeleteCategory = async () => {
+    if (!pendingDelete) return;
 
     try {
       const supabase = createClient();
@@ -233,7 +248,7 @@ export default function ServiceCategoriesPage() {
       const { error } = await supabase
         .from('service_categories')
         .delete()
-        .eq('id', category.id);
+        .eq('id', pendingDelete.id);
 
       if (error) throw error;
 
@@ -242,6 +257,9 @@ export default function ServiceCategoriesPage() {
     } catch (error) {
       console.error('Error deleting category:', error);
       toast.error('Failed to delete category');
+    } finally {
+      setDeleteConfirmOpen(false);
+      setPendingDelete(null);
     }
   };
 
@@ -782,6 +800,36 @@ export default function ServiceCategoriesPage() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Delete Category Confirmation Dialog */}
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Category</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete "{pendingDelete?.name}"? This action cannot be undone and will 
+              permanently remove the category from your system.
+              {pendingDelete?.services_count && pendingDelete.services_count > 0 && (
+                ` This category currently has ${pendingDelete.services_count} services assigned to it.`
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => {
+              setDeleteConfirmOpen(false);
+              setPendingDelete(null);
+            }}>
+              Keep Category
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmDeleteCategory}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete Category
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

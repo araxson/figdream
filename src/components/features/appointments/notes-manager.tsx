@@ -3,6 +3,16 @@
 import { useState, useEffect } from 'react'
 import { Database } from '@/types/database.types'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
@@ -44,6 +54,8 @@ export default function AppointmentNotesManager({
   const [editingNoteContent, setEditingNoteContent] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
 
   useEffect(() => {
     if (isOpen) {
@@ -162,12 +174,15 @@ export default function AppointmentNotesManager({
   }
 
   const handleDeleteNote = async (noteId: string) => {
-    if (!confirm('Are you sure you want to delete this note?')) {
-      return
-    }
+    setPendingDeleteId(noteId)
+    setDeleteConfirmOpen(true)
+  }
+
+  const confirmDeleteNote = async () => {
+    if (!pendingDeleteId) return
 
     try {
-      const response = await fetch(`/api/appointments/${appointment.id}/notes/${noteId}`, {
+      const response = await fetch(`/api/appointments/${appointment.id}/notes/${pendingDeleteId}`, {
         method: 'DELETE',
       })
 
@@ -175,11 +190,14 @@ export default function AppointmentNotesManager({
         throw new Error('Failed to delete note')
       }
 
-      setNotes(notes.filter(n => n.id !== noteId))
+      setNotes(notes.filter(n => n.id !== pendingDeleteId))
       toast.success('Note deleted successfully')
     } catch (error) {
       console.error('Error deleting note:', error)
       toast.error('Failed to delete note. Please try again.')
+    } finally {
+      setDeleteConfirmOpen(false)
+      setPendingDeleteId(null)
     }
   }
 
@@ -370,6 +388,33 @@ export default function AppointmentNotesManager({
           </Button>
         </DialogFooter>
       </DialogContent>
+
+      {/* Delete Note Confirmation Dialog */}
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Note</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this note? This action cannot be undone and will 
+              permanently remove the note from the appointment record.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => {
+              setDeleteConfirmOpen(false);
+              setPendingDeleteId(null);
+            }}>
+              Keep Note
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmDeleteNote}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete Note
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Dialog>
   )
 }

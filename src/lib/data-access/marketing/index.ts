@@ -127,7 +127,7 @@ export async function getEmailCampaigns(
       return { data: null, error: authError || 'Not authenticated' }
     }
 
-    if (!hasMinimumRoleLevel('salon_admin')) {
+    if (!hasMinimumRoleLevel('salon_owner')) {
       return { data: null, error: 'Insufficient permissions' }
     }
 
@@ -233,7 +233,7 @@ export async function getSmsCampaigns(
       return { data: null, error: authError || 'Not authenticated' }
     }
 
-    if (!hasMinimumRoleLevel('salon_admin')) {
+    if (!hasMinimumRoleLevel('salon_owner')) {
       return { data: null, error: 'Insufficient permissions' }
     }
 
@@ -320,7 +320,7 @@ export async function createEmailCampaign(
   campaignData: EmailCampaignInsert
 ): Promise<CampaignResult<EmailCampaign>> {
   try {
-    const { hasRole: hasPermission, error: roleError } = await hasMinimumRoleLevel('salon_admin')
+    const { hasRole: hasPermission, error: roleError } = await hasMinimumRoleLevel('salon_owner')
     
     if (roleError) {
       return { data: null, error: roleError }
@@ -367,7 +367,7 @@ export async function createSmsCampaign(
   campaignData: SmsCampaignInsert
 ): Promise<CampaignResult<SmsCampaign>> {
   try {
-    const { hasRole: hasPermission, error: roleError } = await hasMinimumRoleLevel('salon_admin')
+    const { hasRole: hasPermission, error: roleError } = await hasMinimumRoleLevel('salon_owner')
     
     if (roleError) {
       return { data: null, error: roleError }
@@ -515,7 +515,7 @@ export async function addEmailCampaignRecipients(
   customerIds: string[]
 ): Promise<{ success: boolean; error: string | null; added_count: number }> {
   try {
-    const { hasRole: hasPermission, error: roleError } = await hasMinimumRoleLevel('salon_admin')
+    const { hasRole: hasPermission, error: roleError } = await hasMinimumRoleLevel('salon_owner')
     
     if (roleError) {
       return { success: false, error: roleError, added_count: 0 }
@@ -583,7 +583,7 @@ export async function sendEmailCampaign(
   scheduledFor?: string
 ): Promise<{ success: boolean; error: string | null }> {
   try {
-    const { hasRole: hasPermission, error: roleError } = await hasMinimumRoleLevel('salon_admin')
+    const { hasRole: hasPermission, error: roleError } = await hasMinimumRoleLevel('salon_owner')
     
     if (roleError) {
       return { success: false, error: roleError }

@@ -12,6 +12,16 @@ import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
@@ -101,6 +111,8 @@ export default function SalonManagementPage() {
   const [showSalonDialog, setShowSalonDialog] = useState(false);
   const [showLocationDialog, setShowLocationDialog] = useState(false);
   const [editingLocation, setEditingLocation] = useState<SalonLocationExtended | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   // ULTRA-FORM: Salon form state
   const [salonForm, setSalonForm] = useState({
@@ -156,7 +168,7 @@ export default function SalonManagementPage() {
         .eq('user_id', user.id)
         .single();
 
-      if (!userRole || userRole.role !== 'salon_admin') {
+      if (!userRole || userRole.role !== 'salon_owner') {
         toast.error('Insufficient permissions');
         return;
       }
@@ -361,9 +373,12 @@ export default function SalonManagementPage() {
 
   // ULTRA-HANDLER: Delete location
   const handleDeleteLocation = async (locationId: string) => {
-    if (!confirm('Are you sure you want to delete this location? This action cannot be undone.')) {
-      return;
-    }
+    setPendingDeleteId(locationId);
+    setDeleteConfirmOpen(true);
+  };
+
+  const confirmDeleteLocation = async () => {
+    if (!pendingDeleteId) return;
 
     try {
       const supabase = createClient();
@@ -372,17 +387,19 @@ export default function SalonManagementPage() {
       const { count } = await supabase
         .from('appointments')
         .select('*', { count: 'exact', head: true })
-        .eq('location_id', locationId);
+        .eq('location_id', pendingDeleteId);
 
       if (count && count > 0) {
         toast.error('Cannot delete location with existing appointments');
+        setDeleteConfirmOpen(false);
+        setPendingDeleteId(null);
         return;
       }
 
       const { error } = await supabase
         .from('salon_locations')
         .delete()
-        .eq('id', locationId);
+        .eq('id', pendingDeleteId);
 
       if (error) throw error;
 
@@ -391,6 +408,9 @@ export default function SalonManagementPage() {
     } catch (error) {
       console.error('Error deleting location:', error);
       toast.error('Failed to delete location');
+    } finally {
+      setDeleteConfirmOpen(false);
+      setPendingDeleteId(null);
     }
   };
 
@@ -1025,6 +1045,33 @@ export default function SalonManagementPage() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Delete Location Confirmation Dialog */}
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Location</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this location? This action cannot be undone and will 
+              permanently remove the location from your system. Any associated data will be lost.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => {
+              setDeleteConfirmOpen(false);
+              setPendingDeleteId(null);
+            }}>
+              Keep Location
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmDeleteLocation}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete Location
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

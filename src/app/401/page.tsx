@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
 import { 
   Shield, ArrowLeft, LogIn, Home, 
   AlertTriangle, HelpCircle, Mail
@@ -17,12 +19,12 @@ export default function UnauthorizedPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-muted/30 p-4">
       <div className="max-w-lg w-full space-y-6">
         {/* Main Card */}
-        <Card className="border-orange-200 dark:border-orange-900/50">
+        <Card>
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
-              <div className="p-4 bg-orange-100 dark:bg-orange-900/20 rounded-full">
+              <Badge variant="outline" className="p-4 bg-orange-100 dark:bg-orange-900/20 border-orange-200 dark:border-orange-900/50 rounded-full">
                 <Shield className="h-10 w-10 text-orange-600 dark:text-orange-400" />
-              </div>
+              </Badge>
             </div>
             <CardTitle className="text-3xl font-bold">401 - Authentication Required</CardTitle>
             <CardDescription className="text-base mt-2">
@@ -31,8 +33,8 @@ export default function UnauthorizedPage() {
           </CardHeader>
 
           <CardContent className="space-y-4">
-            <Alert className="border-orange-200 dark:border-orange-900/50">
-              <AlertTriangle className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+            <Alert>
+              <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
                 This page requires authentication. Please sign in with your account to continue.
                 If you don&apos;t have an account yet, you can create one for free.
@@ -91,8 +93,8 @@ export default function UnauthorizedPage() {
             <div className="space-y-3">
               <p className="text-sm font-medium mb-3">Quick Actions:</p>
               
-              <Link href="/auth/register" className="block">
-                <div className="flex items-center justify-between p-3 rounded-lg bg-background hover:bg-accent transition-colors">
+              <Button variant="ghost" asChild className="w-full justify-between p-3 h-auto">
+                <Link href="/auth/register">
                   <div>
                     <p className="text-sm font-medium">New to FigDream?</p>
                     <p className="text-xs text-muted-foreground">
@@ -100,11 +102,11 @@ export default function UnauthorizedPage() {
                     </p>
                   </div>
                   <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground" />
-                </div>
-              </Link>
+                </Link>
+              </Button>
 
-              <Link href="/auth/forgot-password" className="block">
-                <div className="flex items-center justify-between p-3 rounded-lg bg-background hover:bg-accent transition-colors">
+              <Button variant="ghost" asChild className="w-full justify-between p-3 h-auto">
+                <Link href="/auth/forgot-password">
                   <div>
                     <p className="text-sm font-medium">Forgot Password?</p>
                     <p className="text-xs text-muted-foreground">
@@ -112,11 +114,11 @@ export default function UnauthorizedPage() {
                     </p>
                   </div>
                   <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground" />
-                </div>
-              </Link>
+                </Link>
+              </Button>
 
-              <Link href="/contact" className="block">
-                <div className="flex items-center justify-between p-3 rounded-lg bg-background hover:bg-accent transition-colors">
+              <Button variant="ghost" asChild className="w-full justify-between p-3 h-auto">
+                <Link href="/contact">
                   <div className="flex items-center gap-3">
                     <Mail className="h-4 w-4 text-muted-foreground" />
                     <div>
@@ -127,8 +129,8 @@ export default function UnauthorizedPage() {
                     </div>
                   </div>
                   <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground" />
-                </div>
-              </Link>
+                </Link>
+              </Button>
             </div>
           </CardContent>
         </Card>

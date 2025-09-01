@@ -141,7 +141,7 @@ export const rolePermissions: Record<UserRole, Permission[]> = {
     'reports.generate_all',
   ],
   
-  salon_admin: [
+  salon_owner: [
     // Manage own salon and its locations
     'salons.read',
     'salons.update',
@@ -179,7 +179,7 @@ export const rolePermissions: Record<UserRole, Permission[]> = {
     'reports.generate_salon',
   ],
   
-  location_admin: [
+  location_manager: [
     // Manage single location
     'locations.read',
     'locations.update',

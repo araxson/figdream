@@ -2,7 +2,7 @@ import { User } from '@supabase/supabase-js'
 import { Database } from '@/types/database.types'
 
 // User role types based on raw_app_meta_data
-export type UserRole = 'super_admin' | 'salon_admin' | 'location_admin' | 'staff' | 'customer'
+export type UserRole = 'super_admin' | 'salon_owner' | 'location_manager' | 'staff' | 'customer'
 
 // Extended user type with role
 export interface AuthUser extends User {
@@ -34,7 +34,7 @@ export function getUserRole(user: User | null): UserRole | null {
  * Check if a string is a valid user role
  */
 export function isValidRole(role: unknown): role is UserRole {
-  const validRoles: UserRole[] = ['super_admin', 'salon_admin', 'location_admin', 'staff', 'customer']
+  const validRoles: UserRole[] = ['super_admin', 'salon_owner', 'location_manager', 'staff', 'customer']
   return typeof role === 'string' && validRoles.includes(role as UserRole)
 }
 
@@ -58,7 +58,7 @@ export function hasAnyRole(user: User | null, roles: UserRole[]): boolean {
  * Check if user has admin privileges (any admin role)
  */
 export function isAdmin(user: User | null): boolean {
-  return hasAnyRole(user, ['super_admin', 'salon_admin', 'location_admin'])
+  return hasAnyRole(user, ['super_admin', 'salon_owner', 'location_manager'])
 }
 
 /**
@@ -71,15 +71,15 @@ export function isSuperAdmin(user: User | null): boolean {
 /**
  * Check if user is a salon admin
  */
-export function isSalonAdmin(user: User | null): boolean {
-  return hasRole(user, 'salon_admin')
+export function isSalonOwner(user: User | null): boolean {
+  return hasRole(user, 'salon_owner')
 }
 
 /**
  * Check if user is a location admin
  */
-export function isLocationAdmin(user: User | null): boolean {
-  return hasRole(user, 'location_admin')
+export function isLocationManager(user: User | null): boolean {
+  return hasRole(user, 'location_manager')
 }
 
 /**
@@ -144,7 +144,7 @@ export function canAccessLocation(user: User | null, locationId: string): boolea
   if (isSuperAdmin(user)) return true
   
   // Salon admin can access all locations in their salon
-  if (isSalonAdmin(user)) {
+  if (isSalonOwner(user)) {
     // Would need to check if location belongs to user's salon
     // This would require a database query
     return true
@@ -162,9 +162,9 @@ export function getRoleRedirectPath(role: UserRole | null): string {
   switch (role) {
     case 'super_admin':
       return '/admin'
-    case 'salon_admin':
+    case 'salon_owner':
       return '/salon'
-    case 'location_admin':
+    case 'location_manager':
       return '/location'
     case 'staff':
       return '/staff'
@@ -182,9 +182,9 @@ export function getRoleLoginPath(role: UserRole): string {
   switch (role) {
     case 'super_admin':
       return '/auth/login/super-admin'
-    case 'salon_admin':
+    case 'salon_owner':
       return '/auth/login/salon-owner'
-    case 'location_admin':
+    case 'location_manager':
       return '/auth/login/salon-owner'
     case 'staff':
       return '/auth/login/staff'
@@ -220,8 +220,8 @@ export function isProtectedPath(pathname: string): boolean {
  */
 export function getRoleForPath(pathname: string): UserRole | null {
   if (pathname.startsWith('/admin')) return 'super_admin'
-  if (pathname.startsWith('/salon')) return 'salon_admin'
-  if (pathname.startsWith('/location')) return 'location_admin'
+  if (pathname.startsWith('/salon')) return 'salon_owner'
+  if (pathname.startsWith('/location')) return 'location_manager'
   if (pathname.startsWith('/staff')) return 'staff'
   if (pathname.startsWith('/dashboard')) return 'customer'
   return null
@@ -259,7 +259,7 @@ export function canAccessPath(user: User | null, pathname: string): boolean {
 export function getUserDisplayName(user: User | null): string {
   if (!user) return 'Guest'
   
-  const metadata = user.user_metadata || {}
+  const metadata = user.raw_app_meta_data || {}
   
   if (metadata.full_name) return metadata.full_name
   if (metadata.first_name && metadata.last_name) {
@@ -307,9 +307,9 @@ export function isProfileComplete(user: User | null): boolean {
   
   // Role-specific requirements
   switch (role) {
-    case 'salon_admin':
+    case 'salon_owner':
       return hasBasicInfo && !!getUserSalonId(user)
-    case 'location_admin':
+    case 'location_manager':
       return hasBasicInfo && !!getUserLocationId(user)
     case 'staff':
       return hasBasicInfo && !!getUserStaffId(user)

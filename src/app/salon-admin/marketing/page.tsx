@@ -11,6 +11,17 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
@@ -116,6 +127,10 @@ export default function MarketingAutomationPage() {
   const [campaignType, setCampaignType] = useState<'email' | 'sms'>('email');
   const [selectedCampaign, setSelectedCampaign] = useState<any>(null);
   const [selectedSegment, setSelectedSegment] = useState<string>('all');
+  const [sendConfirmOpen, setSendConfirmOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [pendingAction, setPendingAction] = useState<{ campaign: any; type: 'email' | 'sms' } | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<{ campaignId: string; type: 'email' | 'sms' } | null>(null);
 
   // ULTRA-METRICS: Campaign analytics
   const [metrics, setMetrics] = useState({
@@ -329,10 +344,15 @@ export default function MarketingAutomationPage() {
 
   // ULTRA-HANDLER: Send campaign
   const handleSendCampaign = async (campaign: any, type: 'email' | 'sms') => {
-    if (!confirm(`Are you sure you want to send this campaign to ${campaign.recipients_count || 0} recipients?`)) {
-      return;
-    }
+    setPendingAction({ campaign, type });
+    setSendConfirmOpen(true);
+  };
 
+  const confirmSendCampaign = async () => {
+    if (!pendingAction) return;
+    
+    const { campaign, type } = pendingAction;
+    
     try {
       const supabase = createClient();
       const table = type === 'email' ? 'email_campaigns' : 'sms_campaigns';
@@ -353,15 +373,23 @@ export default function MarketingAutomationPage() {
     } catch (error) {
       console.error('Error sending campaign:', error);
       toast.error('Failed to send campaign');
+    } finally {
+      setSendConfirmOpen(false);
+      setPendingAction(null);
     }
   };
 
   // ULTRA-HANDLER: Delete campaign
   const handleDeleteCampaign = async (campaignId: string, type: 'email' | 'sms') => {
-    if (!confirm('Are you sure you want to delete this campaign?')) {
-      return;
-    }
+    setPendingDelete({ campaignId, type });
+    setDeleteConfirmOpen(true);
+  };
 
+  const confirmDeleteCampaign = async () => {
+    if (!pendingDelete) return;
+    
+    const { campaignId, type } = pendingDelete;
+    
     try {
       const supabase = createClient();
       const table = type === 'email' ? 'email_campaigns' : 'sms_campaigns';
@@ -378,6 +406,9 @@ export default function MarketingAutomationPage() {
     } catch (error) {
       console.error('Error deleting campaign:', error);
       toast.error('Failed to delete campaign');
+    } finally {
+      setDeleteConfirmOpen(false);
+      setPendingDelete(null);
     }
   };
 
@@ -895,6 +926,57 @@ export default function MarketingAutomationPage() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Send Campaign Confirmation Dialog */}
+      <AlertDialog open={sendConfirmOpen} onOpenChange={setSendConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Send Campaign</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to send this campaign to {pendingAction?.campaign?.recipients_count || 0} recipients? 
+              This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => {
+              setSendConfirmOpen(false);
+              setPendingAction(null);
+            }}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={confirmSendCampaign}>
+              Send Campaign
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete Campaign Confirmation Dialog */}
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Campaign</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this campaign? This action cannot be undone and will permanently 
+              remove all campaign data and analytics.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => {
+              setDeleteConfirmOpen(false);
+              setPendingDelete(null);
+            }}>
+              Keep Campaign
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmDeleteCampaign}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete Campaign
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

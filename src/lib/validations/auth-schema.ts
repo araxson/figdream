@@ -11,7 +11,7 @@ const phoneRegex = /^\+?[\d\s\-\(\)]{10,}$/
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/
 
 // User roles enum
-const UserRole = z.enum(['super_admin', 'salon_admin', 'location_admin', 'staff', 'customer'], {
+const UserRole = z.enum(['super_admin', 'salon_owner', 'location_manager', 'staff', 'customer'], {
   errorMap: () => ({ message: 'Invalid user role' })
 })
 

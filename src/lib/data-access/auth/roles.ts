@@ -62,15 +62,15 @@ export async function isSuperAdmin(): Promise<RoleCheckResult> {
 /**
  * Check if current user is salon admin
  */
-export async function isSalonAdmin(): Promise<RoleCheckResult> {
-  return hasRole('salon_admin')
+export async function isSalonOwner(): Promise<RoleCheckResult> {
+  return hasRole('salon_owner')
 }
 
 /**
  * Check if current user is location admin
  */
-export async function isLocationAdmin(): Promise<RoleCheckResult> {
-  return hasRole('location_admin')
+export async function isLocationManager(): Promise<RoleCheckResult> {
+  return hasRole('location_manager')
 }
 
 /**
@@ -88,31 +88,31 @@ export async function isCustomer(): Promise<RoleCheckResult> {
 }
 
 /**
- * Check if current user is admin (super_admin, salon_admin, or location_admin)
+ * Check if current user is admin (super_admin, salon_owner, or location_manager)
  */
 export async function isAdmin(): Promise<RoleCheckResult> {
-  return hasAnyRole(['super_admin', 'salon_admin', 'location_admin'])
+  return hasAnyRole(['super_admin', 'salon_owner', 'location_manager'])
 }
 
 /**
- * Check if current user can manage salons (super_admin or salon_admin)
+ * Check if current user can manage salons (super_admin or salon_owner)
  */
 export async function canManageSalons(): Promise<RoleCheckResult> {
-  return hasAnyRole(['super_admin', 'salon_admin'])
+  return hasAnyRole(['super_admin', 'salon_owner'])
 }
 
 /**
- * Check if current user can manage locations (super_admin, salon_admin, or location_admin)
+ * Check if current user can manage locations (super_admin, salon_owner, or location_manager)
  */
 export async function canManageLocations(): Promise<RoleCheckResult> {
-  return hasAnyRole(['super_admin', 'salon_admin', 'location_admin'])
+  return hasAnyRole(['super_admin', 'salon_owner', 'location_manager'])
 }
 
 /**
- * Check if current user can manage staff (super_admin, salon_admin, or location_admin)
+ * Check if current user can manage staff (super_admin, salon_owner, or location_manager)
  */
 export async function canManageStaff(): Promise<RoleCheckResult> {
-  return hasAnyRole(['super_admin', 'salon_admin', 'location_admin'])
+  return hasAnyRole(['super_admin', 'salon_owner', 'location_manager'])
 }
 
 /**
@@ -165,8 +165,8 @@ export function getRoleLevel(role: UserRole): number {
   const roleLevels: Record<UserRole, number> = {
     customer: 1,
     staff: 2,
-    location_admin: 3,
-    salon_admin: 4,
+    location_manager: 3,
+    salon_owner: 4,
     super_admin: 5
   }
   

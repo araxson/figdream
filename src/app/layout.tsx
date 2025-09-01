@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from '@/components/ui/navigation-menu'
+import { Separator } from '@/components/ui/separator'
 import { 
   Building, Users, Calendar, DollarSign, BarChart, Settings,
   Menu, X, Home, MapPin, Clock, Star, Package, Bell,
@@ -14,11 +16,11 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-interface SalonAdminLayoutProps {
+interface SalonOwnerLayoutProps {
   children: React.ReactNode
 }
 
-export default function SalonAdminLayout({ children }: SalonAdminLayoutProps) {
+export default function SalonOwnerLayout({ children }: SalonOwnerLayoutProps) {
   const pathname = usePathname()
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
@@ -92,7 +94,7 @@ export default function SalonAdminLayout({ children }: SalonAdminLayoutProps) {
                   <Bell className="h-5 w-5" />
                 </Button>
                 
-                <div className="hidden lg:block lg:h-6 lg:w-px lg:bg-border" />
+                <Separator orientation="vertical" className="hidden lg:block h-6" />
                 
                 <div className="flex items-center gap-3">
                   <div className="hidden sm:block text-right">
@@ -129,7 +131,7 @@ interface SidebarContentProps {
 
 function SidebarContent({ navigation, secondaryNavigation, pathname, onNavigate }: SidebarContentProps) {
   return (
-    <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r bg-background px-6 pb-4">
+    <ScrollArea className="flex grow flex-col gap-y-5 border-r bg-background px-6 pb-4">
       <div className="flex h-16 shrink-0 items-center">
         <Link href="/owner" className="flex items-center gap-2" onClick={onNavigate}>
           <Building className="h-8 w-8 text-primary" />
@@ -137,59 +139,63 @@ function SidebarContent({ navigation, secondaryNavigation, pathname, onNavigate 
         </Link>
       </div>
       
-      <nav className="flex flex-1 flex-col">
-        <ul role="list" className="flex flex-1 flex-col gap-y-7">
-          <li>
-            <ul role="list" className="-mx-2 space-y-1">
+      <NavigationMenu orientation="vertical" className="flex flex-1 flex-col">
+        <NavigationMenuList className="flex flex-1 flex-col gap-y-7">
+          <NavigationMenuItem className="flex flex-1 flex-col">
+            <ul className="-mx-2 space-y-1">
               {navigation.map((item) => {
                 const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
                 return (
                   <li key={item.name}>
-                    <Link
-                      href={item.href}
-                      onClick={onNavigate}
-                      className={cn(
-                        'group flex gap-x-3 rounded-md p-2 text-sm font-medium transition-colors',
-                        isActive
-                          ? 'bg-primary text-primary-foreground'
-                          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                      )}
-                    >
-                      <item.icon
+                    <NavigationMenuLink asChild>
+                      <Link
+                        href={item.href}
+                        onClick={onNavigate}
                         className={cn(
-                          'h-5 w-5 shrink-0',
-                          isActive ? 'text-primary-foreground' : 'text-muted-foreground group-hover:text-foreground'
+                          'group flex gap-x-3 rounded-md p-2 text-sm font-medium transition-colors',
+                          isActive
+                            ? 'bg-primary text-primary-foreground'
+                            : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                         )}
-                      />
-                      {item.name}
-                      {isActive && (
-                        <ChevronRight className="ml-auto h-4 w-4" />
-                      )}
-                    </Link>
+                      >
+                        <item.icon
+                          className={cn(
+                            'h-5 w-5 shrink-0',
+                            isActive ? 'text-primary-foreground' : 'text-muted-foreground group-hover:text-foreground'
+                          )}
+                        />
+                        {item.name}
+                        {isActive && (
+                          <ChevronRight className="ml-auto h-4 w-4" />
+                        )}
+                      </Link>
+                    </NavigationMenuLink>
                   </li>
                 )
               })}
             </ul>
-          </li>
+          </NavigationMenuItem>
           
-          <li className="mt-auto">
-            <ul role="list" className="-mx-2 space-y-1">
+          <NavigationMenuItem className="mt-auto">
+            <ul className="-mx-2 space-y-1">
               {secondaryNavigation.map((item) => (
                 <li key={item.name}>
-                  <Link
-                    href={item.href}
-                    onClick={onNavigate}
-                    className="group flex gap-x-3 rounded-md p-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-                  >
-                    <item.icon className="h-5 w-5 shrink-0 text-muted-foreground group-hover:text-foreground" />
-                    {item.name}
-                  </Link>
+                  <NavigationMenuLink asChild>
+                    <Link
+                      href={item.href}
+                      onClick={onNavigate}
+                      className="group flex gap-x-3 rounded-md p-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                    >
+                      <item.icon className="h-5 w-5 shrink-0 text-muted-foreground group-hover:text-foreground" />
+                      {item.name}
+                    </Link>
+                  </NavigationMenuLink>
                 </li>
               ))}
             </ul>
-          </li>
-        </ul>
-      </nav>
-    </div>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
+    </ScrollArea>
   )
 }

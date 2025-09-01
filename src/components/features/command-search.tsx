@@ -39,7 +39,7 @@ import {
 interface CommandSearchProps {
   open?: boolean
   onOpenChange?: (open: boolean) => void
-  userRole?: 'customer' | 'staff' | 'salon_admin' | 'super_admin'
+  userRole?: 'customer' | 'staff' | 'salon_owner' | 'super_admin'
 }
 
 export function CommandSearch({ open, onOpenChange, userRole = 'customer' }: CommandSearchProps) {
@@ -139,7 +139,7 @@ export function CommandSearch({ open, onOpenChange, userRole = 'customer' }: Com
           }
         ]
       
-      case 'salon_admin':
+      case 'salon_owner':
         return [
           ...baseItems,
           {

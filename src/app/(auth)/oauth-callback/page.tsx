@@ -119,7 +119,7 @@ export default function OAuthCallbackPage() {
     const role = userInfo.role || 'customer'
     const dashboardRoutes: Record<string, string> = {
       super_admin: '/admin',
-      salon_admin: '/salon',
+      salon_owner: '/salon',
       staff: '/staff',
       customer: '/dashboard'
     }

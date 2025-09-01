@@ -60,7 +60,7 @@ async function checkExportPermissions(
       // Super admin can export everything
       return { allowed: true }
       
-    case 'salon_admin':
+    case 'salon_owner':
       // Salon admin can export data for their salons
       switch (exportType) {
         case 'bookings':
@@ -79,7 +79,7 @@ async function checkExportPermissions(
           return { allowed: false, reason: 'Export type not allowed' }
       }
       
-    case 'location_admin':
+    case 'location_manager':
       // Location admin can export data for their location
       switch (exportType) {
         case 'bookings':

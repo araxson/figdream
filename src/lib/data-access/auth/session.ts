@@ -119,7 +119,7 @@ export async function currentUserHasAnyRole(roles: UserRole[]): Promise<boolean>
  * Check if current user is admin (any admin role)
  */
 export async function currentUserIsAdmin(): Promise<boolean> {
-  return currentUserHasAnyRole(['super_admin', 'salon_admin', 'location_admin'])
+  return currentUserHasAnyRole(['super_admin', 'salon_owner', 'location_manager'])
 }
 
 /**
@@ -201,7 +201,7 @@ export async function requireAnyRole(roles: UserRole[]): Promise<User> {
  * Throws error if not authenticated or not admin
  */
 export async function requireAdmin(): Promise<User> {
-  return requireAnyRole(['super_admin', 'salon_admin', 'location_admin'])
+  return requireAnyRole(['super_admin', 'salon_owner', 'location_manager'])
 }
 
 /**

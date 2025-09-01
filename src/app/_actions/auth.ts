@@ -16,7 +16,7 @@ const signUpSchema = z.object({
   confirmPassword: z.string(),
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
-  role: z.enum(['customer', 'staff', 'salon_admin', 'location_admin', 'super_admin']).optional(),
+  role: z.enum(['customer', 'staff', 'salon_owner', 'location_manager', 'super_admin']).optional(),
   phone: z.string().optional()
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -78,9 +78,9 @@ export async function signInAction(formData: FormData) {
   switch (role) {
     case 'super_admin':
       redirect('/admin')
-    case 'salon_admin':
+    case 'salon_owner':
       redirect('/salon')
-    case 'location_admin':
+    case 'location_manager':
       redirect('/location')
     case 'staff':
       redirect('/staff')
@@ -258,9 +258,9 @@ export async function verifyOtpAction(formData: FormData) {
   switch (role) {
     case 'super_admin':
       redirect('/admin')
-    case 'salon_admin':
+    case 'salon_owner':
       redirect('/salon')
-    case 'location_admin':
+    case 'location_manager':
       redirect('/location')
     case 'staff':
       redirect('/staff')

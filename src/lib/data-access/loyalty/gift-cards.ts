@@ -485,7 +485,7 @@ export async function getGiftCardAnalytics(salonId: string) {
       .eq('salon_id', salonId)
       .single()
 
-    if (!salonAccess || !['salon_admin', 'location_admin', 'super_admin'].includes(salonAccess.role)) {
+    if (!salonAccess || !['salon_owner', 'location_manager', 'super_admin'].includes(salonAccess.role)) {
       throw new Error('Insufficient permissions')
     }
 
@@ -734,7 +734,7 @@ export async function activateGiftCard(code: string, salonId: string) {
       .eq('salon_id', salonId)
       .single()
 
-    if (!salonAccess || !['salon_admin', 'location_admin', 'staff', 'super_admin'].includes(salonAccess.role)) {
+    if (!salonAccess || !['salon_owner', 'location_manager', 'staff', 'super_admin'].includes(salonAccess.role)) {
       throw new Error('Insufficient permissions')
     }
 

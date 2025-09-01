@@ -110,7 +110,7 @@ export async function createLoyaltyProgram(input: CreateLoyaltyProgramInput) {
       .eq('salon_id', validatedInput.salon_id)
       .single()
 
-    if (!salonAccess || !['salon_admin', 'super_admin'].includes(salonAccess.role)) {
+    if (!salonAccess || !['salon_owner', 'super_admin'].includes(salonAccess.role)) {
       throw new Error('Insufficient permissions to create loyalty program')
     }
 

@@ -312,7 +312,7 @@ export async function getServicesByCategory(categoryId: string): Promise<Service
  */
 export async function createService(serviceData: ServiceInsert): Promise<ServiceCreateResult> {
   try {
-    const { hasRole: hasPermission, error: roleError } = await hasMinimumRoleLevel('salon_admin')
+    const { hasRole: hasPermission, error: roleError } = await hasMinimumRoleLevel('salon_owner')
     
     if (roleError) {
       return { data: null, error: roleError }
@@ -350,7 +350,7 @@ export async function createService(serviceData: ServiceInsert): Promise<Service
  */
 export async function updateService(serviceId: string, updates: ServiceUpdate): Promise<ServiceUpdateResult> {
   try {
-    const { hasRole: hasPermission, error: roleError } = await hasMinimumRoleLevel('salon_admin')
+    const { hasRole: hasPermission, error: roleError } = await hasMinimumRoleLevel('salon_owner')
     
     if (roleError) {
       return { data: null, error: roleError }
@@ -394,7 +394,7 @@ export async function updateService(serviceId: string, updates: ServiceUpdate): 
  */
 export async function deleteService(serviceId: string): Promise<ServiceDeleteResult> {
   try {
-    const { hasRole: hasPermission, error: roleError } = await hasMinimumRoleLevel('salon_admin')
+    const { hasRole: hasPermission, error: roleError } = await hasMinimumRoleLevel('salon_owner')
     
     if (roleError) {
       return { success: false, error: roleError }

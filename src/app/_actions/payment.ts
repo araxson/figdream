@@ -261,7 +261,7 @@ export async function refundPayment(
     const userRole = user.raw_app_meta_data?.role
     const isCustomer = payment.bookings.customer_id === user.id
     const isOwner = payment.bookings.salons?.owner_id === user.id
-    const isAdmin = ['super_admin', 'salon_admin'].includes(userRole)
+    const isAdmin = ['super_admin', 'salon_owner'].includes(userRole)
 
     if (!isCustomer && !isOwner && !isAdmin) {
       return { success: false, error: 'Unauthorized to refund this payment' }

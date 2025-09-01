@@ -349,7 +349,7 @@ export async function moderateReview(input: ModerateReviewInput): Promise<boolea
       .single()
     
     const userRole = user.raw_app_meta_data?.role
-    if (salon?.owner_id !== user.id && !['super_admin', 'salon_admin'].includes(userRole)) {
+    if (salon?.owner_id !== user.id && !['super_admin', 'salon_owner'].includes(userRole)) {
       throw new Error('Unauthorized to moderate this review')
     }
     
@@ -432,7 +432,7 @@ export async function createReviewResponse(input: CreateReviewResponseInput): Pr
       .single()
     
     const userRole = user.raw_app_meta_data?.role
-    if (salon?.owner_id !== user.id && !['super_admin', 'salon_admin', 'location_admin'].includes(userRole)) {
+    if (salon?.owner_id !== user.id && !['super_admin', 'salon_owner', 'location_manager'].includes(userRole)) {
       throw new Error('Unauthorized to respond to this review')
     }
     

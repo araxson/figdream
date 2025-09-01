@@ -55,7 +55,7 @@ export async function upsertLoyaltyProgram(
   }
 
   return data
-})
+}
 
 /**
  * Get customer points balance

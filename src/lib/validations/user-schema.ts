@@ -443,16 +443,5 @@ export type StaffProfileUpdateInput = z.infer<typeof staffProfileUpdateSchema>
 export type UserPreferencesUpdateInput = z.infer<typeof userPreferencesUpdateSchema>
 export type NotificationPreferencesUpdateInput = z.infer<typeof notificationPreferencesUpdateSchema>
 
-// Export individual field schemas for reuse
-export {
-  LoyaltyTier,
-  userIdSchema,
-  avatarUrlSchema,
-  dateOfBirthSchema,
-  timezoneSchema,
-  addressSchema,
-  citySchema,
-  stateSchema,
-  zipCodeSchema,
-  countrySchema
-}
+// Re-export loyalty tier enum
+export { LoyaltyTier }

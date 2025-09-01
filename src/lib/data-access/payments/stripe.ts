@@ -78,7 +78,7 @@ export async function ensureStripeCustomer(userId: string): Promise<string> {
 }
 
 /**
- * Create a payment intent for a booking
+ * Create a payment intent for an appointment
  */
 export async function createBookingPaymentIntent(params: {
   bookingId: string
@@ -94,16 +94,16 @@ export async function createBookingPaymentIntent(params: {
   const { bookingId, amount, currency = 'usd', depositAmount, metadata = {} } = params
 
   try {
-    // Get booking details
-    const { data: booking } = await supabase
-      .from('bookings')
+    // Get appointment details
+    const { data: appointment } = await supabase
+      .from('appointments')
       .select(`
         id,
         customer_id,
         salon_id,
         location_id,
         total_amount,
-        booking_services (
+        appointment_services (
           service_name,
           price
         )
@@ -111,12 +111,12 @@ export async function createBookingPaymentIntent(params: {
       .eq('id', bookingId)
       .single()
 
-    if (!booking) {
-      throw new Error('Booking not found')
+    if (!appointment) {
+      throw new Error('Appointment not found')
     }
 
     // Ensure customer has Stripe customer ID
-    const stripeCustomerId = await ensureStripeCustomer(booking.customer_id)
+    const stripeCustomerId = await ensureStripeCustomer(appointment.customer_id)
 
     // Determine final amount (use deposit if provided, otherwise full amount)
     const finalAmount = depositAmount || amount
@@ -126,12 +126,12 @@ export async function createBookingPaymentIntent(params: {
       amount: finalAmount,
       currency,
       customerId: stripeCustomerId,
-      description: `Booking payment for ${booking.booking_services.map(s => s.service_name).join(', ')}`,
+      description: `Appointment payment for ${appointment.appointment_services.map(s => s.service_name).join(', ')}`,
       setupFutureUsage: 'off_session',
       metadata: {
         booking_id: bookingId,
-        salon_id: booking.salon_id,
-        location_id: booking.location_id || '',
+        salon_id: appointment.salon_id,
+        location_id: appointment.location_id || '',
         is_deposit: depositAmount ? 'true' : 'false',
         ...metadata,
       },
@@ -143,7 +143,7 @@ export async function createBookingPaymentIntent(params: {
       .insert({
         id: paymentIntent.id,
         booking_id: bookingId,
-        customer_id: booking.customer_id,
+        customer_id: appointment.customer_id,
         amount: finalAmount,
         currency,
         payment_method: 'online',
@@ -168,7 +168,7 @@ export async function createBookingPaymentIntent(params: {
       paymentRecord,
     }
   } catch (error) {
-    console.error('Error creating booking payment intent:', error)
+    console.error('Error creating appointment payment intent:', error)
     throw new Error('Failed to create payment intent')
   }
 }
@@ -257,9 +257,9 @@ export async function updatePaymentFromStripe(
       throw new Error('Failed to update payment status')
     }
 
-    // If payment completed, update booking status
+    // If payment completed, update appointment status
     if (status === 'completed') {
-      await updateBookingAfterPayment(paymentIntentId)
+      await updateAppointmentAfterPayment(paymentIntentId)
     }
   } catch (error) {
     console.error('Error updating payment from Stripe:', error)
@@ -268,16 +268,16 @@ export async function updatePaymentFromStripe(
 }
 
 /**
- * Update booking status after successful payment
+ * Update appointment status after successful payment
  */
-async function updateBookingAfterPayment(paymentIntentId: string): Promise<void> {
+async function updateAppointmentAfterPayment(paymentIntentId: string): Promise<void> {
   const supabase = await createClient()
 
   try {
     // Get payment details
     const { data: payment } = await supabase
       .from('payments')
-      .select('booking_id, is_deposit, amount, booking:bookings(total_amount)')
+      .select('booking_id, is_deposit, amount, appointment:appointments(total_amount)')
       .eq('stripe_payment_intent_id', paymentIntentId)
       .single()
 
@@ -285,33 +285,33 @@ async function updateBookingAfterPayment(paymentIntentId: string): Promise<void>
       throw new Error('Payment not found')
     }
 
-    const bookingUpdate: any = {
+    const appointmentUpdate: any = {
       updated_at: new Date().toISOString(),
     }
 
     if (payment.is_deposit) {
       // If it's a deposit, mark as confirmed
-      bookingUpdate.status = 'confirmed'
-      bookingUpdate.deposit_paid = true
-      bookingUpdate.deposit_amount = payment.amount
+      appointmentUpdate.status = 'confirmed'
+      appointmentUpdate.deposit_paid = true
+      appointmentUpdate.deposit_amount = payment.amount
     } else {
       // Full payment completed
-      bookingUpdate.status = 'confirmed'
-      bookingUpdate.payment_status = 'paid'
-      bookingUpdate.paid_at = new Date().toISOString()
+      appointmentUpdate.status = 'confirmed'
+      appointmentUpdate.payment_status = 'paid'
+      appointmentUpdate.paid_at = new Date().toISOString()
     }
 
     const { error } = await supabase
-      .from('bookings')
-      .update(bookingUpdate)
+      .from('appointments')
+      .update(appointmentUpdate)
       .eq('id', payment.booking_id)
 
     if (error) {
-      console.error('Error updating booking after payment:', error)
-      throw new Error('Failed to update booking')
+      console.error('Error updating appointment after payment:', error)
+      throw new Error('Failed to update appointment')
     }
   } catch (error) {
-    console.error('Error updating booking after payment:', error)
+    console.error('Error updating appointment after payment:', error)
     throw error
   }
 }
@@ -543,7 +543,7 @@ export async function getPaymentAnalytics(params: {
         status,
         created_at,
         is_deposit,
-        bookings (
+        appointments (
           salon_id,
           location_id
         )
@@ -553,11 +553,11 @@ export async function getPaymentAnalytics(params: {
       .eq('status', 'completed')
 
     if (salonId) {
-      query = query.eq('bookings.salon_id', salonId)
+      query = query.eq('appointments.salon_id', salonId)
     }
 
     if (locationId) {
-      query = query.eq('bookings.location_id', locationId)
+      query = query.eq('appointments.location_id', locationId)
     }
 
     const { data, error } = await query

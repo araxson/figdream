@@ -432,40 +432,40 @@ export async function getSalonStats(salonId: string): Promise<{
 
     // Get active staff count
     const { count: staffCount, error: staffError } = await supabase
-      .from('staff')
+      .from('staff_profiles')
       .select('*, locations!inner(*)', { count: 'exact', head: true })
       .eq('locations.salon_id', salonId)
       .eq('is_active', true)
 
-    // Get total bookings count (last 30 days)
+    // Get total appointments count (last 30 days)
     const thirtyDaysAgo = new Date()
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
     
-    const { count: bookingsCount, error: bookingsError } = await supabase
-      .from('bookings')
+    const { count: appointmentsCount, error: appointmentsError } = await supabase
+      .from('appointments')
       .select('*, locations!inner(*)', { count: 'exact', head: true })
       .eq('locations.salon_id', salonId)
       .gte('created_at', thirtyDaysAgo.toISOString())
 
     // Get total revenue (last 30 days)
     const { data: revenueData, error: revenueError } = await supabase
-      .from('bookings')
+      .from('appointments')
       .select('total_price, locations!inner(*)')
       .eq('locations.salon_id', salonId)
       .eq('status', 'completed')
       .gte('created_at', thirtyDaysAgo.toISOString())
 
-    if (locationsError || staffError || bookingsError || revenueError) {
+    if (locationsError || staffError || appointmentsError || revenueError) {
       return { data: null, error: 'Failed to fetch salon statistics' }
     }
 
-    const totalRevenue = revenueData?.reduce((sum, booking) => sum + booking.total_price, 0) || 0
+    const totalRevenue = revenueData?.reduce((sum, appointment) => sum + appointment.total_price, 0) || 0
 
     return {
       data: {
         totalLocations: locationsCount || 0,
         activeStaff: staffCount || 0,
-        totalBookings: bookingsCount || 0,
+        totalBookings: appointmentsCount || 0,
         totalRevenue
       },
       error: null

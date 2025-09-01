@@ -52,11 +52,11 @@ async function sendAppointmentReminders(): Promise<CronTaskResult> {
     const dayAfterTomorrow = new Date(tomorrow)
     dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 1)
     
-    const { data: bookings, error } = await supabase
-      .from('bookings')
+    const { data: appointments, error } = await supabase
+      .from('appointments')
       .select(`
         id,
-        scheduled_at,
+        appointment_date,
         total_price,
         notes,
         customer_id,
@@ -78,7 +78,7 @@ async function sendAppointmentReminders(): Promise<CronTaskResult> {
           id,
           display_name
         ),
-        booking_services (
+        appointment_services (
           service_id,
           services (
             name,
@@ -86,15 +86,15 @@ async function sendAppointmentReminders(): Promise<CronTaskResult> {
           )
         )
       `)
-      .gte('scheduled_at', tomorrow.toISOString())
-      .lt('scheduled_at', dayAfterTomorrow.toISOString())
+      .gte('appointment_date', tomorrow.toISOString())
+      .lt('appointment_date', dayAfterTomorrow.toISOString())
       .eq('status', 'confirmed')
       
     if (error) {
       throw new Error(`Failed to fetch appointments: ${error.message}`)
     }
     
-    if (!bookings || bookings.length === 0) {
+    if (!appointments || appointments.length === 0) {
       console.log('No appointments found for reminder sending')
       return {
         task: 'sendAppointmentReminders',
@@ -104,33 +104,33 @@ async function sendAppointmentReminders(): Promise<CronTaskResult> {
       }
     }
     
-    // Process each booking for reminders
-    for (const booking of bookings) {
+    // Process each appointment for reminders
+    for (const appointment of appointments) {
       try {
-        // Check notification preferences
+        // Check notification settings
         const { data: preferences } = await supabase
-          .from('notification_preferences')
-          .select('email_bookings, sms_bookings')
-          .eq('user_id', booking.customer_id)
+          .from('notification_settings')
+          .select('email_notifications, sms_notifications, appointment_reminders')
+          .eq('user_id', appointment.customer_id)
           .single()
         
         if (!preferences) {
-          console.log(`No notification preferences found for customer ${booking.customer_id}`)
+          console.log(`No notification preferences found for customer ${appointment.customer_id}`)
           continue
         }
         
         // Create notification record
         const notificationData = {
-          user_id: booking.customer_id,
+          user_id: appointment.customer_id,
           type: 'appointment_reminder',
           title: 'Upcoming Appointment Reminder',
-          message: `Your appointment at ${booking.locations?.name} is scheduled for ${new Date(booking.scheduled_at).toLocaleString()}`,
+          message: `Your appointment at ${appointment.locations?.name} is scheduled for ${new Date(appointment.appointment_date).toLocaleString()}`,
           data: {
-            booking_id: booking.id,
-            scheduled_at: booking.scheduled_at,
-            location_name: booking.locations?.name,
-            staff_name: booking.staff?.display_name,
-            services: booking.booking_services?.map((bs: any) => bs.services?.name).join(', ')
+            appointment_id: appointment.id,
+            appointment_date: appointment.appointment_date,
+            location_name: appointment.locations?.name,
+            staff_name: appointment.staff?.display_name,
+            services: appointment.appointment_services?.map((bs: any) => bs.services?.name).join(', ')
           }
         }
         
@@ -140,7 +140,7 @@ async function sendAppointmentReminders(): Promise<CronTaskResult> {
           
         if (notificationError) {
           logError(
-            `Failed to create notification for booking ${booking.id}: ${notificationError.message}`,
+            `Failed to create notification for appointment ${appointment.id}: ${notificationError.message}`,
             'medium',
             'api'
           )
@@ -149,22 +149,22 @@ async function sendAppointmentReminders(): Promise<CronTaskResult> {
         
         // TODO: Send actual email/SMS notifications
         // For now, just log what would be sent
-        if (preferences.email_bookings && booking.profiles?.email) {
-          console.log(`Would send email reminder to ${booking.profiles.email} for booking ${booking.id}`)
+        if (preferences.email_notifications && preferences.appointment_reminders && appointment.profiles?.email) {
+          console.log(`Would send email reminder to ${appointment.profiles.email} for appointment ${appointment.id}`)
         }
         
-        if (preferences.sms_bookings && booking.profiles?.phone) {
-          console.log(`Would send SMS reminder to ${booking.profiles.phone} for booking ${booking.id}`)
+        if (preferences.sms_notifications && preferences.appointment_reminders && appointment.profiles?.phone) {
+          console.log(`Would send SMS reminder to ${appointment.profiles.phone} for appointment ${appointment.id}`)
         }
         
         itemsProcessed++
         
-      } catch (bookingError) {
+      } catch (appointmentError) {
         logError(
-          `Failed to process reminder for booking ${booking.id}: ${bookingError}`,
+          `Failed to process reminder for appointment ${appointment.id}: ${appointmentError}`,
           'medium',
           'api',
-          { bookingId: booking.id }
+          { appointmentId: appointment.id }
         )
       }
     }
@@ -306,9 +306,9 @@ async function updateDailyAnalytics(): Promise<CronTaskResult> {
     // Process analytics for each location
     for (const location of locations) {
       try {
-        // Get bookings data for the location for yesterday
-        const { data: bookings, error: bookingsError } = await supabase
-          .from('bookings')
+        // Get appointments data for the location for yesterday
+        const { data: appointments, error: appointmentsError } = await supabase
+          .from('appointments')
           .select(`
             id,
             total_price,
@@ -317,49 +317,49 @@ async function updateDailyAnalytics(): Promise<CronTaskResult> {
             created_at
           `)
           .eq('location_id', location.id)
-          .gte('scheduled_at', yesterday.toISOString())
-          .lt('scheduled_at', today.toISOString())
+          .gte('appointment_date', yesterday.toISOString())
+          .lt('appointment_date', today.toISOString())
           
-        if (bookingsError) {
+        if (appointmentsError) {
           logError(
-            `Failed to fetch bookings for location ${location.id}: ${bookingsError.message}`,
+            `Failed to fetch appointments for location ${location.id}: ${appointmentsError.message}`,
             'medium',
             'api'
           )
           continue
         }
         
-        const bookingsArray = bookings || []
+        const appointmentsArray = appointments || []
         
         // Calculate metrics
-        const totalBookings = bookingsArray.length
-        const totalRevenue = bookingsArray
+        const totalAppointments = appointmentsArray.length
+        const totalRevenue = appointmentsArray
           .filter(b => b.status === 'completed')
           .reduce((sum, b) => sum + (b.total_price || 0), 0)
         
-        const noShowCount = bookingsArray.filter(b => b.status === 'no_show').length
-        const cancellationCount = bookingsArray.filter(b => b.status === 'cancelled').length
+        const noShowCount = appointmentsArray.filter(b => b.status === 'no_show').length
+        const cancellationCount = appointmentsArray.filter(b => b.status === 'cancelled').length
         
-        const completedBookings = bookingsArray.filter(b => b.status === 'completed')
-        const averageBookingValue = completedBookings.length > 0 
-          ? totalRevenue / completedBookings.length 
+        const completedAppointments = appointmentsArray.filter(b => b.status === 'completed')
+        const averageBookingValue = completedAppointments.length > 0 
+          ? totalRevenue / completedAppointments.length 
           : 0
         
         // Count new vs returning customers
-        const uniqueCustomers = [...new Set(bookingsArray.map(b => b.customer_id))]
+        const uniqueCustomers = [...new Set(appointmentsArray.map(b => b.customer_id))]
         let newCustomers = 0
         let returningCustomers = 0
         
         for (const customerId of uniqueCustomers) {
-          // Check if customer had bookings before yesterday
-          const { data: previousBookings } = await supabase
-            .from('bookings')
+          // Check if customer had appointments before yesterday
+          const { data: previousAppointments } = await supabase
+            .from('appointments')
             .select('id')
             .eq('customer_id', customerId)
             .lt('created_at', yesterday.toISOString())
             .limit(1)
             
-          if (previousBookings && previousBookings.length > 0) {
+          if (previousAppointments && previousAppointments.length > 0) {
             returningCustomers++
           } else {
             newCustomers++
@@ -370,7 +370,7 @@ async function updateDailyAnalytics(): Promise<CronTaskResult> {
         const analyticsData = {
           location_id: location.id,
           date: yesterday.toISOString().split('T')[0], // Just the date part
-          total_bookings: totalBookings,
+          total_bookings: totalAppointments,
           total_revenue: totalRevenue,
           new_customers: newCustomers,
           returning_customers: returningCustomers,

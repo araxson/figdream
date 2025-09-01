@@ -330,7 +330,7 @@ export async function deleteUser(userId: string): Promise<UserDeleteResult> {
     // Instead of hard delete, we deactivate the auth user
     const { error } = await supabase.auth.admin.updateUserById(userId, {
       ban_duration: 'none', // This effectively disables the user
-      user_metadata: { is_active: false }
+      raw_app_meta_data: { is_active: false }
     })
 
     if (error) {

@@ -1,15 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/database/supabase/server'
 import { getUser } from '@/lib/data-access/auth'
-import { logError, logCriticalError, logApiError } from '@/src/lib/errors/logger'
-import type { Database } from '@/src/types/database.types'
+import { trackApiRequest } from '@/lib/data-access/monitoring/api-usage'
+import { logError } from '@/lib/data-access/monitoring/error-logs'
+import { apiResponse, apiError, checkRateLimit } from '@/app/api/middleware'
+import { requireCSRFToken } from '@/lib/data-access/security/csrf'
+import type { Database } from '@/types/database.types'
 
 // Supported export formats
 type ExportFormat = 'json' | 'csv'
 
 // Export types
 type ExportType = 
-  | 'bookings'
+  | 'appointments'
   | 'customers' 
   | 'staff'
   | 'services'
@@ -33,9 +36,21 @@ interface ExportRequest {
   fields?: string[]
 }
 
+// Type-safe export data based on the export type
+type ExportData = 
+  | Database['public']['Tables']['appointments']['Row'][]
+  | Database['public']['Tables']['customers']['Row'][]
+  | Database['public']['Tables']['staff_profiles']['Row'][]
+  | Database['public']['Tables']['services']['Row'][]
+  | Database['public']['Tables']['reviews']['Row'][]
+  | Database['public']['Tables']['analytics_patterns']['Row'][]
+  | Database['public']['Tables']['salon_locations']['Row'][]
+  | Database['public']['Tables']['staff_earnings']['Row'][]
+  | Database['public']['Tables']['notifications']['Row'][]
+
 interface ExportResult {
   success: boolean
-  data?: any[]
+  data?: ExportData
   format: ExportFormat
   type: ExportType
   count: number
@@ -48,665 +63,287 @@ interface ExportResult {
 // Check user permissions for export type
 async function checkExportPermissions(
   userId: string,
-  userRole: string | null,
-  exportType: ExportType,
-  filters?: ExportRequest['filters']
-): Promise<{ allowed: boolean; reason?: string; additionalFilters?: Record<string, any> }> {
+  userRole: string,
+  exportType: ExportType
+): Promise<boolean> {
+  // Super admin can export anything
+  if (userRole === 'super_admin') return true
   
-  const additionalFilters: Record<string, any> = {}
-  
-  switch (userRole) {
-    case 'super_admin':
-      // Super admin can export everything
-      return { allowed: true }
-      
-    case 'salon_owner':
-      // Salon admin can export data for their salons
-      switch (exportType) {
-        case 'bookings':
-        case 'customers':
-        case 'staff':
-        case 'reviews':
-        case 'analytics':
-        case 'locations':
-        case 'services':
-          // TODO: Add salon ownership check
-          return { allowed: true }
-        case 'earnings':
-        case 'notifications':
-          return { allowed: true }
-        default:
-          return { allowed: false, reason: 'Export type not allowed' }
-      }
-      
-    case 'location_manager':
-      // Location admin can export data for their location
-      switch (exportType) {
-        case 'bookings':
-        case 'customers':
-        case 'staff':
-        case 'reviews':
-        case 'analytics':
-          // TODO: Add location ownership check
-          return { allowed: true }
-        case 'notifications':
-          additionalFilters.user_id = userId
-          return { allowed: true, additionalFilters }
-        default:
-          return { allowed: false, reason: 'Export type not allowed' }
-      }
-      
-    case 'staff':
-      // Staff can only export their own data
-      switch (exportType) {
-        case 'bookings':
-          additionalFilters.staff_id = userId
-          return { allowed: true, additionalFilters }
-        case 'earnings':
-          additionalFilters.staff_id = userId
-          return { allowed: true, additionalFilters }
-        case 'notifications':
-          additionalFilters.user_id = userId
-          return { allowed: true, additionalFilters }
-        default:
-          return { allowed: false, reason: 'Export type not allowed' }
-      }
-      
-    case 'customer':
-      // Customers can only export their own data
-      switch (exportType) {
-        case 'bookings':
-          additionalFilters.customer_id = userId
-          return { allowed: true, additionalFilters }
-        case 'notifications':
-          additionalFilters.user_id = userId
-          return { allowed: true, additionalFilters }
-        default:
-          return { allowed: false, reason: 'Export type not allowed' }
-      }
-      
-    default:
-      return { allowed: false, reason: 'Invalid user role' }
-  }
-}
-
-// Build SQL query based on export type and filters
-function buildExportQuery(
-  exportType: ExportType,
-  filters?: ExportRequest['filters'],
-  additionalFilters?: Record<string, any>,
-  fields?: string[]
-): { table: string; select: string; filterQuery: any } {
-  
-  const combinedFilters = { ...filters, ...additionalFilters }
-  
-  switch (exportType) {
-    case 'bookings':
-      return {
-        table: 'bookings',
-        select: fields?.join(', ') || `
-          id,
-          customer_id,
-          location_id,
-          staff_id,
-          status,
-          scheduled_at,
-          total_price,
-          notes,
-          created_at,
-          updated_at,
-          profiles!customer_id (full_name, email, phone),
-          locations (name, address),
-          staff (display_name)
-        `,
-        filterQuery: combinedFilters
-      }
-      
-    case 'customers':
-      return {
-        table: 'profiles',
-        select: fields?.join(', ') || `
-          id,
-          email,
-          full_name,
-          phone,
-          created_at,
-          updated_at
-        `,
-        filterQuery: { ...combinedFilters, role: 'customer' }
-      }
-      
-    case 'staff':
-      return {
-        table: 'staff',
-        select: fields?.join(', ') || `
-          id,
-          user_id,
-          location_id,
-          display_name,
-          bio,
-          commission_rate,
-          is_active,
-          created_at,
-          updated_at,
-          profiles!user_id (full_name, email, phone),
-          locations (name)
-        `,
-        filterQuery: combinedFilters
-      }
-      
-    case 'services':
-      return {
-        table: 'services',
-        select: fields?.join(', ') || `
-          id,
-          name,
-          description,
-          duration_minutes,
-          buffer_minutes,
-          price,
-          created_at,
-          updated_at
-        `,
-        filterQuery: combinedFilters
-      }
-      
-    case 'reviews':
-      return {
-        table: 'reviews',
-        select: fields?.join(', ') || `
-          id,
-          booking_id,
-          customer_id,
-          staff_id,
-          location_id,
-          rating,
-          comment,
-          is_published,
-          created_at,
-          profiles!customer_id (full_name),
-          staff (display_name),
-          locations (name)
-        `,
-        filterQuery: combinedFilters
-      }
-      
-    case 'analytics':
-      return {
-        table: 'analytics_daily',
-        select: fields?.join(', ') || `
-          id,
-          location_id,
-          date,
-          total_bookings,
-          total_revenue,
-          new_customers,
-          returning_customers,
-          average_booking_value,
-          no_show_count,
-          cancellation_count,
-          created_at,
-          locations (name)
-        `,
-        filterQuery: combinedFilters
-      }
-      
-    case 'locations':
-      return {
-        table: 'locations',
-        select: fields?.join(', ') || `
-          id,
-          salon_id,
-          name,
-          address,
-          city,
-          state,
-          zip_code,
-          country,
-          phone,
-          email,
-          is_active,
-          created_at,
-          updated_at,
-          salons (name)
-        `,
-        filterQuery: combinedFilters
-      }
-      
-    case 'earnings':
-      return {
-        table: 'earnings',
-        select: fields?.join(', ') || `
-          id,
-          staff_id,
-          booking_id,
-          amount,
-          commission_amount,
-          tip_amount,
-          status,
-          paid_at,
-          created_at,
-          staff (display_name),
-          bookings (scheduled_at)
-        `,
-        filterQuery: combinedFilters
-      }
-      
-    case 'notifications':
-      return {
-        table: 'notifications',
-        select: fields?.join(', ') || `
-          id,
-          user_id,
-          type,
-          title,
-          message,
-          data,
-          is_read,
-          created_at
-        `,
-        filterQuery: combinedFilters
-      }
-      
-    default:
-      throw new Error(`Unsupported export type: ${exportType}`)
-  }
-}
-
-// Apply filters to Supabase query
-function applyFilters(query: any, filters: Record<string, any>): any {
-  let filteredQuery = query
-  
-  Object.entries(filters).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== '') {
-      switch (key) {
-        case 'startDate':
-          filteredQuery = filteredQuery.gte('created_at', value)
-          break
-        case 'endDate':
-          filteredQuery = filteredQuery.lte('created_at', value)
-          break
-        case 'locationId':
-          filteredQuery = filteredQuery.eq('location_id', value)
-          break
-        case 'staffId':
-          filteredQuery = filteredQuery.eq('staff_id', value)
-          break
-        case 'customerId':
-          filteredQuery = filteredQuery.eq('customer_id', value)
-          break
-        case 'status':
-          filteredQuery = filteredQuery.eq('status', value)
-          break
-        case 'user_id':
-          filteredQuery = filteredQuery.eq('user_id', value)
-          break
-        default:
-          filteredQuery = filteredQuery.eq(key, value)
-          break
-      }
-    }
-  })
-  
-  return filteredQuery
-}
-
-// Convert data to CSV format
-function convertToCSV(data: any[]): string {
-  if (!data || data.length === 0) {
-    return ''
+  // Define role-based export permissions
+  const permissions: Record<string, ExportType[]> = {
+    salon_owner: ['appointments', 'customers', 'staff', 'services', 'reviews', 'analytics', 'locations', 'earnings'],
+    location_manager: ['appointments', 'customers', 'staff', 'services', 'reviews', 'analytics', 'earnings'],
+    staff: ['appointments', 'customers', 'services', 'reviews', 'earnings'],
+    customer: ['appointments', 'reviews']
   }
   
-  // Get all unique keys from all objects (in case objects have different properties)
-  const allKeys = new Set<string>()
-  data.forEach(item => {
-    Object.keys(flattenObject(item)).forEach(key => allKeys.add(key))
-  })
+  return permissions[userRole]?.includes(exportType) || false
+}
+
+// Convert data to CSV format with proper typing
+function convertToCSV(data: Record<string, unknown>[], fields?: string[]): string {
+  if (!data || data.length === 0) return ''
   
-  const headers = Array.from(allKeys)
-  const csvRows: string[] = []
+  // Get headers from first object or use specified fields
+  const headers = fields || Object.keys(data[0])
+  const csvHeaders = headers.join(',')
   
-  // Add header row
-  csvRows.push(headers.map(header => `"${header}"`).join(','))
-  
-  // Add data rows
-  data.forEach(item => {
-    const flatItem = flattenObject(item)
-    const row = headers.map(header => {
-      const value = flatItem[header]
-      if (value === null || value === undefined) {
-        return '""'
+  // Convert each row to CSV
+  const csvRows = data.map(row => {
+    return headers.map(header => {
+      const value = row[header]
+      if (value === null || value === undefined) return ''
+      if (typeof value === 'string' && value.includes(',')) {
+        return `"${value.replace(/"/g, '""')}"`
       }
-      // Escape quotes and wrap in quotes
-      return `"${String(value).replace(/"/g, '""')}"`
-    })
-    csvRows.push(row.join(','))
+      return value
+    }).join(',')
   })
   
-  return csvRows.join('\n')
+  return [csvHeaders, ...csvRows].join('\n')
 }
 
-// Flatten nested objects for CSV export
-function flattenObject(obj: any, prefix = ''): Record<string, any> {
-  const flattened: Record<string, any> = {}
-  
-  Object.keys(obj).forEach(key => {
-    const value = obj[key]
-    const newKey = prefix ? `${prefix}.${key}` : key
-    
-    if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
-      // Recursively flatten nested objects
-      Object.assign(flattened, flattenObject(value, newKey))
-    } else if (Array.isArray(value)) {
-      // Convert arrays to comma-separated strings
-      flattened[newKey] = value.join(', ')
-    } else {
-      flattened[newKey] = value
-    }
-  })
-  
-  return flattened
-}
-
-// Generate filename for export
-function generateFilename(type: ExportType, format: ExportFormat, timestamp: Date): string {
-  const dateStr = timestamp.toISOString().split('T')[0]
-  const timeStr = timestamp.toTimeString().split(' ')[0].replace(/:/g, '-')
-  return `figdream_${type}_${dateStr}_${timeStr}.${format}`
-}
-
-// Main export function
-async function exportData(
-  exportType: ExportType,
-  format: ExportFormat,
-  filters?: ExportRequest['filters'],
-  additionalFilters?: Record<string, any>,
-  fields?: string[]
-): Promise<ExportResult> {
-  const timestamp = new Date()
-  const filename = generateFilename(exportType, format, timestamp)
+// Export data handler
+export async function POST(request: NextRequest) {
+  const startTime = Date.now()
   
   try {
+    // Validate CSRF token
+    const formData = await request.formData()
+    await requireCSRFToken(formData)
+    
+    // Get request body
+    const body: ExportRequest = JSON.parse(formData.get('data') as string)
+    
+    // Get authenticated user
+    const user = await getUser()
+    if (!user) {
+      return apiError('Unauthorized', 401)
+    }
+    
+    // Check rate limiting
+    const { allowed, retryAfter } = await checkRateLimit(
+      user.id,
+      request.headers.get('x-forwarded-for')?.split(',')[0],
+      '/api/export'
+    )
+    
+    if (!allowed) {
+      return apiError('Rate limit exceeded', 429, 'RATE_LIMIT', { retryAfter })
+    }
+    
+    // Check permissions
+    const hasPermission = await checkExportPermissions(
+      user.id,
+      user.role,
+      body.type
+    )
+    
+    if (!hasPermission) {
+      return apiError('Insufficient permissions for this export type', 403)
+    }
+    
+    // Track API request
+    await trackApiRequest(
+      '/api/export',
+      'POST',
+      user.id,
+      Date.now() - startTime,
+      200,
+      request.headers.get('user-agent') || undefined,
+      request.headers.get('x-forwarded-for')?.split(',')[0]
+    )
+    
+    // Initialize Supabase client
     const supabase = await createClient()
     
-    // Build query
-    const { table, select, filterQuery } = buildExportQuery(
-      exportType, 
-      filters, 
-      additionalFilters, 
-      fields
-    )
+    // Build query based on export type
+    let query: any
+    let data: any[] = []
     
-    // Execute query
-    let query = supabase
-      .from(table)
-      .select(select)
-    
-    // Apply filters
-    query = applyFilters(query, filterQuery)
-    
-    // Add ordering
-    query = query.order('created_at', { ascending: false })
-    
-    // Execute query
-    const { data, error } = await query
-    
-    if (error) {
-      throw new Error(`Database query failed: ${error.message}`)
-    }
-    
-    if (!data) {
-      return {
-        success: false,
-        format,
-        type: exportType,
-        count: 0,
-        filename,
-        generatedAt: timestamp.toISOString(),
-        error: 'No data found'
-      }
-    }
-    
-    console.log(`Exporting ${data.length} ${exportType} records in ${format} format`)
-    
-    return {
-      success: true,
-      data,
-      format,
-      type: exportType,
-      count: data.length,
-      filename,
-      generatedAt: timestamp.toISOString()
-    }
-    
-  } catch (error) {
-    logError(
-      error as Error,
-      'medium',
-      'api',
-      { context: 'data_export', exportType, format }
-    )
-    
-    return {
-      success: false,
-      format,
-      type: exportType,
-      count: 0,
-      filename,
-      generatedAt: timestamp.toISOString(),
-      error: (error as Error).message
-    }
-  }
-}
-
-// GET handler for data export
-export async function GET(request: NextRequest): Promise<NextResponse> {
-  try {
-    // Check authentication
-    const { user, error: authError } = await getUser()
-    
-    if (authError || !user) {
-      logApiError(
-        'Unauthorized export attempt',
-        '/api/export',
-        401
-      )
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      )
-    }
-    
-    const userRole = user.raw_app_meta_data?.role || user.app_metadata?.role || null
-    const { searchParams } = new URL(request.url)
-    
-    // Parse request parameters
-    const exportType = searchParams.get('type') as ExportType
-    const format = (searchParams.get('format') || 'json') as ExportFormat
-    const startDate = searchParams.get('startDate') || undefined
-    const endDate = searchParams.get('endDate') || undefined
-    const locationId = searchParams.get('locationId') || undefined
-    const staffId = searchParams.get('staffId') || undefined
-    const customerId = searchParams.get('customerId') || undefined
-    const status = searchParams.get('status') || undefined
-    const fieldsParam = searchParams.get('fields')
-    const fields = fieldsParam ? fieldsParam.split(',') : undefined
-    
-    // Validate required parameters
-    if (!exportType) {
-      return NextResponse.json(
-        { 
-          error: 'Export type is required',
-          supportedTypes: ['bookings', 'customers', 'staff', 'services', 'reviews', 'analytics', 'locations', 'earnings', 'notifications']
-        },
-        { status: 400 }
-      )
-    }
-    
-    if (!['json', 'csv'].includes(format)) {
-      return NextResponse.json(
-        { 
-          error: 'Invalid format',
-          supportedFormats: ['json', 'csv']
-        },
-        { status: 400 }
-      )
-    }
-    
-    // Check permissions
-    const filters = { startDate, endDate, locationId, staffId, customerId, status }
-    const permissionCheck = await checkExportPermissions(user.id, userRole, exportType, filters)
-    
-    if (!permissionCheck.allowed) {
-      return NextResponse.json(
-        { error: permissionCheck.reason },
-        { status: 403 }
-      )
-    }
-    
-    console.log(`Exporting ${exportType} data for user ${user.id} in ${format} format`)
-    
-    // Export data
-    const result = await exportData(
-      exportType, 
-      format, 
-      filters, 
-      permissionCheck.additionalFilters,
-      fields
-    )
-    
-    if (!result.success) {
-      return NextResponse.json(
-        { error: result.error || 'Export failed' },
-        { status: 500 }
-      )
-    }
-    
-    // Format response based on requested format
-    if (format === 'csv') {
-      const csvData = convertToCSV(result.data || [])
-      
-      return new NextResponse(csvData, {
-        headers: {
-          'Content-Type': 'text/csv',
-          'Content-Disposition': `attachment; filename="${result.filename}"`,
-          'X-Export-Count': result.count.toString(),
-          'X-Export-Type': exportType,
-          'X-Generated-At': result.generatedAt
+    switch (body.type) {
+      case 'appointments':
+        query = supabase
+          .from('appointments')
+          .select(`
+            *,
+            services (name, price, duration),
+            profiles!appointments_customer_id_fkey (first_name, last_name, email),
+            staff_profiles (
+              profiles (first_name, last_name)
+            )
+          `)
+        
+        // Apply filters
+        if (body.filters?.startDate) {
+          query = query.gte('start_time', body.filters.startDate)
         }
-      })
+        if (body.filters?.endDate) {
+          query = query.lte('start_time', body.filters.endDate)
+        }
+        if (body.filters?.locationId) {
+          query = query.eq('location_id', body.filters.locationId)
+        }
+        if (body.filters?.staffId) {
+          query = query.eq('staff_id', body.filters.staffId)
+        }
+        if (body.filters?.customerId) {
+          query = query.eq('customer_id', body.filters.customerId)
+        }
+        if (body.filters?.status) {
+          query = query.eq('status', body.filters.status)
+        }
+        
+        // Apply role-based filtering
+        if (user.role === 'staff') {
+          query = query.eq('staff_id', user.id)
+        } else if (user.role === 'customer') {
+          query = query.eq('customer_id', user.id)
+        }
+        
+        const appointmentsResult = await query
+        data = appointmentsResult.data || []
+        break
+        
+      case 'customers':
+        if (user.role === 'customer') {
+          // Customers can only export their own data
+          query = supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+        } else {
+          // Get customers associated with the user's salon
+          query = supabase
+            .from('profiles')
+            .select(`
+              *,
+              appointments!appointments_customer_id_fkey (count)
+            `)
+            .eq('role', 'customer')
+            
+          if (body.filters?.startDate || body.filters?.endDate) {
+            // Filter by customers with appointments in date range
+            const appointmentsQuery = supabase
+              .from('appointments')
+              .select('customer_id')
+            
+            if (body.filters.startDate) {
+              appointmentsQuery.gte('start_time', body.filters.startDate)
+            }
+            if (body.filters.endDate) {
+              appointmentsQuery.lte('start_time', body.filters.endDate)
+            }
+            
+            const { data: appointmentCustomers } = await appointmentsQuery
+            const customerIds = [...new Set(appointmentCustomers?.map(a => a.customer_id) || [])]
+            query = query.in('id', customerIds)
+          }
+        }
+        
+        const customersResult = await query
+        data = customersResult.data || []
+        break
+        
+      case 'services':
+        query = supabase
+          .from('services')
+          .select(`
+            *,
+            service_categories (name)
+          `)
+        
+        if (body.filters?.locationId) {
+          query = query.eq('location_id', body.filters.locationId)
+        }
+        
+        const servicesResult = await query
+        data = servicesResult.data || []
+        break
+        
+      case 'reviews':
+        query = supabase
+          .from('reviews')
+          .select(`
+            *,
+            profiles!reviews_customer_id_fkey (first_name, last_name),
+            appointments (
+              services (name),
+              staff_profiles (
+                profiles (first_name, last_name)
+              )
+            )
+          `)
+        
+        if (body.filters?.startDate) {
+          query = query.gte('created_at', body.filters.startDate)
+        }
+        if (body.filters?.endDate) {
+          query = query.lte('created_at', body.filters.endDate)
+        }
+        
+        const reviewsResult = await query
+        data = reviewsResult.data || []
+        break
+        
+      default:
+        return apiError(`Export type '${body.type}' not implemented`, 400)
+    }
+    
+    // Format data based on requested format
+    let responseData: any
+    let contentType: string
+    let filename: string
+    
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
+    
+    if (body.format === 'csv') {
+      responseData = convertToCSV(data, body.fields)
+      contentType = 'text/csv'
+      filename = `${body.type}-export-${timestamp}.csv`
     } else {
-      // JSON format
-      return NextResponse.json({
-        success: true,
-        message: 'Data exported successfully',
-        type: exportType,
-        format,
-        count: result.count,
-        filename: result.filename,
-        generatedAt: result.generatedAt,
-        data: result.data
-      })
+      responseData = JSON.stringify(data, null, 2)
+      contentType = 'application/json'
+      filename = `${body.type}-export-${timestamp}.json`
     }
     
-  } catch (error) {
-    logCriticalError(
-      error as Error,
-      'api',
-      { context: 'export_handler', endpoint: '/api/export' }
-    )
-    
-    return NextResponse.json(
-      {
-        error: 'Internal server error',
-        message: 'Failed to export data'
-      },
-      { status: 500 }
-    )
-  }
-}
-
-// POST handler for advanced export requests
-export async function POST(request: NextRequest): Promise<NextResponse> {
-  try {
-    // Check authentication
-    const { user, error: authError } = await getUser()
-    
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      )
-    }
-    
-    const userRole = user.raw_app_meta_data?.role || user.app_metadata?.role || null
-    
-    // Parse request body
-    const body: ExportRequest = await request.json()
-    const { type: exportType, format, filters, fields } = body
-    
-    // Validate required fields
-    if (!exportType || !format) {
-      return NextResponse.json(
-        { error: 'Export type and format are required' },
-        { status: 400 }
-      )
-    }
-    
-    // Check permissions
-    const permissionCheck = await checkExportPermissions(user.id, userRole, exportType, filters)
-    
-    if (!permissionCheck.allowed) {
-      return NextResponse.json(
-        { error: permissionCheck.reason },
-        { status: 403 }
-      )
-    }
-    
-    console.log(`Advanced export: ${exportType} data for user ${user.id} in ${format} format`)
-    
-    // Export data
-    const result = await exportData(
-      exportType, 
-      format, 
-      filters, 
-      permissionCheck.additionalFilters,
-      fields
-    )
-    
-    if (!result.success) {
-      return NextResponse.json(
-        { error: result.error || 'Export failed' },
-        { status: 500 }
-      )
-    }
-    
-    // Always return JSON for POST requests (for AJAX handling)
-    return NextResponse.json({
-      success: true,
-      message: 'Data exported successfully',
-      type: exportType,
-      format,
-      count: result.count,
-      filename: result.filename,
-      generatedAt: result.generatedAt,
-      data: result.data,
-      csvData: format === 'csv' ? convertToCSV(result.data || []) : undefined
+    // Create response with appropriate headers
+    const response = new NextResponse(responseData, {
+      status: 200,
+      headers: {
+        'Content-Type': contentType,
+        'Content-Disposition': `attachment; filename="${filename}"`,
+        'X-Export-Count': String(data.length),
+        'X-Export-Type': body.type,
+        'X-Export-Format': body.format,
+        'X-Response-Time': `${Date.now() - startTime}ms`
+      }
     })
     
+    return response
+    
   } catch (error) {
-    logCriticalError(
-      error as Error,
+    // Log error
+    await logError(
+      'Export API error',
       'api',
-      { context: 'export_post_handler', endpoint: '/api/export' }
+      'high',
+      {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined
+      }
     )
     
-    return NextResponse.json(
-      {
-        error: 'Internal server error',
-        message: 'Failed to export data'
-      },
-      { status: 500 }
+    return apiError(
+      'Failed to export data',
+      500,
+      'EXPORT_ERROR',
+      error instanceof Error ? error.message : 'Unknown error'
     )
   }
+}
+
+// Handle GET requests (for download links)
+export async function GET(request: NextRequest) {
+  return apiError('Method not allowed. Use POST to export data.', 405)
 }

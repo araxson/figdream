@@ -9,6 +9,7 @@ import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { getUser } from '@/lib/data-access/auth'
+import { getUserRole } from '@/lib/data-access/auth/utils'
 import { 
   createBookingPaymentIntent,
   createSavePaymentMethodIntent,
@@ -81,21 +82,21 @@ export async function createBookingPayment(
       ...options,
     })
 
-    // Verify user owns the booking
+    // Verify user owns the appointment
     const supabase = await createClient()
-    const { data: booking, error: bookingError } = await supabase
-      .from('bookings')
+    const { data: appointment, error: appointmentError } = await supabase
+      .from('appointments')
       .select('id, customer_id, status, total_amount')
       .eq('id', bookingId)
       .eq('customer_id', user.id)
       .single()
 
-    if (bookingError || !booking) {
-      return { success: false, error: 'Booking not found or unauthorized' }
+    if (appointmentError || !appointment) {
+      return { success: false, error: 'Appointment not found or unauthorized' }
     }
 
-    if (booking.status === 'cancelled') {
-      return { success: false, error: 'Cannot pay for cancelled booking' }
+    if (appointment.status === 'cancelled') {
+      return { success: false, error: 'Cannot pay for cancelled appointment' }
     }
 
     // Create payment intent
@@ -107,7 +108,7 @@ export async function createBookingPayment(
       metadata: {
         ...validated.metadata,
         user_id: user.id,
-        description: validated.description || `Booking payment${validated.isDeposit ? ' (deposit)' : ''}`,
+        description: validated.description || `Appointment payment${validated.isDeposit ? ' (deposit)' : ''}`,
       },
     })
 
@@ -121,7 +122,7 @@ export async function createBookingPayment(
     }
 
   } catch (error) {
-    console.error('Error creating booking payment:', error)
+    console.error('Error creating appointment payment:', error)
     
     if (error instanceof z.ZodError) {
       return {
@@ -243,7 +244,7 @@ export async function refundPayment(
       .from('payments')
       .select(`
         *,
-        bookings (
+        appointments (
           customer_id,
           salon_id,
           salons (
@@ -258,10 +259,10 @@ export async function refundPayment(
       return { success: false, error: 'Payment not found' }
     }
 
-    const userRole = user.raw_app_meta_data?.role
-    const isCustomer = payment.bookings.customer_id === user.id
-    const isOwner = payment.bookings.salons?.owner_id === user.id
-    const isAdmin = ['super_admin', 'salon_owner'].includes(userRole)
+    const userRole = getUserRole(user)
+    const isCustomer = payment.appointments.customer_id === user.id
+    const isOwner = payment.appointments.salons?.owner_id === user.id
+    const isAdmin = userRole && ['super_admin', 'salon_owner'].includes(userRole)
 
     if (!isCustomer && !isOwner && !isAdmin) {
       return { success: false, error: 'Unauthorized to refund this payment' }
@@ -341,7 +342,7 @@ export async function createSalonSubscriptionAction(
       .single()
 
     if (!salon || salon.owner_id !== user.id) {
-      const userRole = user.raw_app_meta_data?.role
+      const userRole = getUserRole(user)
       if (userRole !== 'super_admin') {
         return { success: false, error: 'Unauthorized to create subscription for this salon' }
       }
@@ -421,7 +422,7 @@ export async function cancelSalonSubscription(
       return { success: false, error: 'Subscription not found' }
     }
 
-    const userRole = user.raw_app_meta_data?.role
+    const userRole = getUserRole(user)
     if (subscription.salons.owner_id !== user.id && userRole !== 'super_admin') {
       return { success: false, error: 'Unauthorized to cancel this subscription' }
     }
@@ -490,7 +491,7 @@ export async function updateSubscriptionPaymentMethod(
       return { success: false, error: 'Subscription not found' }
     }
 
-    const userRole = user.raw_app_meta_data?.role
+    const userRole = getUserRole(user)
     if (subscription.salons.owner_id !== user.id && userRole !== 'super_admin') {
       return { success: false, error: 'Unauthorized to update this subscription' }
     }
@@ -545,7 +546,7 @@ export async function reactivateSubscription(
       return { success: false, error: 'Subscription not found' }
     }
 
-    const userRole = user.raw_app_meta_data?.role
+    const userRole = getUserRole(user)
     if (subscription.salons.owner_id !== user.id && userRole !== 'super_admin') {
       return { success: false, error: 'Unauthorized to reactivate this subscription' }
     }

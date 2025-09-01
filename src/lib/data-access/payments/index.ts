@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/database/supabase/server'
 import type { Database } from '@/types/database'
 import { getUserWithRole } from '../auth/verify'
-import { canAccessBooking } from '../auth/permissions'
+import { canAccessAppointment } from '../auth/permissions'
 import { hasMinimumRoleLevel } from '../auth/roles'
 
 type Payment = Database['public']['Tables']['payments']['Row']
@@ -22,12 +22,12 @@ export interface PaymentsResult {
   error: string | null
 }
 
-export interface PaymentWithBooking extends Payment {
-  booking: {
+export interface PaymentWithAppointment extends Payment {
+  appointment: {
     id: string
     customer_id: string
-    total_price: number
-    booking_date: string
+    total_amount: number
+    appointment_date: string
     status: string
     customer: {
       first_name: string
@@ -37,13 +37,13 @@ export interface PaymentWithBooking extends Payment {
   } | null
 }
 
-export interface PaymentWithBookingResult {
-  data: PaymentWithBooking | null
+export interface PaymentWithAppointmentResult {
+  data: PaymentWithAppointment | null
   error: string | null
 }
 
-export interface PaymentsWithBookingResult {
-  data: PaymentWithBooking[] | null
+export interface PaymentsWithAppointmentResult {
+  data: PaymentWithAppointment[] | null
   error: string | null
 }
 
@@ -85,8 +85,8 @@ export async function getPaymentById(paymentId: string): Promise<PaymentResult> 
       return { data: null, error: 'Payment not found' }
     }
 
-    // Check if user can access the related booking
-    const { allowed, error: permissionError } = await canAccessBooking(payment.booking_id)
+    // Check if user can access the related appointment
+    const { allowed, error: permissionError } = await canAccessAppointment(payment.appointment_id)
     
     if (!allowed) {
       return { data: null, error: permissionError || 'Insufficient permissions' }
@@ -100,9 +100,9 @@ export async function getPaymentById(paymentId: string): Promise<PaymentResult> 
 }
 
 /**
- * Get payment with booking details
+ * Get payment with appointment details
  */
-export async function getPaymentWithBooking(paymentId: string): Promise<PaymentWithBookingResult> {
+export async function getPaymentWithAppointment(paymentId: string): Promise<PaymentWithAppointmentResult> {
   try {
     const { user, error: authError } = await getUserWithRole()
     
@@ -116,11 +116,11 @@ export async function getPaymentWithBooking(paymentId: string): Promise<PaymentW
       .from('payments')
       .select(`
         *,
-        bookings (
+        appointments (
           id,
           customer_id,
           total_price,
-          booking_date,
+          appointment_date,
           status,
           customer:profiles!customer_id (first_name, last_name, email)
         )
@@ -132,31 +132,31 @@ export async function getPaymentWithBooking(paymentId: string): Promise<PaymentW
       return { data: null, error: 'Payment not found' }
     }
 
-    // Check if user can access the related booking
-    const { allowed, error: permissionError } = await canAccessBooking(payment.booking_id)
+    // Check if user can access the related appointment
+    const { allowed, error: permissionError } = await canAccessAppointment(payment.appointment_id)
     
     if (!allowed) {
       return { data: null, error: permissionError || 'Insufficient permissions' }
     }
 
-    const paymentWithBooking: PaymentWithBooking = {
+    const paymentWithAppointment: PaymentWithAppointment = {
       ...payment,
-      booking: payment.bookings as any
+      appointment: payment.appointments as any
     }
 
-    return { data: paymentWithBooking, error: null }
+    return { data: paymentWithAppointment, error: null }
   } catch (error) {
-    console.error('Error getting payment with booking:', error)
-    return { data: null, error: 'Failed to get payment with booking' }
+    console.error('Error getting payment with appointment:', error)
+    return { data: null, error: 'Failed to get payment with appointment' }
   }
 }
 
 /**
- * Get payments for a booking
+ * Get payments for a appointment
  */
-export async function getBookingPayments(bookingId: string): Promise<PaymentsResult> {
+export async function getAppointmentPayments(appointmentId: string): Promise<PaymentsResult> {
   try {
-    const { allowed, error: permissionError } = await canAccessBooking(bookingId)
+    const { allowed, error: permissionError } = await canAccessAppointment(appointmentId)
     
     if (!allowed) {
       return { data: null, error: permissionError || 'Insufficient permissions' }
@@ -167,7 +167,7 @@ export async function getBookingPayments(bookingId: string): Promise<PaymentsRes
     const { data: payments, error } = await supabase
       .from('payments')
       .select('*')
-      .eq('booking_id', bookingId)
+      .eq('appointment_id', appointmentId)
       .order('created_at', { ascending: false })
 
     if (error) {
@@ -176,8 +176,8 @@ export async function getBookingPayments(bookingId: string): Promise<PaymentsRes
 
     return { data: payments || [], error: null }
   } catch (error) {
-    console.error('Error getting booking payments:', error)
-    return { data: null, error: 'Failed to get booking payments' }
+    console.error('Error getting appointment payments:', error)
+    return { data: null, error: 'Failed to get appointment payments' }
   }
 }
 
@@ -203,7 +203,7 @@ export async function getUserPayments(
       .from('payments')
       .select(`
         *,
-        bookings (customer_id, location_id, locations(salon_id, salons(owner_id)))
+        appointments (customer_id, location_id, locations(salon_id, salons(owner_id)))
       `)
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1)
@@ -230,7 +230,7 @@ export async function getUserPayments(
     if (user.role === 'customer') {
       // Customers can only see their own payments
       filteredPayments = filteredPayments.filter(p => 
-        (p.bookings as any)?.customer_id === user.user_id
+        (p.appointments as any)?.customer_id === user.user_id
       )
     } else if (user.role === 'staff' || user.role === 'location_manager') {
       // Staff and location admins can see payments for their locations
@@ -239,14 +239,14 @@ export async function getUserPayments(
     } else if (user.role === 'salon_owner') {
       // Salon admins can see payments for their salons
       filteredPayments = filteredPayments.filter(p => 
-        (p.bookings as any)?.locations?.salons?.owner_id === user.user_id
+        (p.appointments as any)?.locations?.salons?.owner_id === user.user_id
       )
     }
     // super_admin sees all payments (no filter)
 
-    // Remove the nested booking data for cleaner response
+    // Remove the nested appointment data for cleaner response
     const cleanPayments = filteredPayments.map(p => {
-      const { bookings, ...payment } = p
+      const { appointments, ...payment } = p
       return payment as Payment
     })
 
@@ -265,7 +265,7 @@ export async function getLocationPayments(
   status?: PaymentStatus,
   startDate?: string,
   endDate?: string
-): Promise<PaymentsWithBookingResult> {
+): Promise<PaymentsWithAppointmentResult> {
   try {
     const { user, error: authError } = await getUserWithRole()
     
@@ -279,17 +279,17 @@ export async function getLocationPayments(
       .from('payments')
       .select(`
         *,
-        bookings!inner (
+        appointments!inner (
           id,
           customer_id,
           total_price,
-          booking_date,
+          appointment_date,
           status,
           location_id,
           customer:profiles!customer_id (first_name, last_name, email)
         )
       `)
-      .eq('bookings.location_id', locationId)
+      .eq('appointments.location_id', locationId)
       .order('created_at', { ascending: false })
 
     // Apply filters
@@ -309,12 +309,12 @@ export async function getLocationPayments(
       return { data: null, error: error.message }
     }
 
-    const paymentsWithBooking = (payments || []).map(p => ({
+    const paymentsWithAppointment = (payments || []).map(p => ({
       ...p,
-      booking: p.bookings as any
-    })) as PaymentWithBooking[]
+      appointment: p.appointments as any
+    })) as PaymentWithAppointment[]
 
-    return { data: paymentsWithBooking, error: null }
+    return { data: paymentsWithAppointment, error: null }
   } catch (error) {
     console.error('Error getting location payments:', error)
     return { data: null, error: 'Failed to get location payments' }
@@ -326,7 +326,7 @@ export async function getLocationPayments(
  */
 export async function createPayment(paymentData: PaymentInsert): Promise<PaymentCreateResult> {
   try {
-    const { allowed, error: permissionError } = await canAccessBooking(paymentData.booking_id)
+    const { allowed, error: permissionError } = await canAccessAppointment(paymentData.appointment_id)
     
     if (!allowed) {
       return { data: null, error: permissionError || 'Insufficient permissions' }
@@ -334,20 +334,20 @@ export async function createPayment(paymentData: PaymentInsert): Promise<Payment
 
     const supabase = await createClient()
 
-    // Verify booking exists and get total amount
-    const { data: booking, error: bookingError } = await supabase
-      .from('bookings')
+    // Verify appointment exists and get total amount
+    const { data: appointment, error: appointmentError } = await supabase
+      .from('appointments')
       .select('total_price, status')
-      .eq('id', paymentData.booking_id)
+      .eq('id', paymentData.appointment_id)
       .single()
 
-    if (bookingError || !booking) {
-      return { data: null, error: 'Booking not found' }
+    if (appointmentError || !appointment) {
+      return { data: null, error: 'Appointment not found' }
     }
 
     // Check if payment amount is valid
-    if (paymentData.amount > booking.total_price) {
-      return { data: null, error: 'Payment amount cannot exceed booking total' }
+    if (paymentData.amount > appointment.total_price) {
+      return { data: null, error: 'Payment amount cannot exceed appointment total' }
     }
 
     const { data: payment, error } = await supabase
@@ -464,7 +464,7 @@ export async function refundPayment(
     const { data: refundPayment, error: refundError } = await supabase
       .from('payments')
       .insert({
-        booking_id: payment.booking_id,
+        appointment_id: payment.appointment_id,
         amount: -refundAmount, // Negative amount for refund
         payment_method: payment.payment_method,
         status: 'completed',
@@ -529,9 +529,9 @@ export async function getPaymentStats(locationId: string, days = 30): Promise<{
       .from('payments')
       .select(`
         *,
-        bookings!inner (location_id)
+        appointments!inner (location_id)
       `)
-      .eq('bookings.location_id', locationId)
+      .eq('appointments.location_id', locationId)
       .gte('created_at', startDate.toISOString())
 
     if (error) {

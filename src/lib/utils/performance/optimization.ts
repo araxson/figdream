@@ -147,30 +147,8 @@ export function prefetchResources(urls: string[]): void {
   })
 }
 
-/**
- * Web Vitals monitoring
- */
-export interface WebVitalsMetric {
-  name: 'FCP' | 'LCP' | 'CLS' | 'FID' | 'TTFB' | 'INP'
-  value: number
-  rating: 'good' | 'needs-improvement' | 'poor'
-}
-
-export function reportWebVitals(metric: WebVitalsMetric): void {
-  // Send to analytics
-  if (window.gtag) {
-    window.gtag('event', metric.name, {
-      value: Math.round(metric.name === 'CLS' ? metric.value * 1000 : metric.value),
-      event_label: metric.rating,
-      non_interaction: true,
-    })
-  }
-
-  // Log to console in development
-  if (process.env.NODE_ENV === 'development') {
-    console.log(`[Web Vitals] ${metric.name}: ${metric.value} (${metric.rating})`)
-  }
-}
+// Web Vitals functionality removed as per project requirements
+// Use PerformanceMonitor class below for custom performance tracking
 
 /**
  * Request idle callback polyfill

@@ -23,7 +23,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-20 px-6">
+      <section className="relative py-20 container">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center space-y-6">
             <h1 className="text-5xl md:text-6xl font-bold tracking-tight">
@@ -51,7 +51,7 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-6 bg-muted/50">
+      <section className="py-20 bg-muted/50">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">
@@ -245,7 +245,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-6">
+      <section className="py-20 container">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-3xl font-bold mb-4">
             Ready to Grow Your Salon Business?
@@ -270,7 +270,7 @@ export default function HomePage() {
       </section>
 
       {/* Footer Links */}
-      <footer className="border-t py-12 px-6">
+      <footer className="border-t py-12 container">
         <div className="container mx-auto max-w-6xl">
           <div className="grid md:grid-cols-4 gap-8">
             <div>

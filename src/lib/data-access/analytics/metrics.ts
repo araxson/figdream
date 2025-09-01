@@ -4,7 +4,7 @@ import { cache } from 'react'
 import { startOfMonth, endOfMonth, subMonths, startOfDay, endOfDay, subDays } from 'date-fns'
 
 type Appointment = Database['public']['Tables']['appointments']['Row']
-type Transaction = Database['public']['Tables']['transactions']['Row']
+type LoyaltyTransaction = Database['public']['Tables']['loyalty_transactions']['Row']
 type Customer = Database['public']['Tables']['customers']['Row']
 type Service = Database['public']['Tables']['services']['Row']
 
@@ -38,19 +38,21 @@ export const getRevenueMetrics = cache(async (salonId: string, period: 'day' | '
       break
   }
 
-  // Get current period transactions
-  const { data: currentTransactions, error: currentError } = await supabase
-    .from('transactions')
-    .select('amount, created_at, type')
+  // Get current period appointments with revenue
+  const { data: currentAppointments, error: currentError } = await supabase
+    .from('appointments')
+    .select('total_amount, created_at, status')
     .eq('salon_id', salonId)
+    .eq('status', 'completed')
     .gte('created_at', startDate.toISOString())
     .lte('created_at', now.toISOString())
 
-  // Get previous period transactions for comparison
-  const { data: previousTransactions, error: previousError } = await supabase
-    .from('transactions')
-    .select('amount, created_at, type')
+  // Get previous period appointments for comparison
+  const { data: previousAppointments, error: previousError } = await supabase
+    .from('appointments')
+    .select('total_amount, created_at, status')
     .eq('salon_id', salonId)
+    .eq('status', 'completed')
     .gte('created_at', previousStartDate.toISOString())
     .lt('created_at', startDate.toISOString())
 
@@ -60,17 +62,17 @@ export const getRevenueMetrics = cache(async (salonId: string, period: 'day' | '
       currentRevenue: 0,
       previousRevenue: 0,
       growth: 0,
-      transactions: [],
+      appointments: [],
       dailyRevenue: []
     }
   }
 
-  const currentRevenue = currentTransactions?.reduce((sum, t) => {
-    return t.type === 'payment' ? sum + (t.amount || 0) : sum
+  const currentRevenue = currentAppointments?.reduce((sum, apt) => {
+    return sum + (apt.total_amount || 0)
   }, 0) || 0
 
-  const previousRevenue = previousTransactions?.reduce((sum, t) => {
-    return t.type === 'payment' ? sum + (t.amount || 0) : sum
+  const previousRevenue = previousAppointments?.reduce((sum, apt) => {
+    return sum + (apt.total_amount || 0)
   }, 0) || 0
 
   const growth = previousRevenue > 0 
@@ -78,13 +80,13 @@ export const getRevenueMetrics = cache(async (salonId: string, period: 'day' | '
     : 0
 
   // Calculate daily revenue for charts
-  const dailyRevenue = calculateDailyRevenue(currentTransactions || [], startDate, now)
+  const dailyRevenue = calculateDailyRevenue(currentAppointments || [], startDate, now)
 
   return {
     currentRevenue,
     previousRevenue,
     growth,
-    transactions: currentTransactions || [],
+    appointments: currentAppointments || [],
     dailyRevenue
   }
 })
@@ -246,7 +248,7 @@ export const getStaffUtilization = cache(async (salonId: string) => {
 
   // Get staff with their appointments
   const { data: staffData } = await supabase
-    .from('staff')
+    .from('staff_profiles')
     .select(`
       id,
       first_name,
@@ -380,7 +382,7 @@ export const getDashboardSummary = cache(async (salonId: string) => {
 })
 
 // Helper functions
-function calculateDailyRevenue(transactions: any[], startDate: Date, endDate: Date) {
+function calculateDailyRevenue(appointments: Appointment[], startDate: Date, endDate: Date) {
   const dailyMap = new Map<string, number>()
   
   // Initialize all days with 0
@@ -390,11 +392,11 @@ function calculateDailyRevenue(transactions: any[], startDate: Date, endDate: Da
     currentDate.setDate(currentDate.getDate() + 1)
   }
 
-  // Sum transactions by day
-  transactions.forEach(t => {
-    if (t.type === 'payment' && t.created_at) {
-      const day = new Date(t.created_at).toISOString().split('T')[0]
-      dailyMap.set(day, (dailyMap.get(day) || 0) + (t.amount || 0))
+  // Sum appointment revenue by day
+  appointments.forEach(apt => {
+    if (apt.created_at && apt.total_amount) {
+      const day = new Date(apt.created_at).toISOString().split('T')[0]
+      dailyMap.set(day, (dailyMap.get(day) || 0) + apt.total_amount)
     }
   })
 

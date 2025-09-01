@@ -75,7 +75,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user owns the salon or has admin role
-    const role = user.raw_app_meta_data?.role
+    const { data: roleData } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .eq('is_active', true)
+      .maybeSingle()
+    
+    const role = roleData?.role || 'customer'
     if (salon.owner_id !== user.id && role !== 'super_admin') {
       return NextResponse.json(
         { error: 'Unauthorized to create subscription for this salon' },
@@ -215,7 +222,14 @@ export async function GET(request: NextRequest) {
     }
 
     // Verify user has permission to view this subscription
-    const role = user.raw_app_meta_data?.role
+    const { data: roleData } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .eq('is_active', true)
+      .maybeSingle()
+    
+    const role = roleData?.role || 'customer'
     if (subscriptionRecord.salons.owner_id !== user.id && role !== 'super_admin') {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -308,7 +322,14 @@ export async function PUT(request: NextRequest) {
       .eq('id', subscriptionRecord.salon_id)
       .single()
 
-    const role = user.raw_app_meta_data?.role
+    const { data: roleData } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .eq('is_active', true)
+      .maybeSingle()
+    
+    const role = roleData?.role || 'customer'
     if (!salon || (salon.owner_id !== user.id && role !== 'super_admin')) {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -426,7 +447,14 @@ export async function DELETE(request: NextRequest) {
       .eq('id', subscriptionRecord.salon_id)
       .single()
 
-    const role = user.raw_app_meta_data?.role
+    const { data: roleData } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .eq('is_active', true)
+      .maybeSingle()
+    
+    const role = roleData?.role || 'customer'
     if (!salon || (salon.owner_id !== user.id && role !== 'super_admin')) {
       return NextResponse.json(
         { error: 'Unauthorized' },

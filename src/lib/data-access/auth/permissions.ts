@@ -33,13 +33,13 @@ export type Permission =
   | 'services.delete'
   | 'services.manage_all'
   
-  // Booking permissions
-  | 'bookings.create'
-  | 'bookings.read'
-  | 'bookings.update'
-  | 'bookings.delete'
-  | 'bookings.manage_all'
-  | 'bookings.manage_own'
+  // Appointment permissions
+  | 'appointments.create'
+  | 'appointments.read'
+  | 'appointments.update'
+  | 'appointments.delete'
+  | 'appointments.manage_all'
+  | 'appointments.manage_own'
   
   // Customer permissions
   | 'customers.create'

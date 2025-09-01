@@ -1,8 +1,9 @@
 import { User } from '@supabase/supabase-js'
 import { Database } from '@/types/database.types'
+import { createClient } from '@/lib/database/supabase/server'
 
-// User role types based on raw_app_meta_data
-export type UserRole = 'super_admin' | 'salon_owner' | 'location_manager' | 'staff' | 'customer'
+// User role types from database enum
+export type UserRole = Database['public']['Enums']['user_role_type']
 
 // Extended user type with role
 export interface AuthUser extends User {
@@ -13,21 +14,33 @@ export interface AuthUser extends User {
 }
 
 /**
- * Extract user role from Supabase user object
- * IMPORTANT: Use app_metadata, not user_metadata
+ * Extract user role from user_roles table - MUST be called server-side
+ * Query the user_roles table instead of using raw_app_meta_data for security
  */
-export function getUserRole(user: User | null): UserRole | null {
-  if (!user) return null
+export async function getUserRole(userId: string | null): Promise<UserRole | null> {
+  if (!userId) return null
   
-  // Check app_metadata for role (secure, server-side metadata)
-  const role = user.app_metadata?.role
-  
-  if (isValidRole(role)) {
-    return role as UserRole
+  try {
+    const supabase = await createClient()
+    
+    // Query user_roles table for active role
+    const { data, error } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .eq('is_active', true)
+      .maybeSingle()
+    
+    if (error) {
+      console.error('Error fetching user role:', error)
+      return null
+    }
+    
+    return data?.role || 'customer'
+  } catch (error) {
+    console.error('Error in getUserRole:', error)
+    return null
   }
-  
-  // Default to customer if no role is set
-  return 'customer'
 }
 
 /**
@@ -39,119 +52,189 @@ export function isValidRole(role: unknown): role is UserRole {
 }
 
 /**
- * Check if user has specific role
+ * Check if user has specific role - MUST be called server-side
  */
-export function hasRole(user: User | null, role: UserRole): boolean {
-  const userRole = getUserRole(user)
+export async function hasRole(userId: string | null, role: UserRole): Promise<boolean> {
+  const userRole = await getUserRole(userId)
   return userRole === role
 }
 
 /**
- * Check if user has any of the specified roles
+ * Check if user has any of the specified roles - MUST be called server-side
  */
-export function hasAnyRole(user: User | null, roles: UserRole[]): boolean {
-  const userRole = getUserRole(user)
+export async function hasAnyRole(userId: string | null, roles: UserRole[]): Promise<boolean> {
+  const userRole = await getUserRole(userId)
   return userRole !== null && roles.includes(userRole)
 }
 
 /**
- * Check if user has admin privileges (any admin role)
+ * Check if user has admin privileges (any admin role) - MUST be called server-side
  */
-export function isAdmin(user: User | null): boolean {
-  return hasAnyRole(user, ['super_admin', 'salon_owner', 'location_manager'])
+export async function isAdmin(userId: string | null): Promise<boolean> {
+  return hasAnyRole(userId, ['super_admin', 'salon_owner', 'location_manager'])
 }
 
 /**
- * Check if user is a super admin
+ * Check if user is a super admin - MUST be called server-side
  */
-export function isSuperAdmin(user: User | null): boolean {
-  return hasRole(user, 'super_admin')
+export async function isSuperAdmin(userId: string | null): Promise<boolean> {
+  return hasRole(userId, 'super_admin')
 }
 
 /**
- * Check if user is a salon admin
+ * Check if user is a salon admin - MUST be called server-side
  */
-export function isSalonOwner(user: User | null): boolean {
-  return hasRole(user, 'salon_owner')
+export async function isSalonOwner(userId: string | null): Promise<boolean> {
+  return hasRole(userId, 'salon_owner')
 }
 
 /**
- * Check if user is a location admin
+ * Check if user is a location admin - MUST be called server-side
  */
-export function isLocationManager(user: User | null): boolean {
-  return hasRole(user, 'location_manager')
+export async function isLocationManager(userId: string | null): Promise<boolean> {
+  return hasRole(userId, 'location_manager')
 }
 
 /**
- * Check if user is staff
+ * Check if user is staff - MUST be called server-side
  */
-export function isStaff(user: User | null): boolean {
-  return hasRole(user, 'staff')
+export async function isStaff(userId: string | null): Promise<boolean> {
+  return hasRole(userId, 'staff')
 }
 
 /**
- * Check if user is a customer
+ * Check if user is a customer - MUST be called server-side
  */
-export function isCustomer(user: User | null): boolean {
-  return hasRole(user, 'customer')
+export async function isCustomer(userId: string | null): Promise<boolean> {
+  return hasRole(userId, 'customer')
 }
 
 /**
- * Get salon ID from user metadata
+ * Get salon ID from user_roles table - MUST be called server-side
  */
-export function getUserSalonId(user: User | null): string | null {
-  if (!user) return null
-  return user.app_metadata?.salon_id || null
+export async function getUserSalonId(userId: string | null): Promise<string | null> {
+  if (!userId) return null
+  
+  try {
+    const supabase = await createClient()
+    
+    const { data, error } = await supabase
+      .from('user_roles')
+      .select('salon_id')
+      .eq('user_id', userId)
+      .eq('is_active', true)
+      .maybeSingle()
+    
+    if (error) {
+      console.error('Error fetching user salon ID:', error)
+      return null
+    }
+    
+    return data?.salon_id || null
+  } catch (error) {
+    console.error('Error in getUserSalonId:', error)
+    return null
+  }
 }
 
 /**
- * Get location ID from user metadata
+ * Get location ID from user_roles table - MUST be called server-side
  */
-export function getUserLocationId(user: User | null): string | null {
-  if (!user) return null
-  return user.app_metadata?.location_id || null
+export async function getUserLocationId(userId: string | null): Promise<string | null> {
+  if (!userId) return null
+  
+  try {
+    const supabase = await createClient()
+    
+    const { data, error } = await supabase
+      .from('user_roles')
+      .select('location_id')
+      .eq('user_id', userId)
+      .eq('is_active', true)
+      .maybeSingle()
+    
+    if (error) {
+      console.error('Error fetching user location ID:', error)
+      return null
+    }
+    
+    return data?.location_id || null
+  } catch (error) {
+    console.error('Error in getUserLocationId:', error)
+    return null
+  }
 }
 
 /**
- * Get staff ID from user metadata
+ * Get staff ID from staff_profiles table - MUST be called server-side
  */
-export function getUserStaffId(user: User | null): string | null {
-  if (!user) return null
-  return user.app_metadata?.staff_id || null
+export async function getUserStaffId(userId: string | null): Promise<string | null> {
+  if (!userId) return null
+  
+  try {
+    const supabase = await createClient()
+    
+    const { data, error } = await supabase
+      .from('staff_profiles')
+      .select('id')
+      .eq('user_id', userId)
+      .maybeSingle()
+    
+    if (error) {
+      console.error('Error fetching staff ID:', error)
+      return null
+    }
+    
+    return data?.id || null
+  } catch (error) {
+    console.error('Error in getUserStaffId:', error)
+    return null
+  }
 }
 
 /**
- * Check if user can access a specific salon
+ * Check if user can access a specific salon - MUST be called server-side
  */
-export function canAccessSalon(user: User | null, salonId: string): boolean {
-  if (!user) return false
+export async function canAccessSalon(userId: string | null, salonId: string): Promise<boolean> {
+  if (!userId) return false
   
   // Super admin can access all salons
-  if (isSuperAdmin(user)) return true
+  if (await isSuperAdmin(userId)) return true
   
   // Check if user's salon matches
-  const userSalonId = getUserSalonId(user)
+  const userSalonId = await getUserSalonId(userId)
   return userSalonId === salonId
 }
 
 /**
- * Check if user can access a specific location
+ * Check if user can access a specific location - MUST be called server-side
  */
-export function canAccessLocation(user: User | null, locationId: string): boolean {
-  if (!user) return false
+export async function canAccessLocation(userId: string | null, locationId: string): Promise<boolean> {
+  if (!userId) return false
   
   // Super admin can access all locations
-  if (isSuperAdmin(user)) return true
+  if (await isSuperAdmin(userId)) return true
   
   // Salon admin can access all locations in their salon
-  if (isSalonOwner(user)) {
-    // Would need to check if location belongs to user's salon
-    // This would require a database query
-    return true
+  if (await isSalonOwner(userId)) {
+    // Check if location belongs to user's salon
+    const supabase = await createClient()
+    const userSalonId = await getUserSalonId(userId)
+    
+    if (!userSalonId) return false
+    
+    const { data } = await supabase
+      .from('salon_locations')
+      .select('id')
+      .eq('id', locationId)
+      .eq('salon_id', userSalonId)
+      .maybeSingle()
+    
+    return !!data
   }
   
   // Check if user's location matches
-  const userLocationId = getUserLocationId(user)
+  const userLocationId = await getUserLocationId(userId)
   return userLocationId === locationId
 }
 
@@ -228,19 +311,19 @@ export function getRoleForPath(pathname: string): UserRole | null {
 }
 
 /**
- * Validate user has required role for path
+ * Validate user has required role for path - MUST be called server-side
  */
-export function canAccessPath(user: User | null, pathname: string): boolean {
+export async function canAccessPath(userId: string | null, pathname: string): Promise<boolean> {
   // Public paths are always accessible
   if (!isProtectedPath(pathname)) return true
   
   // User must be authenticated for protected paths
-  if (!user) return false
+  if (!userId) return false
   
   // Check role-specific paths
   const requiredRole = getRoleForPath(pathname)
   if (requiredRole) {
-    const userRole = getUserRole(user)
+    const userRole = await getUserRole(userId)
     
     // Super admin can access everything
     if (userRole === 'super_admin') return true
@@ -254,21 +337,28 @@ export function canAccessPath(user: User | null, pathname: string): boolean {
 }
 
 /**
- * Format user display name
+ * Format user display name from profiles table - MUST be called server-side
  */
-export function getUserDisplayName(user: User | null): string {
-  if (!user) return 'Guest'
+export async function getUserDisplayName(userId: string | null): Promise<string> {
+  if (!userId) return 'Guest'
   
-  const metadata = user.raw_app_meta_data || {}
-  
-  if (metadata.full_name) return metadata.full_name
-  if (metadata.first_name && metadata.last_name) {
-    return `${metadata.first_name} ${metadata.last_name}`
+  try {
+    const supabase = await createClient()
+    
+    const { data } = await supabase
+      .from('profiles')
+      .select('full_name, email')
+      .eq('user_id', userId)
+      .maybeSingle()
+    
+    if (data?.full_name) return data.full_name
+    if (data?.email) return data.email.split('@')[0]
+    
+    return 'User'
+  } catch (error) {
+    console.error('Error getting user display name:', error)
+    return 'User'
   }
-  if (metadata.name) return metadata.name
-  if (user.email) return user.email.split('@')[0]
-  
-  return 'User'
 }
 
 /**
@@ -290,31 +380,44 @@ export function getUserInitials(user: User | null): string {
 }
 
 /**
- * Check if user profile is complete
+ * Check if user profile is complete - MUST be called server-side
  */
-export function isProfileComplete(user: User | null): boolean {
-  if (!user) return false
+export async function isProfileComplete(userId: string | null): Promise<boolean> {
+  if (!userId) return false
   
-  const metadata = user.user_metadata || {}
-  const role = getUserRole(user)
-  
-  // Basic requirements for all users
-  const hasBasicInfo = !!(
-    metadata.first_name &&
-    metadata.last_name &&
-    metadata.phone
-  )
-  
-  // Role-specific requirements
-  switch (role) {
-    case 'salon_owner':
-      return hasBasicInfo && !!getUserSalonId(user)
-    case 'location_manager':
-      return hasBasicInfo && !!getUserLocationId(user)
-    case 'staff':
-      return hasBasicInfo && !!getUserStaffId(user)
-    default:
-      return hasBasicInfo
+  try {
+    const supabase = await createClient()
+    
+    // Get profile data
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('full_name, phone')
+      .eq('user_id', userId)
+      .maybeSingle()
+    
+    if (!profile) return false
+    
+    // Basic requirements for all users
+    const hasBasicInfo = !!(profile.full_name && profile.phone)
+    
+    if (!hasBasicInfo) return false
+    
+    // Role-specific requirements
+    const role = await getUserRole(userId)
+    
+    switch (role) {
+      case 'salon_owner':
+        return !!(await getUserSalonId(userId))
+      case 'location_manager':
+        return !!(await getUserLocationId(userId))
+      case 'staff':
+        return !!(await getUserStaffId(userId))
+      default:
+        return true
+    }
+  } catch (error) {
+    console.error('Error checking profile completeness:', error)
+    return false
   }
 }
 

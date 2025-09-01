@@ -3,8 +3,9 @@
 import { createClient } from '@/lib/database/supabase/server'
 import type { Database } from '@/types/database'
 
-type UserRole = Database['public']['Enums']['user_role']
+type UserRole = Database['public']['Enums']['user_role_type']
 type User = Database['public']['Tables']['profiles']['Row']
+type UserRoles = Database['public']['Tables']['user_roles']['Row']
 
 export interface AuthResult {
   user: User | null
@@ -48,7 +49,7 @@ export async function getUser(): Promise<AuthResult> {
 }
 
 /**
- * Get the current user with their role
+ * Get the current user with their role from user_roles table
  */
 export async function getUserWithRole(): Promise<{ user: UserWithRole | null; error: string | null }> {
   try {
@@ -60,11 +61,20 @@ export async function getUserWithRole(): Promise<{ user: UserWithRole | null; er
       return { user: null, error: 'Not authenticated' }
     }
 
-    // Get role from raw_app_meta_data
-    const role = authUser.raw_app_meta_data?.role as UserRole
-    if (!role) {
+    // Get role from user_roles table instead of raw_app_meta_data
+    const { data: roleData, error: roleError } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', authUser.id)
+      .eq('is_active', true)
+      .maybeSingle()
+    
+    if (roleError) {
+      console.error('Error fetching user role:', roleError)
       return { user: null, error: 'User role not found' }
     }
+    
+    const role = roleData?.role || 'customer'
 
     // Get user profile
     const { data: profile, error: profileError } = await supabase
@@ -103,7 +113,7 @@ export async function verifyAuthenticated(): Promise<{ authenticated: boolean; e
 }
 
 /**
- * Get user's role
+ * Get user's role from user_roles table
  */
 export async function getUserRole(): Promise<{ role: UserRole | null; error: string | null }> {
   try {
@@ -115,10 +125,20 @@ export async function getUserRole(): Promise<{ role: UserRole | null; error: str
       return { role: null, error: 'Not authenticated' }
     }
 
-    const role = user.raw_app_meta_data?.role as UserRole
-    if (!role) {
+    // Query user_roles table instead of using raw_app_meta_data
+    const { data: roleData, error: roleError } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .eq('is_active', true)
+      .maybeSingle()
+    
+    if (roleError) {
+      console.error('Error fetching user role:', roleError)
       return { role: null, error: 'User role not found' }
     }
+    
+    const role = roleData?.role || 'customer'
 
     return { role, error: null }
   } catch (error) {

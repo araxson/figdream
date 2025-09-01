@@ -3,39 +3,43 @@
 import { createClient } from '@/lib/database/supabase/server'
 import { Database } from '@/types/database.types'
 
-// Type definitions for booking operations
-export type BookingStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'no-show'
+// Type definitions for appointment operations
+type Appointment = Database['public']['Tables']['appointments']['Row']
+type AppointmentInsert = Database['public']['Tables']['appointments']['Insert']
+type AppointmentUpdate = Database['public']['Tables']['appointments']['Update']
+
+export type AppointmentStatus = Database['public']['Tables']['appointments']['Row']['status']
 export type PaymentStatus = 'pending' | 'paid' | 'refunded' | 'failed'
 
-export interface CreateBookingInput {
+export interface CreateAppointmentInput {
   customer_id: string
-  location_id: string
+  salon_id: string
+  location_id?: string
   staff_id: string
-  service_id: string
-  booking_date: string
+  appointment_date: string
   start_time: string
   end_time: string
-  price: number
+  total_amount?: number
   deposit_amount?: number
   notes?: string
-  add_ons?: string[]
+  reminder_sent?: boolean
 }
 
-export interface UpdateBookingInput {
-  status?: BookingStatus
+export interface UpdateAppointmentInput {
+  status?: AppointmentStatus
   staff_id?: string
   start_time?: string
   end_time?: string
   notes?: string
-  payment_status?: PaymentStatus
+  total_amount?: number
 }
 
-export interface BookingFilters {
+export interface AppointmentFilters {
+  salon_id?: string
   location_id?: string
   staff_id?: string
   customer_id?: string
-  service_id?: string
-  status?: BookingStatus
+  status?: AppointmentStatus
   date_from?: string
   date_to?: string
   limit?: number
@@ -43,28 +47,28 @@ export interface BookingFilters {
 }
 
 /**
- * Create a new booking
+ * Create a new appointment
  */
-export async function createBooking(input: CreateBookingInput) {
+export async function createAppointment(input: CreateAppointmentInput) {
   const supabase = await createClient()
   
   // Check for conflicts
-  const conflicts = await checkBookingConflicts({
+  const conflicts = await checkAppointmentConflicts({
     staff_id: input.staff_id,
-    booking_date: input.booking_date,
+    appointment_date: input.appointment_date,
     start_time: input.start_time,
     end_time: input.end_time
   })
   
   if (conflicts.length > 0) {
     return { 
-      error: 'Booking conflict detected', 
+      error: 'Appointment conflict detected', 
       conflicts 
     }
   }
   
   const { data, error } = await supabase
-    .from('bookings')
+    .from('appointments')
     .insert({
       ...input,
       status: 'pending',
@@ -78,32 +82,32 @@ export async function createBooking(input: CreateBookingInput) {
     return { error: error.message }
   }
   
-  // Create booking status history entry
-  await createBookingStatusHistory(data.id, 'pending', 'Booking created')
+  // Create appointment status history entry
+  await createAppointmentStatusHistory(data.id, 'pending', 'Appointment created')
   
   // Send confirmation email/SMS
-  await sendBookingConfirmation(data.id)
+  await sendAppointmentConfirmation(data.id)
   
   return { data }
 }
 
 /**
- * Get booking by ID
+ * Get appointment by ID
  */
-export async function getBookingById(bookingId: string) {
+export async function getAppointmentById(appointmentId: string) {
   const supabase = await createClient()
   
   const { data, error } = await supabase
-    .from('bookings')
+    .from('appointments')
     .select(`
       *,
       customer:customers(*),
       location:locations(*),
       staff:staff(*),
       service:services(*),
-      booking_services(*)
+      appointment_services(*)
     `)
-    .eq('id', bookingId)
+    .eq('id', appointmentId)
     .single()
   
   if (error) {
@@ -114,13 +118,13 @@ export async function getBookingById(bookingId: string) {
 }
 
 /**
- * Get bookings with filters
+ * Get appointments with filters
  */
-export async function getBookings(filters: BookingFilters = {}) {
+export async function getAppointments(filters: AppointmentFilters = {}) {
   const supabase = await createClient()
   
   let query = supabase
-    .from('bookings')
+    .from('appointments')
     .select(`
       *,
       customer:customers(id, first_name, last_name, email, phone),
@@ -146,10 +150,10 @@ export async function getBookings(filters: BookingFilters = {}) {
     query = query.eq('status', filters.status)
   }
   if (filters.date_from) {
-    query = query.gte('booking_date', filters.date_from)
+    query = query.gte('appointment_date', filters.date_from)
   }
   if (filters.date_to) {
-    query = query.lte('booking_date', filters.date_to)
+    query = query.lte('appointment_date', filters.date_to)
   }
   
   // Apply pagination
@@ -160,8 +164,8 @@ export async function getBookings(filters: BookingFilters = {}) {
     query = query.range(filters.offset, filters.offset + (filters.limit || 10) - 1)
   }
   
-  // Order by booking date and time
-  query = query.order('booking_date', { ascending: false })
+  // Order by appointment date and time
+  query = query.order('appointment_date', { ascending: false })
     .order('start_time', { ascending: false })
   
   const { data, error } = await query
@@ -174,42 +178,42 @@ export async function getBookings(filters: BookingFilters = {}) {
 }
 
 /**
- * Update booking
+ * Update appointment
  */
-export async function updateBooking(bookingId: string, input: UpdateBookingInput) {
+export async function updateAppointment(appointmentId: string, input: UpdateAppointmentInput) {
   const supabase = await createClient()
   
-  // Get current booking
-  const { data: currentBooking } = await getBookingById(bookingId)
-  if (!currentBooking) {
-    return { error: 'Booking not found' }
+  // Get current appointment
+  const { data: currentAppointment } = await getAppointmentById(appointmentId)
+  if (!currentAppointment) {
+    return { error: 'Appointment not found' }
   }
   
   // Check for conflicts if time/staff is being changed
   if (input.staff_id || input.start_time || input.end_time) {
-    const conflicts = await checkBookingConflicts({
-      staff_id: input.staff_id || currentBooking.staff_id,
-      booking_date: currentBooking.booking_date,
-      start_time: input.start_time || currentBooking.start_time,
-      end_time: input.end_time || currentBooking.end_time,
-      exclude_booking_id: bookingId
+    const conflicts = await checkAppointmentConflicts({
+      staff_id: input.staff_id || currentAppointment.staff_id,
+      appointment_date: currentAppointment.appointment_date,
+      start_time: input.start_time || currentAppointment.start_time,
+      end_time: input.end_time || currentAppointment.end_time,
+      exclude_appointment_id: appointmentId
     })
     
     if (conflicts.length > 0) {
       return { 
-        error: 'Booking conflict detected', 
+        error: 'Appointment conflict detected', 
         conflicts 
       }
     }
   }
   
   const { data, error } = await supabase
-    .from('bookings')
+    .from('appointments')
     .update({
       ...input,
       updated_at: new Date().toISOString()
     })
-    .eq('id', bookingId)
+    .eq('id', appointmentId)
     .select()
     .single()
   
@@ -218,14 +222,14 @@ export async function updateBooking(bookingId: string, input: UpdateBookingInput
   }
   
   // Log status change if applicable
-  if (input.status && input.status !== currentBooking.status) {
-    await createBookingStatusHistory(bookingId, input.status, 'Status updated')
+  if (input.status && input.status !== currentAppointment.status) {
+    await createAppointmentStatusHistory(appointmentId, input.status, 'Status updated')
     
     // Send notification based on status
     if (input.status === 'confirmed') {
-      await sendBookingConfirmation(bookingId)
+      await sendAppointmentConfirmation(appointmentId)
     } else if (input.status === 'cancelled') {
-      await sendBookingCancellation(bookingId)
+      await sendAppointmentCancellation(appointmentId)
     }
   }
   
@@ -233,20 +237,20 @@ export async function updateBooking(bookingId: string, input: UpdateBookingInput
 }
 
 /**
- * Cancel booking
+ * Cancel appointment
  */
-export async function cancelBooking(bookingId: string, reason?: string) {
+export async function cancelAppointment(appointmentId: string, reason?: string) {
   const supabase = await createClient()
   
   const { data, error } = await supabase
-    .from('bookings')
+    .from('appointments')
     .update({
       status: 'cancelled',
       cancellation_reason: reason,
       cancelled_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     })
-    .eq('id', bookingId)
+    .eq('id', appointmentId)
     .select()
     .single()
   
@@ -255,40 +259,40 @@ export async function cancelBooking(bookingId: string, reason?: string) {
   }
   
   // Create status history
-  await createBookingStatusHistory(bookingId, 'cancelled', reason || 'Booking cancelled')
+  await createAppointmentStatusHistory(appointmentId, 'cancelled', reason || 'Appointment cancelled')
   
   // Send cancellation notification
-  await sendBookingCancellation(bookingId)
+  await sendAppointmentCancellation(appointmentId)
   
   // Process refund if applicable
   if (data.deposit_amount && data.deposit_amount > 0) {
-    await processBookingRefund(bookingId, data.deposit_amount)
+    await processAppointmentRefund(appointmentId, data.deposit_amount)
   }
   
   return { data }
 }
 
 /**
- * Check for booking conflicts
+ * Check for appointment conflicts
  */
-export async function checkBookingConflicts(params: {
+export async function checkAppointmentConflicts(params: {
   staff_id: string
-  booking_date: string
+  appointment_date: string
   start_time: string
   end_time: string
-  exclude_booking_id?: string
+  exclude_appointment_id?: string
 }) {
   const supabase = await createClient()
   
   let query = supabase
-    .from('bookings')
+    .from('appointments')
     .select('*')
     .eq('staff_id', params.staff_id)
-    .eq('booking_date', params.booking_date)
+    .eq('appointment_date', params.appointment_date)
     .in('status', ['pending', 'confirmed'])
   
-  if (params.exclude_booking_id) {
-    query = query.neq('id', params.exclude_booking_id)
+  if (params.exclude_appointment_id) {
+    query = query.neq('id', params.exclude_appointment_id)
   }
   
   const { data, error } = await query
@@ -298,16 +302,16 @@ export async function checkBookingConflicts(params: {
   }
   
   // Check for time overlaps
-  const conflicts = data?.filter(booking => {
-    const bookingStart = booking.start_time
-    const bookingEnd = booking.end_time
+  const conflicts = data?.filter(appointment => {
+    const appointmentStart = appointment.start_time
+    const appointmentEnd = appointment.end_time
     const newStart = params.start_time
     const newEnd = params.end_time
     
     return (
-      (newStart >= bookingStart && newStart < bookingEnd) ||
-      (newEnd > bookingStart && newEnd <= bookingEnd) ||
-      (newStart <= bookingStart && newEnd >= bookingEnd)
+      (newStart >= appointmentStart && newStart < appointmentEnd) ||
+      (newEnd > appointmentStart && newEnd <= appointmentEnd) ||
+      (newStart <= appointmentStart && newEnd >= appointmentEnd)
     )
   }) || []
   
@@ -349,8 +353,8 @@ export async function getAvailableTimeSlots(params: {
     return { error: 'Service not found' }
   }
   
-  // Get existing bookings for the day
-  const { data: bookings } = await getBookings({
+  // Get existing appointments for the day
+  const { data: appointments } = await getAppointments({
     staff_id: params.staff_id,
     date_from: params.date,
     date_to: params.date
@@ -363,19 +367,19 @@ export async function getAvailableTimeSlots(params: {
     duration: service.duration,
     breakStart: staffSchedule.break_start,
     breakEnd: staffSchedule.break_end,
-    existingBookings: bookings || []
+    existingAppointments: appointments || []
   })
   
   return { data: slots }
 }
 
 /**
- * Get upcoming bookings for customer
+ * Get upcoming appointments for customer
  */
-export async function getCustomerUpcomingBookings(customerId: string) {
+export async function getCustomerUpcomingAppointments(customerId: string) {
   const today = new Date().toISOString().split('T')[0]
   
-  return getBookings({
+  return getAppointments({
     customer_id: customerId,
     date_from: today,
     status: 'confirmed',
@@ -384,15 +388,15 @@ export async function getCustomerUpcomingBookings(customerId: string) {
 }
 
 /**
- * Get past bookings for customer
+ * Get past appointments for customer
  */
-export async function getCustomerPastBookings(customerId: string) {
+export async function getCustomerPastAppointments(customerId: string) {
   const today = new Date().toISOString().split('T')[0]
   
   const supabase = await createClient()
   
   const { data, error } = await supabase
-    .from('bookings')
+    .from('appointments')
     .select(`
       *,
       location:locations(id, name),
@@ -400,8 +404,8 @@ export async function getCustomerPastBookings(customerId: string) {
       service:services(id, name, duration, price)
     `)
     .eq('customer_id', customerId)
-    .lt('booking_date', today)
-    .order('booking_date', { ascending: false })
+    .lt('appointment_date', today)
+    .order('appointment_date', { ascending: false })
     .limit(20)
   
   if (error) {
@@ -412,10 +416,10 @@ export async function getCustomerPastBookings(customerId: string) {
 }
 
 /**
- * Get staff bookings for a date
+ * Get staff appointments for a date
  */
-export async function getStaffDayBookings(staffId: string, date: string) {
-  return getBookings({
+export async function getStaffDayAppointments(staffId: string, date: string) {
+  return getAppointments({
     staff_id: staffId,
     date_from: date,
     date_to: date
@@ -423,57 +427,57 @@ export async function getStaffDayBookings(staffId: string, date: string) {
 }
 
 /**
- * Mark booking as completed
+ * Mark appointment as completed
  */
-export async function completeBooking(bookingId: string) {
-  return updateBooking(bookingId, {
+export async function completeAppointment(appointmentId: string) {
+  return updateAppointment(appointmentId, {
     status: 'completed'
   })
 }
 
 /**
- * Mark booking as no-show
+ * Mark appointment as no-show
  */
-export async function markBookingNoShow(bookingId: string) {
-  return updateBooking(bookingId, {
+export async function markAppointmentNoShow(appointmentId: string) {
+  return updateAppointment(appointmentId, {
     status: 'no-show'
   })
 }
 
 // Helper functions
 
-async function createBookingStatusHistory(
-  bookingId: string, 
-  status: BookingStatus, 
+async function createAppointmentStatusHistory(
+  appointmentId: string, 
+  status: AppointmentStatus, 
   notes?: string
 ) {
   const supabase = await createClient()
   
   await supabase
-    .from('booking_status_history')
+    .from('appointment_status_history')
     .insert({
-      booking_id: bookingId,
+      appointment_id: appointmentId,
       status,
       notes,
       created_at: new Date().toISOString()
     })
 }
 
-async function sendBookingConfirmation(bookingId: string) {
+async function sendAppointmentConfirmation(appointmentId: string) {
   // Implementation for sending confirmation email/SMS
-  console.log('Sending booking confirmation for:', bookingId)
+  console.log('Sending appointment confirmation for:', appointmentId)
   // This would integrate with your email/SMS service
 }
 
-async function sendBookingCancellation(bookingId: string) {
+async function sendAppointmentCancellation(appointmentId: string) {
   // Implementation for sending cancellation notification
-  console.log('Sending booking cancellation for:', bookingId)
+  console.log('Sending appointment cancellation for:', appointmentId)
   // This would integrate with your email/SMS service
 }
 
-async function processBookingRefund(bookingId: string, amount: number) {
+async function processAppointmentRefund(appointmentId: string, amount: number) {
   // Implementation for processing refunds
-  console.log('Processing refund for booking:', bookingId, 'Amount:', amount)
+  console.log('Processing refund for appointment:', appointmentId, 'Amount:', amount)
   // This would integrate with your payment processor
 }
 
@@ -483,7 +487,7 @@ function generateTimeSlots(params: {
   duration: number
   breakStart?: string
   breakEnd?: string
-  existingBookings: any[]
+  existingAppointments: any[]
 }) {
   const slots = []
   const slotDuration = params.duration
@@ -509,7 +513,7 @@ function generateTimeSlots(params: {
     
     const slotEnd = `${endSlotHour.toString().padStart(2, '0')}:${endSlotMin.toString().padStart(2, '0')}`
     
-    // Check if slot is available (not conflicting with breaks or existing bookings)
+    // Check if slot is available (not conflicting with breaks or existing appointments)
     const isAvailable = checkSlotAvailability(slotStart, slotEnd, params)
     
     if (isAvailable) {
@@ -546,11 +550,11 @@ function checkSlotAvailability(
     }
   }
   
-  // Check if slot conflicts with existing bookings
-  for (const booking of params.existingBookings) {
+  // Check if slot conflicts with existing appointments
+  for (const appointment of params.existingAppointments) {
     if (
-      (slotStart >= booking.start_time && slotStart < booking.end_time) ||
-      (slotEnd > booking.start_time && slotEnd <= booking.end_time)
+      (slotStart >= appointment.start_time && slotStart < appointment.end_time) ||
+      (slotEnd > appointment.start_time && slotEnd <= appointment.end_time)
     ) {
       return false
     }

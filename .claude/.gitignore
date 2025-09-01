@@ -13,3 +13,4 @@ src/app/globals.css
 src/lib/utils.ts
 PROJECT_TREE.md
 .env.local
+src/types

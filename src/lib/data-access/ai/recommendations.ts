@@ -15,9 +15,10 @@ import {
   type TrackRecommendationInteractionInput,
 } from '@/lib/validations/advanced-features-schema'
 
-type Recommendation = Database['public']['Tables']['ai_recommendations']['Row']
+// NOTE: ai_recommendations table does not exist in database
+// type Recommendation = Database['public']['Tables']['ai_recommendations']['Row']
 type Service = Database['public']['Tables']['services']['Row']
-type Staff = Database['public']['Tables']['staff']['Row']
+type StaffProfile = Database['public']['Tables']['staff_profiles']['Row']
 
 interface RecommendationResult {
   id: string
@@ -27,7 +28,7 @@ interface RecommendationResult {
   reason: string
   metadata?: any
   service?: Service
-  staff?: Staff
+  staff?: StaffProfile
 }
 
 /**
@@ -75,7 +76,9 @@ export async function generateRecommendations(
         recommendations = await recommendServices(customerData, validated)
     }
     
-    // Store recommendations for tracking
+    // NOTE: ai_recommendations table does not exist - skipping storage
+    // Would need to create this table to track recommendations
+    /*
     if (recommendations.length > 0) {
       const { data: stored } = await supabase
         .from('ai_recommendations')
@@ -100,6 +103,7 @@ export async function generateRecommendations(
         }))
       }
     }
+    */
     
     return recommendations.slice(0, validated.limit)
   } catch (error) {
@@ -121,20 +125,18 @@ async function getCustomerData(customerId: string): Promise<any> {
     .eq('id', customerId)
     .single()
   
-  // Get booking history
-  const { data: bookings } = await supabase
-    .from('bookings')
+  // Get appointment history
+  const { data: appointments } = await supabase
+    .from('appointments')
     .select(`
       *,
-      booking_services (
+      appointment_services (
         service_id,
-        service_name,
         price
       ),
-      staff (
+      staff_profiles (
         id,
-        first_name,
-        last_name
+        user_id
       )
     `)
     .eq('customer_id', customerId)
@@ -159,7 +161,7 @@ async function getCustomerData(customerId: string): Promise<any> {
   
   return {
     profile,
-    bookings: bookings || [],
+    bookings: appointments || [],
     preferences: preferences || {},
     reviews: reviews || [],
   }
@@ -179,7 +181,7 @@ async function recommendServices(
     // Get frequently booked services
     const serviceFrequency: Record<string, number> = {}
     customerData.bookings.forEach((booking: any) => {
-      booking.booking_services?.forEach((service: any) => {
+      booking.appointment_services?.forEach((service: any) => {
         serviceFrequency[service.service_id] = (serviceFrequency[service.service_id] || 0) + 1
       })
     })
@@ -282,7 +284,7 @@ async function recommendStaff(
     
     // Get all available staff
     let query = supabase
-      .from('staff')
+      .from('staff_profiles')
       .select(`
         *,
         staff_services (
@@ -486,6 +488,11 @@ async function recommendComplementaryServices(
   customerData: any,
   params: CreateRecommendationRequestInput
 ): Promise<RecommendationResult[]> {
+  // NOTE: service_pairings table does not exist
+  // Fallback to category-based recommendations
+  return recommendServices(customerData, params)
+  
+  /* Original implementation requires service_pairings table
   const supabase = await createClient()
   
   try {
@@ -523,6 +530,7 @@ async function recommendComplementaryServices(
     console.error('Error recommending complementary services:', error)
     return []
   }
+  */
 }
 
 /**
@@ -539,17 +547,15 @@ async function recommendTrending(
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
     
     const { data: trending } = await supabase
-      .from('booking_services')
+      .from('appointment_services')
       .select(`
         service_id,
-        count:service_id.count(),
         services!inner (
           *,
-          categories (name)
+          service_categories (name)
         )
       `)
       .gte('created_at', thirtyDaysAgo.toISOString())
-      .order('count', { ascending: false })
       .limit(20)
     
     if (!trending) return []
@@ -571,7 +577,7 @@ async function recommendTrending(
         type: 'trending',
         item_id: serviceId,
         score: data.count,
-        reason: `Trending - ${data.count} bookings this month`,
+        reason: `Trending - ${data.count} appointments this month`,
         service: data.service,
       }))
       .sort((a, b) => b.score - a.score)
@@ -589,6 +595,12 @@ async function recommendTrending(
 export async function trackRecommendationInteraction(
   input: TrackRecommendationInteractionInput
 ): Promise<boolean> {
+  // NOTE: recommendation_interactions table does not exist
+  // This functionality is currently disabled
+  console.warn('Recommendation tracking is disabled - recommendation_interactions table does not exist')
+  return false
+  
+  /* Original implementation requires recommendation_interactions table
   const supabase = await createClient()
   
   try {
@@ -618,6 +630,7 @@ export async function trackRecommendationInteraction(
     console.error('Error in trackRecommendationInteraction:', error)
     return false
   }
+  */
 }
 
 /**
@@ -667,6 +680,18 @@ export async function getRecommendationAnalytics(
   salonId?: string,
   dateRange?: { start: string; end: string }
 ): Promise<any> {
+  // NOTE: recommendation_interactions and ai_recommendations tables do not exist
+  // Analytics functionality is currently disabled
+  console.warn('Recommendation analytics is disabled - required tables do not exist')
+  return {
+    total_generated: 0,
+    view_rate: 0,
+    click_rate: 0,
+    conversion_rate: 0,
+    by_type: {},
+  }
+  
+  /* Original implementation requires recommendation_interactions and ai_recommendations tables
   const supabase = await createClient()
   
   try {
@@ -720,4 +745,5 @@ export async function getRecommendationAnalytics(
     console.error('Error getting recommendation analytics:', error)
     return null
   }
+  */
 }

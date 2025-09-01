@@ -184,7 +184,7 @@ export const getStaffingOptimization = cache(async (salonId: string) => {
   
   // Get current staff schedules
   const { data: staff } = await supabase
-    .from('staff')
+    .from('staff_profiles')
     .select(`
       id,
       first_name,

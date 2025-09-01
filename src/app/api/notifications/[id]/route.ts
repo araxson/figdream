@@ -27,9 +27,16 @@ export async function DELETE(
     }
 
     if (notification.user_id !== user.id) {
-      // Check if user is admin
-      const role = user.raw_app_meta_data?.role
-      if (role !== 'super_admin') {
+      // Check if user is admin by querying user_roles table
+      const supabase = await createClient()
+      const { data: roleData } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .eq('is_active', true)
+        .maybeSingle()
+      
+      if (roleData?.role !== 'super_admin') {
         return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
       }
     }
@@ -80,8 +87,15 @@ export async function PATCH(
     }
 
     if (notification.user_id !== user.id) {
-      const role = user.raw_app_meta_data?.role
-      if (role !== 'super_admin') {
+      // Check if user is admin by querying user_roles table
+      const { data: roleData } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .eq('is_active', true)
+        .maybeSingle()
+      
+      if (roleData?.role !== 'super_admin') {
         return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
       }
     }

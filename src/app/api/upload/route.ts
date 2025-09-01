@@ -240,7 +240,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
     
     // Get user role
-    const userRole = user.raw_app_meta_data?.role || user.app_metadata?.role || null
+    const supabase = await createClient()
+    const { data: roleData } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .eq('is_active', true)
+      .maybeSingle()
+    const userRole = roleData?.role || 'customer'
     
     // Parse form data
     const formData = await request.formData()
@@ -400,7 +407,14 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
     }
     
     // Check if user has permission to delete this file
-    const userRole = user.raw_app_meta_data?.role || user.app_metadata?.role || null
+    const supabase = await createClient()
+    const { data: roleData } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .eq('is_active', true)
+      .maybeSingle()
+    const userRole = roleData?.role || 'customer'
     const permissionCheck = await checkUploadPermissions(user.id, userRole, bucket)
     
     if (!permissionCheck.allowed) {
@@ -476,7 +490,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       )
     }
     
-    const userRole = user.raw_app_meta_data?.role || user.app_metadata?.role || null
+    const supabase = await createClient()
+    const { data: roleData } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .eq('is_active', true)
+      .maybeSingle()
+    const userRole = roleData?.role || 'customer'
     
     // Get allowed buckets for this user
     const allowedBuckets: AllowedBucket[] = []

@@ -1,6 +1,8 @@
 'use server'
 
 import { signInWithEmail, signUpWithEmail, signOut, sendPasswordResetEmail, updatePassword, verifyOtp } from '@/lib/data-access/auth'
+import { requireCSRFToken } from '@/lib/data-access/security/csrf'
+import { createClient } from '@/lib/database/supabase/server'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 
@@ -39,6 +41,16 @@ const updatePasswordSchema = z.object({
  * Sign in server action
  */
 export async function signInAction(formData: FormData) {
+  // Validate CSRF token
+  try {
+    await requireCSRFToken(formData)
+  } catch (error) {
+    return {
+      success: false,
+      error: 'Security validation failed. Please refresh and try again.'
+    }
+  }
+
   const rawData = {
     email: formData.get('email') as string,
     password: formData.get('password') as string
@@ -72,8 +84,16 @@ export async function signInAction(formData: FormData) {
     }
   }
 
-  // Redirect based on user role
-  const role = user.raw_app_meta_data?.role || user.app_metadata?.role || 'customer'
+  // Get role from user_roles table instead of metadata
+  const supabase = await createClient()
+  const { data: roleData } = await supabase
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', user.id)
+    .eq('is_active', true)
+    .maybeSingle()
+  
+  const role = roleData?.role || 'customer'
   
   switch (role) {
     case 'super_admin':
@@ -93,6 +113,16 @@ export async function signInAction(formData: FormData) {
  * Sign up server action
  */
 export async function signUpAction(formData: FormData) {
+  // Validate CSRF token
+  try {
+    await requireCSRFToken(formData)
+  } catch (error) {
+    return {
+      success: false,
+      error: 'Security validation failed. Please refresh and try again.'
+    }
+  }
+
   const rawData = {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
@@ -252,8 +282,16 @@ export async function verifyOtpAction(formData: FormData) {
     }
   }
 
-  // Redirect based on user role
-  const role = user.raw_app_meta_data?.role || user.app_metadata?.role || 'customer'
+  // Get role from user_roles table instead of metadata
+  const supabase = await createClient()
+  const { data: roleData } = await supabase
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', user.id)
+    .eq('is_active', true)
+    .maybeSingle()
+  
+  const role = roleData?.role || 'customer'
   
   switch (role) {
     case 'super_admin':

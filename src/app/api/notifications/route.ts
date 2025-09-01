@@ -18,7 +18,15 @@ export async function GET(request: NextRequest) {
     // Verify user can access these notifications
     if (userId && userId !== user.id) {
       // Check if user is admin or staff that can view other's notifications
-      const role = user.raw_app_meta_data?.role
+      const supabase = await createClient()
+      const { data: roleData } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .eq('is_active', true)
+        .maybeSingle()
+      
+      const role = roleData?.role || 'customer'
       if (!['super_admin', 'salon_owner', 'location_manager'].includes(role)) {
         return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
       }
@@ -75,7 +83,15 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user has permission to send notifications
-    const role = user.raw_app_meta_data?.role
+    const supabase = await createClient()
+    const { data: roleData } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .eq('is_active', true)
+      .maybeSingle()
+    
+    const role = roleData?.role || 'customer'
     if (!['super_admin', 'salon_owner', 'location_manager', 'staff'].includes(role)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }

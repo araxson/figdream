@@ -134,12 +134,12 @@ export async function sendSMSNotification(payload: SMSPayload) {
 }
 
 /**
- * Send booking confirmation notification
+ * Send appointment confirmation notification
  */
-export async function sendBookingConfirmation(
-  bookingId: string,
+export async function sendAppointmentConfirmation(
+  appointmentId: string,
   customerId: string,
-  bookingDetails: {
+  appointmentDetails: {
     date: string
     time: string
     services: string[]
@@ -159,9 +159,9 @@ export async function sendBookingConfirmation(
   
   if (!customer) return
   
-  // Get notification preferences
+  // Get notification settings
   const { data: prefs } = await supabase
-    .from('notification_preferences')
+    .from('notification_settings')
     .select('*')
     .eq('user_id', customerId)
     .single()
@@ -169,43 +169,43 @@ export async function sendBookingConfirmation(
   // Send in-app notification
   await sendNotification({
     user_id: customerId,
-    title: 'Booking Confirmed!',
-    message: `Your appointment on ${bookingDetails.date} at ${bookingDetails.time} has been confirmed.`,
+    title: 'Appointment Confirmed!',
+    message: `Your appointment on ${appointmentDetails.date} at ${appointmentDetails.time} has been confirmed.`,
     type: 'booking',
-    action_url: `/customer/appointments/${bookingId}`
+    action_url: `/customer/appointments/${appointmentId}`
   })
   
   // Send email if enabled
-  if (prefs?.email_enabled && prefs?.booking_reminders) {
+  if (prefs?.email_notifications && prefs?.booking_confirmations) {
     const emailHtml = `
-      <h2>Booking Confirmation</h2>
+      <h2>Appointment Confirmation</h2>
       <p>Hi ${customer.first_name},</p>
       <p>Your appointment has been confirmed!</p>
-      <h3>Booking Details:</h3>
+      <h3>Appointment Details:</h3>
       <ul>
-        <li><strong>Date:</strong> ${bookingDetails.date}</li>
-        <li><strong>Time:</strong> ${bookingDetails.time}</li>
-        <li><strong>Services:</strong> ${bookingDetails.services.join(', ')}</li>
-        <li><strong>Staff:</strong> ${bookingDetails.staffName}</li>
-        <li><strong>Location:</strong> ${bookingDetails.locationName}</li>
-        <li><strong>Total:</strong> $${bookingDetails.totalPrice}</li>
+        <li><strong>Date:</strong> ${appointmentDetails.date}</li>
+        <li><strong>Time:</strong> ${appointmentDetails.time}</li>
+        <li><strong>Services:</strong> ${appointmentDetails.services.join(', ')}</li>
+        <li><strong>Staff:</strong> ${appointmentDetails.staffName}</li>
+        <li><strong>Location:</strong> ${appointmentDetails.locationName}</li>
+        <li><strong>Total:</strong> $${appointmentDetails.totalPrice}</li>
       </ul>
       <p>We look forward to seeing you!</p>
     `
     
     await sendEmailNotification({
       to: customer.email,
-      subject: 'Booking Confirmation - FigDream',
+      subject: 'Appointment Confirmation - FigDream',
       html: emailHtml,
-      text: `Your appointment on ${bookingDetails.date} at ${bookingDetails.time} has been confirmed.`
+      text: `Your appointment on ${appointmentDetails.date} at ${appointmentDetails.time} has been confirmed.`
     })
   }
   
   // Send SMS if enabled
-  if (prefs?.sms_enabled && prefs?.booking_reminders && customer.phone) {
+  if (prefs?.sms_notifications && prefs?.booking_confirmations && customer.phone) {
     await sendSMSNotification({
       to: customer.phone,
-      message: `FigDream: Your appointment on ${bookingDetails.date} at ${bookingDetails.time} is confirmed. Reply STOP to unsubscribe.`
+      message: `FigDream: Your appointment on ${appointmentDetails.date} at ${appointmentDetails.time} is confirmed. Reply STOP to unsubscribe.`
     })
   }
 }
@@ -214,25 +214,25 @@ export async function sendBookingConfirmation(
  * Send appointment reminder
  */
 export async function sendAppointmentReminder(
-  bookingId: string,
+  appointmentId: string,
   customerId: string,
   hoursBeforeAppointment: number = 24
 ) {
   const supabase = await createClient()
   
-  // Get booking details
-  const { data: booking } = await supabase
-    .from('bookings')
+  // Get appointment details
+  const { data: appointment } = await supabase
+    .from('appointments')
     .select(`
       *,
       location:locations(name, address, phone),
       staff:staff(profiles(first_name, last_name)),
-      booking_services(services(name))
+      appointment_services(services(name))
     `)
-    .eq('id', bookingId)
+    .eq('id', appointmentId)
     .single()
   
-  if (!booking) return
+  if (!appointment) return
   
   // Get customer details
   const { data: customer } = await supabase
@@ -251,36 +251,36 @@ export async function sendAppointmentReminder(
   await sendNotification({
     user_id: customerId,
     title: 'Appointment Reminder',
-    message: `Don't forget your appointment ${reminderMessage} at ${booking.start_time}`,
+    message: `Don't forget your appointment ${reminderMessage} at ${appointment.appointment_date}`,
     type: 'booking',
-    action_url: `/customer/appointments/${bookingId}`
+    action_url: `/customer/appointments/${appointmentId}`
   })
   
-  // Check preferences and send email/SMS
+  // Check notification settings and send email/SMS
   const { data: prefs } = await supabase
-    .from('notification_preferences')
+    .from('notification_settings')
     .select('*')
     .eq('user_id', customerId)
     .single()
   
-  if (prefs?.email_enabled) {
+  if (prefs?.email_notifications && prefs?.appointment_reminders) {
     await sendEmailNotification({
       to: customer.email,
       subject: `Reminder: Your appointment is ${reminderMessage}`,
       html: `
         <p>Hi ${customer.first_name},</p>
         <p>This is a reminder that you have an appointment ${reminderMessage}.</p>
-        <p><strong>Time:</strong> ${booking.start_time}</p>
-        <p><strong>Location:</strong> ${booking.location.name}</p>
+        <p><strong>Time:</strong> ${appointment.appointment_date}</p>
+        <p><strong>Location:</strong> ${appointment.location.name}</p>
         <p>See you soon!</p>
       `
     })
   }
   
-  if (prefs?.sms_enabled && customer.phone) {
+  if (prefs?.sms_notifications && prefs?.appointment_reminders && customer.phone) {
     await sendSMSNotification({
       to: customer.phone,
-      message: `Reminder: Your FigDream appointment is ${reminderMessage} at ${booking.start_time}`
+      message: `Reminder: Your FigDream appointment is ${reminderMessage} at ${appointment.appointment_date}`
     })
   }
 }
@@ -289,30 +289,30 @@ export async function sendAppointmentReminder(
  * Send review request after appointment
  */
 export async function sendReviewRequest(
-  bookingId: string,
+  appointmentId: string,
   customerId: string
 ) {
   const supabase = await createClient()
   
-  // Get booking and customer details
-  const { data: booking } = await supabase
-    .from('bookings')
+  // Get appointment and customer details
+  const { data: appointment } = await supabase
+    .from('appointments')
     .select(`
       *,
       location:locations(name),
       staff:staff(profiles(first_name, last_name))
     `)
-    .eq('id', bookingId)
+    .eq('id', appointmentId)
     .single()
   
-  if (!booking) return
+  if (!appointment) return
   
   await sendNotification({
     user_id: customerId,
     title: 'How was your experience?',
-    message: `We'd love to hear about your recent visit to ${booking.location.name}`,
+    message: `We'd love to hear about your recent visit to ${appointment.location.name}`,
     type: 'review',
-    action_url: `/customer/bookings/${bookingId}/review`
+    action_url: `/customer/appointments/${appointmentId}/review`
   })
 }
 
@@ -332,10 +332,11 @@ export async function sendMarketingNotification(
   
   // Get users with marketing preferences enabled
   const { data: users } = await supabase
-    .from('notification_preferences')
-    .select('user_id, email_enabled, sms_enabled, marketing_messages')
+    .from('notification_settings')
+    .select('user_id, email_notifications, sms_notifications, marketing_emails, marketing_sms')
     .in('user_id', userIds)
-    .eq('marketing_messages', true)
+    .where('marketing_emails', 'eq', true)
+    .or('marketing_sms', 'eq', true)
   
   if (!users || users.length === 0) return
   
@@ -351,7 +352,7 @@ export async function sendMarketingNotification(
   await supabase.from('notifications').insert(notifications)
   
   // Send emails to users with email enabled
-  const emailUsers = users.filter(u => u.email_enabled)
+  const emailUsers = users.filter(u => u.email_notifications && u.marketing_emails)
   if (emailUsers.length > 0) {
     // Batch send emails (implement batch logic based on email provider)
     // This is a simplified version

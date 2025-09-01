@@ -4,7 +4,7 @@ import { createClient } from '@/lib/database/supabase/server'
 import type { Database } from '@/types/database'
 import { getUserWithRole } from './verify'
 
-type UserRole = Database['public']['Enums']['user_role']
+type UserRole = Database['public']['Enums']['user_role_type']
 
 export interface RoleCheckResult {
   hasRole: boolean
@@ -140,12 +140,36 @@ export async function updateUserRole(userId: string, newRole: UserRole): Promise
 
     const supabase = await createClient()
     
-    // Update role in auth.users metadata
-    const { error } = await supabase.auth.admin.updateUserById(userId, {
-      raw_app_meta_data: {
-        role: newRole
+    // Check if user has existing role
+    const { data: existingRole } = await supabase
+      .from('user_roles')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('is_active', true)
+      .maybeSingle()
+    
+    if (existingRole) {
+      // Deactivate existing role
+      const { error: deactivateError } = await supabase
+        .from('user_roles')
+        .update({ is_active: false })
+        .eq('id', existingRole.id)
+      
+      if (deactivateError) {
+        return { success: false, error: 'Failed to deactivate existing role' }
       }
-    })
+    }
+    
+    // Create new role entry in user_roles table
+    const { error } = await supabase
+      .from('user_roles')
+      .insert({
+        user_id: userId,
+        role: newRole,
+        is_active: true,
+        permissions: {}, // Default permissions
+        assigned_by: (await supabase.auth.getUser()).data.user?.id
+      })
 
     if (error) {
       return { success: false, error: error.message }

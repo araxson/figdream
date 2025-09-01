@@ -6,9 +6,12 @@ This project uses automated tools to help Claude Code understand the codebase st
 
 ### Automatic Setup
 
-When you start a new conversation with Claude Code:
-1. A hook automatically generates `PROJECT_TREE.md` with current project statistics
-2. Claude should **ALWAYS** read `PROJECT_TREE.md` first to understand the project structure
+**IMPORTANT: The hook runs with EVERY message, not just at conversation start!**
+
+With EVERY message you send:
+1. The hook automatically regenerates `PROJECT_TREE.md` with fresh statistics
+2. Claude MUST read `PROJECT_TREE.md` with EVERY response to stay current
+3. This ensures Claude always has the latest project structure and changes
 
 ### Key Files to Check
 
@@ -81,7 +84,7 @@ npm run build
 
 ### 5. Supabase & Security
 - **CRITICAL:** Data Access Layer (DAL) is now MANDATORY for authentication (not middleware)
-- **CRITICAL:** Never use `user_metadata` in RLS policies - use `raw_app_meta_data` instead
+- **CRITICAL:** Never use `raw_app_meta_data` in RLS policies - use `raw_app_meta_data` instead
 - **FOLLOW:** Always use Row Level Security (RLS) policies
 - **FOLLOW:** Validate authentication on every server request using `supabase.auth.getUser()`
 - **FOLLOW:** Use `@supabase/ssr` package (auth-helpers are deprecated)
@@ -118,10 +121,19 @@ npm run build
 - **FOLLOW:** Stream responses using Suspense and loading.tsx
 - **AVOID:** Large JavaScript bundles in client components
 
-### 10. Testing Prohibition
-- **AVOID:** Adding ANY testing frameworks, libraries, or tools
+### 10. Testing & Performance Monitoring Prohibition
+- **CRITICAL:** Do NOT add ANY testing frameworks (jest, vitest, testing-library, cypress, playwright, etc.)
+- **CRITICAL:** Do NOT use web-vitals package or any web vitals monitoring
+- **CRITICAL:** Do NOT import or use web-vitals in any component
 - **AVOID:** Writing unit tests, integration tests, or e2e tests
 - **AVOID:** Creating test files or test configurations
+- **AVOID:** Adding performance monitoring packages
+
+### 11. Build System (Turbopack Only)
+- **MANDATORY:** Use Turbopack exclusively (configured with `next dev --turbo`)
+- **CRITICAL:** Do NOT use or configure Webpack
+- **AVOID:** Adding webpack plugins, loaders, or configurations
+- **NOTE:** Turbopack is already configured in package.json and next.config.ts
 
 ## Project Structure Overview
 
@@ -153,6 +165,3 @@ This project uses Claude Code hooks located in `.claude/hooks/`:
 - `user-prompt-submit-hook` - Generates fresh project tree at conversation start
 
 The hook ensures you always have up-to-date project statistics and structure information.
-
-
-As a Senior Front-End Developer and expert in Shadcn UI, ensure thorough double-checking. Remove duplicated styles, analyze the entire project’s UI, identify custom implementations for Shadcn components, and replace improper usages. Use components creatively, not rely on a few. Create a todo list for a comprehensive UI audit. Systematically review the codebase, focusing on key areas like components/ui/accordion.tsx, components/ui/alert-dialog.tsx, components/ui/alert.tsx, components/ui/aspect-ratio.tsx, components/ui/avatar.tsx, components/ui/badge.tsx, components/ui/breadcrumb.tsx, components/ui/button.tsx, components/ui/calendar.tsx, components/ui/card.tsx, components/ui/carousel.tsx, components/ui/chart.tsx, components/ui/checkbox.tsx, components/ui/collapsible.tsx, components/ui/command.tsx, components/ui/context-menu.tsx, components/ui/date-picker.tsx, components/ui/date-range-picker.tsx, components/ui/datetime-picker.tsx, components/ui/dialog.tsx, components/ui/drawer.tsx, components/ui/dropdown-menu.tsx, components/ui/form.tsx, components/ui/hover-card.tsx, components/ui/input-otp.tsx, components/ui/input.tsx, components/ui/label.tsx, components/ui/menubar.tsx, components/ui/navigation-menu.tsx, components/ui/pagination.tsx, components/ui/popover.tsx, components/ui/progress.tsx, components/ui/radio-gro Find common patterns in custom implementations where Shadcn components should be used. Fix the existing files instead of creating new ones. The previous developer was fired for not completing his job, so ensure you do your job properly. Avoid using animations; Shadcn UI components have their own. Remove duplicate styling (padding, borders, shadows, border-radius) added to Shadcn UI components where they’re used, as these components already have these styles built-in, causing conflicts.

@@ -11,15 +11,19 @@ python3 generate_project_tree.py 2>/dev/null || {
     echo "⚠️ Could not generate project tree. Python script may be missing."
 }
 
-# Check if PROJECT_TREE.md exists and remind Claude to read it
+# Check if PROJECT_TREE.md exists and instruct Claude to read it
 if [ -f "PROJECT_TREE.md" ]; then
     echo ""
-    echo "📋 IMPORTANT: Read PROJECT_TREE.md first to understand the project structure."
-    echo "   This file contains:"
-    echo "   • Total files and lines of code"
-    echo "   • File distribution by extension"
-    echo "   • Largest files in the project"
-    echo "   • Complete project tree structure"
+    echo "📋 MANDATORY ACTION FOR CLAUDE:"
+    echo "   1. Read PROJECT_TREE.md to get the latest project statistics"
+    echo "   2. Check for any structural changes since last message"
+    echo ""
+    echo "   The file has been freshly generated and contains:"
+    echo "   • Updated file and line counts"
+    echo "   • Current file distribution"
+    echo "   • Latest project structure"
+    echo ""
+    echo "⚠️  CLAUDE: You MUST read PROJECT_TREE.md with EVERY response to stay current."
     echo ""
 fi
 

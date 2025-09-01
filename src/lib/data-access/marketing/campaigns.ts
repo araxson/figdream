@@ -6,7 +6,7 @@
 'use server'
 
 import { createClient } from '@/lib/database/supabase/server'
-import { getUser } from '@/lib/data-access/auth'
+import { getUser, getUserRole } from '@/lib/data-access/auth'
 import type { Database } from '@/types/database'
 import { 
   createCampaignSchema,
@@ -27,7 +27,8 @@ type Campaign = Database['public']['Tables']['marketing_campaigns']['Row']
 type CampaignInsert = Database['public']['Tables']['marketing_campaigns']['Insert']
 type CampaignUpdate = Database['public']['Tables']['marketing_campaigns']['Update']
 
-type Segment = Database['public']['Tables']['customer_segments']['Row']
+// Note: customer_segments table does not exist in database
+// Segment functionality is currently not available
 type EmailTemplate = Database['public']['Tables']['email_templates']['Row']
 type SmsTemplate = Database['public']['Tables']['sms_templates']['Row']
 
@@ -52,7 +53,7 @@ export async function createCampaign(input: CreateCampaignInput): Promise<Campai
       .eq('id', validated.salon_id)
       .single()
     
-    if (!salon || (salon.owner_id !== user.id && user.raw_app_meta_data?.role !== 'super_admin')) {
+    if (!salon || (salon.owner_id !== user.id && getUserRole(user) !== 'super_admin')) {
       throw new Error('Unauthorized to create campaigns for this salon')
     }
 
@@ -114,7 +115,7 @@ export async function updateCampaign(input: UpdateCampaignInput): Promise<Campai
       .eq('id', campaign.salon_id)
       .single()
     
-    if (!salon || (salon.owner_id !== user.id && user.raw_app_meta_data?.role !== 'super_admin')) {
+    if (!salon || (salon.owner_id !== user.id && getUserRole(user) !== 'super_admin')) {
       throw new Error('Unauthorized to update this campaign')
     }
 
@@ -214,7 +215,7 @@ export async function createSegment(input: CreateSegmentInput): Promise<Segment 
       .eq('id', validated.salon_id)
       .single()
     
-    if (!salon || (salon.owner_id !== user.id && user.raw_app_meta_data?.role !== 'super_admin')) {
+    if (!salon || (salon.owner_id !== user.id && getUserRole(user) !== 'super_admin')) {
       throw new Error('Unauthorized to create segments for this salon')
     }
 
@@ -318,32 +319,14 @@ async function updateSegmentSize(segmentId: string): Promise<void> {
 
 /**
  * Get segments for a salon
+ * NOTE: customer_segments table does not exist in database
+ * This function returns empty array until table is created
  */
-export async function getSegments(salonId: string): Promise<Segment[]> {
-  const supabase = await createClient()
-  const { user } = await getUser()
-  
-  if (!user) {
-    throw new Error('Authentication required')
-  }
-
-  try {
-    const { data, error } = await supabase
-      .from('customer_segments')
-      .select('*')
-      .eq('salon_id', salonId)
-      .order('created_at', { ascending: false })
-
-    if (error) {
-      console.error('Error fetching segments:', error)
-      return []
-    }
-
-    return data || []
-  } catch (error) {
-    console.error('Error in getSegments:', error)
-    return []
-  }
+export async function getSegments(salonId: string): Promise<[]> {
+  // customer_segments table does not exist in database.types.ts
+  // Returning empty array until table is implemented
+  console.warn('customer_segments table not found in database schema')
+  return []
 }
 
 /**
@@ -367,7 +350,7 @@ export async function createEmailTemplate(input: CreateEmailTemplateInput): Prom
       .eq('id', validated.salon_id)
       .single()
     
-    if (!salon || (salon.owner_id !== user.id && user.raw_app_meta_data?.role !== 'super_admin')) {
+    if (!salon || (salon.owner_id !== user.id && getUserRole(user) !== 'super_admin')) {
       throw new Error('Unauthorized to create templates for this salon')
     }
 
@@ -413,7 +396,7 @@ export async function createSmsTemplate(input: CreateSmsTemplateInput): Promise<
       .eq('id', validated.salon_id)
       .single()
     
-    if (!salon || (salon.owner_id !== user.id && user.raw_app_meta_data?.role !== 'super_admin')) {
+    if (!salon || (salon.owner_id !== user.id && getUserRole(user) !== 'super_admin')) {
       throw new Error('Unauthorized to create templates for this salon')
     }
 
@@ -532,7 +515,7 @@ export async function sendCampaign(input: SendCampaignInput): Promise<{ success:
     }
 
     // Check permissions
-    if (campaign.salons.owner_id !== user.id && user.raw_app_meta_data?.role !== 'super_admin') {
+    if (campaign.salons.owner_id !== user.id && getUserRole(user) !== 'super_admin') {
       throw new Error('Unauthorized to send this campaign')
     }
 
@@ -667,7 +650,7 @@ export async function deleteCampaign(campaignId: string): Promise<boolean> {
       .eq('id', campaign.salon_id)
       .single()
     
-    if (!salon || (salon.owner_id !== user.id && user.raw_app_meta_data?.role !== 'super_admin')) {
+    if (!salon || (salon.owner_id !== user.id && getUserRole(user) !== 'super_admin')) {
       throw new Error('Unauthorized to delete this campaign')
     }
 

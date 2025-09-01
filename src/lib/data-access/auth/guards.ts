@@ -278,15 +278,23 @@ export async function ensureResourceAccess(
     return
   }
   
-  // Check resource-specific access
-  // This would typically involve database queries
-  // For now, we'll implement basic checks
+  // Check resource-specific access using proper database queries
+  // Import createClient at the top of the function if needed
+  const { createClient } = await import('@/lib/database/supabase/server')
+  const supabase = await createClient()
   
   switch (resourceType) {
     case 'salon':
       if (role === 'salon_owner') {
-        const userSalonId = user.app_metadata?.salon_id
-        if (userSalonId !== resourceId) {
+        // Get salon_id from user_roles table instead of metadata
+        const { data: userRole } = await supabase
+          .from('user_roles')
+          .select('salon_id')
+          .eq('user_id', user.id)
+          .eq('role', 'salon_owner')
+          .single()
+        
+        if (userRole?.salon_id !== resourceId) {
           redirect('/403')
         }
       }
@@ -294,8 +302,15 @@ export async function ensureResourceAccess(
       
     case 'location':
       if (role === 'location_manager') {
-        const userLocationId = user.app_metadata?.location_id
-        if (userLocationId !== resourceId) {
+        // Get location_id from user_roles table instead of metadata
+        const { data: userRole } = await supabase
+          .from('user_roles')
+          .select('location_id')
+          .eq('user_id', user.id)
+          .eq('role', 'location_manager')
+          .single()
+        
+        if (userRole?.location_id !== resourceId) {
           redirect('/403')
         }
       }
@@ -303,8 +318,14 @@ export async function ensureResourceAccess(
       
     case 'staff':
       if (role === 'staff') {
-        const userStaffId = user.app_metadata?.staff_id
-        if (userStaffId !== resourceId) {
+        // Check if user is the staff member
+        const { data: staffProfile } = await supabase
+          .from('staff_profiles')
+          .select('id')
+          .eq('user_id', user.id)
+          .single()
+        
+        if (staffProfile?.id !== resourceId) {
           redirect('/403')
         }
       }

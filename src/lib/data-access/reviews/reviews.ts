@@ -46,26 +46,26 @@ export async function createReview(input: CreateReviewInput): Promise<Review | n
     const validated = createReviewSchema.parse(input)
     
     // Verify customer can review this salon/service
-    if (validated.booking_id) {
-      const { data: booking } = await supabase
-        .from('bookings')
+    if (validated.appointment_id) {
+      const { data: appointment } = await supabase
+        .from('appointments')
         .select('id, customer_id, salon_id, status')
-        .eq('id', validated.booking_id)
+        .eq('id', validated.appointment_id)
         .single()
       
-      if (!booking || booking.customer_id !== user.id) {
-        throw new Error('Invalid booking or unauthorized')
+      if (!appointment || appointment.customer_id !== user.id) {
+        throw new Error('Invalid appointment or unauthorized')
       }
       
-      if (booking.status !== 'completed') {
-        throw new Error('Can only review completed bookings')
+      if (appointment.status !== 'completed') {
+        throw new Error('Can only review completed appointments')
       }
       
       // Check if already reviewed
       const { data: existingReview } = await supabase
         .from('reviews')
         .select('id')
-        .eq('booking_id', validated.booking_id)
+        .eq('appointment_id', validated.appointment_id)
         .single()
       
       if (existingReview) {
@@ -80,7 +80,7 @@ export async function createReview(input: CreateReviewInput): Promise<Review | n
         ...validated,
         customer_id: user.id,
         status: 'pending', // Reviews start as pending for moderation
-        verified_purchase: !!validated.booking_id,
+        verified_purchase: !!validated.appointment_id,
       })
       .select()
       .single()
@@ -348,8 +348,16 @@ export async function moderateReview(input: ModerateReviewInput): Promise<boolea
       .eq('id', review.salon_id)
       .single()
     
-    const userRole = user.raw_app_meta_data?.role
-    if (salon?.owner_id !== user.id && !['super_admin', 'salon_owner'].includes(userRole)) {
+    // Get user role from user_roles table
+    const { data: userRoleData } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .eq('salon_id', review.salon_id)
+      .single()
+    
+    const userRole = userRoleData?.role
+    if (salon?.owner_id !== user.id && !['super_admin', 'salon_owner'].includes(userRole || '')) {
       throw new Error('Unauthorized to moderate this review')
     }
     
@@ -431,8 +439,16 @@ export async function createReviewResponse(input: CreateReviewResponseInput): Pr
       .eq('id', review.salon_id)
       .single()
     
-    const userRole = user.raw_app_meta_data?.role
-    if (salon?.owner_id !== user.id && !['super_admin', 'salon_owner', 'location_manager'].includes(userRole)) {
+    // Get user role from user_roles table
+    const { data: userRoleData } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .eq('salon_id', review.salon_id)
+      .single()
+    
+    const userRole = userRoleData?.role
+    if (salon?.owner_id !== user.id && !['super_admin', 'salon_owner', 'location_manager'].includes(userRole || '')) {
       throw new Error('Unauthorized to respond to this review')
     }
     
@@ -503,34 +519,34 @@ export async function createReviewRequest(input: CreateReviewRequestInput): Prom
   try {
     const validated = createReviewRequestSchema.parse(input)
     
-    // Verify booking exists and is completed
-    const { data: booking } = await supabase
-      .from('bookings')
+    // Verify appointment exists and is completed
+    const { data: appointment } = await supabase
+      .from('appointments')
       .select('status, end_time, salon_id')
-      .eq('id', validated.booking_id)
+      .eq('id', validated.appointment_id)
       .single()
     
-    if (!booking) {
+    if (!appointment) {
       throw new Error('Booking not found')
     }
     
-    if (booking.status !== 'completed') {
-      throw new Error('Can only request reviews for completed bookings')
+    if (appointment.status !== 'completed') {
+      throw new Error('Can only request reviews for completed appointments')
     }
     
     // Check if request already exists
     const { data: existingRequest } = await supabase
       .from('review_requests')
       .select('id')
-      .eq('booking_id', validated.booking_id)
+      .eq('appointment_id', validated.appointment_id)
       .single()
     
     if (existingRequest) {
-      throw new Error('Review request already sent for this booking')
+      throw new Error('Review request already sent for this appointment')
     }
     
     // Calculate send time
-    const sendAt = new Date(booking.end_time)
+    const sendAt = new Date(appointment.end_time)
     sendAt.setDate(sendAt.getDate() + validated.schedule_days_after)
     
     // Create review request
@@ -707,7 +723,7 @@ async function updateStaffRatings(staffId: string): Promise<void> {
     
     // Update staff stats
     await supabase
-      .from('staff')
+      .from('staff_profiles')
       .update({
         review_count: stats.total_reviews,
         average_rating: stats.average_rating,

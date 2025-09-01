@@ -39,11 +39,25 @@ export async function getCurrentSession(): Promise<SessionUser | null> {
     return null
   }
   
+  // Get user metadata from database instead of raw_app_meta_data
+  const supabase = await createClient()
+  const { data: userRole } = await supabase
+    .from('user_roles')
+    .select('salon_id, location_id')
+    .eq('user_id', user.id)
+    .maybeSingle()
+  
+  const metadata: Record<string, unknown> = {}
+  if (userRole) {
+    if (userRole.salon_id) metadata.salon_id = userRole.salon_id
+    if (userRole.location_id) metadata.location_id = userRole.location_id
+  }
+  
   return {
     id: user.id,
     email: user.email || '',
     role: getUserRole(user),
-    metadata: user.user_metadata || {}
+    metadata
   }
 }
 
@@ -129,7 +143,15 @@ export async function getSessionSalonId(): Promise<string | null> {
   const user = await getCurrentUser()
   if (!user) return null
   
-  return user.app_metadata?.salon_id || null
+  // Get salon_id from user_roles table instead of raw_app_meta_data
+  const supabase = await createClient()
+  const { data: userRole } = await supabase
+    .from('user_roles')
+    .select('salon_id')
+    .eq('user_id', user.id)
+    .maybeSingle()
+  
+  return userRole?.salon_id || null
 }
 
 /**
@@ -139,7 +161,15 @@ export async function getSessionLocationId(): Promise<string | null> {
   const user = await getCurrentUser()
   if (!user) return null
   
-  return user.app_metadata?.location_id || null
+  // Get location_id from user_roles table instead of raw_app_meta_data
+  const supabase = await createClient()
+  const { data: userRole } = await supabase
+    .from('user_roles')
+    .select('location_id')
+    .eq('user_id', user.id)
+    .maybeSingle()
+  
+  return userRole?.location_id || null
 }
 
 /**
@@ -149,7 +179,15 @@ export async function getSessionStaffId(): Promise<string | null> {
   const user = await getCurrentUser()
   if (!user) return null
   
-  return user.app_metadata?.staff_id || null
+  // Get staff_id from staff_profiles table instead of raw_app_meta_data
+  const supabase = await createClient()
+  const { data: staffProfile } = await supabase
+    .from('staff_profiles')
+    .select('id')
+    .eq('user_id', user.id)
+    .maybeSingle()
+  
+  return staffProfile?.id || null
 }
 
 /**

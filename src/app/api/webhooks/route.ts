@@ -47,15 +47,31 @@ async function handleUserCreated(record: any): Promise<void> {
     const supabase = await createClient()
     
     // Create profile record for new user
+    // SECURITY: Do not use raw_app_meta_data (CVE-2025-29927)
+    // Extract safe metadata from raw_user_meta_data instead
     const { error } = await supabase
       .from('profiles')
       .insert({
         id: record.id,
         email: record.email,
-        full_name: record.raw_app_meta_data?.full_name || null,
-        phone: record.raw_app_meta_data?.phone || null,
-        role: record.raw_app_meta_data?.role || 'customer',
+        full_name: record.raw_user_meta_data?.full_name || null,
+        phone: record.raw_user_meta_data?.phone || null,
+        // Note: role is now stored in user_roles table, not profiles
       })
+    
+    if (!error) {
+      // Create user_roles entry for new user
+      // Default role should be 'customer' for security
+      const role = 'customer' // Never trust client-provided role data
+      await supabase
+        .from('user_roles')
+        .insert({
+          user_id: record.id,
+          role: role,
+          is_active: true,
+          permissions: {},
+        })
+    }
 
     if (error) {
       logCriticalError(
@@ -67,17 +83,22 @@ async function handleUserCreated(record: any): Promise<void> {
       console.log(`Profile created for user: ${record.id}`)
     }
 
-    // Create notification preferences with defaults
+    // Create notification settings with defaults
     const { error: notificationError } = await supabase
-      .from('notification_preferences')
+      .from('notification_settings')
       .insert({
         user_id: record.id,
-        email_bookings: true,
-        email_marketing: false,
-        sms_bookings: true,
-        sms_marketing: false,
-        push_bookings: true,
-        push_marketing: false,
+        email_notifications: true,
+        sms_notifications: true,
+        push_notifications: true,
+        marketing_emails: false,
+        marketing_sms: false,
+        appointment_reminders: true,
+        booking_confirmations: true,
+        review_requests: true,
+        loyalty_updates: true,
+        staff_notifications: false,
+        preferences: {},
       })
 
     if (notificationError) {
@@ -110,17 +131,17 @@ async function handleUserUpdated(record: any, oldRecord?: any): Promise<void> {
       updates.email = record.email
     }
     
-    if (record.raw_app_meta_data?.full_name !== oldRecord?.raw_app_meta_data?.full_name) {
-      updates.full_name = record.raw_app_meta_data?.full_name || null
+    // SECURITY: Use raw_user_meta_data instead of raw_app_meta_data (CVE-2025-29927)
+    if (record.raw_user_meta_data?.full_name !== oldRecord?.raw_user_meta_data?.full_name) {
+      updates.full_name = record.raw_user_meta_data?.full_name || null
     }
     
-    if (record.raw_app_meta_data?.phone !== oldRecord?.raw_app_meta_data?.phone) {
-      updates.phone = record.raw_app_meta_data?.phone || null
+    if (record.raw_user_meta_data?.phone !== oldRecord?.raw_user_meta_data?.phone) {
+      updates.phone = record.raw_user_meta_data?.phone || null
     }
     
-    if (record.raw_app_meta_data?.role !== oldRecord?.raw_app_meta_data?.role) {
-      updates.role = record.raw_app_meta_data?.role || 'customer'
-    }
+    // Role changes should be handled through proper admin endpoints
+    // Never allow role changes through webhooks for security
 
     if (Object.keys(updates).length > 0) {
       updates.updated_at = new Date().toISOString()

@@ -14,8 +14,15 @@ export async function POST(request: NextRequest) {
 
     // Verify user can mark these notifications as read
     if (userId !== user.id) {
-      const role = user.raw_app_meta_data?.role
-      if (role !== 'super_admin') {
+      const supabase = await createClient()
+      const { data: roleData } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .eq('is_active', true)
+        .maybeSingle()
+      
+      if (roleData?.role !== 'super_admin') {
         return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
       }
     }

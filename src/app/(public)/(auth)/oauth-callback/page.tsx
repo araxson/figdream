@@ -2,10 +2,17 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
-import { Progress } from '@/components/ui/progress'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Alert,
+  AlertDescription,
+  Button,
+  Progress,
+} from '@/components/ui'
 import { toast } from 'sonner'
 import { 
   Loader2, CheckCircle, XCircle, AlertTriangle, 

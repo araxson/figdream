@@ -1,8 +1,6 @@
 'use client'
 
-import { Card } from '@/components/ui/card'
-import { Progress } from '@/components/ui/progress'
-import { Badge } from '@/components/ui/badge'
+import { Card, Progress, Badge, Alert, AlertDescription } from '@/components/ui'
 import { 
   BarChart, 
   Bar, 
@@ -59,7 +57,7 @@ export function AuditStats({ stats }: AuditStatsProps) {
   return (
     <div className="space-y-6">
       {/* Activity Over Time */}
-      <Card className="p-6">
+      <Card>
         <h3 className="font-semibold mb-4">Activity Over Time</h3>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={dayData}>
@@ -80,7 +78,7 @@ export function AuditStats({ stats }: AuditStatsProps) {
 
       <div className="grid gap-6 md:grid-cols-2">
         {/* Actions Breakdown */}
-        <Card className="p-6">
+        <Card>
           <h3 className="font-semibold mb-4">Top Actions</h3>
           <div className="space-y-3">
             {actionData.map((item, index) => (
@@ -103,7 +101,7 @@ export function AuditStats({ stats }: AuditStatsProps) {
         </Card>
 
         {/* Entity Types */}
-        <Card className="p-6">
+        <Card>
           <h3 className="font-semibold mb-4">Entity Types</h3>
           <ResponsiveContainer width="100%" height={250}>
             <PieChart>
@@ -128,7 +126,7 @@ export function AuditStats({ stats }: AuditStatsProps) {
       </div>
 
       {/* Recent Activity Patterns */}
-      <Card className="p-6">
+      <Card>
         <h3 className="font-semibold mb-4">Activity Patterns</h3>
         <div className="grid gap-4 md:grid-cols-3">
           <div className="space-y-2">
@@ -162,47 +160,55 @@ export function AuditStats({ stats }: AuditStatsProps) {
       </Card>
 
       {/* Security Insights */}
-      <Card className="p-6">
+      <Card>
         <h3 className="font-semibold mb-4">Security Insights</h3>
         <div className="space-y-3">
           {stats.byAction['login'] && (
-            <div className="flex items-center justify-between p-3 rounded-lg border">
+            <Card>
+              <CardContent className="flex items-center justify-between p-3">
               <div>
                 <p className="font-medium">Login Attempts</p>
                 <p className="text-sm text-muted-foreground">Total authentication events</p>
               </div>
               <Badge variant="default">{stats.byAction['login']}</Badge>
-            </div>
+              </CardContent>
+            </Card>
           )}
           
           {stats.byAction['access_denied'] && (
-            <div className="flex items-center justify-between p-3 rounded-lg border border-red-200 bg-red-50">
-              <div>
-                <p className="font-medium text-red-900">Access Denied</p>
-                <p className="text-sm text-red-700">Unauthorized access attempts</p>
-              </div>
-              <Badge variant="destructive">{stats.byAction['access_denied']}</Badge>
-            </div>
+            <Alert variant="destructive">
+              <AlertDescription className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Access Denied</p>
+                  <p className="text-sm">Unauthorized access attempts</p>
+                </div>
+                <Badge variant="destructive">{stats.byAction['access_denied']}</Badge>
+              </AlertDescription>
+            </Alert>
           )}
           
           {stats.byAction['permission_change'] && (
-            <div className="flex items-center justify-between p-3 rounded-lg border">
+            <Card>
+              <CardContent className="flex items-center justify-between p-3">
               <div>
                 <p className="font-medium">Permission Changes</p>
                 <p className="text-sm text-muted-foreground">Role and permission updates</p>
               </div>
               <Badge variant="outline">{stats.byAction['permission_change']}</Badge>
-            </div>
+              </CardContent>
+            </Card>
           )}
 
           {!stats.byAction['access_denied'] && (
-            <div className="flex items-center justify-between p-3 rounded-lg border border-green-200 bg-green-50">
-              <div>
-                <p className="font-medium text-green-900">No Security Issues</p>
-                <p className="text-sm text-green-700">No unauthorized access attempts detected</p>
-              </div>
-              <Badge variant="outline" className="bg-green-100">Secure</Badge>
-            </div>
+            <Alert>
+              <AlertDescription className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium text-green-600">No Security Issues</p>
+                  <p className="text-sm text-muted-foreground">No unauthorized access attempts detected</p>
+                </div>
+                <Badge variant="outline" className="text-green-600 border-green-200">Secure</Badge>
+              </AlertDescription>
+            </Alert>
           )}
         </div>
       </Card>

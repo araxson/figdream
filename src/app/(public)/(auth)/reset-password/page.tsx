@@ -1,9 +1,7 @@
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Alert, AlertDescription, Button } from '@/components/ui'
 import { ResetPasswordForm } from '@/components/auth/reset-password-form'
 import { Lock, AlertTriangle } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 
 export default function ResetPasswordPage() {
   return (

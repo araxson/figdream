@@ -1,5 +1,5 @@
 import { Database } from '@/types/database.types'
-import { createServerClient } from '@/lib/database/supabase/server'
+import { createClient } from '@/lib/database/supabase/server'
 import { cache } from 'react'
 
 type SalonLocation = Database['public']['Tables']['salon_locations']['Row']
@@ -11,7 +11,7 @@ type ServiceLocationAvailability = Database['public']['Tables']['service_locatio
  * Get all locations for a salon
  */
 export const getSalonLocations = cache(async (salonId: string) => {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('salon_locations')
@@ -38,7 +38,7 @@ export const getSalonLocations = cache(async (salonId: string) => {
  * Get a single location by ID
  */
 export const getLocationById = cache(async (locationId: string) => {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('salon_locations')
@@ -69,7 +69,7 @@ export const getLocationById = cache(async (locationId: string) => {
  * Create a new salon location
  */
 export async function createSalonLocation(location: SalonLocationInsert) {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   // Check user permissions
   const { data: { user } } = await supabase.auth.getUser()
@@ -109,7 +109,7 @@ export async function updateSalonLocation(
   locationId: string,
   updates: SalonLocationUpdate
 ) {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   // Check user permissions
   const { data: { user } } = await supabase.auth.getUser()
@@ -143,7 +143,7 @@ export async function updateSalonLocation(
  * Delete a salon location
  */
 export async function deleteSalonLocation(locationId: string) {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   // Check user permissions
   const { data: { user } } = await supabase.auth.getUser()
@@ -181,7 +181,7 @@ export async function updateServiceAvailability(
   serviceId: string,
   isAvailable: boolean
 ) {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('service_location_availability')
@@ -205,7 +205,7 @@ export async function updateServiceAvailability(
  * Get location statistics
  */
 export const getLocationStats = cache(async (locationId: string) => {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   // Get appointment counts
   const today = new Date().toISOString().split('T')[0]
@@ -250,7 +250,7 @@ export const getLocationStats = cache(async (locationId: string) => {
  * Get available services at a location
  */
 export const getLocationServices = cache(async (locationId: string) => {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   // First get the salon_id for this location
   const { data: location } = await supabase
@@ -298,7 +298,7 @@ export async function cloneLocationSettings(
   sourceLocationId: string,
   targetLocationId: string
 ) {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   // Get source location service availability
   const { data: sourceServices } = await supabase

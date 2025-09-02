@@ -1,16 +1,30 @@
 'use client'
 
 import * as React from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Separator } from '@/components/ui/separator'
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Badge,
+  ScrollArea,
+  Skeleton,
+  Alert,
+  AlertDescription,
+  Input,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Checkbox,
+  Separator,
+  HoverCard,
+  HoverCardTrigger,
+  HoverCardContent,
+} from '@/components/ui'
+import { ServiceHoverCard } from '@/components/shared/hovers'
 import { 
   Search, 
   Clock, 
@@ -346,31 +360,33 @@ export function ServiceSelector({
     const duration = service.custom_duration || service.duration_minutes
 
     return (
-      <Card 
-        key={service.id}
-        className={cn(
-          "cursor-pointer transition-all hover:shadow-md",
-          selected && "ring-2 ring-primary border-primary",
-          disabled && "opacity-50 cursor-not-allowed"
-        )}
-        onClick={() => !disabled && handleServiceToggle(service)}
-      >
-        <CardContent>
-          <div className="flex items-start justify-between">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-2">
-                <Checkbox 
-                  checked={selected}
-                  readOnly
-                  className="pointer-events-none"
-                />
-                <h4 className="font-medium truncate">{service.name}</h4>
-                {service.category && (
-                  <Badge variant="outline" className="text-xs">
-                    {service.category.name}
-                  </Badge>
-                )}
-              </div>
+      <HoverCard>
+        <HoverCardTrigger asChild>
+          <Card 
+            key={service.id}
+            className={cn(
+              "cursor-pointer transition-all hover:shadow-md",
+              selected && "ring-2 ring-primary border-primary",
+              disabled && "opacity-50 cursor-not-allowed"
+            )}
+            onClick={() => !disabled && handleServiceToggle(service)}
+          >
+            <CardContent>
+              <div className="flex items-start justify-between">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Checkbox 
+                      checked={selected}
+                      readOnly
+                      className="pointer-events-none"
+                    />
+                    <h4 className="font-medium truncate">{service.name}</h4>
+                    {service.category && (
+                      <Badge variant="outline" className="text-xs">
+                        {service.category.name}
+                      </Badge>
+                    )}
+                  </div>
               
               {service.description && (
                 <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
@@ -421,6 +437,58 @@ export function ServiceSelector({
           </div>
         </CardContent>
       </Card>
+        </HoverCardTrigger>
+        <HoverCardContent className="w-80">
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <h4 className="font-semibold">{service.name}</h4>
+              {service.category && (
+                <Badge variant="outline" className="text-xs">
+                  {service.category.name}
+                </Badge>
+              )}
+            </div>
+            
+            {service.description && (
+              <p className="text-sm text-muted-foreground">{service.description}</p>
+            )}
+            
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="flex items-center gap-2">
+                <Clock className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <div className="font-medium">{duration} minutes</div>
+                  <div className="text-xs text-muted-foreground">Duration</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <div className="font-medium">${price}</div>
+                  <div className="text-xs text-muted-foreground">Price</div>
+                  {service.custom_price && service.price !== service.custom_price && (
+                    <div className="text-xs line-through">${service.price}</div>
+                  )}
+                </div>
+              </div>
+            </div>
+            
+            {service.requirements && (
+              <div>
+                <div className="text-sm font-medium mb-1">Requirements</div>
+                <p className="text-xs text-muted-foreground">{service.requirements}</p>
+              </div>
+            )}
+            
+            {service.benefits && (
+              <div>
+                <div className="text-sm font-medium mb-1">Benefits</div>
+                <p className="text-xs text-muted-foreground">{service.benefits}</p>
+              </div>
+            )}
+          </div>
+        </HoverCardContent>
+      </HoverCard>
     )
   }
 
@@ -570,7 +638,7 @@ export function ServiceSelector({
 
       {/* Selected Services Summary */}
       {internalSelectedServices.length > 0 && (
-        <Card className="border-primary">
+        <Card>
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-base">
               <CheckCircle className="h-5 w-5 text-primary" />

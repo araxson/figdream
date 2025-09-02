@@ -1,14 +1,29 @@
 'use client'
 
 import * as React from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Progress } from '@/components/ui/progress'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Skeleton } from '@/components/ui/skeleton'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Progress,
+  Badge,
+  Button,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Alert,
+  AlertDescription,
+  Skeleton,
+  Avatar,
+  AvatarFallback,
+} from '@/components/ui'
 import { 
   Star,
   TrendingUp,
@@ -333,9 +348,11 @@ export function ReviewStats({
                   )}
                 </div>
               </div>
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <MessageSquare className="h-4 w-4 text-primary" />
-              </div>
+              <Avatar className="h-8 w-8">
+                <AvatarFallback>
+                  <MessageSquare className="h-4 w-4" />
+                </AvatarFallback>
+              </Avatar>
             </div>
           </CardContent>
         </Card>
@@ -377,9 +394,11 @@ export function ReviewStats({
                   ))}
                 </div>
               </div>
-              <div className="p-2 bg-yellow-500/10 rounded-lg">
-                <Star className="h-4 w-4 text-yellow-600" />
-              </div>
+              <Avatar className="h-8 w-8">
+                <AvatarFallback>
+                  <Star className="h-4 w-4" />
+                </AvatarFallback>
+              </Avatar>
             </div>
           </CardContent>
         </Card>
@@ -390,13 +409,15 @@ export function ReviewStats({
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Response Rate</p>
                 <p className="text-2xl font-bold">{stats.responseRate}%</p>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-sm text-muted-foreground mt-1">
                   {stats.reviewsWithResponses} of {stats.totalReviews} reviews
                 </p>
               </div>
-              <div className="p-2 bg-green-500/10 rounded-lg">
-                <MessageSquare className="h-4 w-4 text-green-600" />
-              </div>
+              <Avatar className="h-8 w-8">
+                <AvatarFallback>
+                  <MessageSquare className="h-4 w-4" />
+                </AvatarFallback>
+              </Avatar>
             </div>
           </CardContent>
         </Card>
@@ -407,13 +428,15 @@ export function ReviewStats({
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Recent Activity</p>
                 <p className="text-2xl font-bold">{stats.recentReviews}</p>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-sm text-muted-foreground mt-1">
                   reviews this week
                 </p>
               </div>
-              <div className="p-2 bg-purple-500/10 rounded-lg">
-                <Activity className="h-4 w-4 text-purple-600" />
-              </div>
+              <Avatar className="h-8 w-8">
+                <AvatarFallback>
+                  <Activity className="h-4 w-4" />
+                </AvatarFallback>
+              </Avatar>
             </div>
           </CardContent>
         </Card>
@@ -534,13 +557,15 @@ export function ReviewStats({
         <Card>
           <CardContent>
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-500/10 rounded-lg">
-                <CheckCircle className="h-4 w-4 text-green-600" />
-              </div>
+              <Avatar className="h-8 w-8">
+                <AvatarFallback>
+                  <CheckCircle className="h-4 w-4" />
+                </AvatarFallback>
+              </Avatar>
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Verified Reviews</p>
                 <p className="text-2xl font-bold">{stats.verifiedReviews}</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-sm text-muted-foreground">
                   {stats.totalReviews > 0 
                     ? Math.round((stats.verifiedReviews / stats.totalReviews) * 100)
                     : 0
@@ -554,13 +579,15 @@ export function ReviewStats({
         <Card>
           <CardContent>
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <Camera className="h-4 w-4 text-primary" />
-              </div>
+              <Avatar className="h-8 w-8">
+                <AvatarFallback>
+                  <Camera className="h-4 w-4" />
+                </AvatarFallback>
+              </Avatar>
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Reviews with Photos</p>
                 <p className="text-2xl font-bold">{stats.reviewsWithPhotos}</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-sm text-muted-foreground">
                   {stats.totalReviews > 0 
                     ? Math.round((stats.reviewsWithPhotos / stats.totalReviews) * 100)
                     : 0
@@ -574,13 +601,15 @@ export function ReviewStats({
         <Card>
           <CardContent>
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-purple-500/10 rounded-lg">
-                <ThumbsUp className="h-4 w-4 text-purple-600" />
-              </div>
+              <Avatar className="h-8 w-8">
+                <AvatarFallback>
+                  <ThumbsUp className="h-4 w-4" />
+                </AvatarFallback>
+              </Avatar>
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Helpful Votes</p>
                 <p className="text-2xl font-bold">{stats.helpfulVotes}</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-sm text-muted-foreground">
                   {stats.totalReviews > 0 
                     ? (stats.helpfulVotes / stats.totalReviews).toFixed(1)
                     : 0
@@ -615,10 +644,10 @@ export function ReviewStats({
 
                 return (
                   <div key={index} className="flex flex-col items-center">
-                    <div className="text-xs text-muted-foreground mb-1">
+                    <div className="text-sm text-muted-foreground mb-1">
                       {data.reviews}
                     </div>
-                    <div className="w-full bg-muted rounded-t h-[60px] relative overflow-hidden">
+                    <div className="w-full h-[60px] relative">
                       <div 
                         className="bg-primary rounded-t absolute bottom-0 w-full"
                         style={{ 
@@ -709,7 +738,7 @@ export function ReviewStats({
             </SelectContent>
           </Select>
           <Button variant="outline" onClick={fetchStats} disabled={isLoading}>
-            <RefreshCw className={cn("h-4 w-4 mr-2", isLoading && "animate-spin")} />
+            {isLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />}
             Refresh
           </Button>
           <Button variant="outline">

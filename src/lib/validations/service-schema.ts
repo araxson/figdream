@@ -16,26 +16,26 @@ const colorHexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
 // const urlRegex = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/ // Reserved for future use
 
 // Service difficulty levels
-const ServiceDifficulty = z.enum(['beginner', 'intermediate', 'advanced', 'expert'], {
-  errorMap: () => ({ message: 'Invalid service difficulty level' })
+export const ServiceDifficulty = z.enum(['beginner', 'intermediate', 'advanced', 'expert'], {
+  message: 'Invalid service difficulty level'
 })
 
 // Service status
-const ServiceStatus = z.enum(['active', 'inactive', 'discontinued', 'seasonal'], {
-  errorMap: () => ({ message: 'Invalid service status' })
+export const ServiceStatus = z.enum(['active', 'inactive', 'discontinued', 'seasonal'], {
+  message: 'Invalid service status'
 })
 
 // Base validation schemas
 export const serviceIdSchema = z
-  .string({ required_error: 'Service ID is required' })
+  .string({ message: 'Service ID is required' })
   .regex(uuidRegex, 'Invalid service ID format')
 
 export const categoryIdSchema = z
-  .string({ required_error: 'Category ID is required' })
+  .string({ message: 'Category ID is required' })
   .regex(uuidRegex, 'Invalid category ID format')
 
 export const serviceNameSchema = z
-  .string({ required_error: 'Service name is required' })
+  .string({ message: 'Service name is required' })
   .min(1, 'Service name is required')
   .max(100, 'Service name must be less than 100 characters')
   .regex(/^[a-zA-Z0-9\s\-\'&\.!(),]+$/, 'Service name contains invalid characters')
@@ -51,7 +51,7 @@ export const serviceDescriptionSchema = z
   .transform((val) => val?.trim() || null)
 
 export const categoryNameSchema = z
-  .string({ required_error: 'Category name is required' })
+  .string({ message: 'Category name is required' })
   .min(1, 'Category name is required')
   .max(50, 'Category name must be less than 50 characters')
   .regex(/^[a-zA-Z0-9\s\-\'&\.!(),]+$/, 'Category name contains invalid characters')
@@ -330,7 +330,7 @@ export const staffServiceSchema = z.object({
 // Service package schema
 export const servicePackageSchema = z.object({
   name: z
-    .string({ required_error: 'Package name is required' })
+    .string({ message: 'Package name is required' })
     .min(1, 'Package name is required')
     .max(100, 'Package name must be less than 100 characters')
     .trim(),
@@ -380,7 +380,7 @@ export const servicePackageSchema = z.object({
 // Service addon schema
 export const serviceAddonSchema = z.object({
   name: z
-    .string({ required_error: 'Addon name is required' })
+    .string({ message: 'Addon name is required' })
     .min(1, 'Addon name is required')
     .max(100, 'Addon name must be less than 100 characters')
     .trim(),
@@ -547,17 +547,4 @@ export type ServiceReviewInput = z.infer<typeof serviceReviewSchema>
 export type ServiceUpdateInput = z.infer<typeof serviceUpdateSchema>
 export type ServiceCategoryUpdateInput = z.infer<typeof serviceCategoryUpdateSchema>
 
-// Export individual field schemas for reuse
-export {
-  ServiceDifficulty,
-  ServiceStatus,
-  serviceIdSchema,
-  categoryIdSchema,
-  serviceNameSchema,
-  serviceDescriptionSchema,
-  categoryNameSchema,
-  displayOrderSchema,
-  skillLevelSchema,
-  preparationTimeSchema,
-  cleanupTimeSchema
-}
+// Individual field schemas are already exported at their declaration

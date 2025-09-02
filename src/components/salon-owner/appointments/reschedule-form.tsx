@@ -2,12 +2,21 @@
 
 import { useState, useEffect } from 'react'
 import { Database } from '@/types/database.types'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
-import { Label } from '@/components/ui/label'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { ScrollArea } from '@/components/ui/scroll-area'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  Button,
+  Calendar,
+  Label,
+  RadioGroup,
+  RadioGroupItem,
+  ScrollArea,
+} from '@/components/ui'
 import { toast } from 'sonner'
 import { CalendarDays, Clock, Loader2 } from 'lucide-react'
 import { format } from 'date-fns'
@@ -198,7 +207,6 @@ export default function RescheduleAppointmentForm({
               onSelect={setSelectedDate}
               disabled={disabledDays}
               initialFocus
-              className="rounded-md border"
             />
           </div>
 
@@ -217,7 +225,7 @@ export default function RescheduleAppointmentForm({
                   <Loader2 className="h-6 w-6 animate-spin" />
                 </div>
               ) : availableSlots.length > 0 ? (
-                <ScrollArea className="h-64 rounded-md border p-4">
+                <ScrollArea className="h-64">
                   <RadioGroup value={selectedTime} onValueChange={setSelectedTime}>
                     <div className="grid grid-cols-2 gap-2">
                       {availableSlots.map((slot) => (

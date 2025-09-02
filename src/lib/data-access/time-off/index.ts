@@ -55,8 +55,8 @@ export async function createStaffTimeOff(timeOff: StaffTimeOffInsert) {
     throw new Error('Failed to create staff time off')
   }
 
-  revalidatePath('/salon-admin/staff/time-off')
-  revalidatePath('/staff/time-off')
+  revalidatePath('/salon-admin/staff/timeoff')
+  revalidatePath('/staff/timeoff')
   
   return data
 }
@@ -76,8 +76,8 @@ export async function updateStaffTimeOff(id: string, updates: StaffTimeOffUpdate
     throw new Error('Failed to update staff time off')
   }
 
-  revalidatePath('/salon-admin/staff/time-off')
-  revalidatePath('/staff/time-off')
+  revalidatePath('/salon-admin/staff/timeoff')
+  revalidatePath('/staff/timeoff')
   
   return data
 }
@@ -95,8 +95,8 @@ export async function deleteStaffTimeOff(id: string) {
     throw new Error('Failed to delete staff time off')
   }
 
-  revalidatePath('/salon-admin/staff/time-off')
-  revalidatePath('/staff/time-off')
+  revalidatePath('/salon-admin/staff/timeoff')
+  revalidatePath('/staff/timeoff')
   
   return { success: true }
 }
@@ -149,8 +149,8 @@ export async function createTimeOffRequest(request: TimeOffRequestInsert) {
     throw new Error('Failed to create time off request')
   }
 
-  revalidatePath('/salon-admin/staff/time-off/requests')
-  revalidatePath('/staff/time-off')
+  revalidatePath('/salon-admin/staff/timeoff/requests')
+  revalidatePath('/staff/timeoff')
   
   return data
 }
@@ -170,8 +170,8 @@ export async function updateTimeOffRequest(id: string, updates: TimeOffRequestUp
     throw new Error('Failed to update time off request')
   }
 
-  revalidatePath('/salon-admin/staff/time-off/requests')
-  revalidatePath('/staff/time-off')
+  revalidatePath('/salon-admin/staff/timeoff/requests')
+  revalidatePath('/staff/timeoff')
   
   return data
 }
@@ -220,8 +220,8 @@ export async function approveTimeOffRequest(id: string, approvedBy: string) {
     throw new Error('Failed to create staff time off entry')
   }
 
-  revalidatePath('/salon-admin/staff/time-off')
-  revalidatePath('/staff/time-off')
+  revalidatePath('/salon-admin/staff/timeoff')
+  revalidatePath('/staff/timeoff')
   
   return { success: true }
 }
@@ -243,8 +243,8 @@ export async function rejectTimeOffRequest(id: string, rejectedBy: string, rejec
     throw new Error('Failed to reject time off request')
   }
 
-  revalidatePath('/salon-admin/staff/time-off/requests')
-  revalidatePath('/staff/time-off')
+  revalidatePath('/salon-admin/staff/timeoff/requests')
+  revalidatePath('/staff/timeoff')
   
   return { success: true }
 }

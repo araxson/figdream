@@ -4,7 +4,7 @@ import { getUser } from '@/lib/data-access/auth'
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { user } = await getUser()
@@ -12,7 +12,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const notificationId = params.id
+    const { id: notificationId } = await params
     const supabase = await createClient()
 
     // Verify the notification belongs to the user

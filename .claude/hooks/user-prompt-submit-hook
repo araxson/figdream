@@ -7,7 +7,7 @@
 echo "📊 Generating fresh project tree for Claude..."
 
 # Generate the project tree
-python3 generate_project_tree.py 2>/dev/null || {
+python3 scripts/utilities/generate_project_tree.py 2>/dev/null || {
     echo "⚠️ Could not generate project tree. Python script may be missing."
 }
 

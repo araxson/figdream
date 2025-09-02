@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { logValidationError } from '@/lib/errors/logger'
+import { logValidationError } from '@/lib/utils/errors/logger'
 
 /**
  * Form validation error type

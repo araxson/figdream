@@ -1,12 +1,23 @@
 'use client'
 
+'use client'
+
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from "@/components/ui/resizable"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Calendar, Clock, Users, Package } from "lucide-react"
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+  Button
+} from "@/components/ui"
+import { Calendar, Clock, Users, Package, ChevronDown, ChevronUp } from "lucide-react"
+import { useState } from 'react'
 
 interface DashboardPanelsProps {
   stats: {
@@ -19,6 +30,9 @@ interface DashboardPanelsProps {
 }
 
 export function DashboardPanels({ stats, salonName }: DashboardPanelsProps) {
+  const [isStaffDetailsOpen, setIsStaffDetailsOpen] = useState(false)
+  const [isServiceDetailsOpen, setIsServiceDetailsOpen] = useState(false)
+  
   return (
     <ResizablePanelGroup
       direction="horizontal"
@@ -79,16 +93,39 @@ export function DashboardPanels({ stats, salonName }: DashboardPanelsProps) {
                 <CardContent>
                   <div className="text-2xl font-bold">{stats.activeStaff}</div>
                   <p className="text-xs text-muted-foreground">Currently working</p>
-                  <div className="mt-4 space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Available</span>
-                      <span className="font-medium">{Math.floor(stats.activeStaff * 0.6)}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Busy</span>
-                      <span className="font-medium">{Math.ceil(stats.activeStaff * 0.4)}</span>
-                    </div>
-                  </div>
+                  
+                  <Collapsible open={isStaffDetailsOpen} onOpenChange={setIsStaffDetailsOpen}>
+                    <CollapsibleTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="w-full justify-between mt-2 p-2 h-auto"
+                      >
+                        <span className="text-sm">Staff Details</span>
+                        {isStaffDetailsOpen ? (
+                          <ChevronUp className="h-3 w-3" />
+                        ) : (
+                          <ChevronDown className="h-3 w-3" />
+                        )}
+                      </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <div className="mt-2 space-y-2 border-t pt-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Available</span>
+                          <span className="font-medium">{Math.floor(stats.activeStaff * 0.6)}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Busy</span>
+                          <span className="font-medium">{Math.ceil(stats.activeStaff * 0.4)}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">On Break</span>
+                          <span className="font-medium">2</span>
+                        </div>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
                 </CardContent>
               </Card>
             </div>
@@ -108,16 +145,44 @@ export function DashboardPanels({ stats, salonName }: DashboardPanelsProps) {
                 <CardContent>
                   <div className="text-2xl font-bold">{stats.activeServices}</div>
                   <p className="text-xs text-muted-foreground">Available to book</p>
-                  <div className="mt-4 space-y-2">
-                    <div className="text-sm text-muted-foreground">
-                      Most popular today:
-                    </div>
-                    <div className="space-y-1">
-                      <div className="text-sm">• Haircut & Style</div>
-                      <div className="text-sm">• Hair Color</div>
-                      <div className="text-sm">• Manicure</div>
-                    </div>
-                  </div>
+                  
+                  <Collapsible open={isServiceDetailsOpen} onOpenChange={setIsServiceDetailsOpen}>
+                    <CollapsibleTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="w-full justify-between mt-2 p-2 h-auto"
+                      >
+                        <span className="text-sm">Service Details</span>
+                        {isServiceDetailsOpen ? (
+                          <ChevronUp className="h-3 w-3" />
+                        ) : (
+                          <ChevronDown className="h-3 w-3" />
+                        )}
+                      </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <div className="mt-2 space-y-2 border-t pt-2">
+                        <div className="text-sm text-muted-foreground">
+                          Most popular today:
+                        </div>
+                        <div className="space-y-1">
+                          <div className="flex justify-between text-sm">
+                            <span>• Haircut & Style</span>
+                            <span className="text-muted-foreground">12 booked</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span>• Hair Color</span>
+                            <span className="text-muted-foreground">8 booked</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span>• Manicure</span>
+                            <span className="text-muted-foreground">6 booked</span>
+                          </div>
+                        </div>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
                 </CardContent>
               </Card>
             </div>

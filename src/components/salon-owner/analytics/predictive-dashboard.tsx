@@ -1,10 +1,6 @@
 'use client'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Progress } from '@/components/ui/progress'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, Tabs, TabsContent, TabsList, TabsTrigger, Badge, Button, Progress } from '@/components/ui'
 import { 
   TrendingUp,
   TrendingDown,
@@ -290,40 +286,46 @@ export default function PredictiveDashboard({
               
               {/* Churn Statistics */}
               <div className="mt-6 grid gap-4 md:grid-cols-3">
-                <div className="border rounded-lg p-4 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Total Customers</span>
-                    <span className="font-semibold">{churnPrediction.statistics.totalCustomers}</span>
-                  </div>
-                  <Progress 
-                    value={100} 
-                    className="h-2"
-                  />
-                </div>
-                <div className="border rounded-lg p-4 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">At Risk</span>
-                    <span className="font-semibold text-orange-600">
-                      {churnPrediction.statistics.highRisk + churnPrediction.statistics.mediumRisk}
-                    </span>
-                  </div>
-                  <Progress 
-                    value={(churnPrediction.statistics.highRisk + churnPrediction.statistics.mediumRisk) / churnPrediction.statistics.totalCustomers * 100} 
-                    className="h-2"
-                  />
-                </div>
-                <div className="border rounded-lg p-4 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Safe</span>
-                    <span className="font-semibold text-green-600">
-                      {churnPrediction.statistics.lowRisk}
-                    </span>
-                  </div>
-                  <Progress 
-                    value={churnPrediction.statistics.lowRisk / churnPrediction.statistics.totalCustomers * 100} 
-                    className="h-2"
-                  />
-                </div>
+                <Card>
+                  <CardContent className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Total Customers</span>
+                      <span className="font-semibold">{churnPrediction.statistics.totalCustomers}</span>
+                    </div>
+                    <Progress 
+                      value={100} 
+                      className="h-2"
+                    />
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">At Risk</span>
+                      <span className="font-semibold text-orange-600">
+                        {churnPrediction.statistics.highRisk + churnPrediction.statistics.mediumRisk}
+                      </span>
+                    </div>
+                    <Progress 
+                      value={(churnPrediction.statistics.highRisk + churnPrediction.statistics.mediumRisk) / churnPrediction.statistics.totalCustomers * 100} 
+                      className="h-2"
+                    />
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Safe</span>
+                      <span className="font-semibold text-green-600">
+                        {churnPrediction.statistics.lowRisk}
+                      </span>
+                    </div>
+                    <Progress 
+                      value={churnPrediction.statistics.lowRisk / churnPrediction.statistics.totalCustomers * 100} 
+                      className="h-2"
+                    />
+                  </CardContent>
+                </Card>
               </div>
 
               {/* Action Recommendations */}
@@ -363,28 +365,30 @@ export default function PredictiveDashboard({
               {/* Projection Details */}
               <div className="mt-6 space-y-3">
                 {revenueProjection.projections.map((month) => (
-                  <div key={month.month} className="border rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-medium">{month.month}</span>
-                      <Badge variant="outline" className="text-xs">
-                        {month.confidence}% confidence
-                      </Badge>
-                    </div>
-                    <div className="grid grid-cols-3 gap-4 text-sm">
-                      <div>
-                        <p className="text-muted-foreground">Pessimistic</p>
-                        <p className="font-semibold">{formatCurrency(month.pessimistic)}</p>
+                  <Card key={month.month}>
+                    <CardContent>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-medium">{month.month}</span>
+                        <Badge variant="outline" className="text-xs">
+                          {month.confidence}% confidence
+                        </Badge>
                       </div>
-                      <div>
-                        <p className="text-muted-foreground">Expected</p>
-                        <p className="font-semibold text-primary">{formatCurrency(month.projected)}</p>
+                      <div className="grid grid-cols-3 gap-4 text-sm">
+                        <div>
+                          <p className="text-muted-foreground">Pessimistic</p>
+                          <p className="font-semibold">{formatCurrency(month.pessimistic)}</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Expected</p>
+                          <p className="font-semibold text-primary">{formatCurrency(month.projected)}</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Optimistic</p>
+                          <p className="font-semibold text-green-600">{formatCurrency(month.optimistic)}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-muted-foreground">Optimistic</p>
-                        <p className="font-semibold text-green-600">{formatCurrency(month.optimistic)}</p>
-                      </div>
-                    </div>
-                  </div>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
 
@@ -421,32 +425,36 @@ export default function PredictiveDashboard({
               
               {/* Staffing Insights */}
               <div className="mt-6 grid gap-4 md:grid-cols-2">
-                <div className="border rounded-lg p-4 space-y-3">
-                  <h4 className="text-sm font-medium">Staffing Insights</h4>
-                  <ul className="space-y-2">
-                    {staffingOptimization.insights.map((insight: string, index: number) => (
-                      <li key={index} className="text-sm text-muted-foreground flex items-start gap-2">
-                        <span className="text-primary">•</span>
-                        {insight}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                <Card>
+                  <CardContent className="space-y-3">
+                    <h4 className="text-sm font-medium">Staffing Insights</h4>
+                    <ul className="space-y-2">
+                      {staffingOptimization.insights.map((insight: string, index: number) => (
+                        <li key={index} className="text-sm text-muted-foreground flex items-start gap-2">
+                          <span className="text-primary">•</span>
+                          {insight}
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
                 
-                <div className="border rounded-lg p-4 space-y-3">
-                  <h4 className="text-sm font-medium">Optimization Actions</h4>
-                  <div className="space-y-2">
-                    <Button variant="outline" size="sm" className="w-full justify-start">
-                      Adjust staff schedules for peak days
-                    </Button>
-                    <Button variant="outline" size="sm" className="w-full justify-start">
-                      Request overtime for understaffed periods
-                    </Button>
-                    <Button variant="outline" size="sm" className="w-full justify-start">
-                      Cross-train staff for flexibility
-                    </Button>
-                  </div>
-                </div>
+                <Card>
+                  <CardContent className="space-y-3">
+                    <h4 className="text-sm font-medium">Optimization Actions</h4>
+                    <div className="space-y-2">
+                      <Button variant="outline" size="sm" className="w-full justify-start">
+                        Adjust staff schedules for peak days
+                      </Button>
+                      <Button variant="outline" size="sm" className="w-full justify-start">
+                        Request overtime for understaffed periods
+                      </Button>
+                      <Button variant="outline" size="sm" className="w-full justify-start">
+                        Cross-train staff for flexibility
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             </CardContent>
           </Card>

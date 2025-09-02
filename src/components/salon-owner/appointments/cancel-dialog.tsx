@@ -12,13 +12,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
+  Button,
+  Textarea,
+  Label,
+  Alert,
+  AlertDescription,
+} from '@/components/ui'
 import { toast } from 'sonner'
 import { X, AlertTriangle } from 'lucide-react'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 
 type Appointment = Database['public']['Tables']['appointments']['Row']
 

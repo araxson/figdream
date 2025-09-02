@@ -1,7 +1,14 @@
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  Button,
+  Separator,
+} from '@/components/ui'
 import { RegisterForm } from '@/components/auth/register-form'
 import { User, Calendar, Heart, Gift, ChevronRight } from 'lucide-react'
 

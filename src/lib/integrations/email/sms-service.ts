@@ -5,7 +5,7 @@
 
 import twilio from 'twilio'
 import { createClient } from '@/lib/database/supabase/server'
-import type { Database } from '@/types/database'
+import type { Database } from '@/types/database.types'
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID!
 const authToken = process.env.TWILIO_AUTH_TOKEN!

@@ -2,15 +2,15 @@
 
 import { useState, useTransition, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import {
+  Button,
+  Input,
+  Label,
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
   InputOTPSeparator,
-} from '@/components/ui/input-otp'
+} from '@/components/ui'
 import { toast } from 'sonner'
 import { Loader2, Mail, CheckCircle, RefreshCw } from 'lucide-react'
 import { verifyOtpAction } from '@/app/_actions/auth'
@@ -124,9 +124,11 @@ export function VerifyEmailForm() {
     return (
       <div className="text-center py-8 space-y-4">
         <div className="flex justify-center">
-          <div className="p-3 bg-green-100 dark:bg-green-900/20 rounded-full">
-            <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
-          </div>
+          <Card className="w-fit">
+            <CardContent className="p-3 flex items-center justify-center bg-green-100 dark:bg-green-900/20">
+              <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
+            </CardContent>
+          </Card>
         </div>
         <div className="space-y-2">
           <h3 className="text-lg font-semibold">Email Verified!</h3>

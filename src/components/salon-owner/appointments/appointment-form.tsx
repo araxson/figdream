@@ -2,20 +2,23 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { TimePicker } from '@/components/ui/time-picker'
-import { DatetimePicker } from '@/components/ui/datetime-picker'
-import { Calendar } from '@/components/ui/calendar'
-import {
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardHeader, 
+  CardTitle, 
+  Button, 
+  Label, 
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
+  Textarea,
+  Checkbox,
+  DateTimePicker
+} from '@/components/ui'
 import { toast } from 'sonner'
 import { CalendarIcon, Clock, User, Scissors, DollarSign, FileText } from 'lucide-react'
 import { format } from 'date-fns'
@@ -37,28 +40,28 @@ export function AppointmentForm({
   const [isSubmitting, setIsSubmitting] = useState(false)
   
   // Form state
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
-  const [startTime, setStartTime] = useState('')
-  const [endTime, setEndTime] = useState('')
+  const [startDateTime, setStartDateTime] = useState<Date | undefined>(new Date())
+  const [endDateTime, setEndDateTime] = useState<Date | undefined>()
   const [selectedCustomer, setSelectedCustomer] = useState('')
   const [selectedStaff, setSelectedStaff] = useState('')
   const [selectedServices, setSelectedServices] = useState<string[]>([])
   const [notes, setNotes] = useState('')
 
-  const calculateEndTime = (start: string, serviceIds: string[]) => {
-    if (!start || serviceIds.length === 0) return ''
-    
-    const totalDuration = serviceIds.reduce((total, id) => {
+  const calculateTotalDuration = (serviceIds: string[]) => {
+    return serviceIds.reduce((total, id) => {
       const service = services.find(s => s.id === id)
       return total + (service?.duration || 0)
     }, 0)
+  }
+
+  const calculateEndDateTime = (startDate: Date, serviceIds: string[]) => {
+    if (!startDate || serviceIds.length === 0) return undefined
     
-    const [hour, minute] = start.split(':').map(Number)
-    const totalMinutes = hour * 60 + minute + totalDuration
-    const endHour = Math.floor(totalMinutes / 60)
-    const endMinute = totalMinutes % 60
+    const totalDuration = calculateTotalDuration(serviceIds)
+    const endDate = new Date(startDate)
+    endDate.setMinutes(endDate.getMinutes() + totalDuration)
     
-    return `${endHour.toString().padStart(2, '0')}:${endMinute.toString().padStart(2, '0')}`
+    return endDate
   }
 
   const handleServiceChange = (serviceId: string) => {
@@ -69,15 +72,17 @@ export function AppointmentForm({
     setSelectedServices(newServices)
     
     // Auto-calculate end time
-    if (startTime) {
-      setEndTime(calculateEndTime(startTime, newServices))
+    if (startDateTime) {
+      const endDate = calculateEndDateTime(startDateTime, newServices)
+      setEndDateTime(endDate)
     }
   }
 
-  const handleStartTimeChange = (time: string) => {
-    setStartTime(time)
-    if (selectedServices.length > 0) {
-      setEndTime(calculateEndTime(time, selectedServices))
+  const handleStartDateTimeChange = (date: Date | undefined) => {
+    setStartDateTime(date)
+    if (date && selectedServices.length > 0) {
+      const endDate = calculateEndDateTime(date, selectedServices)
+      setEndDateTime(endDate)
     }
   }
 
@@ -90,7 +95,7 @@ export function AppointmentForm({
 
   const handleSubmit = async () => {
     // Validation
-    if (!selectedDate || !startTime || !selectedCustomer || !selectedStaff || selectedServices.length === 0) {
+    if (!startDateTime || !selectedCustomer || !selectedStaff || selectedServices.length === 0) {
       toast.error('Please fill in all required fields')
       return
     }
@@ -104,10 +109,13 @@ export function AppointmentForm({
         customer_id: selectedCustomer,
         staff_id: selectedStaff,
         services: selectedServices,
-        date: format(selectedDate, 'yyyy-MM-dd'),
-        start_time: startTime,
-        end_time: endTime,
+        date: format(startDateTime, 'yyyy-MM-dd'),
+        start_time: format(startDateTime, 'HH:mm:ss'),
+        end_time: endDateTime ? format(endDateTime, 'HH:mm:ss') : '',
+        appointment_date: startDateTime.toISOString(),
+        end_date: endDateTime?.toISOString(),
         total_price: calculateTotalPrice(),
+        total_duration: calculateTotalDuration(selectedServices),
         notes,
         status: 'confirmed'
       }
@@ -135,36 +143,42 @@ export function AppointmentForm({
           <CardDescription>Select date, time, and customer</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label>Date</Label>
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={setSelectedDate}
-              disabled={(date) => date < new Date()}
-              className="rounded-md border"
-            />
-          </div>
-          
-          <div className="grid gap-4 md:grid-cols-2">
-            <TimePicker
-              label="Start Time"
-              value={startTime}
-              onChange={handleStartTimeChange}
+          <div className="grid gap-4 lg:grid-cols-2">
+            <DateTimePicker
+              label="Start Date & Time"
+              placeholder="Select appointment start"
+              value={startDateTime}
+              onChange={handleStartDateTimeChange}
+              minDate={new Date()}
               minTime="09:00"
               maxTime="18:00"
               interval={15}
             />
             
-            <TimePicker
-              label="End Time"
-              value={endTime}
-              onChange={setEndTime}
-              minTime="09:00"
-              maxTime="19:00"
-              interval={15}
-              disabled
-            />
+            <div className="space-y-2">
+              <Label>End Date & Time</Label>
+              <div className="p-3 rounded-md border bg-muted/50">
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <div>
+                    {endDateTime ? (
+                      <div>
+                        <p className="font-medium">
+                          {format(endDateTime, "MMM dd, yyyy 'at' h:mm a")}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Duration: {calculateTotalDuration(selectedServices)} minutes
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">
+                        Select services to calculate end time
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           
           <div className="space-y-2">
@@ -220,15 +234,16 @@ export function AppointmentForm({
             <div className="space-y-2 rounded-md border p-4">
               {services.map(service => (
                 <div key={service.id} className="flex items-center justify-between">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
+                  <div className="flex items-center gap-2">
+                    <Checkbox
+                      id={service.id}
                       checked={selectedServices.includes(service.id)}
-                      onChange={() => handleServiceChange(service.id)}
-                      className="rounded border-gray-300"
+                      onCheckedChange={() => handleServiceChange(service.id)}
                     />
-                    <span>{service.name}</span>
-                  </label>
+                    <Label htmlFor={service.id} className="cursor-pointer">
+                      {service.name}
+                    </Label>
+                  </div>
                   <div className="flex items-center gap-4 text-sm text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <Clock className="h-3 w-3" />

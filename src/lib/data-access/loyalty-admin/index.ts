@@ -1,5 +1,5 @@
 import { Database } from '@/types/database.types'
-import { createServerClient } from '@/lib/database/supabase/server'
+import { createClient } from '@/lib/database/supabase/server'
 import { cache } from 'react'
 
 type LoyaltyProgram = Database['public']['Tables']['loyalty_programs']['Row']
@@ -11,7 +11,7 @@ type Customer = Database['public']['Tables']['customers']['Row']
  * Get loyalty program configuration for a salon
  */
 export const getLoyaltyProgram = cache(async (salonId: string) => {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('loyalty_programs')
@@ -34,7 +34,7 @@ export async function upsertLoyaltyProgram(
   salonId: string,
   program: Partial<LoyaltyProgram>
 ) {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Unauthorized')
@@ -61,7 +61,7 @@ export async function upsertLoyaltyProgram(
  * Get customer points balance
  */
 export const getCustomerPoints = cache(async (customerId: string, salonId: string) => {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('loyalty_points_ledger')
@@ -102,7 +102,7 @@ export async function adjustCustomerPoints(
     reference_type?: string
   }
 ) {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Unauthorized')
@@ -143,7 +143,7 @@ export async function adjustCustomerPoints(
     .insert({
       customer_id: customerId,
       salon_id: salonId,
-      transaction_type: adjustment.type,
+      type: adjustment.type,
       points: adjustment.points,
       balance_after: newBalance,
       description: adjustment.description,
@@ -182,16 +182,17 @@ export const getLoyaltyTransactions = cache(async (
     offset?: number
   }
 ) => {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   let query = supabase
     .from('loyalty_transactions')
     .select(`
       *,
-      customers (
+      profiles!loyalty_transactions_customer_id_fkey (
         id,
         first_name,
         last_name,
+        full_name,
         email
       )
     `, { count: 'exact' })
@@ -211,7 +212,7 @@ export const getLoyaltyTransactions = cache(async (
   }
   
   if (filters?.type) {
-    query = query.eq('transaction_type', filters.type)
+    query = query.eq('type', filters.type)
   }
   
   if (filters?.limit) {
@@ -236,7 +237,7 @@ export const getLoyaltyTransactions = cache(async (
  * Get loyalty program statistics
  */
 export const getLoyaltyStats = cache(async (salonId: string) => {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   const [program, ledger, transactions] = await Promise.all([
     // Get program config
@@ -251,7 +252,7 @@ export const getLoyaltyStats = cache(async (salonId: string) => {
     // Get recent transactions
     supabase
       .from('loyalty_transactions')
-      .select('points, transaction_type')
+      .select('points, type')
       .eq('salon_id', salonId)
       .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
   ])
@@ -262,11 +263,11 @@ export const getLoyaltyStats = cache(async (salonId: string) => {
   
   // Calculate monthly activity
   const monthlyEarned = transactions.data
-    ?.filter(t => t.transaction_type === 'earned')
+    ?.filter(t => t.type === 'earned')
     .reduce((sum, t) => sum + t.points, 0) || 0
   
   const monthlyRedeemed = transactions.data
-    ?.filter(t => t.transaction_type === 'redeemed')
+    ?.filter(t => t.type === 'redeemed')
     .reduce((sum, t) => sum + Math.abs(t.points), 0) || 0
 
   // Calculate tier distribution
@@ -301,16 +302,17 @@ export const getLoyaltyStats = cache(async (salonId: string) => {
  * Get top loyalty customers
  */
 export const getTopLoyaltyCustomers = cache(async (salonId: string, limit = 10) => {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('loyalty_points_ledger')
     .select(`
       *,
-      customers (
+      profiles!loyalty_points_ledger_customer_id_fkey (
         id,
         first_name,
         last_name,
+        full_name,
         email,
         phone
       )
@@ -339,7 +341,7 @@ export const searchLoyaltyCustomers = cache(async (
   salonId: string,
   search: string
 ) => {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('customers')
@@ -375,7 +377,7 @@ export async function bulkAdjustPoints(
     description: string
   }>
 ) {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Unauthorized')
@@ -405,9 +407,16 @@ export async function bulkAdjustPoints(
 
 /**
  * Get loyalty rewards for a salon
+ * NOTE: loyalty_rewards table does not exist in database
+ * This function is non-functional until the table is created
  */
 export const getLoyaltyRewards = cache(async (salonId: string) => {
-  const supabase = await createServerClient()
+  // WARNING: loyalty_rewards table doesn't exist in database
+  console.warn('getLoyaltyRewards called but loyalty_rewards table does not exist in database')
+  return []
+  
+  /* Commented out until loyalty_rewards table is created
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('loyalty_rewards')
@@ -421,4 +430,5 @@ export const getLoyaltyRewards = cache(async (salonId: string) => {
   }
 
   return data || []
+  */
 })

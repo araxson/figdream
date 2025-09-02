@@ -19,7 +19,7 @@ import {
   formatAmountForStripe,
   formatAmountFromStripe
 } from '@/lib/integrations/stripe/server'
-import type { Database } from '@/types/database'
+import type { Database } from '@/types/database.types'
 import type Stripe from 'stripe'
 
 type PaymentRow = Database['public']['Tables']['payments']['Row']

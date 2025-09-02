@@ -1,14 +1,14 @@
 'use client'
 
-import { Badge } from '@/components/ui/badge'
 import {
+  Badge,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@/components/ui'
 import { 
   Users,
   AlertCircle,

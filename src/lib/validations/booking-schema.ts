@@ -4,10 +4,13 @@
  */
 
 import { z } from 'zod'
+import { locationIdSchema } from './salon-schema'
+import { serviceIdSchema } from './service-schema'
+import { userIdSchema } from './user-schema'
 
 // Booking status enum
 const BookingStatus = z.enum(['pending', 'confirmed', 'cancelled', 'completed', 'no_show'], {
-  errorMap: () => ({ message: 'Invalid booking status' })
+  message: 'Invalid booking status'
 })
 
 // Time format regex (HH:MM or HH:MM:SS)
@@ -19,20 +22,10 @@ const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[
 
 // Base validation schemas
 export const bookingIdSchema = z
-  .string({ required_error: 'Booking ID is required' })
+  .string()
   .regex(uuidRegex, 'Invalid booking ID format')
 
-export const userIdSchema = z
-  .string({ required_error: 'User ID is required' })
-  .regex(uuidRegex, 'Invalid user ID format')
-
-export const locationIdSchema = z
-  .string({ required_error: 'Location ID is required' })
-  .regex(uuidRegex, 'Invalid location ID format')
-
-export const serviceIdSchema = z
-  .string({ required_error: 'Service ID is required' })
-  .regex(uuidRegex, 'Invalid service ID format')
+// Import these from salon-schema to avoid duplicate exports
 
 export const staffIdSchema = z
   .string()
@@ -43,7 +36,7 @@ export const staffIdSchema = z
   })
 
 export const bookingDateSchema = z
-  .string({ required_error: 'Booking date is required' })
+  .string()
   .regex(dateRegex, 'Date must be in YYYY-MM-DD format')
   .refine((date) => {
     const bookingDate = new Date(date)
@@ -63,7 +56,7 @@ export const bookingDateSchema = z
   })
 
 export const timeSchema = z
-  .string({ required_error: 'Time is required' })
+  .string()
   .regex(timeRegex, 'Time must be in HH:MM format')
   .refine((time) => {
     const [hours, minutes] = time.split(':').map(Number)
@@ -73,13 +66,13 @@ export const timeSchema = z
   })
 
 export const priceSchema = z
-  .number({ required_error: 'Price is required' })
+  .number()
   .min(0, 'Price cannot be negative')
   .max(10000, 'Price cannot exceed $10,000')
   .multipleOf(0.01, 'Price must have at most 2 decimal places')
 
 export const durationSchema = z
-  .number({ required_error: 'Duration is required' })
+  .number()
   .min(15, 'Service duration must be at least 15 minutes')
   .max(480, 'Service duration cannot exceed 8 hours')
   .multipleOf(15, 'Duration must be in 15-minute increments')
@@ -109,7 +102,7 @@ export const createBookingSchema = z.object({
   booking_date: bookingDateSchema,
   start_time: timeSchema,
   services: z
-    .array(bookingServiceSchema, { required_error: 'At least one service is required' })
+    .array(bookingServiceSchema)
     .min(1, 'At least one service is required')
     .max(10, 'Cannot book more than 10 services at once'),
   notes: notesSchema,
@@ -392,18 +385,3 @@ export type BookingServiceInput = z.infer<typeof bookingServiceSchema>
 // Update type exports
 export type CreateBookingUpdateInput = z.infer<typeof createBookingUpdateSchema>
 export type UpdateBookingPartialInput = z.infer<typeof updateBookingPartialSchema>
-
-// Export individual field schemas for reuse
-export {
-  BookingStatus,
-  bookingIdSchema,
-  userIdSchema,
-  locationIdSchema,
-  serviceIdSchema,
-  staffIdSchema,
-  bookingDateSchema,
-  timeSchema,
-  priceSchema,
-  durationSchema,
-  notesSchema
-}

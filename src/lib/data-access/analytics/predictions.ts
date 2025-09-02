@@ -1,5 +1,5 @@
 import { Database } from '@/types/database.types'
-import { createServerClient } from '@/lib/database/supabase/server'
+import { createClient } from '@/lib/database/supabase/server'
 import { cache } from 'react'
 import { addDays, addWeeks, addMonths, startOfDay, endOfDay, format } from 'date-fns'
 
@@ -7,7 +7,7 @@ import { addDays, addWeeks, addMonths, startOfDay, endOfDay, format } from 'date
  * Generate demand forecast based on historical booking patterns
  */
 export const getDemandForecast = cache(async (salonId: string, days: number = 30) => {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   // Get historical booking data for pattern analysis
   const historicalDays = 90
@@ -59,7 +59,7 @@ export const getDemandForecast = cache(async (salonId: string, days: number = 30
  * Predict customer churn risk
  */
 export const getChurnPrediction = cache(async (salonId: string) => {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   // Get customers with their booking history
   const { data: customers } = await supabase
@@ -124,7 +124,7 @@ export const getChurnPrediction = cache(async (salonId: string) => {
  * Generate revenue projections
  */
 export const getRevenueProjection = cache(async (salonId: string, months: number = 3) => {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   // Get historical revenue data
   const startDate = addMonths(new Date(), -6)
@@ -177,7 +177,7 @@ export const getRevenueProjection = cache(async (salonId: string, months: number
  * Optimize staff scheduling based on predicted demand
  */
 export const getStaffingOptimization = cache(async (salonId: string) => {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   // Get demand forecast
   const demandForecast = await getDemandForecast(salonId, 7)

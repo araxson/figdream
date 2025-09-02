@@ -11,18 +11,18 @@ const phoneRegex = /^\+?[\d\s\-\(\)]{10,}$/
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/
 
 // User roles enum
-const UserRole = z.enum(['super_admin', 'salon_owner', 'location_manager', 'staff', 'customer'], {
-  errorMap: () => ({ message: 'Invalid user role' })
+export const UserRole = z.enum(['super_admin', 'salon_owner', 'location_manager', 'staff', 'customer'], {
+  message: 'Invalid user role'
 })
 
 // Gender enum
-const Gender = z.enum(['male', 'female', 'other', 'prefer_not_to_say'], {
-  errorMap: () => ({ message: 'Please select a valid gender option' })
+export const Gender = z.enum(['male', 'female', 'other', 'prefer_not_to_say'], {
+  message: 'Please select a valid gender option'
 })
 
 // Base validation schemas
 export const emailSchema = z
-  .string({ required_error: 'Email is required' })
+  .string()
   .min(1, 'Email is required')
   .max(255, 'Email must be less than 255 characters')
   .regex(emailRegex, 'Please enter a valid email address')
@@ -30,7 +30,7 @@ export const emailSchema = z
   .trim()
 
 export const passwordSchema = z
-  .string({ required_error: 'Password is required' })
+  .string()
   .min(8, 'Password must be at least 8 characters long')
   .max(128, 'Password must be less than 128 characters')
   .regex(passwordRegex, 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character')
@@ -45,7 +45,7 @@ export const phoneSchema = z
   .transform((val) => val || null)
 
 export const nameSchema = z
-  .string({ required_error: 'Name is required' })
+  .string()
   .min(1, 'Name is required')
   .max(50, 'Name must be less than 50 characters')
   .regex(/^[a-zA-Z\s\-\'\.]+$/, 'Name can only contain letters, spaces, hyphens, apostrophes, and periods')
@@ -55,7 +55,7 @@ export const nameSchema = z
 export const loginSchema = z.object({
   email: emailSchema,
   password: z
-    .string({ required_error: 'Password is required' })
+    .string()
     .min(1, 'Password is required'),
   remember_me: z.boolean().optional().default(false)
 })
@@ -67,7 +67,7 @@ export const registerSchema = z.object({
   email: emailSchema,
   phone: phoneSchema,
   password: passwordSchema,
-  confirm_password: z.string({ required_error: 'Please confirm your password' }),
+  confirm_password: z.string(),
   date_of_birth: z
     .string()
     .optional()
@@ -84,7 +84,7 @@ export const registerSchema = z.object({
     .transform((val) => val || null),
   gender: Gender.optional().nullable(),
   terms_accepted: z
-    .boolean({ required_error: 'You must accept the terms and conditions' })
+    .boolean()
     .refine((val) => val === true, {
       message: 'You must accept the terms and conditions'
     }),
@@ -97,7 +97,7 @@ export const registerSchema = z.object({
 // Salon owner registration schema
 export const salonOwnerRegisterSchema = registerSchema.extend({
   salon_name: z
-    .string({ required_error: 'Salon name is required' })
+    .string()
     .min(1, 'Salon name is required')
     .max(100, 'Salon name must be less than 100 characters')
     .trim(),
@@ -118,7 +118,7 @@ export const staffRegisterSchema = z.object({
   email: emailSchema,
   phone: phoneSchema,
   password: passwordSchema,
-  confirm_password: z.string({ required_error: 'Please confirm your password' }),
+  confirm_password: z.string(),
   date_of_birth: z
     .string()
     .optional()
@@ -143,7 +143,7 @@ export const staffRegisterSchema = z.object({
     })
     .transform((val) => val || null),
   terms_accepted: z
-    .boolean({ required_error: 'You must accept the terms and conditions' })
+    .boolean()
     .refine((val) => val === true, {
       message: 'You must accept the terms and conditions'
     })
@@ -160,9 +160,9 @@ export const forgotPasswordSchema = z.object({
 // Password reset schema
 export const resetPasswordSchema = z.object({
   password: passwordSchema,
-  confirm_password: z.string({ required_error: 'Please confirm your password' }),
+  confirm_password: z.string(),
   token: z
-    .string({ required_error: 'Reset token is required' })
+    .string()
     .min(1, 'Invalid reset token')
 }).refine((data) => data.password === data.confirm_password, {
   message: 'Passwords do not match',
@@ -172,10 +172,10 @@ export const resetPasswordSchema = z.object({
 // Change password schema
 export const changePasswordSchema = z.object({
   current_password: z
-    .string({ required_error: 'Current password is required' })
+    .string()
     .min(1, 'Current password is required'),
   new_password: passwordSchema,
-  confirm_password: z.string({ required_error: 'Please confirm your new password' })
+  confirm_password: z.string()
 }).refine((data) => data.new_password === data.confirm_password, {
   message: 'Passwords do not match',
   path: ['confirm_password']
@@ -187,7 +187,7 @@ export const changePasswordSchema = z.object({
 // Email verification schema
 export const emailVerificationSchema = z.object({
   token: z
-    .string({ required_error: 'Verification token is required' })
+    .string()
     .min(1, 'Invalid verification token'),
   email: emailSchema.optional()
 })
@@ -200,28 +200,28 @@ export const resendVerificationSchema = z.object({
 // OAuth callback schema
 export const oauthCallbackSchema = z.object({
   code: z
-    .string({ required_error: 'Authorization code is required' })
+    .string()
     .min(1, 'Invalid authorization code'),
   state: z
     .string()
     .optional()
     .nullable(),
   provider: z.enum(['google', 'facebook', 'apple'], {
-    errorMap: () => ({ message: 'Invalid OAuth provider' })
+    message: 'Invalid OAuth provider'
   })
 })
 
 // Session refresh schema
 export const refreshSessionSchema = z.object({
   refresh_token: z
-    .string({ required_error: 'Refresh token is required' })
+    .string()
     .min(1, 'Invalid refresh token')
 })
 
 // Account deactivation schema
 export const deactivateAccountSchema = z.object({
   password: z
-    .string({ required_error: 'Password is required to deactivate account' })
+    .string()
     .min(1, 'Password is required'),
   reason: z
     .string()
@@ -244,7 +244,7 @@ export const deactivateAccountSchema = z.object({
 // Two-factor authentication setup schema
 export const twoFactorSetupSchema = z.object({
   password: z
-    .string({ required_error: 'Password is required' })
+    .string()
     .min(1, 'Password is required'),
   phone: phoneSchema.refine((val) => val !== null && val !== undefined, {
     message: 'Phone number is required for two-factor authentication'
@@ -254,7 +254,7 @@ export const twoFactorSetupSchema = z.object({
 // Two-factor authentication verify schema
 export const twoFactorVerifySchema = z.object({
   code: z
-    .string({ required_error: 'Verification code is required' })
+    .string()
     .length(6, 'Verification code must be 6 digits')
     .regex(/^\d{6}$/, 'Verification code must contain only numbers'),
   remember_device: z.boolean().optional().default(false)
@@ -287,13 +287,3 @@ export type LoginUpdateInput = z.infer<typeof loginUpdateSchema>
 export type RegisterUpdateInput = z.infer<typeof registerUpdateSchema>
 export type SalonOwnerRegisterUpdateInput = z.infer<typeof salonOwnerRegisterUpdateSchema>
 export type StaffRegisterUpdateInput = z.infer<typeof staffRegisterUpdateSchema>
-
-// Export individual field schemas for reuse
-export { 
-  UserRole, 
-  Gender, 
-  emailSchema, 
-  passwordSchema, 
-  phoneSchema, 
-  nameSchema 
-}

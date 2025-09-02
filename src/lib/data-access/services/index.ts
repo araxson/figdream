@@ -1,7 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/database/supabase/server'
-import type { Database } from '@/types/database'
+import type { Database } from '@/types/database.types'
 import { getUserWithRole } from '../auth/verify'
 import { canAccessSalon, canAccessLocation } from '../auth/permissions'
 import { hasMinimumRoleLevel } from '../auth/roles'
@@ -9,8 +9,8 @@ import { hasMinimumRoleLevel } from '../auth/roles'
 type Service = Database['public']['Tables']['services']['Row']
 type ServiceInsert = Database['public']['Tables']['services']['Insert']
 type ServiceUpdate = Database['public']['Tables']['services']['Update']
-type Category = Database['public']['Tables']['categories']['Row']
-type SalonService = Database['public']['Tables']['salon_services']['Row']
+type Category = Database['public']['Tables']['service_categories']['Row']
+// SalonService type removed - table doesn't exist in database
 
 export interface ServiceResult {
   data: Service | null
@@ -36,10 +36,7 @@ export interface ServicesWithCategoryResult {
   error: string | null
 }
 
-export interface SalonServiceResult {
-  data: SalonService | null
-  error: string | null
-}
+// SalonServiceResult interface removed - table doesn't exist
 
 export interface ServiceCreateResult {
   data: Service | null
@@ -406,9 +403,9 @@ export async function deleteService(serviceId: string): Promise<ServiceDeleteRes
 
     const supabase = await createClient()
 
-    // Check if service is used in any bookings
+    // Check if service is used in any appointments
     const { count: bookingCount, error: bookingError } = await supabase
-      .from('booking_services')
+      .from('appointment_services')
       .select('*', { count: 'exact', head: true })
       .eq('service_id', serviceId)
 

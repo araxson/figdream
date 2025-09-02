@@ -107,7 +107,7 @@ export async function optOutPhone(optOut: SmsOptOutInsert) {
     }
   }
 
-  revalidatePath('/salon-admin/marketing/sms-opt-outs')
+  revalidatePath('/salon-admin/marketing/sms')
   
   return data
 }
@@ -152,7 +152,7 @@ export async function removeOptOut(id: string) {
     }
   }
 
-  revalidatePath('/salon-admin/marketing/sms-opt-outs')
+  revalidatePath('/salon-admin/marketing/sms')
   
   return { success: true }
 }
@@ -194,7 +194,7 @@ export async function bulkOptOut(
     throw new Error('Failed to bulk opt-out phone numbers')
   }
 
-  revalidatePath('/salon-admin/marketing/sms-opt-outs')
+  revalidatePath('/salon-admin/marketing/sms')
   
   return { 
     success: true, 
@@ -282,8 +282,9 @@ export async function processUnsubscribeRequest(
       processed: true, 
       message: 'Successfully processed unsubscribe request' 
     }
-  } catch (error: any) {
-    if (error.message === 'This phone number is already opted out') {
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    if (errorMessage === 'This phone number is already opted out') {
       return { 
         processed: true, 
         message: 'Phone number was already opted out' 

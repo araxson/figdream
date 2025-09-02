@@ -1,14 +1,26 @@
 'use client'
 
 import * as React from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Skeleton } from '@/components/ui/skeleton'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Button,
+  Badge,
+  Progress,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Alert,
+  AlertDescription,
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Skeleton,
+} from '@/components/ui'
 import {
   Gift,
   Award,
@@ -183,7 +195,7 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
 
   if (error || !loyaltyData) {
     return (
-      <Alert className={className}>
+      <Alert>
         <Info className="h-4 w-4" />
         <AlertDescription>
           {error || 'Unable to load loyalty information. Please try again later.'}
@@ -342,7 +354,7 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Button className="h-auto p-4 justify-start" variant="outline">
+                <Button className="h-auto justify-start" variant="outline">
                   <div className="flex items-center gap-3">
                     <Calendar className="h-5 w-5" />
                     <div className="text-left">
@@ -353,7 +365,7 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
                   <ArrowRight className="h-4 w-4 ml-auto" />
                 </Button>
 
-                <Button className="h-auto p-4 justify-start" variant="outline">
+                <Button className="h-auto justify-start" variant="outline">
                   <div className="flex items-center gap-3">
                     <Gift className="h-5 w-5" />
                     <div className="text-left">
@@ -450,7 +462,7 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <Button className="h-auto p-4 justify-start" variant="outline">
+                    <Button className="h-auto justify-start" variant="outline">
                       <div className="flex items-center gap-3">
                         <Share2 className="h-5 w-5" />
                         <div className="text-left">
@@ -461,7 +473,7 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
                       <ExternalLink className="h-4 w-4 ml-auto" />
                     </Button>
 
-                    <Button className="h-auto p-4 justify-start" variant="outline">
+                    <Button className="h-auto justify-start" variant="outline">
                       <div className="flex items-center gap-3">
                         <Heart className="h-5 w-5" />
                         <div className="text-left">

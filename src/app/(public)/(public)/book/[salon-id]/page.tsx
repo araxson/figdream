@@ -1,16 +1,53 @@
 import { notFound } from 'next/navigation'
 import { getSalonForBooking, getServicesBySalon, getStaffBySalon } from '@/lib/data-access/bookings/public-booking'
-import { createServerClient } from '@/lib/database/supabase/server'
+import { createClient } from '@/lib/database/supabase/server'
 import { Database } from '@/types/database.types'
-import SalonBookingTabs from './salon-booking-tabs'
-import { Button } from '@/components/ui/button'
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
+import SalonBookingTabs from '@/components/shared/booking/salon-booking-tabs'
+import {
+  Button,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui'
 import { Calendar, MapPin, Phone, Star, Home } from 'lucide-react'
 import Link from 'next/link'
 
 type Salon = Database['public']['Tables']['salons']['Row']
 type Service = Database['public']['Tables']['services']['Row']
 type StaffProfile = Database['public']['Tables']['staff_profiles']['Row']
+
+// Extended staff type with relations
+type StaffWithRelations = StaffProfile & {
+  profiles?: {
+    email: string
+    full_name: string | null
+    avatar_url: string | null
+  } | null
+  staff_schedules?: Array<{
+    day_of_week: number
+    start_time: string
+    end_time: string
+    is_available: boolean
+  }>
+}
+
+// Extended salon type with relations
+type SalonWithLocations = Salon & {
+  salon_locations: Array<{
+    id: string
+    address_line_1: string | null
+    address_line_2: string | null
+    city: string | null
+    state_province: string | null
+    postal_code: string | null
+    phone: string | null
+    latitude: number | null
+    longitude: number | null
+  }>
+}
 
 interface PageProps {
   params: Promise<{ 'salon-id': string }>
@@ -21,7 +58,7 @@ export default async function SalonBookingPage({ params }: PageProps) {
   const salonId = resolvedParams['salon-id']
   
   // Fetch salon data
-  const salon = await getSalonForBooking(salonId)
+  const salon = await getSalonForBooking(salonId) as SalonWithLocations | null
   
   if (!salon) {
     notFound()
@@ -34,7 +71,7 @@ export default async function SalonBookingPage({ params }: PageProps) {
   ])
   
   // Get review statistics
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   const { data: reviewStats } = await supabase
     .from('reviews')
     .select('rating')
@@ -42,12 +79,12 @@ export default async function SalonBookingPage({ params }: PageProps) {
     .eq('is_published', true)
   
   const avgRating = reviewStats && reviewStats.length > 0
-    ? reviewStats.reduce((sum, r) => sum + r.rating, 0) / reviewStats.length
+    ? reviewStats.reduce((sum, r) => sum + (r.rating || 0), 0) / reviewStats.length
     : 0
   
   const location = salon.salon_locations?.[0]
   const address = location 
-    ? `${location.address || ''}, ${location.city || ''}, ${location.state || ''} ${location.postal_code || ''}`
+    ? `${location.address_line_1 || ''}, ${location.city || ''}, ${location.state_province || ''} ${location.postal_code || ''}`
     : 'Address not available'
 
   return (
@@ -119,7 +156,7 @@ export default async function SalonBookingPage({ params }: PageProps) {
       <SalonBookingTabs 
         salon={salon}
         services={services}
-        staff={staff}
+        staff={staff as StaffProfile[]}
         reviewCount={reviewStats?.length || 0}
         avgRating={avgRating}
       />

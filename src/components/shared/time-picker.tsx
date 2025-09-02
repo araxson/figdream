@@ -2,15 +2,15 @@
 
 import * as React from "react"
 import { Clock } from "lucide-react"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
 import {
+  Label,
+  Button,
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
+  ScrollArea,
+} from "@/components/ui"
 import { cn } from "@/lib/utils"
-import { ScrollArea } from "@/components/ui/scroll-area"
 
 interface TimePickerProps {
   value?: string

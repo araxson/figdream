@@ -1,16 +1,32 @@
 'use client'
 
 import * as React from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { AspectRatio } from '@/components/ui/aspect-ratio'
-import { Separator } from '@/components/ui/separator'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { Textarea } from '@/components/ui/textarea'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import {
+  Button,
+  Card,
+  CardContent,
+  Badge,
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  AspectRatio,
+  Separator,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  Textarea,
+  Alert,
+  AlertDescription,
+} from '@/components/ui'
 import { 
   Star,
   ThumbsUp,
@@ -38,6 +54,7 @@ import {
 import { cn } from '@/lib/utils'
 import { format, formatDistanceToNow } from 'date-fns'
 import { voteReview, createReviewResponse, moderateReview } from '@/lib/data-access/reviews/reviews'
+import { CustomerHoverCard, StaffHoverCard, ServiceHoverCard } from '@/components/shared/hovers'
 import type { Database } from '@/types/database.types'
 
 type ReviewPhoto = {
@@ -264,7 +281,7 @@ export function ReviewCard({
     
     if (review.verified_purchase) {
       badges.push(
-        <Badge key="verified" variant="secondary" className="text-xs">
+        <Badge key="verified" variant="secondary">
           <CheckCircle className="h-3 w-3 mr-1" />
           Verified
         </Badge>
@@ -273,7 +290,7 @@ export function ReviewCard({
 
     if (photos.length > 0) {
       badges.push(
-        <Badge key="photos" variant="outline" className="text-xs">
+        <Badge key="photos" variant="outline">
           <Camera className="h-3 w-3 mr-1" />
           {photos.length} Photo{photos.length > 1 ? 's' : ''}
         </Badge>
@@ -282,7 +299,7 @@ export function ReviewCard({
 
     if (review.review_responses && review.review_responses.length > 0) {
       badges.push(
-        <Badge key="response" variant="outline" className="text-xs">
+        <Badge key="response" variant="outline">
           <Reply className="h-3 w-3 mr-1" />
           Business Replied
         </Badge>
@@ -291,7 +308,7 @@ export function ReviewCard({
 
     if (review.would_recommend) {
       badges.push(
-        <Badge key="recommend" variant="secondary" className="text-xs">
+        <Badge key="recommend" variant="secondary">
           <Heart className="h-3 w-3 mr-1" />
           Recommends
         </Badge>
@@ -308,19 +325,21 @@ export function ReviewCard({
       <div className="mt-3">
         <div className="flex gap-2 overflow-x-auto pb-2">
           {photos.slice(0, 4).map((photo, index) => (
-            <button
+            <Button
               key={index}
+              variant="ghost"
+              size="sm"
               onClick={() => {
                 setSelectedImageIndex(index)
                 setShowImageDialog(true)
               }}
-              className="relative flex-shrink-0 w-20 bg-muted rounded-lg overflow-hidden hover:opacity-80 transition-opacity group"
+              className="relative flex-shrink-0 w-20 overflow-hidden p-0 h-auto"
             >
               <AspectRatio ratio={1}>
                 <img 
                   src={photo.url} 
                   alt={photo.caption || `Review photo ${index + 1}`}
-                  className="w-full h-full object-cover"
+                  className="object-cover"
                 />
                 {index === 3 && photos.length > 4 && (
                   <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
@@ -329,11 +348,11 @@ export function ReviewCard({
                     </span>
                   </div>
                 )}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                  <ExternalLink className="h-4 w-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <ExternalLink className="h-4 w-4 text-white hidden group-hover:block" />
                 </div>
               </AspectRatio>
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -353,8 +372,9 @@ export function ReviewCard({
     if (ratings.length === 0) return null
 
     return (
-      <div className="mt-3 p-3 bg-muted/50 rounded-lg">
-        <h5 className="text-xs font-medium text-muted-foreground mb-2">Detailed Ratings</h5>
+      <Card className="mt-3">
+        <CardContent className="pt-3">
+          <h5 className="text-xs font-medium text-muted-foreground mb-2">Detailed Ratings</h5>
         <div className="grid grid-cols-2 gap-2">
           {ratings.map((rating) => (
             <div key={rating.label} className="flex items-center justify-between">
@@ -366,7 +386,8 @@ export function ReviewCard({
             </div>
           ))}
         </div>
-      </div>
+        </CardContent>
+      </Card>
     )
   }
 
@@ -376,14 +397,17 @@ export function ReviewCard({
     const response = review.review_responses[0] // Show only the first response
 
     return (
-      <div className="mt-4 bg-muted/50 rounded-lg p-4">
-        <div className="flex items-start gap-3">
-          <div className="p-2 bg-primary/10 rounded-full flex-shrink-0">
-            <MessageSquare className="h-4 w-4 text-primary" />
-          </div>
+      <Card className="mt-4">
+        <CardContent>
+          <div className="flex items-start gap-3">
+            <Avatar className="h-8 w-8 flex-shrink-0">
+              <AvatarFallback>
+                <MessageSquare className="h-4 w-4" />
+              </AvatarFallback>
+            </Avatar>
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
-              <Badge variant="outline" className="text-xs">
+              <Badge variant="outline">
                 Business Response
               </Badge>
               <span className="text-xs text-muted-foreground">
@@ -397,7 +421,8 @@ export function ReviewCard({
             <p className="text-sm">{response.content}</p>
           </div>
         </div>
-      </div>
+        </CardContent>
+      </Card>
     )
   }
 
@@ -408,28 +433,20 @@ export function ReviewCard({
           {allowVoting && (
             <>
               <Button
-                variant="ghost"
+                variant={userVote === 'helpful' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => handleVote('helpful')}
                 disabled={isVoting}
-                className={cn(
-                  "text-xs",
-                  userVote === 'helpful' && "text-green-600 bg-green-50"
-                )}
               >
                 <ThumbsUp className="h-3 w-3 mr-1" />
                 Helpful ({helpfulCount})
               </Button>
               
               <Button
-                variant="ghost"
+                variant={userVote === 'not_helpful' ? 'destructive' : 'ghost'}
                 size="sm"
                 onClick={() => handleVote('not_helpful')}
                 disabled={isVoting}
-                className={cn(
-                  "text-xs",
-                  userVote === 'not_helpful' && "text-red-600 bg-red-50"
-                )}
               >
                 <ThumbsDown className="h-3 w-3 mr-1" />
                 Not helpful
@@ -437,7 +454,7 @@ export function ReviewCard({
             </>
           )}
           
-          <Button variant="ghost" size="sm" className="text-xs">
+          <Button variant="ghost" size="sm">
             <Share2 className="h-3 w-3 mr-1" />
             Share
           </Button>
@@ -523,7 +540,17 @@ export function ReviewCard({
               {/* Header */}
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h4 className="font-medium text-sm">{customerName}</h4>
+                  <h4 className="font-medium text-sm">
+                    {!review.is_anonymous && review.customers ? (
+                      <CustomerHoverCard customer={review.customers}>
+                        <button className="text-left hover:text-primary transition-colors">
+                          {customerName}
+                        </button>
+                      </CustomerHoverCard>
+                    ) : (
+                      customerName
+                    )}
+                  </h4>
                   
                   {showSalon && review.salons && (
                     <>
@@ -560,7 +587,11 @@ export function ReviewCard({
                       {showService && <span>•</span>}
                       <span className="flex items-center gap-1">
                         <User className="h-3 w-3" />
-                        {review.staff.first_name} {review.staff.last_name}
+                        <StaffHoverCard staff={review.staff}>
+                          <button className="text-left hover:text-primary transition-colors">
+                            {review.staff.first_name} {review.staff.last_name}
+                          </button>
+                        </StaffHoverCard>
                       </span>
                     </>
                   )}
@@ -599,12 +630,12 @@ export function ReviewCard({
               {tags.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-3">
                   {tags.slice(0, 8).map((tag: string, index: number) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
+                    <Badge key={index} variant="secondary">
                       {tag}
                     </Badge>
                   ))}
                   {tags.length > 8 && (
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline">
                       +{tags.length - 8} more
                     </Badge>
                   )}
@@ -638,21 +669,23 @@ export function ReviewCard({
           </DialogHeader>
           
           <div className="space-y-4">
-            <div className="p-4 bg-muted rounded-lg">
-              <div className="flex items-center gap-2 mb-2">
+            <Card>
+              <CardContent>
+                <div className="flex items-center gap-2 mb-2">
                 <StarRating rating={review.rating} />
                 <span className="font-medium">{customerName}</span>
               </div>
               <p className="text-sm text-muted-foreground line-clamp-3">
                 {review.content}
               </p>
-            </div>
+              </CardContent>
+            </Card>
             
             <Textarea
               placeholder="Write your response..."
               value={replyContent}
               onChange={(e) => setReplyContent(e.target.value)}
-              className="min-h-32"
+              rows={6}
               maxLength={1000}
             />
             
@@ -701,7 +734,7 @@ export function ReviewCard({
                     <img 
                       src={photos[selectedImageIndex]?.url} 
                       alt={photos[selectedImageIndex]?.caption || 'Review photo'}
-                      className="w-full h-full object-contain rounded-lg"
+                      className="object-contain"
                     />
                   </AspectRatio>
                 </div>
@@ -716,11 +749,13 @@ export function ReviewCard({
               {photos.length > 1 && (
                 <div className="flex justify-center gap-2 overflow-x-auto pb-2">
                   {photos.map((photo, index) => (
-                    <button
+                    <Button
                       key={index}
+                      variant="ghost"
+                      size="sm"
                       onClick={() => setSelectedImageIndex(index)}
                       className={cn(
-                        "flex-shrink-0 w-16 rounded-lg overflow-hidden border-2",
+                        "flex-shrink-0 w-16 rounded-lg overflow-hidden border-2 p-0 h-auto",
                         index === selectedImageIndex 
                           ? "border-primary" 
                           : "border-transparent hover:border-muted-foreground/50"
@@ -730,10 +765,10 @@ export function ReviewCard({
                         <img 
                           src={photo.url} 
                           alt={`Thumbnail ${index + 1}`}
-                          className="w-full h-full object-cover"
+                          className="object-cover"
                         />
                       </AspectRatio>
-                    </button>
+                    </Button>
                   ))}
                 </div>
               )}

@@ -1,8 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { Slider } from '@/components/ui/slider'
-import { Label } from '@/components/ui/label'
+import { Slider, Label } from '@/components/ui'
 import { DollarSign } from 'lucide-react'
 
 interface PriceRangeSliderProps {

@@ -5,10 +5,11 @@
 
 import { z } from 'zod'
 
-// Import reusable schemas
+// Import email and phone from auth-schema
+import { emailSchema, phoneSchema } from './auth-schema'
+
+// Import reusable schemas from user-schema
 import { 
-  emailSchema, 
-  phoneSchema, 
   userIdSchema,
   addressSchema,
   citySchema,
@@ -27,20 +28,22 @@ const timeRegex = /^([01]?\d|2[0-3]):([0-5]?\d)(?::([0-5]?\d))?$/
 
 // Days of week
 const DaysOfWeek = z.enum(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'], {
-  errorMap: () => ({ message: 'Invalid day of week' })
+  message: 'Invalid day of week'
 })
 
 // Base validation schemas
 export const salonIdSchema = z
-  .string({ required_error: 'Salon ID is required' })
+  .string({ message: 'Salon ID is required' })
   .regex(uuidRegex, 'Invalid salon ID format')
 
 export const locationIdSchema = z
-  .string({ required_error: 'Location ID is required' })
+  .string({ message: 'Location ID is required' })
   .regex(uuidRegex, 'Invalid location ID format')
 
+// serviceIdSchema is exported from service-schema.ts to avoid duplication
+
 export const salonNameSchema = z
-  .string({ required_error: 'Salon name is required' })
+  .string({ message: 'Salon name is required' })
   .min(1, 'Salon name is required')
   .max(100, 'Salon name must be less than 100 characters')
   .regex(/^[a-zA-Z0-9\s\-\'&\.!]+$/, 'Salon name contains invalid characters')
@@ -82,10 +85,10 @@ export const logoUrlSchema = z
 export const businessHoursSchema = z.object({
   day: DaysOfWeek,
   open_time: z
-    .string({ required_error: 'Opening time is required' })
+    .string({ message: 'Opening time is required' })
     .regex(timeRegex, 'Opening time must be in HH:MM format'),
   close_time: z
-    .string({ required_error: 'Closing time is required' })
+    .string({ message: 'Closing time is required' })
     .regex(timeRegex, 'Closing time must be in HH:MM format'),
   is_closed: z.boolean().optional().default(false)
 }).refine((data) => {
@@ -156,7 +159,7 @@ export const updateSalonSchema = createSalonSchema.partial().extend({
 export const createLocationSchema = z.object({
   salon_id: salonIdSchema,
   name: z
-    .string({ required_error: 'Location name is required' })
+    .string({ message: 'Location name is required' })
     .min(1, 'Location name is required')
     .max(100, 'Location name must be less than 100 characters')
     .trim(),
@@ -172,7 +175,7 @@ export const createLocationSchema = z.object({
   zip_code: zipCodeSchema.refine((val) => val !== null && val !== undefined, {
     message: 'ZIP code is required for locations'
   }),
-  country: countrySchema.default('United States'),
+  country: countrySchema.default('United States' as const),
   phone: phoneSchema.refine((val) => val !== null && val !== undefined, {
     message: 'Phone number is required for locations'
   }),
@@ -330,7 +333,7 @@ export const salonStaffSchema = z.object({
   location_id: locationIdSchema.optional(),
   user_id: userIdSchema,
   role: z.enum(['salon_owner', 'location_manager', 'staff'], {
-    errorMap: () => ({ message: 'Invalid staff role' })
+    message: 'Invalid staff role'
   }),
   employee_id: z
     .string()
@@ -530,15 +533,4 @@ export type CreateSalonUpdateInput = z.infer<typeof createSalonUpdateSchema>
 export type CreateLocationUpdateInput = z.infer<typeof createLocationUpdateSchema>
 export type SalonSettingsUpdateInput = z.infer<typeof salonSettingsUpdateSchema>
 
-// Export individual field schemas for reuse
-export {
-  DaysOfWeek,
-  salonIdSchema,
-  locationIdSchema,
-  salonNameSchema,
-  descriptionSchema,
-  websiteUrlSchema,
-  logoUrlSchema,
-  businessHoursSchema,
-  coordinatesSchema
-}
+// Individual field schemas are already exported at their declaration

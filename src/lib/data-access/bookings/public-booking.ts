@@ -1,5 +1,5 @@
 import { Database } from '@/types/database.types'
-import { createServerClient } from '@/lib/database/supabase/server'
+import { createClient } from '@/lib/database/supabase/server'
 import { cache } from 'react'
 
 type Salon = Database['public']['Tables']['salons']['Row']
@@ -15,7 +15,7 @@ type BlockedTime = Database['public']['Tables']['blocked_times']['Row']
  * Get all active salons for public display
  */
 export const getSalonsForBooking = cache(async () => {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('salons')
@@ -45,7 +45,7 @@ export const getSalonsForBooking = cache(async () => {
  * Get salon details with services and staff
  */
 export const getSalonForBooking = cache(async (salonId: string) => {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   const { data: salon, error: salonError } = await supabase
     .from('salons')
@@ -53,9 +53,10 @@ export const getSalonForBooking = cache(async (salonId: string) => {
       *,
       salon_locations (
         id,
-        address,
+        address_line_1,
+        address_line_2,
         city,
-        state,
+        state_province,
         postal_code,
         phone,
         latitude,
@@ -78,7 +79,7 @@ export const getSalonForBooking = cache(async (salonId: string) => {
  * Get available services for a salon
  */
 export const getServicesBySalon = cache(async (salonId: string) => {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('services')
@@ -110,7 +111,7 @@ export const getServicesBySalon = cache(async (salonId: string) => {
  * Get staff members who can perform a specific service
  */
 export const getStaffForService = cache(async (salonId: string, serviceId: string) => {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('staff_profiles')
@@ -148,7 +149,7 @@ export const getStaffForService = cache(async (salonId: string, serviceId: strin
  * Get all staff for a salon
  */
 export const getStaffBySalon = cache(async (salonId: string) => {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .from('staff_profiles')
@@ -187,7 +188,7 @@ export async function checkStaffAvailability(
   startTime: string,
   duration: number
 ) {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   // Check staff schedule
   const dayOfWeek = new Date(date).getDay()
@@ -259,7 +260,7 @@ export async function getAvailableTimeSlots(
   serviceId: string,
   date: string
 ) {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   // Get service duration
   const { data: service } = await supabase
@@ -340,7 +341,7 @@ export async function createBooking(data: {
   customerPhone?: string
   notes?: string
 }) {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   // Get service details
   const { data: service } = await supabase

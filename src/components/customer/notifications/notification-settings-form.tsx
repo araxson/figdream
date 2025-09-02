@@ -1,18 +1,26 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Switch } from '@/components/ui/switch'
-import { Label } from '@/components/ui/label'
-import { Separator } from '@/components/ui/separator'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
+  Button,
+  Switch,
+  Label,
+  Separator,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion'
-import { Badge } from '@/components/ui/badge'
+  Badge,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui'
 import { 
   upsertNotificationSettings,
   updateNotificationChannel,
@@ -129,7 +137,8 @@ export function NotificationSettingsForm({
   return (
     <div className="space-y-6">
       {/* Master Controls */}
-      <div className="flex items-center justify-between rounded-lg border p-4">
+      <Card>
+        <CardContent className="flex items-center justify-between p-4">
         <div className="space-y-0.5">
           <Label className="text-base">All Notifications</Label>
           <p className="text-sm text-muted-foreground">
@@ -153,7 +162,8 @@ export function NotificationSettingsForm({
             </>
           )}
         </Button>
-      </div>
+        </CardContent>
+      </Card>
 
       <Separator />
 
@@ -161,7 +171,8 @@ export function NotificationSettingsForm({
       <div className="space-y-4">
         <h3 className="font-medium">Notification Channels</h3>
         <div className="space-y-3">
-          <div className="flex items-center justify-between rounded-lg border p-3">
+          <Card>
+            <CardContent className="flex items-center justify-between p-3">
             <div className="flex items-center gap-3">
               <Mail className="h-4 w-4 text-muted-foreground" />
               <Label htmlFor="email-channel" className="cursor-pointer">
@@ -173,9 +184,11 @@ export function NotificationSettingsForm({
               checked={settings.email_enabled}
               onCheckedChange={(checked) => handleChannelToggle('email', checked)}
             />
-          </div>
+            </CardContent>
+          </Card>
 
-          <div className="flex items-center justify-between rounded-lg border p-3">
+          <Card>
+            <CardContent className="flex items-center justify-between p-3">
             <div className="flex items-center gap-3">
               <MessageSquare className="h-4 w-4 text-muted-foreground" />
               <Label htmlFor="sms-channel" className="cursor-pointer">
@@ -187,9 +200,11 @@ export function NotificationSettingsForm({
               checked={settings.sms_enabled}
               onCheckedChange={(checked) => handleChannelToggle('sms', checked)}
             />
-          </div>
+            </CardContent>
+          </Card>
 
-          <div className="flex items-center justify-between rounded-lg border p-3">
+          <Card>
+            <CardContent className="flex items-center justify-between p-3">
             <div className="flex items-center gap-3">
               <Smartphone className="h-4 w-4 text-muted-foreground" />
               <Label htmlFor="push-channel" className="cursor-pointer">
@@ -201,7 +216,8 @@ export function NotificationSettingsForm({
               checked={settings.push_enabled}
               onCheckedChange={(checked) => handleChannelToggle('push', checked)}
             />
-          </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
 
@@ -238,7 +254,8 @@ export function NotificationSettingsForm({
                         const pushKey = `${type.id}_push` as keyof NotificationSettings
                         
                         return (
-                          <div key={type.id} className="space-y-3 rounded-lg border p-4">
+                          <Card key={type.id}>
+                            <CardContent className="space-y-3 p-4">
                             <div>
                               <p className="font-medium">{type.label}</p>
                               <p className="text-sm text-muted-foreground">
@@ -295,7 +312,8 @@ export function NotificationSettingsForm({
                                 </Label>
                               </div>
                             </div>
-                          </div>
+                            </CardContent>
+                          </Card>
                         )
                       })}
                     </div>

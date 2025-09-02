@@ -15,14 +15,20 @@ import {
   AddressElement,
 } from '@stripe/react-stripe-js'
 import { loadStripe, type Stripe, type StripeElements, type PaymentIntent } from '@stripe/stripe-js'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Label } from '@/components/ui/label'
-import { Skeleton } from '@/components/ui/skeleton'
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Alert,
+  AlertDescription,
+  Badge,
+  Separator,
+  Checkbox,
+  Label,
+  Skeleton,
+} from '@/components/ui'
 import { Loader2, CreditCard, Shield, AlertCircle } from 'lucide-react'
 import { 
   createElementsOptions, 
@@ -131,15 +137,17 @@ function PaymentForm({
 
   if (paymentComplete) {
     return (
-      <div className="text-center py-8">
-        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Shield className="w-8 h-8 text-green-600" />
-        </div>
-        <h3 className="text-lg font-semibold mb-2">Payment Successful!</h3>
-        <p className="text-gray-600">
-          {isDeposit ? 'Your deposit has been processed.' : 'Your payment has been processed successfully.'}
-        </p>
-      </div>
+      <Card>
+        <CardContent className="pt-8">
+          <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+            <Shield className="w-8 h-8 text-green-600" />
+          </div>
+          <h3 className="text-lg font-semibold mb-2">Payment Successful!</h3>
+          <p className="text-muted-foreground">
+            {isDeposit ? 'Your deposit has been processed.' : 'Your payment has been processed successfully.'}
+          </p>
+        </CardContent>
+      </Card>
     )
   }
 
@@ -218,7 +226,7 @@ function PaymentForm({
       </Button>
 
       {/* Security Notice */}
-      <p className="text-xs text-gray-500 text-center">
+      <p className="text-xs text-muted-foreground text-center">
         Your payment information is secure and encrypted. We never store your card details.
       </p>
     </form>
@@ -267,9 +275,9 @@ export function CheckoutForm(props: CheckoutFormProps) {
   }
 
   return (
-    <div className="max-w-md mx-auto">
+    <div className="max-w-md mx-auto space-y-6">
       {/* Payment Summary */}
-      <Card className="mb-6">
+      <Card>
         <CardHeader>
           <CardTitle className="text-lg">Payment Summary</CardTitle>
         </CardHeader>
@@ -286,11 +294,11 @@ export function CheckoutForm(props: CheckoutFormProps) {
           {isDeposit && (
             <>
               <Separator />
-              <div className="flex justify-between items-center text-sm text-gray-600">
+              <div className="flex justify-between items-center text-sm text-muted-foreground">
                 <span>Total Booking Amount</span>
                 <span>{formatAmountForDisplay(amount, currency)}</span>
               </div>
-              <div className="flex justify-between items-center text-sm text-gray-600">
+              <div className="flex justify-between items-center text-sm text-muted-foreground">
                 <span>Remaining Balance</span>
                 <span>{formatAmountForDisplay(amount - finalAmount, currency)}</span>
               </div>
@@ -300,10 +308,10 @@ export function CheckoutForm(props: CheckoutFormProps) {
           <Separator />
           
           <div className="flex items-center gap-2">
-            <Badge variant="secondary" className="text-xs">
+            <Badge variant="secondary">
               {isDeposit ? 'Deposit Payment' : 'Full Payment'}
             </Badge>
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline">
               {currency.toUpperCase()}
             </Badge>
           </div>
@@ -329,7 +337,7 @@ export function CheckoutForm(props: CheckoutFormProps) {
 export function CheckoutFormSkeleton() {
   return (
     <div className="max-w-md mx-auto">
-      <Card className="mb-6">
+      <Card>
         <CardHeader>
           <Skeleton className="h-6 w-32" />
         </CardHeader>

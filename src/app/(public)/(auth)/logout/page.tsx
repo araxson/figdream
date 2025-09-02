@@ -3,10 +3,18 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Separator } from '@/components/ui/separator'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  Button,
+  Alert,
+  AlertDescription,
+  Separator,
+} from '@/components/ui'
 import { toast } from 'sonner'
 import { 
   LogOut, CheckCircle, Home, ArrowLeft, 
@@ -214,8 +222,8 @@ export default function LogoutPage() {
         <CardContent className="pt-6">
           <p className="text-sm font-medium mb-4">While you&apos;re here:</p>
           <div className="grid gap-3">
-            <Link href="/book" className="group">
-              <div className="flex items-center justify-between p-3 rounded-lg bg-background hover:bg-accent transition-colors">
+            <Button asChild variant="ghost" className="h-auto p-3 justify-between group">
+              <Link href="/book">
                 <div className="flex items-center gap-3">
                   <Calendar className="h-5 w-5 text-primary" />
                   <div>
@@ -226,11 +234,11 @@ export default function LogoutPage() {
                   </div>
                 </div>
                 <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground group-hover:translate-x-1 transition-transform" />
-              </div>
-            </Link>
+              </Link>
+            </Button>
 
-            <Link href="/features" className="group">
-              <div className="flex items-center justify-between p-3 rounded-lg bg-background hover:bg-accent transition-colors">
+            <Button asChild variant="ghost" className="h-auto p-3 justify-between group">
+              <Link href="/features">
                 <div className="flex items-center gap-3">
                   <Star className="h-5 w-5 text-primary" />
                   <div>
@@ -241,11 +249,11 @@ export default function LogoutPage() {
                   </div>
                 </div>
                 <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground group-hover:translate-x-1 transition-transform" />
-              </div>
-            </Link>
+              </Link>
+            </Button>
 
-            <Link href="/pricing" className="group">
-              <div className="flex items-center justify-between p-3 rounded-lg bg-background hover:bg-accent transition-colors">
+            <Button asChild variant="ghost" className="h-auto p-3 justify-between group">
+              <Link href="/pricing">
                 <div className="flex items-center gap-3">
                   <Heart className="h-5 w-5 text-primary" />
                   <div>
@@ -256,8 +264,8 @@ export default function LogoutPage() {
                   </div>
                 </div>
                 <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground group-hover:translate-x-1 transition-transform" />
-              </div>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -273,12 +281,14 @@ export default function LogoutPage() {
       {/* Hidden: Changed your mind? */}
       {logoutComplete && (
         <div className="text-center">
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={handleStaySignedIn}
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+            className="text-xs text-muted-foreground hover:text-foreground h-auto p-1"
           >
             Changed your mind? Click here to stay signed in
-          </button>
+          </Button>
         </div>
       )}
     </div>

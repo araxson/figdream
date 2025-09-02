@@ -3,9 +3,16 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { 
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  Badge
+} from '@/components/ui'
 import { toast } from 'sonner'
 import { Building, Users, User, ChevronRight, ArrowRight, Sparkles, Clock, Shield, Star } from 'lucide-react'
 
@@ -104,7 +111,7 @@ export default function RegisterPage() {
             >
               {option.badge && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <Badge className="px-3 py-1">{option.badge}</Badge>
+                  <Badge>{option.badge}</Badge>
                 </div>
               )}
               <CardHeader className="text-center pb-4">

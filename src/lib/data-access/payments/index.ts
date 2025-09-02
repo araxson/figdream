@@ -1,14 +1,37 @@
 'use server'
 
+/**
+ * WARNING: This file references a 'payments' table that doesn't exist in the database.
+ * The payment functionality is currently non-functional and needs to be reimplemented.
+ * 
+ * Options for fixing:
+ * 1. Create a payments table in the database
+ * 2. Use loyalty_transactions table for payment tracking
+ * 3. Integrate with an external payment provider (Stripe, etc.)
+ * 
+ * All functions in this file will fail until the payments table is created.
+ */
+
 import { createClient } from '@/lib/database/supabase/server'
-import type { Database } from '@/types/database'
+import type { Database } from '@/types/database.types'
 import { getUserWithRole } from '../auth/verify'
 import { canAccessAppointment } from '../auth/permissions'
 import { hasMinimumRoleLevel } from '../auth/roles'
 
-type Payment = Database['public']['Tables']['payments']['Row']
-type PaymentInsert = Database['public']['Tables']['payments']['Insert']
-type PaymentUpdate = Database['public']['Tables']['payments']['Update']
+// TODO: payments table doesn't exist in database
+// Using a temporary type until payment system is properly implemented
+type Payment = {
+  id: string
+  appointment_id: string
+  amount: number
+  status: PaymentStatus
+  payment_method: PaymentMethod | null
+  transaction_id: string | null
+  created_at: string
+  updated_at: string
+}
+type PaymentInsert = Partial<Payment>
+type PaymentUpdate = Partial<Payment>
 type PaymentStatus = Database['public']['Enums']['payment_status']
 type PaymentMethod = Database['public']['Enums']['payment_method']
 

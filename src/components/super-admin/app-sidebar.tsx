@@ -11,6 +11,10 @@ import {
   Mail,
   Settings,
   Users,
+  FileText,
+  AlertCircle,
+  ShieldAlert,
+  Wrench,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -18,12 +22,13 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@/components/ui/sidebar'
-import { Button } from '@/components/ui/button'
+  Button,
+} from '@/components/ui'
 import type { Database } from '@/types/database.types'
 
 // Use proper database type for profile
@@ -33,12 +38,24 @@ interface SuperAdminSidebarProps {
   user: Profile
 }
 
-const navigation = [
+const mainNavigation = [
   { name: 'Dashboard', href: '/super-admin', icon: Home },
   { name: 'Salons', href: '/super-admin/salons', icon: Building },
   { name: 'Users', href: '/super-admin/users', icon: Users },
   { name: 'Analytics', href: '/super-admin/analytics', icon: BarChart },
   { name: 'Billing', href: '/super-admin/billing', icon: DollarSign },
+  { name: 'Subscriptions', href: '/super-admin/subscriptions', icon: DollarSign },
+  { name: 'Audit Logs', href: '/super-admin/audit', icon: FileText },
+]
+
+const monitoringNavigation = [
+  { name: 'API Usage', href: '/super-admin/monitoring/api-usage', icon: Activity },
+  { name: 'Error Logs', href: '/super-admin/monitoring/error-logs', icon: AlertCircle },
+  { name: 'Rate Limits', href: '/super-admin/monitoring/rate-limits', icon: ShieldAlert },
+]
+
+const systemNavigation = [
+  { name: 'Configuration', href: '/super-admin/system/configuration', icon: Wrench },
   { name: 'Email Templates', href: '/super-admin/email-templates', icon: Mail },
   { name: 'System Health', href: '/super-admin/system-health', icon: Activity },
   { name: 'Settings', href: '/super-admin/settings', icon: Settings },
@@ -60,9 +77,46 @@ export function SuperAdminSidebar({ user }: SuperAdminSidebarProps) {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
+          <SidebarGroupLabel>Main</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navigation.map((item) => (
+              {mainNavigation.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton asChild>
+                    <Link href={item.href}>
+                      <item.icon className="size-4" />
+                      <span>{item.name}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        
+        <SidebarGroup>
+          <SidebarGroupLabel>Monitoring</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {monitoringNavigation.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton asChild>
+                    <Link href={item.href}>
+                      <item.icon className="size-4" />
+                      <span>{item.name}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        
+        <SidebarGroup>
+          <SidebarGroupLabel>System</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {systemNavigation.map((item) => (
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton asChild>
                     <Link href={item.href}>

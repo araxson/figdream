@@ -20,36 +20,36 @@ const postalCodeRegex = /^[A-Za-z0-9\s\-]{3,10}$/
 
 // Payment method enum
 const PaymentMethod = z.enum(['cash', 'card', 'online', 'gift_card', 'bank_transfer', 'digital_wallet'], {
-  errorMap: () => ({ message: 'Invalid payment method' })
+  message: 'Invalid payment method'
 })
 
 // Payment status enum
 const PaymentStatus = z.enum(['pending', 'processing', 'completed', 'failed', 'cancelled', 'refunded', 'partially_refunded'], {
-  errorMap: () => ({ message: 'Invalid payment status' })
+  message: 'Invalid payment status'
 })
 
 // Currency enum
 const Currency = z.enum(['USD', 'CAD', 'EUR', 'GBP', 'AUD', 'JPY'], {
-  errorMap: () => ({ message: 'Unsupported currency' })
+  message: 'Unsupported currency'
 })
 
 // Card type enum
 const CardType = z.enum(['visa', 'mastercard', 'amex', 'discover', 'jcb', 'diners', 'unknown'], {
-  errorMap: () => ({ message: 'Invalid card type' })
+  message: 'Invalid card type'
 })
 
 // Digital wallet providers
 const DigitalWalletProvider = z.enum(['apple_pay', 'google_pay', 'samsung_pay', 'paypal', 'venmo'], {
-  errorMap: () => ({ message: 'Invalid digital wallet provider' })
+  message: 'Invalid digital wallet provider'
 })
 
 // Base validation schemas
 export const paymentIdSchema = z
-  .string({ required_error: 'Payment ID is required' })
+  .string()
   .regex(uuidRegex, 'Invalid payment ID format')
 
 export const amountSchema = z
-  .number({ required_error: 'Amount is required' })
+  .number()
   .min(0.01, 'Amount must be at least $0.01')
   .max(50000, 'Amount cannot exceed $50,000')
   .multipleOf(0.01, 'Amount must have at most 2 decimal places')
@@ -82,7 +82,7 @@ export const referenceNumberSchema = z
 
 // Credit card validation schemas
 export const creditCardNumberSchema = z
-  .string({ required_error: 'Card number is required' })
+  .string()
   .regex(creditCardRegex, 'Invalid card number format')
   .transform((val) => val.replace(/\s/g, '')) // Remove spaces
   .refine((val) => {
@@ -110,11 +110,11 @@ export const creditCardNumberSchema = z
   })
 
 export const cvvSchema = z
-  .string({ required_error: 'CVV is required' })
+  .string()
   .regex(cvvRegex, 'CVV must be 3 or 4 digits')
 
 export const expirationDateSchema = z
-  .string({ required_error: 'Expiration date is required' })
+  .string()
   .regex(expirationRegex, 'Expiration date must be in MM/YY format')
   .refine((val) => {
     const [month, year] = val.split('/').map(Number)
@@ -133,7 +133,7 @@ export const expirationDateSchema = z
   })
 
 export const cardholderNameSchema = z
-  .string({ required_error: 'Cardholder name is required' })
+  .string()
   .min(1, 'Cardholder name is required')
   .max(100, 'Cardholder name must be less than 100 characters')
   .regex(/^[a-zA-Z\s\-\'\.]+$/, 'Cardholder name can only contain letters, spaces, hyphens, apostrophes, and periods')
@@ -142,27 +142,27 @@ export const cardholderNameSchema = z
 // Billing address schema
 export const billingAddressSchema = z.object({
   street_address: z
-    .string({ required_error: 'Street address is required' })
+    .string()
     .min(5, 'Street address must be at least 5 characters')
     .max(100, 'Street address must be less than 100 characters')
     .trim(),
   city: z
-    .string({ required_error: 'City is required' })
+    .string()
     .min(2, 'City must be at least 2 characters')
     .max(50, 'City must be less than 50 characters')
     .regex(/^[a-zA-Z\s\-\'\.]+$/, 'City can only contain letters, spaces, hyphens, apostrophes, and periods')
     .trim(),
   state: z
-    .string({ required_error: 'State is required' })
+    .string()
     .min(2, 'State must be at least 2 characters')
     .max(50, 'State must be less than 50 characters')
     .trim(),
   postal_code: z
-    .string({ required_error: 'Postal code is required' })
+    .string()
     .regex(postalCodeRegex, 'Invalid postal code format')
     .trim(),
   country: z
-    .string({ required_error: 'Country is required' })
+    .string()
     .min(2, 'Country must be at least 2 characters')
     .max(50, 'Country must be less than 50 characters')
     .default('United States')
@@ -171,16 +171,16 @@ export const billingAddressSchema = z.object({
 // Bank account validation schemas
 export const bankAccountSchema = z.object({
   account_holder_name: z
-    .string({ required_error: 'Account holder name is required' })
+    .string()
     .min(1, 'Account holder name is required')
     .max(100, 'Account holder name must be less than 100 characters')
     .regex(/^[a-zA-Z\s\-\'\.]+$/, 'Account holder name can only contain letters, spaces, hyphens, apostrophes, and periods')
     .trim(),
   routing_number: z
-    .string({ required_error: 'Routing number is required' })
+    .string()
     .regex(routingNumberRegex, 'Routing number must be 9 digits'),
   account_number: z
-    .string({ required_error: 'Account number is required' })
+    .string()
     .regex(accountNumberRegex, 'Account number must be between 4 and 20 digits'),
   account_type: z
     .enum(['checking', 'savings'])
@@ -202,7 +202,7 @@ export const creditCardPaymentSchema = z.object({
 export const digitalWalletPaymentSchema = z.object({
   provider: DigitalWalletProvider,
   wallet_token: z
-    .string({ required_error: 'Wallet token is required' })
+    .string()
     .min(10, 'Invalid wallet token')
     .max(500, 'Wallet token is too long'),
   device_id: z
@@ -233,7 +233,7 @@ export const bankTransferPaymentSchema = z.object({
 // Gift card payment schema
 export const giftCardPaymentSchema = z.object({
   gift_card_code: z
-    .string({ required_error: 'Gift card code is required' })
+    .string()
     .min(8, 'Gift card code must be at least 8 characters')
     .max(50, 'Gift card code must be less than 50 characters')
     .regex(/^[A-Z0-9\-]+$/, 'Gift card code can only contain uppercase letters, numbers, and hyphens')
@@ -264,7 +264,7 @@ export const createPaymentSchema = z.object({
     })
     .transform((val) => val?.trim() || null),
   metadata: z
-    .record(z.string())
+    .record(z.string(), z.string())
     .optional()
     .refine((val) => !val || Object.keys(val).length <= 10, {
       message: 'Cannot have more than 10 metadata fields'
@@ -307,7 +307,7 @@ export const confirmPaymentSchema = z.object({
   }),
   confirmed_amount: amountSchema.optional(),
   gateway_response: z
-    .record(z.any())
+    .record(z.string(), z.any())
     .optional(),
   receipt_url: z
     .string()
@@ -321,7 +321,7 @@ export const refundPaymentSchema = z.object({
   payment_id: paymentIdSchema,
   refund_amount: amountSchema.optional(), // If not provided, full refund
   reason: z
-    .string({ required_error: 'Refund reason is required' })
+    .string()
     .min(5, 'Refund reason must be at least 5 characters')
     .max(250, 'Refund reason must be less than 250 characters')
     .trim(),
@@ -341,7 +341,7 @@ export const refundPaymentSchema = z.object({
 export const paymentDisputeSchema = z.object({
   payment_id: paymentIdSchema,
   dispute_id: z
-    .string({ required_error: 'Dispute ID is required' })
+    .string()
     .min(5, 'Dispute ID must be at least 5 characters')
     .max(100, 'Dispute ID must be less than 100 characters'),
   dispute_reason: z
@@ -503,7 +503,14 @@ export const bulkPaymentUpdateSchema = z.object({
 })
 
 // Partial schemas for updates
-export const createPaymentUpdateSchema = createPaymentSchema.partial()
+// Note: Since createPaymentSchema uses intersection, we can't use .partial() directly
+// For updates, specific update schemas should be created as needed
+export const createPaymentUpdateSchema = z.object({
+  amount: amountSchema.optional(),
+  tip_amount: tipAmountSchema.optional(),
+  description: z.string().optional().nullable(),
+  metadata: z.record(z.string(), z.any()).optional()
+})
 
 // Type exports
 export type CreatePaymentInput = z.infer<typeof createPaymentSchema>
@@ -523,23 +530,3 @@ export type BankAccountInput = z.infer<typeof bankAccountSchema>
 
 // Update type exports
 export type CreatePaymentUpdateInput = z.infer<typeof createPaymentUpdateSchema>
-
-// Export individual field schemas for reuse
-export {
-  PaymentMethod,
-  PaymentStatus,
-  Currency,
-  CardType,
-  DigitalWalletProvider,
-  paymentIdSchema,
-  amountSchema,
-  tipAmountSchema,
-  transactionIdSchema,
-  referenceNumberSchema,
-  creditCardNumberSchema,
-  cvvSchema,
-  expirationDateSchema,
-  cardholderNameSchema,
-  billingAddressSchema,
-  bankAccountSchema
-}

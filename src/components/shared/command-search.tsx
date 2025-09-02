@@ -12,7 +12,7 @@ import {
   CommandList,
   CommandSeparator,
   CommandShortcut,
-} from '@/components/ui/command'
+} from '@/components/ui'
 import {
   Calendar,
   CreditCard,
@@ -118,7 +118,7 @@ export function CommandSearch({ open, onOpenChange, userRole = 'customer' }: Com
             group: 'Schedule',
             items: [
               { icon: Calendar, label: 'My Schedule', shortcut: 'C', action: () => router.push('/staff/schedule') },
-              { icon: Clock, label: 'Time Off Requests', action: () => router.push('/staff/time-off') },
+              { icon: Clock, label: 'Time Off Requests', action: () => router.push('/staff/timeoff') },
               { icon: Users, label: 'My Clients', action: () => router.push('/staff/clients') },
             ]
           },

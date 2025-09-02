@@ -2,8 +2,14 @@
 
 import { useState, useEffect } from 'react'
 import { Database } from '@/types/database.types'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -12,13 +18,16 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent } from '@/components/ui/card'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+  Button,
+  Textarea,
+  Label,
+  Card,
+  CardContent,
+  ScrollArea,
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/components/ui'
 import { toast } from 'sonner'
 import { FileText, Plus, Edit2, Save, X, Loader2, User, Calendar } from 'lucide-react'
 import { format } from 'date-fns'

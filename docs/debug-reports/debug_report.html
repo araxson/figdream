@@ -1,0 +1,132 @@
+<!doctype html>
+<html><head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>Next.js + TS + Supabase Debug Report</title>
+<style>
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, sans-serif; padding:24px; line-height:1.55;}
+h1{margin-top:0} .section{margin:24px 0;}
+.finding{border:1px solid #eee; border-left-width:6px; padding:12px 16px; border-radius:12px; margin:12px 0; background:#fff;}
+.critical{border-left-color:#e11d48;background:#fff1f2;}
+.warning{border-left-color:#f59e0b;background:#fffbeb;}
+.info{border-left-color:#3b82f6;background:#eff6ff;}
+.meta{color:#555;} code{background:#f5f5f5; padding:2px 6px; border-radius:6px;}
+ul{margin:8px 0 8px 20px;} .steps ol{margin:8px 0 8px 20px;}
+.notes{color:#444; padding:8px 12px; background:#f9fafb; border-radius:8px;}
+</style></head><body>
+<h1>Next.js + TypeScript + Supabase Debug Report</h1>
+<div class='meta'><em>Generated: 2025-09-01T18:28:35.902146</em><br>
+<em>Project: /Users/afshin/Desktop/zss/clients/009-figdream/03-website-development/figdream</em></div>
+<div class='section'><h2>Executive Summary</h2>
+<div class='finding info'>
+<h3>No critical blockers</h3>
+<p><strong>Summary:</strong> No critical issues found in high-level checks.</p>
+<p><strong>Recommendation:</strong> Address warnings and infos to improve robustness.</p>
+</div>
+</div>
+<div class='section'><h2>Environment</h2>
+<div class='finding info'>
+<h3>Node.js detected</h3>
+<p><strong>Summary:</strong> Node version: v24.7.0</p>
+<p><strong>Recommendation:</strong> Ensure Node.js version meets Next.js requirements (typically LTS).</p>
+<p><strong>Evidence:</strong> <code>v24.7.0</code></p>
+</div>
+<div class='finding info'>
+<h3>Supabase CLI detected</h3>
+<p><strong>Summary:</strong> Supabase CLI version: 2.39.2</p>
+<p><strong>Recommendation:</strong> Keep Supabase CLI up to date for local dev and migrations.</p>
+<p><strong>Evidence:</strong> <code>2.39.2</code></p>
+</div>
+<div class='finding info'>
+<h3>Git repository detected</h3>
+<p><strong>Summary:</strong> Project is inside a Git repository.</p>
+<p><strong>Recommendation:</strong> Use branches and conventional commits to track changes.</p>
+</div>
+<div class='notes'><strong>Notes:</strong><ul>
+<li>Detected package manager: npm</li>
+</ul></div>
+</div>
+<div class='section'><h2>Project Structure</h2>
+<div class='finding info'>
+<h3>middleware.ts present</h3>
+<p><strong>Summary:</strong> Middleware detected.</p>
+<p><strong>Recommendation:</strong> Ensure auth and rewrites are intentional and tested.</p>
+</div>
+<div class='finding info'>
+<h3>Prettier config not found</h3>
+<p><strong>Summary:</strong> Prettier isn&#x27;t configured (optional but recommended).</p>
+<p><strong>Recommendation:</strong> Add Prettier for formatting consistency.</p>
+</div>
+<div class='notes'><strong>Notes:</strong><ul>
+<li>Routing dirs — app/: True, pages/: False</li>
+<li>API routes found: 11</li>
+</ul></div>
+</div>
+<div class='section'><h2>Dependency Health</h2>
+<div class='notes'><strong>Notes:</strong><ul>
+<li>next version: ^15.5.2</li>
+<li>typescript version: ^5</li>
+<li>@supabase/supabase-js version: ^2.56.0</li>
+</ul></div>
+</div>
+<div class='section'><h2>TypeScript Configuration</h2>
+<div class='finding info'>
+<h3>jsx setting not optimized</h3>
+<p><strong>Summary:</strong> `compilerOptions.jsx` is `preserve`.</p>
+<p><strong>Recommendation:</strong> Use `react-jsx` for modern JSX transform.</p>
+</div>
+<div class='notes'><strong>Notes:</strong><ul>
+<li>Using tsconfig.json</li>
+</ul></div>
+</div>
+<div class='section'><h2>Next.js Configuration</h2>
+<div class='notes'><strong>Notes:</strong><ul>
+<li>Using next.config.ts</li>
+<li>Images domain configuration detected.</li>
+<li>Experimental flags detected; validate compatibility.</li>
+<li>Standalone output detected (good for Docker).</li>
+</ul></div>
+</div>
+<div class='section'><h2>Supabase Integration</h2>
+<div class='notes'><strong>Notes:</strong><ul>
+<li>Env files present: .env.local</li>
+<li>Anon key exp: 2035-08-23T07:41:57Z</li>
+<li>REST probe status: 200</li>
+<li>Files referencing supabase-js: 139</li>
+</ul></div>
+</div>
+<div class='section'><h2>Tooling Run Results</h2>
+<div class='finding warning'>
+<h3>TypeScript typecheck failed</h3>
+<p><strong>Summary:</strong> &gt; figdream@0.1.0 typecheck
+&gt; tsc --noEmit
+
+src/app/(customer)/loyalty/page.tsx(112,36): error TS2339: Property &#x27;current_tier&#x27; does not exist on type &#x27;{ success: boolean; data: CustomerLoyalty; error?: undefined; } | { success: boolean; error: string; data?: undefined; }&#x27;.
+  Property &#x27;current_tier&#x27; does not exist on type &#x27;{ success: boolean; data: CustomerLoyalty; error?: undefined; }&#x27;.
+src/app/(customer)/loyalty/page.tsx(113,33): error TS2339: Property &#x27;next_tier&#x27; does not exist on type &#x27;{ succe</p>
+<p><strong>Recommendation:</strong> Investigate TypeScript typecheck output for errors.</p>
+</div>
+<div class='finding warning'>
+<h3>ESLint failed</h3>
+<p><strong>Summary:</strong> &gt; figdream@0.1.0 lint
+&gt; eslint
+
+
+/Users/afshin/Desktop/zss/clients/009-figdream/03-website-development/figdream/src/app/(customer)/appointments/[id]/page.tsx
+   30:3   error  &#x27;ArrowLeft&#x27; is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  144:87  error  Unexpected any. Specify a different type                                     @typescript-eslint/no-explicit-any
+  148:89  error  Unexpected any. Specify a different type                            </p>
+<p><strong>Recommendation:</strong> Investigate ESLint output for errors.</p>
+</div>
+<div class='finding warning'>
+<h3>Next.js build failed</h3>
+<p><strong>Summary:</strong> Failed to compile.
+
+src/app/(customer)/appointments/[id]/page.tsx
+You cannot have two parallel pages that resolve to the same path. Please check /(customer)/appointments/[id]/page and /(staff)/appointments/[id]/page. Refer to the route group docs for more information: https://nextjs.org/docs/app/building-your-application/routing/route-groups
+
+src/app/(customer)/appointments/page.tsx
+You cannot have two parallel pages that resolve to the same path. Please check /(customer)/appointments/page and /</p>
+<p><strong>Recommendation:</strong> Investigate Next.js build output for errors.</p>
+</div>
+</div>
+</body></html>

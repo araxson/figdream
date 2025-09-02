@@ -7,11 +7,23 @@
 
 import { useState, useEffect } from 'react'
 import { Star, Quote, ChevronLeft, ChevronRight, TrendingUp, Users, Award } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Progress } from '@/components/ui/progress'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Button,
+  Badge,
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Progress,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { Database } from '@/types/database.types'
 
@@ -153,10 +165,12 @@ export function ReviewCarousel({
             {/* Indicators */}
             <div className="flex justify-center gap-1 mt-4">
               {reviews.map((_, index) => (
-                <button
+                <Button
                   key={index}
+                  variant="ghost"
+                  size="sm"
                   className={cn(
-                    "h-1.5 rounded-full transition-all",
+                    "h-1.5 rounded-full transition-all p-0 border-none",
                     index === currentIndex
                       ? "w-6 bg-primary"
                       : "w-1.5 bg-muted-foreground/30"
@@ -398,7 +412,6 @@ export function FloatingReviewWidget({
   position?: 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right'
   className?: string
 }) {
-  const [isOpen, setIsOpen] = useState(false)
   const [currentIndex, setCurrentIndex] = useState(0)
 
   const positionClasses = {
@@ -415,21 +428,18 @@ export function FloatingReviewWidget({
 
   return (
     <div className={cn("fixed z-50", positionClasses[position], className)}>
-      {isOpen ? (
-        <Card className="w-80 shadow-lg">
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-base">Customer Reviews</CardTitle>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsOpen(false)}
-              >
-                ✕
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-3">
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button>
+            <Star className="h-4 w-4 mr-2 fill-yellow-400 text-yellow-400" />
+            {averageRating.toFixed(1)} Reviews
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="w-80">
+          <DialogHeader>
+            <DialogTitle>Customer Reviews</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
             {/* Average Rating */}
             <div className="flex items-center gap-2">
               <div className="flex">
@@ -497,17 +507,9 @@ export function FloatingReviewWidget({
                 </Button>
               </div>
             )}
-          </CardContent>
-        </Card>
-      ) : (
-        <Button
-          className="shadow-lg"
-          onClick={() => setIsOpen(true)}
-        >
-          <Star className="h-4 w-4 mr-2 fill-yellow-400 text-yellow-400" />
-          {averageRating.toFixed(1)} Reviews
-        </Button>
-      )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

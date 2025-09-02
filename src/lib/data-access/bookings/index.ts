@@ -4,25 +4,25 @@ import { createClient } from '@/lib/database/supabase/server'
 import { Database } from '@/types/database.types'
 
 // Type definitions for appointment operations
-type Appointment = Database['public']['Tables']['appointments']['Row']
-type AppointmentInsert = Database['public']['Tables']['appointments']['Insert']
-type AppointmentUpdate = Database['public']['Tables']['appointments']['Update']
+type _Appointment = Database['public']['Tables']['appointments']['Row']
+type _AppointmentInsert = Database['public']['Tables']['appointments']['Insert']
+type _AppointmentUpdate = Database['public']['Tables']['appointments']['Update']
 
 export type AppointmentStatus = Database['public']['Tables']['appointments']['Row']['status']
-export type PaymentStatus = 'pending' | 'paid' | 'refunded' | 'failed'
 
 export interface CreateAppointmentInput {
   customer_id: string
   salon_id: string
-  location_id?: string
+  location_id: string
   staff_id: string
   appointment_date: string
   start_time: string
   end_time: string
   total_amount?: number
-  deposit_amount?: number
   notes?: string
-  reminder_sent?: boolean
+  is_walk_in?: boolean
+  services?: Database['public']['Tables']['appointments']['Row']['services']
+  total_duration?: number
 }
 
 export interface UpdateAppointmentInput {
@@ -39,6 +39,7 @@ export interface AppointmentFilters {
   location_id?: string
   staff_id?: string
   customer_id?: string
+  service_id?: string
   status?: AppointmentStatus
   date_from?: string
   date_to?: string
@@ -72,7 +73,6 @@ export async function createAppointment(input: CreateAppointmentInput) {
     .insert({
       ...input,
       status: 'pending',
-      payment_status: 'pending',
       created_at: new Date().toISOString()
     })
     .select()
@@ -101,10 +101,9 @@ export async function getAppointmentById(appointmentId: string) {
     .from('appointments')
     .select(`
       *,
-      customer:customers(*),
-      location:locations(*),
-      staff:staff(*),
-      service:services(*),
+      customers(*),
+      salon_locations!appointments_location_id_fkey(*),
+      staff_profiles!appointments_staff_id_fkey(*),
       appointment_services(*)
     `)
     .eq('id', appointmentId)
@@ -127,10 +126,10 @@ export async function getAppointments(filters: AppointmentFilters = {}) {
     .from('appointments')
     .select(`
       *,
-      customer:customers(id, first_name, last_name, email, phone),
-      location:locations(id, name),
-      staff:staff(id, first_name, last_name),
-      service:services(id, name, duration, price)
+      customers(id, first_name, last_name, email, phone),
+      salon_locations!appointments_location_id_fkey(id, name),
+      staff_profiles!appointments_staff_id_fkey(id, display_name),
+      appointment_services(*, services(*))
     `)
   
   // Apply filters
@@ -265,8 +264,8 @@ export async function cancelAppointment(appointmentId: string, reason?: string) 
   await sendAppointmentCancellation(appointmentId)
   
   // Process refund if applicable
-  if (data.deposit_amount && data.deposit_amount > 0) {
-    await processAppointmentRefund(appointmentId, data.deposit_amount)
+  if (data.total_amount && data.total_amount > 0) {
+    await processAppointmentRefund(appointmentId, data.total_amount)
   }
   
   return { data }
@@ -399,9 +398,9 @@ export async function getCustomerPastAppointments(customerId: string) {
     .from('appointments')
     .select(`
       *,
-      location:locations(id, name),
-      staff:staff(id, first_name, last_name),
-      service:services(id, name, duration, price)
+      salon_locations!appointments_location_id_fkey(id, name),
+      staff_profiles!appointments_staff_id_fkey(id, display_name),
+      appointment_services(*, services(*))
     `)
     .eq('customer_id', customerId)
     .lt('appointment_date', today)
@@ -443,6 +442,204 @@ export async function markAppointmentNoShow(appointmentId: string) {
     status: 'no-show'
   })
 }
+
+/**
+ * Update appointment status specifically
+ */
+export async function updateBookingStatus(appointmentId: string, status: AppointmentStatus, reason?: string) {
+  const supabase = await createClient()
+  
+  const updateData: Record<string, unknown> = {
+    status,
+    updated_at: new Date().toISOString()
+  }
+
+  // Add specific fields based on status
+  if (status === 'cancelled') {
+    updateData.cancelled_at = new Date().toISOString()
+    updateData.cancellation_reason = reason
+  } else if (status === 'completed') {
+    updateData.completed_at = new Date().toISOString()
+  } else if (status === 'confirmed') {
+    updateData.confirmed_at = new Date().toISOString()
+  }
+
+  const { data, error } = await supabase
+    .from('appointments')
+    .update(updateData)
+    .eq('id', appointmentId)
+    .select()
+    .single()
+  
+  if (error) {
+    return { error: error.message }
+  }
+  
+  // Create status history
+  await createAppointmentStatusHistory(appointmentId, status, reason || `Status updated to ${status}`)
+  
+  // Send notifications based on status
+  if (status === 'confirmed') {
+    await sendAppointmentConfirmation(appointmentId)
+  } else if (status === 'cancelled') {
+    await sendAppointmentCancellation(appointmentId)
+  }
+  
+  return { data }
+}
+
+/**
+ * Check if a specific time slot is available
+ */
+export async function isTimeSlotAvailable(params: {
+  staff_id: string
+  location_id: string
+  appointment_date: string
+  start_time: string
+  end_time: string
+  exclude_appointment_id?: string
+}) {
+  const conflicts = await checkAppointmentConflicts(params)
+  
+  // Check staff schedule
+  const supabase = await createClient()
+  const dayOfWeek = new Date(params.appointment_date).getDay()
+  
+  const { data: schedule } = await supabase
+    .from('staff_schedules')
+    .select('*')
+    .eq('staff_id', params.staff_id)
+    .eq('location_id', params.location_id)
+    .eq('day_of_week', dayOfWeek)
+    .single()
+  
+  if (!schedule || !schedule.is_working) {
+    return { available: false, reason: 'Staff not working on this day' }
+  }
+  
+  // Check if time slot is within working hours
+  if (params.start_time < schedule.start_time || params.end_time > schedule.end_time) {
+    return { available: false, reason: 'Time slot outside working hours' }
+  }
+  
+  // Check if time slot conflicts with break
+  if (schedule.break_start && schedule.break_end) {
+    if (
+      (params.start_time >= schedule.break_start && params.start_time < schedule.break_end) ||
+      (params.end_time > schedule.break_start && params.end_time <= schedule.break_end) ||
+      (params.start_time <= schedule.break_start && params.end_time >= schedule.break_end)
+    ) {
+      return { available: false, reason: 'Time slot conflicts with break time' }
+    }
+  }
+  
+  // Check for blocked times
+  const { data: blockedTimes } = await supabase
+    .from('blocked_times')
+    .select('*')
+    .eq('staff_id', params.staff_id)
+    .eq('location_id', params.location_id)
+  
+  if (blockedTimes && blockedTimes.length > 0) {
+    for (const blockedTime of blockedTimes) {
+      const blockedStart = blockedTime.start_datetime
+      const blockedEnd = blockedTime.end_datetime
+      const appointmentStart = `${params.appointment_date}T${params.start_time}`
+      const appointmentEnd = `${params.appointment_date}T${params.end_time}`
+      
+      if (
+        (appointmentStart >= blockedStart && appointmentStart < blockedEnd) ||
+        (appointmentEnd > blockedStart && appointmentEnd <= blockedEnd) ||
+        (appointmentStart <= blockedStart && appointmentEnd >= blockedEnd)
+      ) {
+        return { available: false, reason: 'Time slot is blocked' }
+      }
+    }
+  }
+  
+  if (conflicts.length > 0) {
+    return { available: false, reason: 'Time slot conflicts with existing appointment', conflicts }
+  }
+  
+  return { available: true }
+}
+
+/**
+ * Get available staff for a specific service and time slot
+ */
+export async function getAvailableStaff(params: {
+  salon_id: string
+  location_id: string
+  service_id: string
+  appointment_date: string
+  start_time: string
+  end_time: string
+}) {
+  const supabase = await createClient()
+  
+  // Get staff who can perform this service
+  const { data: staffServices, error: staffServicesError } = await supabase
+    .from('staff_services')
+    .select(`
+      staff_id,
+      staff_profiles (
+        id,
+        user_id,
+        display_name,
+        is_active,
+        profiles:user_id (
+          first_name,
+          last_name,
+          avatar_url
+        )
+      )
+    `)
+    .eq('service_id', params.service_id)
+  
+  if (staffServicesError) {
+    return { error: staffServicesError.message }
+  }
+  
+  if (!staffServices || staffServices.length === 0) {
+    return { data: [] }
+  }
+  
+  const availableStaff = []
+  
+  // Check availability for each staff member
+  for (const staffService of staffServices) {
+    if (!staffService.staff_profiles?.is_active) {
+      continue
+    }
+    
+    const availability = await isTimeSlotAvailable({
+      staff_id: staffService.staff_id,
+      location_id: params.location_id,
+      appointment_date: params.appointment_date,
+      start_time: params.start_time,
+      end_time: params.end_time
+    })
+    
+    if (availability.available) {
+      availableStaff.push({
+        id: staffService.staff_id,
+        display_name: staffService.staff_profiles.display_name,
+        first_name: staffService.staff_profiles.profiles?.first_name,
+        last_name: staffService.staff_profiles.profiles?.last_name,
+        avatar_url: staffService.staff_profiles.profiles?.avatar_url
+      })
+    }
+  }
+  
+  return { data: availableStaff }
+}
+
+// Alias functions for backward compatibility and the requested function names
+export const createBooking = createAppointment
+export const updateBooking = updateAppointment
+export const cancelBooking = cancelAppointment
+export const getBookingById = getAppointmentById
+export const getBookingConflicts = checkAppointmentConflicts
 
 // Helper functions
 
@@ -487,7 +684,7 @@ function generateTimeSlots(params: {
   duration: number
   breakStart?: string
   breakEnd?: string
-  existingAppointments: any[]
+  existingAppointments: { start_time: string; end_time: string }[]
 }) {
   const slots = []
   const slotDuration = params.duration
@@ -538,7 +735,11 @@ function generateTimeSlots(params: {
 function checkSlotAvailability(
   slotStart: string, 
   slotEnd: string, 
-  params: any
+  params: {
+    breakStart?: string
+    breakEnd?: string
+    existingAppointments: { start_time: string; end_time: string }[]
+  }
 ): boolean {
   // Check if slot conflicts with break time
   if (params.breakStart && params.breakEnd) {

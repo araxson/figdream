@@ -1,20 +1,40 @@
 'use client'
 
 import * as React from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Separator } from '@/components/ui/separator'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Skeleton } from '@/components/ui/skeleton'
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Badge,
+  Input,
+  Label,
+  Textarea,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  Alert,
+  AlertDescription,
+  Checkbox,
+  Separator,
+  ScrollArea,
+  Skeleton,
+  Loader2,
+} from '@/components/ui'
 import { 
   Shield,
   CheckCircle,
@@ -47,7 +67,7 @@ import { cn } from '@/lib/utils'
 import { format, formatDistanceToNow } from 'date-fns'
 import { moderateReview, getReviews } from '@/lib/data-access/reviews/reviews'
 import type { ReviewFilterInput } from '@/lib/validations/review-schema'
-import type { Database } from '@/types/database'
+import type { Database } from '@/types/database.types'
 import { ReviewCard } from './review-card'
 
 type Review = Database['public']['Tables']['reviews']['Row'] & {
@@ -272,9 +292,9 @@ export function ReviewModeration({
       <Card>
         <CardContent>
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-orange-100 rounded-lg">
-              <Clock className="h-4 w-4 text-orange-600" />
-            </div>
+            <Badge variant="secondary" className="h-8 w-8 rounded-full p-0 flex items-center justify-center">
+              <Clock className="h-4 w-4" />
+            </Badge>
             <div>
               <p className="text-2xl font-bold">{stats.pending}</p>
               <p className="text-xs text-muted-foreground">Pending</p>
@@ -286,9 +306,9 @@ export function ReviewModeration({
       <Card>
         <CardContent>
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <CheckCircle className="h-4 w-4 text-green-600" />
-            </div>
+            <Badge variant="secondary" className="h-8 w-8 rounded-full p-0 flex items-center justify-center text-green-600">
+              <CheckCircle className="h-4 w-4" />
+            </Badge>
             <div>
               <p className="text-2xl font-bold">{stats.approved}</p>
               <p className="text-xs text-muted-foreground">Approved</p>
@@ -300,9 +320,9 @@ export function ReviewModeration({
       <Card>
         <CardContent>
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-red-100 rounded-lg">
-              <XCircle className="h-4 w-4 text-red-600" />
-            </div>
+            <Badge variant="secondary" className="h-8 w-8 rounded-full p-0 flex items-center justify-center text-red-600">
+              <XCircle className="h-4 w-4" />
+            </Badge>
             <div>
               <p className="text-2xl font-bold">{stats.rejected}</p>
               <p className="text-xs text-muted-foreground">Rejected</p>
@@ -314,9 +334,9 @@ export function ReviewModeration({
       <Card>
         <CardContent>
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-yellow-100 rounded-lg">
-              <Flag className="h-4 w-4 text-yellow-600" />
-            </div>
+            <Badge variant="secondary" className="h-8 w-8 rounded-full p-0 flex items-center justify-center text-yellow-600">
+              <Flag className="h-4 w-4" />
+            </Badge>
             <div>
               <p className="text-2xl font-bold">{stats.flagged}</p>
               <p className="text-xs text-muted-foreground">Flagged</p>
@@ -328,9 +348,9 @@ export function ReviewModeration({
       <Card>
         <CardContent>
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <MessageSquare className="h-4 w-4 text-blue-600" />
-            </div>
+            <Badge variant="secondary" className="h-8 w-8 rounded-full p-0 flex items-center justify-center text-blue-600">
+              <MessageSquare className="h-4 w-4" />
+            </Badge>
             <div>
               <p className="text-2xl font-bold">{stats.total}</p>
               <p className="text-xs text-muted-foreground">Total</p>
@@ -351,7 +371,7 @@ export function ReviewModeration({
           </CardTitle>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={fetchReviews} disabled={isLoading}>
-              <RefreshCw className={cn("h-3 w-3 mr-1", isLoading && "animate-spin")} />
+              {isLoading ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <RefreshCw className="h-3 w-3 mr-1" />}
               Refresh
             </Button>
             <Button variant="outline" size="sm">
@@ -401,7 +421,7 @@ export function ReviewModeration({
                 variant="outline"
                 onClick={() => handleBulkAction('approve')}
                 disabled={selectedReviews.size === 0 || isSubmitting}
-                className="text-green-600 border-green-200 hover:bg-green-50"
+                className="text-green-600"
               >
                 <CheckCircle className="h-3 w-3 mr-1" />
                 Approve ({selectedReviews.size})
@@ -411,7 +431,7 @@ export function ReviewModeration({
                 variant="outline"
                 onClick={() => handleBulkAction('reject')}
                 disabled={selectedReviews.size === 0 || isSubmitting}
-                className="text-red-600 border-red-200 hover:bg-red-50"
+                className="text-red-600"
               >
                 <XCircle className="h-3 w-3 mr-1" />
                 Reject ({selectedReviews.size})
@@ -421,7 +441,10 @@ export function ReviewModeration({
         </div>
 
         {reviews.length > 0 && (
-          <div className="flex items-center justify-between pt-2 border-t">
+          <>
+            <Separator />
+            
+            <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Checkbox
                 checked={selectedReviews.size === reviews.length}
@@ -435,6 +458,7 @@ export function ReviewModeration({
               {selectedReviews.size} of {reviews.length} selected
             </p>
           </div>
+          </>
         )}
       </CardContent>
     </Card>
@@ -474,7 +498,7 @@ export function ReviewModeration({
         size="sm"
         variant="outline"
         onClick={() => openModerationDialog(review, 'flag')}
-        className="text-yellow-600 border-yellow-200 hover:bg-yellow-50"
+        className="text-yellow-600"
       >
         <Flag className="h-3 w-3 mr-1" />
         Flag
@@ -488,7 +512,7 @@ export function ReviewModeration({
           size="sm"
           variant="outline"
           onClick={() => openModerationDialog(review, 'hide')}
-          className="text-gray-600 border-gray-200 hover:bg-gray-50"
+          className="text-gray-600"
         >
           <EyeOff className="h-3 w-3 mr-1" />
           Hide

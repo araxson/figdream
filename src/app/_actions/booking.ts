@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
-import type { Database } from '@/types/database'
+import type { Database } from '@/types/database.types'
 import { 
   createBooking, 
   updateBookingStatus, 

@@ -1,14 +1,15 @@
 'use client'
 
 import * as React from 'react'
-import { Button } from '@/components/ui/button'
 import {
+  Button,
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@/components/ui/collapsible'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
+  Badge,
+  Card,
+  CardContent,
+} from '@/components/ui'
 import { ChevronDown, Clock, DollarSign, Users, Info } from 'lucide-react'
 
 interface ServiceDetails {

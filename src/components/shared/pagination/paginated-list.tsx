@@ -1,14 +1,21 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
 import {
+  Button,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+  PaginationEllipsis,
+} from '@/components/ui'
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
 
 interface PaginatedListProps<T> {
@@ -131,77 +138,88 @@ export default function PaginatedList<T>({
           </span>
         </div>
 
-        {/* Page navigation */}
-        <div className="flex items-center gap-1">
-          {/* First page */}
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => goToPage(1)}
-            disabled={currentPage === 1}
-            className="h-8 w-8"
-          >
-            <ChevronsLeft className="h-4 w-4" />
-          </Button>
+        {/* Page navigation using Shadcn Pagination */}
+        <Pagination>
+          <PaginationContent>
+            {/* First page button */}
+            <PaginationItem>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => goToPage(1)}
+                disabled={currentPage === 1}
+                className="h-8 px-2 lg:px-3"
+              >
+                <ChevronsLeft className="h-4 w-4" />
+                <span className="sr-only">Go to first page</span>
+              </Button>
+            </PaginationItem>
 
-          {/* Previous page */}
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => goToPage(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="h-8 w-8"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
+            {/* Previous page */}
+            <PaginationItem>
+              <PaginationPrevious
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault()
+                  goToPage(currentPage - 1)
+                }}
+                className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+              />
+            </PaginationItem>
 
-          {/* Page numbers */}
-          <div className="flex items-center gap-1">
+            {/* Page numbers */}
             {generatePageNumbers().map((page, index) => {
               if (page === '...') {
                 return (
-                  <span key={`ellipsis-${index}`} className="px-2 text-muted-foreground">
-                    ...
-                  </span>
+                  <PaginationItem key={`ellipsis-${index}`}>
+                    <PaginationEllipsis />
+                  </PaginationItem>
                 )
               }
 
               return (
-                <Button
-                  key={page}
-                  variant={currentPage === page ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => goToPage(page as number)}
-                  className="h-8 w-8 p-0"
-                >
-                  {page}
-                </Button>
+                <PaginationItem key={page}>
+                  <PaginationLink
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      goToPage(page as number)
+                    }}
+                    isActive={currentPage === page}
+                  >
+                    {page}
+                  </PaginationLink>
+                </PaginationItem>
               )
             })}
-          </div>
 
-          {/* Next page */}
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => goToPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="h-8 w-8"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
+            {/* Next page */}
+            <PaginationItem>
+              <PaginationNext
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault()
+                  goToPage(currentPage + 1)
+                }}
+                className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+              />
+            </PaginationItem>
 
-          {/* Last page */}
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => goToPage(totalPages)}
-            disabled={currentPage === totalPages}
-            className="h-8 w-8"
-          >
-            <ChevronsRight className="h-4 w-4" />
-          </Button>
-        </div>
+            {/* Last page button */}
+            <PaginationItem>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => goToPage(totalPages)}
+                disabled={currentPage === totalPages}
+                className="h-8 px-2 lg:px-3"
+              >
+                <ChevronsRight className="h-4 w-4" />
+                <span className="sr-only">Go to last page</span>
+              </Button>
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
 
         {/* Page info */}
         <div className="text-sm text-muted-foreground">

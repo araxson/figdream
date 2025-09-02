@@ -1,19 +1,32 @@
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  Button,
+  Badge,
+  Separator,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui'
 import { LoginForm } from '@/components/auth/login-form'
 import { User, Heart, Calendar, Gift, ChevronRight } from 'lucide-react'
 
 export default function CustomerLoginPage() {
   return (
+    <TooltipProvider>
     <div className="space-y-6">
       {/* Header */}
       <div className="text-center space-y-2">
         <div className="flex justify-center">
-          <div className="p-3 bg-blue-100 dark:bg-blue-900/20 rounded-full">
+          <Badge variant="secondary" className="h-14 w-14 rounded-full p-0 flex items-center justify-center bg-blue-100 dark:bg-blue-900/20">
             <User className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-          </div>
+          </Badge>
         </div>
         <h1 className="text-2xl font-bold">Welcome Back!</h1>
         <p className="text-muted-foreground">
@@ -125,18 +138,37 @@ export default function CustomerLoginPage() {
       </Card>
 
       {/* Other Login Options */}
-      <div className="text-center text-sm text-muted-foreground">
-        <p>Are you a business?</p>
-        <div className="flex justify-center gap-4 mt-2">
-          <Link href="/login/salon-owner" className="text-primary hover:underline">
-            Salon Owner
-          </Link>
-          <span>•</span>
-          <Link href="/login/staff" className="text-primary hover:underline">
-            Staff Member
-          </Link>
-        </div>
+      <Card className="bg-muted/30">
+        <CardContent className="pt-6">
+          <div className="text-center text-sm text-muted-foreground">
+            <p className="mb-3">Are you a business?</p>
+            <div className="flex justify-center gap-4">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link href="/login/salon-owner" className="text-primary hover:underline font-medium">
+                    Salon Owner
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Manage your salon, staff, and bookings</p>
+                </TooltipContent>
+              </Tooltip>
+              <Separator orientation="vertical" className="h-4" />
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link href="/login/staff" className="text-primary hover:underline font-medium">
+                    Staff Member
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Access your schedule and client appointments</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
       </div>
-    </div>
+    </TooltipProvider>
   )
 }

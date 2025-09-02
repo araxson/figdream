@@ -1,5 +1,5 @@
 import { Database } from '@/types/database.types'
-import { createServerClient } from '@/lib/database/supabase/server'
+import { createClient } from '@/lib/database/supabase/server'
 import { cache } from 'react'
 import { startOfMonth, endOfMonth, subMonths, startOfDay, endOfDay, subDays } from 'date-fns'
 
@@ -12,7 +12,7 @@ type Service = Database['public']['Tables']['services']['Row']
  * Get revenue metrics for a salon
  */
 export const getRevenueMetrics = cache(async (salonId: string, period: 'day' | 'week' | 'month' | 'year' = 'month') => {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   // Calculate date range based on period
   const now = new Date()
@@ -67,11 +67,11 @@ export const getRevenueMetrics = cache(async (salonId: string, period: 'day' | '
     }
   }
 
-  const currentRevenue = currentAppointments?.reduce((sum, apt) => {
+  const currentRevenue = currentAppointments?.reduce((sum: number, apt: Appointment) => {
     return sum + (apt.total_amount || 0)
   }, 0) || 0
 
-  const previousRevenue = previousAppointments?.reduce((sum, apt) => {
+  const previousRevenue = previousAppointments?.reduce((sum: number, apt: Appointment) => {
     return sum + (apt.total_amount || 0)
   }, 0) || 0
 
@@ -95,7 +95,7 @@ export const getRevenueMetrics = cache(async (salonId: string, period: 'day' | '
  * Get customer analytics for a salon
  */
 export const getCustomerMetrics = cache(async (salonId: string) => {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   const now = new Date()
   const thirtyDaysAgo = subDays(now, 30)
@@ -128,30 +128,30 @@ export const getCustomerMetrics = cache(async (salonId: string) => {
     .eq('salon_id', salonId)
     .gte('scheduled_at', thirtyDaysAgo.toISOString())
 
-  const returningCustomerIds = new Set(returningData?.map(a => a.customer_id) || [])
-  const recentCustomerIds = new Set(recentData?.map(a => a.customer_id) || [])
+  const returningCustomerIds = new Set(returningData?.map((a: {customer_id: string}) => a.customer_id) || [])
+  const recentCustomerIds = new Set(recentData?.map((a: {customer_id: string}) => a.customer_id) || [])
   const returningCount = [...recentCustomerIds].filter(id => returningCustomerIds.has(id)).length
 
   const retentionRate = totalCustomers && totalCustomers > 0 
     ? (returningCount / totalCustomers) * 100 
     : 0
 
-  // Get customer lifetime value
+  // Get customer lifetime value from loyalty transactions
   const { data: ltv } = await supabase
-    .from('transactions')
-    .select('customer_id, amount')
+    .from('loyalty_transactions')
+    .select('customer_id, points_amount')
     .eq('salon_id', salonId)
-    .eq('type', 'payment')
+    .eq('type', 'earned')
 
-  const customerSpending = ltv?.reduce((acc, t) => {
+  const customerSpending = ltv?.reduce((acc: Record<string, number>, t: LoyaltyTransaction) => {
     if (t.customer_id) {
-      acc[t.customer_id] = (acc[t.customer_id] || 0) + (t.amount || 0)
+      acc[t.customer_id] = (acc[t.customer_id] || 0) + (t.points_amount || 0)
     }
     return acc
   }, {} as Record<string, number>) || {}
 
   const avgLifetimeValue = Object.values(customerSpending).length > 0
-    ? Object.values(customerSpending).reduce((sum, val) => sum + val, 0) / Object.values(customerSpending).length
+    ? Object.values(customerSpending).reduce((sum: number, val: number) => sum + val, 0) / Object.values(customerSpending).length
     : 0
 
   return {
@@ -168,7 +168,7 @@ export const getCustomerMetrics = cache(async (salonId: string) => {
  * Get service popularity metrics
  */
 export const getServiceMetrics = cache(async (salonId: string) => {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   const thirtyDaysAgo = subDays(new Date(), 30)
 
@@ -198,7 +198,7 @@ export const getServiceMetrics = cache(async (salonId: string) => {
     .eq('appointments.status', 'completed')
 
   // Calculate service popularity
-  const serviceStats = bookings?.reduce((acc, booking) => {
+  const serviceStats = bookings?.reduce((acc: Record<string, any>, booking: any) => {
     if (booking.service_id && booking.services) {
       if (!acc[booking.service_id]) {
         acc[booking.service_id] = {
@@ -217,7 +217,7 @@ export const getServiceMetrics = cache(async (salonId: string) => {
   }, {} as Record<string, any>) || {}
 
   const topServices = Object.values(serviceStats)
-    .sort((a, b) => b.bookings - a.bookings)
+    .sort((a: any, b: any) => b.bookings - a.bookings)
     .slice(0, 10)
 
   const categoryBreakdown = Object.values(serviceStats).reduce((acc, service) => {
@@ -241,7 +241,7 @@ export const getServiceMetrics = cache(async (salonId: string) => {
  * Get staff utilization metrics
  */
 export const getStaffUtilization = cache(async (salonId: string) => {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   const now = new Date()
   const thirtyDaysAgo = subDays(now, 30)
@@ -251,12 +251,13 @@ export const getStaffUtilization = cache(async (salonId: string) => {
     .from('staff_profiles')
     .select(`
       id,
-      first_name,
-      last_name,
+      profiles:user_id (
+        full_name
+      ),
       appointments (
         id,
-        scheduled_at,
-        duration,
+        start_time,
+        total_duration,
         status
       )
     `)
@@ -266,11 +267,11 @@ export const getStaffUtilization = cache(async (salonId: string) => {
   const utilization = staffData?.map(staff => {
     const validAppointments = staff.appointments?.filter(
       a => a.status === 'completed' && 
-      new Date(a.scheduled_at) >= thirtyDaysAgo
+      new Date(a.start_time) >= thirtyDaysAgo
     ) || []
 
     const totalMinutesWorked = validAppointments.reduce(
-      (sum, a) => sum + (a.duration || 0), 0
+      (sum, a) => sum + (a.total_duration || 0), 0
     )
 
     // Assume 8 hours per day, 22 working days per month
@@ -281,7 +282,7 @@ export const getStaffUtilization = cache(async (salonId: string) => {
 
     return {
       id: staff.id,
-      name: `${staff.first_name} ${staff.last_name}`,
+      name: staff.profiles?.full_name || 'Unknown',
       appointments: validAppointments.length,
       hoursWorked: totalMinutesWorked / 60,
       utilizationRate: Math.min(utilizationRate, 100) // Cap at 100%
@@ -303,7 +304,7 @@ export const getStaffUtilization = cache(async (salonId: string) => {
  * Get booking patterns and peak hours
  */
 export const getBookingPatterns = cache(async (salonId: string) => {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   const thirtyDaysAgo = subDays(new Date(), 30)
 
@@ -386,7 +387,7 @@ function calculateDailyRevenue(appointments: Appointment[], startDate: Date, end
   const dailyMap = new Map<string, number>()
   
   // Initialize all days with 0
-  let currentDate = new Date(startDate)
+  const currentDate = new Date(startDate)
   while (currentDate <= endDate) {
     dailyMap.set(currentDate.toISOString().split('T')[0], 0)
     currentDate.setDate(currentDate.getDate() + 1)

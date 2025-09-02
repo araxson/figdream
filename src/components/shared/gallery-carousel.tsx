@@ -8,10 +8,11 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from '@/components/ui/carousel'
-import { AspectRatio } from '@/components/ui/aspect-ratio'
-import { Card } from '@/components/ui/card'
-import { Dialog, DialogContent } from '@/components/ui/dialog'
+  AspectRatio,
+  Card,
+  Dialog,
+  DialogContent,
+} from '@/components/ui'
 import Autoplay from 'embla-carousel-autoplay'
 
 interface GalleryImage {
@@ -97,10 +98,12 @@ export function GalleryCarousel({
         {showThumbnails && (
           <div className="flex gap-2 mt-4 overflow-x-auto pb-2">
             {images.map((image, index) => (
-              <button
+              <Button
                 key={image.id}
+                variant="ghost"
+                size="icon"
                 onClick={() => api?.scrollTo(index)}
-                className={`flex-shrink-0 transition-opacity ${
+                className={`flex-shrink-0 transition-opacity h-auto w-auto p-1 ${
                   current === index ? 'opacity-100' : 'opacity-50 hover:opacity-75'
                 }`}
               >
@@ -111,7 +114,7 @@ export function GalleryCarousel({
                     className="w-full h-full object-cover rounded"
                   />
                 </AspectRatio>
-              </button>
+              </Button>
             ))}
           </div>
         )}

@@ -1,14 +1,20 @@
 import { Suspense } from 'react'
 import { getSalonsForBooking } from '@/lib/data-access/bookings/public-booking'
-import { createServerClient } from '@/lib/database/supabase/server'
+import { createClient } from '@/lib/database/supabase/server'
 import { Database } from '@/types/database.types'
-import SalonBookingList from './salon-booking-list'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import SalonBookingList from '@/components/shared/booking/salon-booking-list'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Button,
+  Input,
+  Badge,
+  Skeleton,
+} from '@/components/ui'
 import { MapPin, Search } from 'lucide-react'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
-import { Skeleton } from '@/components/ui/skeleton'
 
 type Salon = Database['public']['Tables']['salons']['Row']
 
@@ -17,10 +23,10 @@ export default async function BookingPage() {
   const salons = await getSalonsForBooking()
   
   // Get aggregated stats for each salon
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   
   // Fetch review stats and service categories for all salons
-  const salonIds = salons.map(s => s.id)
+  const salonIds = salons.map((s: Salon) => s.id)
   
   const [reviewStats, services] = await Promise.all([
     // Get review statistics
@@ -45,18 +51,18 @@ export default async function BookingPage() {
   ])
   
   // Process salon data with stats
-  const salonsWithStats = salons.map(salon => {
+  const salonsWithStats = salons.map((salon: Salon) => {
     // Calculate average rating
     const salonReviews = reviewStats.data?.filter(r => r.salon_id === salon.id) || []
     const avgRating = salonReviews.length > 0
-      ? salonReviews.reduce((sum, r) => sum + r.rating, 0) / salonReviews.length
+      ? salonReviews.reduce((sum: number, r: any) => sum + r.rating, 0) / salonReviews.length
       : 0
     
     // Get unique service categories
     const salonServices = services.data?.filter(s => s.salon_id === salon.id) || []
     const categories = [...new Set(salonServices
       .map(s => s.service_categories?.name)
-      .filter(Boolean)
+      .filter((name): name is string => Boolean(name))
     )]
     
     return {

@@ -49,7 +49,7 @@ export const createCampaignSchema = z.object({
     .optional(),
   
   type: z.enum(campaignTypes, {
-    errorMap: () => ({ message: 'Invalid campaign type' }),
+    message: 'Invalid campaign type',
   }),
   
   status: z.enum(campaignStatuses).default('draft'),
@@ -95,7 +95,7 @@ export const createCampaignSchema = z.object({
   
   tags: z.array(z.string()).max(10, 'Maximum 10 tags allowed').optional(),
   
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 })
 
 export type CreateCampaignInput = z.infer<typeof createCampaignSchema>
@@ -309,7 +309,7 @@ export const createAutomationSchema = z.object({
     'time_based',
   ]),
   
-  trigger_conditions: z.record(z.any()).optional(),
+  trigger_conditions: z.record(z.string(), z.any()).optional(),
   
   actions: z.array(z.object({
     type: z.enum(['send_email', 'send_sms', 'add_tag', 'remove_tag', 'wait', 'webhook']),

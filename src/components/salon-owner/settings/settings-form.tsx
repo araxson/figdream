@@ -1,28 +1,33 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
 import {
+  Button,
+  Input,
+  Label,
+  Switch,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
-import {
+  Separator,
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion'
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from '@/components/ui'
 import { bulkUpdateSettings } from '@/lib/data-access/settings'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
-import { Save, Settings, Clock, Globe, CreditCard } from 'lucide-react'
+import { Save, Settings, Clock, Globe, CreditCard, HelpCircle, Info } from 'lucide-react'
 
 type SettingValue = string | number | boolean
 
@@ -131,14 +136,43 @@ export function SettingsForm({
       case 'boolean':
         return (
           <div className="flex items-center justify-between rounded-lg border p-3">
-            <Label htmlFor={template.key} className="flex-1 cursor-pointer">
-              {template.label}
-            </Label>
-            <Switch
-              id={template.key}
-              checked={value}
-              onCheckedChange={(checked) => handleChange(template.key, checked)}
-            />
+            <div className="flex items-center gap-2 flex-1">
+              <Label htmlFor={template.key} className="flex-1 cursor-pointer">
+                {template.label}
+              </Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" size="sm" className="h-auto p-1">
+                    <HelpCircle className="h-4 w-4" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80">
+                  <div className="space-y-2">
+                    <h4 className="font-medium">{template.label}</h4>
+                    <p className="text-sm text-muted-foreground">
+                      This setting controls how {template.label.toLowerCase()} behaves in your salon management system.
+                      {template.key.includes('notification') && ' Affects customer and staff notifications.'}
+                      {template.key.includes('booking') && ' Impacts appointment scheduling and availability.'}
+                      {template.key.includes('payment') && ' Changes payment processing behavior.'}
+                    </p>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div>
+                  <Switch
+                    id={template.key}
+                    checked={value}
+                    onCheckedChange={(checked) => handleChange(template.key, checked)}
+                  />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{value ? 'Disable' : 'Enable'} {template.label.toLowerCase()}</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
         )
       
@@ -147,21 +181,28 @@ export function SettingsForm({
         return (
           <div className="space-y-2">
             <Label htmlFor={template.key}>{template.label}</Label>
-            <Select
-              value={String(value)}
-              onValueChange={(val) => handleChange(template.key, val)}
-            >
-              <SelectTrigger id={template.key}>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {options.map(option => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Select
+                  value={String(value)}
+                  onValueChange={(val) => handleChange(template.key, val)}
+                >
+                  <SelectTrigger id={template.key}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {options.map(option => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Choose {template.label.toLowerCase()} for your salon</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
         )
       
@@ -198,8 +239,9 @@ export function SettingsForm({
   const otherSettings = templates.filter(t => t.type !== 'boolean')
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <Accordion type="multiple" defaultValue={["basic", "preferences"]} className="w-full">
+    <TooltipProvider>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <Accordion type="multiple" defaultValue={["basic", "preferences"]} className="w-full">
         {/* Basic Configuration Settings */}
         {otherSettings.length > 0 && (
           <AccordionItem value="basic">
@@ -252,31 +294,45 @@ export function SettingsForm({
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label>Auto-save Interval</Label>
-                  <Select defaultValue="5">
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">1 minute</SelectItem>
-                      <SelectItem value="5">5 minutes</SelectItem>
-                      <SelectItem value="10">10 minutes</SelectItem>
-                      <SelectItem value="30">30 minutes</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Select defaultValue="5">
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">1 minute</SelectItem>
+                          <SelectItem value="5">5 minutes</SelectItem>
+                          <SelectItem value="10">10 minutes</SelectItem>
+                          <SelectItem value="30">30 minutes</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>How often to automatically save changes</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
                 <div className="space-y-2">
                   <Label>Session Timeout</Label>
-                  <Select defaultValue="60">
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="30">30 minutes</SelectItem>
-                      <SelectItem value="60">1 hour</SelectItem>
-                      <SelectItem value="120">2 hours</SelectItem>
-                      <SelectItem value="480">8 hours</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Select defaultValue="60">
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="30">30 minutes</SelectItem>
+                          <SelectItem value="60">1 hour</SelectItem>
+                          <SelectItem value="120">2 hours</SelectItem>
+                          <SelectItem value="480">8 hours</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>How long users stay logged in while inactive</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
               </div>
             </div>
@@ -295,7 +351,8 @@ export function SettingsForm({
           <Save className="mr-2 h-4 w-4" />
           {isSaving ? 'Saving...' : 'Save Settings'}
         </Button>
-      </div>
-    </form>
+        </div>
+      </form>
+    </TooltipProvider>
   )
 }

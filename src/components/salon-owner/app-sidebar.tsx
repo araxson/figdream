@@ -30,7 +30,11 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "@/components/ui/sidebar"
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { User } from "@supabase/supabase-js"
@@ -42,92 +46,92 @@ const menuItems = [
   {
     title: "Dashboard",
     icon: Home,
-    href: "/salon-admin/dashboard",
+    href: "/role-salon-owner/dashboard",
   },
   {
     title: "Appointments",
     icon: Calendar,
-    href: "/salon-admin/appointments",
+    href: "/role-salon-owner/appointments",
     subItems: [
-      { title: "All Appointments", href: "/salon-admin/appointments" },
-      { title: "Calendar View", href: "/salon-admin/appointments/calendar" },
-      { title: "Appointment Notes", href: "/salon-admin/appointments/notes" },
+      { title: "All Appointments", href: "/role-salon-owner/appointments" },
+      { title: "Calendar View", href: "/role-salon-owner/appointments/calendar" },
+      { title: "Appointment Notes", href: "/role-salon-owner/appointments/notes" },
     ],
   },
   {
     title: "Customers",
     icon: Users,
-    href: "/salon-admin/customers",
+    href: "/role-salon-owner/customers",
   },
   {
     title: "Services",
     icon: Package,
-    href: "/salon-admin/services",
+    href: "/role-salon-owner/services",
     subItems: [
-      { title: "All Services", href: "/salon-admin/services" },
-      { title: "Categories", href: "/salon-admin/services/categories" },
-      { title: "Pricing", href: "/salon-admin/services/pricing" },
+      { title: "All Services", href: "/role-salon-owner/services" },
+      { title: "Categories", href: "/role-salon-owner/categories" },
+      { title: "Pricing", href: "/role-salon-owner/services/pricing" },
     ],
   },
   {
     title: "Staff",
     icon: UserCheck,
-    href: "/salon-admin/staff",
+    href: "/role-salon-owner/staff",
     subItems: [
-      { title: "Team Members", href: "/salon-admin/staff" },
-      { title: "Schedules", href: "/salon-admin/staff/schedules" },
-      { title: "Performance", href: "/salon-admin/staff/performance" },
-      { title: "Specialties", href: "/salon-admin/staff/specialties" },
+      { title: "Team Members", href: "/role-salon-owner/staff" },
+      { title: "Schedules", href: "/role-salon-owner/staff/schedule" },
+      { title: "Performance", href: "/role-salon-owner/staff/performance" },
+      { title: "Specialties", href: "/role-salon-owner/staff/specialties" },
     ],
   },
   {
     title: "Time Off",
     icon: CalendarOff,
-    href: "/salon-admin/time-off",
+    href: "/role-salon-owner/timeoff",
   },
   {
     title: "Locations",
     icon: MapPin,
-    href: "/salon-admin/locations",
+    href: "/role-salon-owner/locations",
   },
   {
     title: "Loyalty Program",
     icon: Trophy,
-    href: "/salon-admin/loyalty",
+    href: "/role-salon-owner/loyalty",
     subItems: [
-      { title: "Program Settings", href: "/salon-admin/loyalty" },
-      { title: "Points Ledger", href: "/salon-admin/loyalty/ledger" },
-      { title: "Transactions", href: "/salon-admin/loyalty/transactions" },
+      { title: "Program Settings", href: "/role-salon-owner/loyalty" },
+      { title: "Points Ledger", href: "/role-salon-owner/loyalty/ledger" },
+      { title: "Transactions", href: "/role-salon-owner/loyalty/transactions" },
     ],
   },
   {
     title: "Marketing",
     icon: Megaphone,
-    href: "/salon-admin/marketing",
+    href: "/role-salon-owner/marketing",
     subItems: [
-      { title: "Campaigns", href: "/salon-admin/marketing" },
-      { title: "SMS Opt-outs", href: "/salon-admin/marketing/sms-opt-outs" },
-      { title: "Analytics", href: "/salon-admin/marketing/analytics" },
+      { title: "Campaigns", href: "/role-salon-owner/marketing" },
+      { title: "SMS Opt-outs", href: "/role-salon-owner/marketing/sms" },
+      { title: "Analytics", href: "/role-salon-owner/marketing/analytics" },
     ],
   },
   {
     title: "Analytics",
     icon: BarChart3,
-    href: "/salon-admin/analytics",
+    href: "/role-salon-owner/analytics",
   },
   {
     title: "Salon Settings",
     icon: Store,
-    href: "/salon-admin/salon",
+    href: "/role-salon-owner/salon",
   },
   {
     title: "Settings",
     icon: Settings,
-    href: "/salon-admin/settings",
+    href: "/role-salon-owner/settings",
     subItems: [
-      { title: "General", href: "/salon-admin/settings" },
-      { title: "Notifications", href: "/salon-admin/settings/notifications" },
-      { title: "Export Data", href: "/salon-admin/settings/export" },
+      { title: "General", href: "/role-salon-owner/settings" },
+      { title: "Notifications", href: "/role-salon-owner/settings/notifications" },
+      { title: "Export Data", href: "/role-salon-owner/settings/export" },
     ],
   },
 ]
@@ -141,18 +145,19 @@ export function AppSidebar({ user, profile }: AppSidebarProps) {
   const pathname = usePathname()
 
   return (
-    <Sidebar>
-      <SidebarHeader>
-        <div className="flex items-center gap-2 px-2 py-4">
-          <Store className="h-6 w-6" />
-          <div className="flex flex-col">
-            <span className="font-semibold">Salon Manager</span>
-            <span className="text-xs text-muted-foreground">
-              {profile?.salon_name || "Your Salon"}
-            </span>
+    <TooltipProvider>
+      <Sidebar>
+        <SidebarHeader>
+          <div className="flex items-center gap-2 px-2 py-4">
+            <Store className="h-6 w-6" />
+            <div className="flex flex-col">
+              <span className="font-semibold">Salon Manager</span>
+              <span className="text-xs text-muted-foreground">
+                {profile?.salon_name || "Your Salon"}
+              </span>
+            </div>
           </div>
-        </div>
-      </SidebarHeader>
+        </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
@@ -161,37 +166,58 @@ export function AppSidebar({ user, profile }: AppSidebarProps) {
                 <SidebarMenuItem key={item.href}>
                   {item.subItems ? (
                     <>
-                      <SidebarMenuButton asChild>
-                        <Link href={item.href}>
-                          <item.icon className="h-4 w-4" />
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <SidebarMenuButton asChild>
+                            <Link href={item.href}>
+                              <item.icon className="h-4 w-4" />
+                              <span>{item.title}</span>
+                            </Link>
+                          </SidebarMenuButton>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                          <p>{item.title}</p>
+                        </TooltipContent>
+                      </Tooltip>
                       <SidebarMenuSub>
                         {item.subItems.map((subItem) => (
                           <SidebarMenuSubItem key={subItem.href}>
-                            <SidebarMenuSubButton
-                              asChild
-                              isActive={pathname === subItem.href}
-                            >
-                              <Link href={subItem.href}>
-                                <span>{subItem.title}</span>
-                              </Link>
-                            </SidebarMenuSubButton>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <SidebarMenuSubButton
+                                  asChild
+                                  isActive={pathname === subItem.href}
+                                >
+                                  <Link href={subItem.href}>
+                                    <span>{subItem.title}</span>
+                                  </Link>
+                                </SidebarMenuSubButton>
+                              </TooltipTrigger>
+                              <TooltipContent side="right">
+                                <p>{subItem.title}</p>
+                              </TooltipContent>
+                            </Tooltip>
                           </SidebarMenuSubItem>
                         ))}
                       </SidebarMenuSub>
                     </>
                   ) : (
-                    <SidebarMenuButton
-                      asChild
-                      isActive={pathname === item.href}
-                    >
-                      <Link href={item.href}>
-                        <item.icon className="h-4 w-4" />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <SidebarMenuButton
+                          asChild
+                          isActive={pathname === item.href}
+                        >
+                          <Link href={item.href}>
+                            <item.icon className="h-4 w-4" />
+                            <span>{item.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </TooltipTrigger>
+                      <TooltipContent side="right">
+                        <p>{item.title}</p>
+                      </TooltipContent>
+                    </Tooltip>
                   )}
                 </SidebarMenuItem>
               ))}
@@ -199,18 +225,26 @@ export function AppSidebar({ user, profile }: AppSidebarProps) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <Link href="/salon-admin/profile">
-                <UserCircle className="h-4 w-4" />
-                <span>{profile?.full_name || user.email}</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
-    </Sidebar>
+        <SidebarFooter>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <SidebarMenuButton asChild>
+                    <Link href="/role-salon-owner/profile">
+                      <UserCircle className="h-4 w-4" />
+                      <span>{profile?.full_name || user.email}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>View and edit your profile</p>
+                </TooltipContent>
+              </Tooltip>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+      </Sidebar>
+    </TooltipProvider>
   )
 }

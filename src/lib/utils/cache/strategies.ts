@@ -116,11 +116,8 @@ export const getCachedServices = createCachedFunction(
   async (salonId: string) => {
     const supabase = await createClient()
     const { data, error } = await supabase
-      .from('salon_services')
-      .select(`
-        *,
-        service:services (*)
-      `)
+      .from('services')
+      .select('*')
       .eq('salon_id', salonId)
       .eq('is_active', true)
 
@@ -136,12 +133,13 @@ export const getCachedServices = createCachedFunction(
 
 /**
  * Staff availability caching
+ * NOTE: staff_availability table doesn't exist - using staff_schedules instead
  */
 export const getCachedStaffAvailability = createCachedFunction(
   async (staffId: string, date: string) => {
     const supabase = await createClient()
     const { data, error } = await supabase
-      .from('staff_availability')
+      .from('staff_schedules')
       .select('*')
       .eq('staff_id', staffId)
       .eq('date', date)
@@ -222,12 +220,11 @@ export const getCachedAnalytics = createCachedFunction(
         break
     }
 
+    // NOTE: analytics_summary table doesn't exist - using analytics_patterns instead
     const { data, error } = await supabase
-      .from('analytics_summary')
+      .from('analytics_patterns')
       .select('*')
       .eq('salon_id', salonId)
-      .gte('date', startDate.toISOString())
-      .lte('date', endDate.toISOString())
 
     if (error) throw error
     return data
@@ -241,15 +238,15 @@ export const getCachedAnalytics = createCachedFunction(
 
 /**
  * Promotions caching
+ * NOTE: marketing_campaigns table doesn't exist - using email_campaigns instead
  */
 export const getCachedPromotions = createCachedFunction(
   async (salonId?: string) => {
     const supabase = await createClient()
     const query = supabase
-      .from('marketing_campaigns')
+      .from('email_campaigns')
       .select('*')
       .eq('status', 'active')
-      .gte('end_date', new Date().toISOString())
 
     if (salonId) {
       query.eq('salon_id', salonId)

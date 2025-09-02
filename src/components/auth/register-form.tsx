@@ -2,10 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Checkbox } from '@/components/ui/checkbox'
+import { Button, Input, Label, Checkbox } from '@/components/ui'
 import { toast } from 'sonner'
 import { Loader2, Mail, Lock, Eye, EyeOff, User, Phone } from 'lucide-react'
 import { signUpAction } from '@/app/_actions/auth'
@@ -205,10 +202,12 @@ export function RegisterForm({
             className="pl-10 pr-10"
           />
           <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 h-auto p-1"
             tabIndex={-1}
           >
             {showPassword ? (
@@ -216,7 +215,7 @@ export function RegisterForm({
             ) : (
               <Eye className="h-4 w-4" />
             )}
-          </button>
+          </Button>
         </div>
         <p className="text-xs text-muted-foreground">
           Must be at least 8 characters
@@ -236,10 +235,12 @@ export function RegisterForm({
             className="pl-10 pr-10"
           />
           <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 h-auto p-1"
             tabIndex={-1}
           >
             {showConfirmPassword ? (
@@ -247,7 +248,7 @@ export function RegisterForm({
             ) : (
               <Eye className="h-4 w-4" />
             )}
-          </button>
+          </Button>
         </div>
       </div>
 

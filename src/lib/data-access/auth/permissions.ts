@@ -500,3 +500,87 @@ export async function canUserPerformAction(
   
   return true
 }
+
+/**
+ * Check if a user has access to a salon
+ */
+export async function canAccessSalon(userId: string, salonId: string): Promise<boolean> {
+  const { createClient } = await import('@/lib/database/supabase/server')
+  const supabase = await createClient()
+  
+  const { data, error } = await supabase
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', userId)
+    .eq('salon_id', salonId)
+    .single()
+  
+  if (error || !data) {
+    return false
+  }
+  
+  // User has access if they have any role in the salon
+  return ['salon_owner', 'location_manager', 'staff'].includes(data.role)
+}
+
+/**
+ * Check if a user has access to a location
+ */
+export async function canAccessLocation(userId: string, locationId: string): Promise<boolean> {
+  const { createClient } = await import('@/lib/database/supabase/server')
+  const supabase = await createClient()
+  
+  // Get the salon_id from the location
+  const { data: location } = await supabase
+    .from('salon_locations')
+    .select('salon_id')
+    .eq('id', locationId)
+    .single()
+  
+  if (!location) {
+    return false
+  }
+  
+  // Check if user has access to the salon
+  return canAccessSalon(userId, location.salon_id)
+}
+
+/**
+ * Check if a user has access to an appointment
+ */
+export async function canAccessAppointment(userId: string, appointmentId: string): Promise<boolean> {
+  const { createClient } = await import('@/lib/database/supabase/server')
+  const supabase = await createClient()
+  
+  // Get the appointment details
+  const { data: appointment } = await supabase
+    .from('appointments')
+    .select('salon_id, customer_id, staff_id')
+    .eq('id', appointmentId)
+    .single()
+  
+  if (!appointment) {
+    return false
+  }
+  
+  // Check if user is the customer
+  if (appointment.customer_id === userId) {
+    return true
+  }
+  
+  // Check if user is the staff member
+  if (appointment.staff_id) {
+    const { data: staffProfile } = await supabase
+      .from('staff_profiles')
+      .select('user_id')
+      .eq('id', appointment.staff_id)
+      .single()
+    
+    if (staffProfile?.user_id === userId) {
+      return true
+    }
+  }
+  
+  // Check if user has access to the salon
+  return canAccessSalon(userId, appointment.salon_id)
+}

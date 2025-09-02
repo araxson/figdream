@@ -1,8 +1,6 @@
 'use client'
 
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Progress } from '@/components/ui/progress'
+import { Badge, Button, Progress, Card, CardContent } from '@/components/ui'
 import { 
   AlertTriangle,
   Mail,
@@ -73,7 +71,8 @@ export default function ChurnRiskList({ customers }: ChurnRiskListProps) {
         </div>
       ) : (
         customers.map((customer) => (
-          <div key={customer.customerId} className="border rounded-lg p-4 space-y-3">
+          <Card key={customer.customerId}>
+            <CardContent className="space-y-3">
             {/* Customer Header */}
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
@@ -151,7 +150,8 @@ export default function ChurnRiskList({ customers }: ChurnRiskListProps) {
                 Schedule
               </Button>
             </div>
-          </div>
+            </CardContent>
+          </Card>
         ))
       )}
     </div>

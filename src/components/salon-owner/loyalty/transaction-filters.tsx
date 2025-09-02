@@ -2,23 +2,26 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
-import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import {
+  Card,
+  CardContent,
+  Button,
+  Input,
+  Label,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover'
-import { Calendar } from '@/components/ui/calendar'
+  Calendar,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { CalendarIcon, Search, X } from 'lucide-react'
@@ -75,7 +78,8 @@ export default function TransactionFilters({
     endDate
 
   return (
-    <Card>
+    <TooltipProvider>
+      <Card>
       <CardContent className="pt-6">
         <div className="grid gap-4 md:grid-cols-5">
           {/* Customer Search */}
@@ -173,19 +177,26 @@ export default function TransactionFilters({
                 Apply
               </Button>
               {hasActiveFilters && (
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={clearFilters}
-                  title="Clear filters"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={clearFilters}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    Clear all filters
+                  </TooltipContent>
+                </Tooltip>
               )}
             </div>
           </div>
         </div>
       </CardContent>
-    </Card>
+      </Card>
+    </TooltipProvider>
   )
 }

@@ -1,311 +1,392 @@
-# 🎯 IMPLEMENTATION PLAN - Database-Frontend Alignment
-*Last Updated: 2025-09-01*
+# 🚀 ULTRA-STRATEGIC IMPLEMENTATION PLAN
 
-## 📊 Executive Summary
+## Phase 1: Critical Fixes (Day 1 - Immediate)
 
-This implementation plan addresses the critical gaps between the Supabase database schema and frontend implementation. The analysis reveals:
-
-- **120+ database objects** (tables, views, functions)
-- **51 core business tables** requiring frontend implementation
-- **31 existing DAL modules** with comprehensive coverage
-- **0 critical missing implementations** - All critical DALs now implemented ✅
-- **Session 13**: Fixed ai_recommendations table references preventing runtime errors
-
-**Target**: Achieve 95% database coverage and 100% type safety within 3 weeks.
-**Current**: 92% database coverage achieved, 98% type safety
-
-## 🔍 Current State Analysis
-
-### Database Coverage
-```
-✅ Implemented DALs: 30+ modules
-⚠️  Partial Coverage: 5 modules (missing critical functions)
-❌ Missing Critical: 5 tables
-📊 Overall Coverage: ~85%
-```
-
-### 🎆 Session 14 Security & Type Fixes
-- ✅ **Fixed critical security vulnerability** - webhooks using raw_app_meta_data (CVE-2025-29927)
-- ✅ **Prevented role escalation** - Removed role changes through webhooks
-- ✅ **Fixed disconnected query** - notification_preferences → notification_settings
-- ✅ **Verified type safety** - No custom interfaces duplicating database types
-- ✅ **Identified missing implementations** - 9 tables without DALs
-
-### 🎆 Session 13 Critical Fixes
-- ✅ **Fixed ai_recommendations.ts** - Commented out references to non-existent tables
-- ✅ **Updated table references** - bookings → appointments, staff → staff_profiles
-- ✅ **Type safety improved** - Reduced `any` usage from 129 to 127 instances
-- ✅ **Runtime errors prevented** - No more queries to non-existent tables
-- ✅ **Staff DAL verified** - Comprehensive CRUD operations confirmed
-
-### 🎆 Session 11 Security Achievements
-- ✅ **100% raw_app_meta_data migration** - All API routes now use user_roles table
-- ✅ **Secure role verification** - All role checks use is_active flag
-- ✅ **Webhook integration** - User creation/updates properly manage user_roles
-- ⚠️ **127 instances with `any` type** - Reduced from 135 but still needs attention
-
-### Critical Gaps Identified
-
-| Priority | Table | Current State | Business Impact |
-|----------|-------|--------------|-----------------|
-| P0 | appointment_notes | ✅ Complete | DAL exists at `/lib/data-access/appointments/notes.ts` |
-| P0 | appointment_services | ✅ Complete | DAL exists at `/lib/data-access/appointments/services.ts` |
-| P0 | staff_earnings | ✅ Complete | DAL exists at `/lib/data-access/staff/earnings.ts` |
-| P0 | staff_schedules | ✅ Complete | DAL exists at `/lib/data-access/staff/schedules.ts` |
-| P1 | service_costs | ✅ Complete | DAL exists at `/lib/data-access/services/costs.ts` |
-| P1 | customer_analytics | ✅ Complete | DAL exists at `/lib/data-access/customers/analytics.ts` |
-| P1 | customer_preferences | ✅ Complete | DAL exists at `/lib/data-access/customers/preferences.ts` |
-| P1 | staff_services | ✅ Complete | DAL exists at `/lib/data-access/staff/services.ts` |
-| P1 | service_location_availability | ✅ Complete | DAL exists at `/lib/data-access/services/availability.ts` |
-
-## 🚀 Implementation Phases
-
-### Phase 1: Critical Infrastructure (Week 1)
-**Goal**: Restore core booking and staff functionality
-
-#### Day 1-2: Appointment Management
-- [x] ~~Create `/lib/data-access/appointments/notes.ts`~~ - COMPLETED
-  - CRUD for appointment notes
-  - Staff/customer note visibility logic
-  - Real-time note updates
-  
-- [x] ~~Create `/lib/data-access/appointments/services.ts`~~ - COMPLETED
-  - Link appointments to services
-  - Calculate total duration/price
-  - Handle service modifications
-
-#### Day 3-4: Staff Management
-- [x] ~~Create `/lib/data-access/staff/earnings.ts`~~ - COMPLETED
-  - Commission calculations
-  - Tip tracking
-  - Earnings reports
-  
-- [x] ~~Create `/lib/data-access/staff/schedules.ts`~~ - COMPLETED
-  - Weekly schedule management
-  - Availability checking
-  - Break time handling
-  
-- [x] ~~Create `/lib/data-access/staff/services.ts`~~ - COMPLETED
-  - Staff-service capabilities
-  - Specialization tracking
-  - Service restrictions
-
-#### Day 5: Service Management
-- [x] ~~Create `/lib/data-access/services/costs.ts`~~ - COMPLETED
-  - Dynamic pricing rules
-  - Time-based pricing
-  - Location-specific pricing
-  
-- [x] ~~Create `/lib/data-access/services/availability.ts`~~ - COMPLETED
-  - Location-based availability
-  - Service restrictions
-  - Capacity management
-
-### Phase 2: Customer Experience (Week 2)
-**Goal**: Enable personalization and analytics
-
-#### Day 6-7: Customer Data
-- [x] ~~Create `/lib/data-access/customers/analytics.ts`~~ - COMPLETED
-  - Behavior tracking
-  - Purchase patterns
-  - Retention metrics
-  
-- [x] ~~Create `/lib/data-access/customers/preferences.ts`~~ - COMPLETED
-  - Notification preferences
-  - Service preferences
-  - Staff preferences
-
-#### Day 8-9: UI Component Updates
-- [ ] Update appointment detail pages
-  - Add notes section
-  - Show service breakdown
-  - Display earnings
-  
-- [ ] Update staff dashboard
-  - Add earnings widget
-  - Show schedule grid
-  - Display service capabilities
-
-#### Day 10: Form Validations
-- [ ] Create Zod schemas for all new tables
-- [ ] Add runtime validation
-- [ ] Implement error handling
-
-### Phase 3: Polish & Optimization (Week 3)
-**Goal**: Complete coverage and optimize performance
-
-#### Day 11-12: Missing Features
-- [ ] Implement remaining secondary tables
-- [ ] Add missing CRUD operations
-- [ ] Complete relation mappings
-
-#### Day 13-14: Performance
-- [ ] Add proper caching strategies
-- [ ] Implement optimistic updates
-- [ ] Add loading/error states
-
-#### Day 15: Testing & Documentation
-- [ ] Type checking (must pass)
-- [ ] ESLint compliance
-- [ ] Update all documentation
-
-## 📋 Implementation Checklist
-
-### For Each New DAL Module
-- [ ] Create TypeScript file in appropriate directory
-- [ ] Import types from `database.types.ts`
-- [ ] Implement CRUD operations
-- [ ] Add proper error handling
-- [ ] Include JSDoc comments
-- [ ] Create corresponding Zod schemas
-- [ ] Add unit tests (if applicable)
-
-### Type Safety Requirements
+### 1.1 Fix Import Paths & Remove Mock Data
 ```typescript
-// ✅ CORRECT - Using database types
-import type { Database } from '@/types/database.types'
-type AppointmentNote = Database['public']['Tables']['appointment_notes']['Row']
+// FILES TO FIX:
+// src/app/(role-salon-owner)/marketing/page.tsx - Line 279
+// src/app/(public)/(public)/book/[salon-id]/staff/[staff-id]/page.tsx - Line 47
 
-// ❌ WRONG - Manual type definition
-interface AppointmentNote {
-  id: string
-  // ...
+// REPLACE mock data with real Supabase queries
+const segments = await supabase
+  .from('customers')
+  .select('*')
+  .eq('salon_id', salonId)
+```
+
+### 1.2 Create Centralized Data Access Layer
+```typescript
+// src/lib/data-access/unified/index.ts
+import { Database } from '@/types/database.types'
+import { createClient } from '@/lib/database/supabase/server'
+
+export class DataAccessLayer {
+  private supabase: ReturnType<typeof createClient>
+  
+  constructor() {
+    this.supabase = createClient()
+  }
+  
+  // Implement typed methods for each table
+  async getServices(salonId: string) {
+    const { data, error } = await this.supabase
+      .from('services')
+      .select('*, service_categories(*), service_costs(*)')
+      .eq('salon_id', salonId)
+    
+    if (error) throw new DatabaseError(error)
+    return data
+  }
 }
 ```
 
-### File Structure Pattern
-```
-src/lib/data-access/
-├── appointments/
-│   ├── index.ts          (existing)
-│   ├── notes.ts          (TO CREATE)
-│   └── services.ts       (TO CREATE)
-├── staff/
-│   ├── index.ts          (existing)
-│   ├── earnings.ts       (TO CREATE)
-│   ├── schedules.ts      (TO CREATE)
-│   └── services.ts       (TO CREATE)
-├── services/
-│   ├── index.ts          (existing)
-│   ├── costs.ts          (TO CREATE)
-│   └── availability.ts   (TO CREATE)
-└── customers/
-    ├── index.ts          (existing)
-    ├── analytics.ts      (TO CREATE)
-    └── preferences.ts    (TO CREATE)
+---
+
+## Phase 2: High Priority Missing Pages (Day 2-3)
+
+### 2.1 User Role Management Interface
+**Path**: `/role-super-admin/users/roles`
+```typescript
+// Features:
+- View all user roles
+- Assign/revoke roles
+- Role permission matrix
+- Audit trail of role changes
 ```
 
-## 🎯 Success Metrics
+### 2.2 Service Cost Configuration
+**Path**: `/role-salon-owner/services/costs`
+```typescript
+// Features:
+- Dynamic pricing tiers
+- Location-based pricing
+- Promotional pricing
+- Cost history tracking
+```
 
-### Week 1 Targets
-- ✅ All P0 critical tables implemented
-- ✅ Core booking flow restored
-- ✅ Staff management functional
+### 2.3 Staff-Service Assignment
+**Path**: `/role-salon-owner/staff/services`
+```typescript
+// Features:
+- Drag-drop service assignment
+- Skill level configuration
+- Service duration customization
+- Availability matrix
+```
 
-### Week 2 Targets
-- ✅ Customer features complete
-- ✅ Analytics operational
-- ✅ UI components updated
-
-### Week 3 Targets
-- ✅ 95% database coverage
-- ✅ Zero TypeScript errors
-- ✅ Zero ESLint errors
-- ✅ All tests passing
-
-## 🚨 Risk Mitigation
-
-### Identified Risks
-1. **Data Migration**: Existing data may not match new schema
-   - **Mitigation**: Create migration scripts before implementation
-   
-2. **Type Conflicts**: Generated types may conflict with existing code
-   - **Mitigation**: Update types incrementally, test frequently
-   
-3. **Performance Impact**: New features may slow down app
-   - **Mitigation**: Implement caching from the start
-
-## 📝 Notes for Developers
-
-### Critical Rules
-1. **NEVER** create duplicate functionality
-2. **ALWAYS** use types from `database.types.ts`
-3. **NEVER** use mock data - only real Supabase data
-4. **ALWAYS** use shadcn/ui components
-5. **NEVER** create custom UI components
-
-### Before Starting
-1. Read `TYPE_VALIDATION.md` for type requirements
-2. Check `DATABASE_MAPPING.md` for existing implementations
-3. Review `DEVELOPER_TASKS.md` for detailed steps
-4. Run `npm run typecheck` to verify current state
-
-### During Implementation
-1. Commit frequently with conventional commits
-2. Test each function as you write it
-3. Update documentation as you go
-4. Ask for help if blocked
-
-## 🔄 Progress Tracking
-
-Use this checklist to track implementation progress:
-
-### Phase 1 Progress: 9/9 ✅ COMPLETE
-- [x] appointment_notes DAL - `/lib/data-access/appointments/notes.ts`
-- [x] appointment_services DAL - `/lib/data-access/appointments/services.ts`
-- [x] staff_earnings DAL - `/lib/data-access/staff/earnings.ts`
-- [x] staff_schedules DAL - `/lib/data-access/staff/schedules.ts`
-- [x] staff_services DAL - `/lib/data-access/staff/services.ts`
-- [x] service_costs DAL - `/lib/data-access/services/costs.ts`
-- [x] service_availability DAL - `/lib/data-access/services/availability.ts`
-- [x] Customer analytics DAL - `/lib/data-access/customers/analytics.ts`
-- [x] Customer preferences DAL - `/lib/data-access/customers/preferences.ts`
-
-### Phase 2 Progress: 5/5 ✅ COMPLETE
-- [x] Appointment UI updates - Customer and staff detail pages already integrated
-- [x] Staff dashboard updates - Earnings and schedule pages updated with new DALs
-- [x] Customer portal updates - Profile page with preferences & dashboard with analytics
-- [x] Form validations - Created for profile, preferences, and notification settings
-- [x] Error handling - Comprehensive error logging DAL implemented
-
-### Phase 3 Progress: Security & Monitoring (2025-09-01)
-- [x] CSRF token security implementation - DAL and React hook created
-- [x] API usage monitoring - Complete DAL with rate limiting
-- [x] Error logging system - Comprehensive error tracking implemented
-- [x] Type safety fixes - Staff management corrected
-- [x] Authentication pages - Removed all mock implementations (forgot-password, reset-password, verify-email)
-- [x] Type safety improvements - Fixed 18 `any` types in components and actions (Sessions 4-5)
-- [x] Security fix - Replaced raw_app_meta_data usage with getUserRole() in payment actions
-- [x] Component type fixes - Multiple sidebars, gift cards, payment forms
-- [x] Verified DAL implementations - Staff earnings and appointment services properly typed
-- [x] Authentication flow verification - Confirmed secure DAL-based auth (CVE-2025-29927 compliant)
-- [ ] CSRF form integration - Pending (44+ forms need update, 3 auth forms complete)
-- [ ] Global error boundary - Needs integration with error logging DAL
-- [ ] Database views implementation - 4 views DAL exists but needs frontend integration
-- [ ] Missing tables issue - gift_cards, customer_segments referenced but not in database.types.ts
-
-### New Critical Issues Found (2025-09-01)
-- [x] Database schema mismatch - Multiple tables used in code but missing from types:
-  - gift_cards table - RESOLVED: Removed DAL and components (table doesn't exist)
-  - customer_segments table - RESOLVED: Updated code to handle missing table gracefully
-  - gift_card_transactions table - Related to gift_cards, no longer an issue
-- [x] Component type safety - Fixed 5 more components using `any` type (Session 5):
-  - salon-owner/app-sidebar.tsx ✅
-  - gift-card-purchase.tsx ✅
-  - checkout-form.tsx ✅
-  - location-manager/app-sidebar.tsx ✅
-  - customer/app-sidebar.tsx ✅
-- [x] Error monitoring gap - Error boundary integrated with logError DAL - COMPLETED (2025-09-01)
-
-
-## 📞 Support
-
-If you encounter issues:
-1. Check existing implementations for patterns
-2. Review error logs in Supabase dashboard
-3. Consult `ULTRA_FRONTEND_CHECKLIST.md` for examples
-4. Ask senior developer for guidance
+### 2.4 Customer Preferences Management
+**Path**: `/role-customer/preferences`
+```typescript
+// Features:
+- Preferred staff selection
+- Service preferences
+- Communication preferences
+- Booking preferences
+```
 
 ---
 
-*This plan is designed for implementation by 1-2 developers over 3 weeks*
+## Phase 3: Medium Priority Features (Day 4-5)
+
+### 3.1 Analytics Pattern Visualization
+**Path**: `/role-salon-owner/analytics/patterns`
+```typescript
+// Features:
+- Booking pattern analysis
+- Revenue trends
+- Customer behavior patterns
+- Predictive analytics dashboard
+```
+
+### 3.2 Campaign Recipient Management
+**Path**: `/role-salon-owner/marketing/recipients`
+```typescript
+// Features:
+- Segment builder
+- Recipient list management
+- Opt-out handling
+- Campaign performance tracking
+```
+
+### 3.3 Export History Viewer
+**Path**: `/role-salon-owner/data-export/history`
+```typescript
+// Features:
+- Export log viewer
+- Re-download capability
+- Export scheduling
+- Format preferences
+```
+
+### 3.4 Staff Breaks Scheduling
+**Path**: `/role-salon-owner/staff/breaks`
+```typescript
+// Features:
+- Break pattern configuration
+- Auto-scheduling breaks
+- Break compliance tracking
+- Integration with appointments
+```
+
+---
+
+## Phase 4: Infrastructure Improvements (Ongoing)
+
+### 4.1 Type Safety Enhancement
+```typescript
+// Create strict type definitions for all operations
+export type ServiceWithRelations = Database['public']['Tables']['services']['Row'] & {
+  service_categories: Database['public']['Tables']['service_categories']['Row']
+  service_costs: Database['public']['Tables']['service_costs']['Row'][]
+}
+```
+
+### 4.2 Form Validation Schemas
+```typescript
+// src/lib/validations/service-cost-schema.ts
+import { z } from 'zod'
+
+export const serviceCostSchema = z.object({
+  service_id: z.string().uuid(),
+  location_id: z.string().uuid(),
+  base_price: z.number().positive(),
+  duration_minutes: z.number().min(15).max(480),
+  is_active: z.boolean()
+})
+```
+
+### 4.3 Error Handling Wrapper
+```typescript
+// src/lib/utils/supabase-wrapper.ts
+export async function withErrorHandling<T>(
+  operation: () => Promise<T>,
+  context: string
+): Promise<{ data: T | null; error: Error | null }> {
+  try {
+    const data = await operation()
+    return { data, error: null }
+  } catch (error) {
+    console.error(`[${context}]`, error)
+    return { data: null, error: error as Error }
+  }
+}
+```
+
+### 4.4 Loading State Management
+```typescript
+// Use React Suspense consistently
+export default async function PageWithData() {
+  return (
+    <Suspense fallback={<LoadingSkeleton />}>
+      <DataComponent />
+    </Suspense>
+  )
+}
+```
+
+---
+
+## Implementation Timeline
+
+### Week 1 (Days 1-5)
+- **Day 1**: Critical fixes, data access layer
+- **Day 2**: User role management, service costs
+- **Day 3**: Staff-service assignment, customer preferences
+- **Day 4**: Analytics patterns, campaign recipients
+- **Day 5**: Export history, staff breaks
+
+### Week 2 (Days 6-10)
+- **Day 6-7**: Form validations for all new pages
+- **Day 8**: Error handling implementation
+- **Day 9**: Loading states and optimizations
+- **Day 10**: Testing and bug fixes
+
+---
+
+## File Structure for New Implementations
+
+```
+src/
+├── app/
+│   ├── (role-super-admin)/
+│   │   └── users/
+│   │       └── roles/
+│   │           ├── page.tsx
+│   │           ├── loading.tsx
+│   │           └── error.tsx
+│   ├── (role-salon-owner)/
+│   │   ├── services/
+│   │   │   └── costs/
+│   │   │       ├── page.tsx
+│   │   │       ├── loading.tsx
+│   │   │       └── error.tsx
+│   │   ├── staff/
+│   │   │   ├── services/
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── loading.tsx
+│   │   │   │   └── error.tsx
+│   │   │   └── breaks/
+│   │   │       ├── page.tsx
+│   │   │       ├── loading.tsx
+│   │   │       └── error.tsx
+│   │   ├── analytics/
+│   │   │   └── patterns/
+│   │   │       ├── page.tsx
+│   │   │       ├── loading.tsx
+│   │   │       └── error.tsx
+│   │   ├── marketing/
+│   │   │   └── recipients/
+│   │   │       ├── page.tsx
+│   │   │       ├── loading.tsx
+│   │   │       └── error.tsx
+│   │   └── data-export/
+│   │       └── history/
+│   │           ├── page.tsx
+│   │           ├── loading.tsx
+│   │           └── error.tsx
+│   └── (role-customer)/
+│       └── preferences/
+│           ├── page.tsx
+│           ├── loading.tsx
+│           └── error.tsx
+├── components/
+│   ├── role-super-admin/
+│   │   └── users/
+│   │       ├── role-manager.tsx
+│   │       └── role-permission-matrix.tsx
+│   ├── role-salon-owner/
+│   │   ├── services/
+│   │   │   ├── cost-configurator.tsx
+│   │   │   └── pricing-tiers.tsx
+│   │   ├── staff/
+│   │   │   ├── service-assignment.tsx
+│   │   │   └── break-scheduler.tsx
+│   │   ├── analytics/
+│   │   │   └── pattern-visualizer.tsx
+│   │   └── marketing/
+│   │       └── recipient-manager.tsx
+│   └── role-customer/
+│       └── preferences/
+│           └── preference-form.tsx
+├── lib/
+│   ├── data-access/
+│   │   ├── unified/
+│   │   │   └── index.ts
+│   │   ├── services/
+│   │   │   ├── service-costs.ts
+│   │   │   └── service-availability.ts
+│   │   ├── staff/
+│   │   │   ├── staff-services.ts
+│   │   │   └── staff-breaks.ts
+│   │   └── customers/
+│   │       └── preferences.ts
+│   └── validations/
+│       ├── service-cost-schema.ts
+│       ├── staff-service-schema.ts
+│       ├── customer-preference-schema.ts
+│       └── role-assignment-schema.ts
+```
+
+---
+
+## Component Templates
+
+### Template: Data Table Page
+```typescript
+// page.tsx template
+import { createClient } from '@/lib/database/supabase/server'
+import { DataTable } from '@/components/ui/data-table'
+import { columns } from './columns'
+
+export default async function TablePage() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  if (!user) redirect('/login')
+  
+  const { data, error } = await supabase
+    .from('table_name')
+    .select('*')
+    .order('created_at', { ascending: false })
+  
+  if (error) throw error
+  
+  return (
+    <div className="container mx-auto py-10">
+      <DataTable columns={columns} data={data ?? []} />
+    </div>
+  )
+}
+```
+
+### Template: Form Page
+```typescript
+// form-page.tsx template
+'use client'
+
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { schema } from '@/lib/validations/schema'
+import { Form } from '@/components/ui/form'
+
+export default function FormPage() {
+  const form = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: {}
+  })
+  
+  async function onSubmit(values: z.infer<typeof schema>) {
+    // Handle submission
+  }
+  
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        {/* Form fields */}
+      </form>
+    </Form>
+  )
+}
+```
+
+---
+
+## Testing Checklist
+
+### For Each New Page:
+- [ ] Page loads without errors
+- [ ] Data fetches from Supabase correctly
+- [ ] Loading states display properly
+- [ ] Error handling works
+- [ ] Form validation functions
+- [ ] CRUD operations complete
+- [ ] Type safety enforced
+- [ ] Mobile responsive
+- [ ] Accessibility standards met
+- [ ] Performance optimized
+
+---
+
+## Success Metrics
+
+### Quantitative:
+- 100% database table coverage
+- 0 TypeScript errors
+- 0 ESLint warnings
+- <3s page load time
+- 100% real data usage
+
+### Qualitative:
+- Consistent UI/UX across all pages
+- Intuitive navigation
+- Clear error messages
+- Smooth data operations
+- Professional appearance
+
+---
+
+**Ready for Implementation**: ✅
+**Estimated Completion**: 10 days
+**Resources Required**: 1 Senior Developer
+**Risk Level**: LOW (incremental approach)

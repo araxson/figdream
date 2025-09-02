@@ -4,21 +4,47 @@ import * as React from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Separator } from '@/components/ui/separator'
-import { Badge } from '@/components/ui/badge'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Checkbox } from '@/components/ui/checkbox'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Label } from '@/components/ui/label'
-import { Progress } from '@/components/ui/progress'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { ScrollArea } from '@/components/ui/scroll-area'
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Input,
+  Textarea,
+  Separator,
+  Badge,
+  Alert,
+  AlertDescription,
+  Checkbox,
+  RadioGroup,
+  RadioGroupItem,
+  Label,
+  Progress,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  ScrollArea,
+  Avatar,
+  AvatarFallback,
+  AspectRatio,
+} from '@/components/ui'
 import { 
   Star, 
   Camera, 
@@ -332,15 +358,17 @@ export function ReviewForm({
             const isHalfFilled = allowHalf && (hoverValue || value) >= rating - 0.5 && (hoverValue || value) < rating
             
             return (
-              <button
+              <Button
                 key={rating}
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={() => handleClick(rating)}
                 onMouseEnter={() => handleMouseEnter(rating)}
                 onMouseLeave={handleMouseLeave}
                 disabled={disabled}
                 className={cn(
-                  'transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 rounded',
+                  'p-1 h-auto transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 rounded',
                   disabled && 'cursor-not-allowed opacity-50'
                 )}
               >
@@ -355,7 +383,7 @@ export function ReviewForm({
                       : 'text-gray-300 hover:text-yellow-400'
                   )}
                 />
-              </button>
+              </Button>
             )
           })}
         </div>
@@ -378,12 +406,14 @@ export function ReviewForm({
           <div className="space-y-6">
             <div className="text-center space-y-4">
               <div className="flex justify-center">
-                <div className="p-4 bg-primary/10 rounded-full">
-                  <Star className="h-8 w-8 text-primary" />
-                </div>
+                <Avatar className="h-16 w-16">
+                  <AvatarFallback>
+                    <Star className="h-8 w-8" />
+                  </AvatarFallback>
+                </Avatar>
               </div>
               <div>
-                <h3 className="text-lg font-semibold mb-2">Rate Your Experience</h3>
+                <h3 className="text-lg font-semibold">Rate Your Experience</h3>
                 <p className="text-muted-foreground">
                   How would you rate your overall experience at this salon?
                 </p>
@@ -411,7 +441,7 @@ export function ReviewForm({
               />
 
               {watchedRating > 0 && (
-                <Alert className="max-w-md">
+                <Alert>
                   <Sparkles className="h-4 w-4" />
                   <AlertDescription>
                     {watchedRating >= 4 
@@ -439,8 +469,9 @@ export function ReviewForm({
 
             <div className="grid gap-6">
               {RATING_CATEGORIES.map((category) => (
-                <Card key={category.key} className="p-4">
-                  <div className="flex items-center justify-between mb-2">
+                <Card key={category.key}>
+                  <CardContent>
+                    <div className="flex items-center justify-between mb-2">
                     <div>
                       <h4 className="font-medium">{category.label}</h4>
                       <p className="text-sm text-muted-foreground">{category.description}</p>
@@ -464,6 +495,7 @@ export function ReviewForm({
                       </FormItem>
                     )}
                   />
+                  </CardContent>
                 </Card>
               ))}
             </div>
@@ -577,18 +609,18 @@ export function ReviewForm({
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {uploadedPhotos.map((photo, index) => (
                       <div key={index} className="relative group">
-                        <div className="aspect-square bg-muted rounded-lg overflow-hidden">
+                        <AspectRatio ratio={1}>
                           <img 
                             src={photo.url} 
                             alt={`Review photo ${index + 1}`}
-                            className="w-full h-full object-cover"
+                            className="object-cover w-full h-full"
                           />
-                        </div>
+                        </AspectRatio>
                         <Button
                           type="button"
                           variant="destructive"
                           size="sm"
-                          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute top-2 right-2 hidden group-hover:block"
                           onClick={() => removePhoto(index)}
                         >
                           <X className="h-3 w-3" />
@@ -597,7 +629,6 @@ export function ReviewForm({
                           placeholder="Add caption..."
                           value={photo.caption}
                           onChange={(e) => updatePhotoCaption(index, e.target.value)}
-                          className="mt-2"
                           maxLength={200}
                         />
                       </div>
@@ -606,12 +637,13 @@ export function ReviewForm({
                 )}
 
                 {uploadedPhotos.length < 10 && (
-                  <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6">
-                    <div className="text-center space-y-2">
+                  <Card>
+                    <CardContent>
+                      <div className="text-center space-y-2">
                       <Upload className="h-8 w-8 mx-auto text-muted-foreground" />
                       <div>
                         <p className="text-sm font-medium">Upload photos of your results</p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-sm text-muted-foreground">
                           PNG, JPG up to 5MB each. Maximum 10 photos.
                         </p>
                       </div>
@@ -636,7 +668,8 @@ export function ReviewForm({
                         </Button>
                       </div>
                     </div>
-                  </div>
+                    </CardContent>
+                  </Card>
                 )}
               </CardContent>
             </Card>
@@ -644,8 +677,8 @@ export function ReviewForm({
             {/* Tags Selection */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Award className="h-5 w-5" />
+                <CardTitle>
+                  <Award className="h-5 w-5 inline-block mr-2" />
                   What did you like?
                 </CardTitle>
               </CardHeader>
@@ -655,14 +688,14 @@ export function ReviewForm({
                     <Badge
                       key={tag}
                       variant={selectedTags.includes(tag) ? "default" : "outline"}
-                      className="cursor-pointer hover:bg-accent transition-colors"
+                      className="cursor-pointer"
                       onClick={() => handleTagToggle(tag)}
                     >
                       {tag}
                     </Badge>
                   ))}
                 </div>
-                <p className="text-xs text-muted-foreground mt-2">
+                <p className="text-sm text-muted-foreground mt-2">
                   Click tags to add them to your review
                 </p>
               </CardContent>

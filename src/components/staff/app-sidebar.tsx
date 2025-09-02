@@ -22,8 +22,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@/components/ui/sidebar'
-import { Button } from '@/components/ui/button'
+  Button,
+} from '@/components/ui'
 import type { Database } from '@/types/database.types'
 
 // Use proper database types
@@ -39,7 +39,7 @@ const navigation = [
   { name: 'Dashboard', href: '/staff', icon: Home },
   { name: 'Schedule', href: '/staff/schedule', icon: Calendar },
   { name: 'Appointments', href: '/staff/appointments', icon: Users },
-  { name: 'Time Off', href: '/staff/time-off', icon: Clock },
+  { name: 'Time Off', href: '/staff/timeoff', icon: Clock },
   { name: 'Earnings', href: '/staff/earnings', icon: DollarSign },
   { name: 'Performance', href: '/staff/performance', icon: TrendingUp },
   { name: 'Profile', href: '/staff/profile', icon: User },

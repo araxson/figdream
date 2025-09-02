@@ -21,6 +21,8 @@ export async function getStaffBySalon(salonId: string) {
       profiles:user_id (
         email,
         full_name,
+        first_name,
+        last_name,
         avatar_url,
         phone
       ),
@@ -58,6 +60,8 @@ export async function getStaffById(staffId: string) {
       profiles:user_id (
         email,
         full_name,
+        first_name,
+        last_name,
         avatar_url,
         phone
       ),
@@ -90,6 +94,8 @@ export async function getStaffByUserId(userId: string) {
       profiles:user_id (
         email,
         full_name,
+        first_name,
+        last_name,
         avatar_url,
         phone
       ),

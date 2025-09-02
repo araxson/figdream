@@ -1,8 +1,8 @@
 'use server'
 
 import { createClient } from '@/lib/database/supabase/server'
-import { getAdminClient } from '@/lib/database/supabase/admin'
-import type { Database } from '@/types/database'
+import { createAdminClient } from '@/lib/database/supabase/admin'
+import type { Database } from '@/types/database.types'
 
 type NotificationType = Database['public']['Tables']['notifications']['Row']['type']
 
@@ -32,7 +32,7 @@ interface SMSPayload {
  */
 export async function sendNotification(payload: NotificationPayload) {
   try {
-    const supabase = getAdminClient()
+    const supabase = createAdminClient()
     
     const { data, error } = await supabase
       .from('notifications')
@@ -328,7 +328,7 @@ export async function sendMarketingNotification(
     image_url?: string
   }
 ) {
-  const supabase = getAdminClient()
+  const supabase = createAdminClient()
   
   // Get users with marketing preferences enabled
   const { data: users } = await supabase

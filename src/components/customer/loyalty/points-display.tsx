@@ -1,12 +1,19 @@
 'use client'
 
 import * as React from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Button,
+  Badge,
+  Progress,
+  Skeleton,
+  Alert,
+  AlertDescription,
+} from '@/components/ui'
 import {
   Sparkles,
   TrendingUp,
@@ -151,22 +158,22 @@ export function PointsDisplay({
     if (type.startsWith('earned_')) {
       switch (type) {
         case 'earned_booking':
-          return <Calendar className="h-4 w-4 text-green-600" />
+          return <Calendar className="h-4 w-4 text-green-500" />
         case 'earned_referral':
-          return <Users className="h-4 w-4 text-blue-600" />
+          return <Users className="h-4 w-4 text-blue-500" />
         case 'earned_review':
-          return <Star className="h-4 w-4 text-yellow-600" />
+          return <Star className="h-4 w-4 text-yellow-500" />
         case 'earned_bonus':
-          return <Gift className="h-4 w-4 text-purple-600" />
+          return <Gift className="h-4 w-4 text-purple-500" />
         default:
-          return <TrendingUp className="h-4 w-4 text-green-600" />
+          return <TrendingUp className="h-4 w-4 text-green-500" />
       }
     } else if (type.startsWith('redeemed_')) {
-      return <Gift className="h-4 w-4 text-orange-600" />
+      return <Gift className="h-4 w-4 text-orange-500" />
     } else if (type === 'expired') {
-      return <Clock className="h-4 w-4 text-red-600" />
+      return <Clock className="h-4 w-4 text-destructive" />
     }
-    return <Target className="h-4 w-4 text-gray-600" />
+    return <Target className="h-4 w-4 text-muted-foreground" />
   }
 
   const formatTransactionType = (type: string) => {
@@ -225,7 +232,7 @@ export function PointsDisplay({
 
   if (error || !loyaltyData) {
     return (
-      <Alert className={className}>
+      <Alert>
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>
           {error || 'Unable to load points information.'}
@@ -237,11 +244,11 @@ export function PointsDisplay({
   // Widget variant for small spaces
   if (variant === 'widget') {
     return (
-      <Card className={cn("", className)}>
-        <CardContent>
+      <Card className={className}>
+        <CardContent className="pt-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-blue-600" />
+              <Sparkles className="h-5 w-5 text-primary" />
               <div>
                 <p className="font-semibold">{loyaltyData.current_points.toLocaleString()}</p>
                 <p className="text-xs text-muted-foreground">Points</p>
@@ -249,7 +256,7 @@ export function PointsDisplay({
             </div>
             <div className="flex items-center gap-2">
               {getTierIcon(loyaltyData.current_tier, 'h-4 w-4')}
-              <Badge variant="secondary" className="text-xs capitalize">
+              <Badge variant="secondary" className="capitalize">
                 {loyaltyData.current_tier}
               </Badge>
             </div>
@@ -423,7 +430,7 @@ export function PointsDisplay({
 
       {/* Expiring Points Alert */}
       {expiringPoints && (
-        <Alert className="border-yellow-200 bg-yellow-50">
+        <Alert>
           <Clock className="h-4 w-4 text-yellow-600" />
           <AlertDescription className="text-yellow-800">
             <strong>{expiringPoints.points.toLocaleString()} points</strong> expire on{' '}

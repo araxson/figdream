@@ -4,19 +4,34 @@ import * as React from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Separator } from '@/components/ui/separator'
-import { Badge } from '@/components/ui/badge'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Checkbox } from '@/components/ui/checkbox'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Label } from '@/components/ui/label'
-import { Progress } from '@/components/ui/progress'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Input,
+  Textarea,
+  Separator,
+  Badge,
+  Alert,
+  AlertDescription,
+  Checkbox,
+  RadioGroup,
+  RadioGroupItem,
+  Label,
+  Progress,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui'
 import { 
   CalendarIcon, 
   Clock, 
@@ -41,6 +56,7 @@ import type { Database } from '@/types/database.types'
 import { ServiceSelector, type SelectedService } from './service-selector'
 import { StaffSelector, type StaffMember } from './staff-selector'
 import { TimeSlotPicker, type TimeSlot } from './time-slot-picker'
+import { TimePicker } from '@/components/shared/time-picker'
 
 type Appointment = Database['public']['Tables']['appointments']['Row']
 
@@ -138,6 +154,8 @@ export function BookingForm({
   const [selectedStaff, setSelectedStaff] = React.useState<StaffMember | null>(initialStaff || null)
   const [selectedDate, setSelectedDate] = React.useState<Date>(initialDate || new Date())
   const [selectedTimeSlot, setSelectedTimeSlot] = React.useState<TimeSlot | null>(null)
+  const [customStartTime, setCustomStartTime] = React.useState<string>('')
+  const [timeSelectionMethod, setTimeSelectionMethod] = React.useState<'slots' | 'custom'>('slots')
   const [isSubmitting, setIsSubmitting] = React.useState(false)
   const [submitError, setSubmitError] = React.useState<string | null>(null)
 
@@ -173,21 +191,38 @@ export function BookingForm({
     }
   }, [selectedServices, businessRules])
 
+  // Calculate end time for custom time selection
+  const calculateEndTime = (startTime: string, durationMinutes: number): string => {
+    if (!startTime) return ''
+    const [hours, minutes] = startTime.split(':').map(Number)
+    const startDate = new Date()
+    startDate.setHours(hours, minutes, 0, 0)
+    const endDate = addMinutes(startDate, durationMinutes)
+    return format(endDate, 'HH:mm:ss')
+  }
+
   // Update form when selections change
   React.useEffect(() => {
     form.setValue('services', selectedServices.map(s => s.id))
     form.setValue('booking_date', format(selectedDate, 'yyyy-MM-dd'))
-    if (selectedTimeSlot) {
+    
+    // Handle time selection based on method
+    if (timeSelectionMethod === 'slots' && selectedTimeSlot) {
       form.setValue('start_time', selectedTimeSlot.start_time)
       form.setValue('end_time', selectedTimeSlot.end_time)
+    } else if (timeSelectionMethod === 'custom' && customStartTime) {
+      const endTime = calculateEndTime(customStartTime + ':00', totals.totalDuration)
+      form.setValue('start_time', customStartTime + ':00')
+      form.setValue('end_time', endTime)
     }
+    
     if (selectedStaff) {
       form.setValue('staff_id', selectedStaff.id)
     }
     if (businessRules.require_deposit) {
       form.setValue('deposit_amount', totals.depositAmount)
     }
-  }, [selectedServices, selectedDate, selectedTimeSlot, selectedStaff, totals.depositAmount, businessRules.require_deposit, form])
+  }, [selectedServices, selectedDate, selectedTimeSlot, customStartTime, timeSelectionMethod, selectedStaff, totals.depositAmount, totals.totalDuration, businessRules.require_deposit, form])
 
   // Navigate between steps
   const nextStep = () => {
@@ -214,7 +249,7 @@ export function BookingForm({
       case 1: // Staff
         return selectedStaff !== null || !selectedServices.some(s => s.id) // Some services might not require specific staff
       case 2: // Date & Time
-        return selectedTimeSlot !== null
+        return timeSelectionMethod === 'slots' ? selectedTimeSlot !== null : customStartTime !== ''
       case 3: // Details
         return true // Details are optional
       case 4: // Confirm
@@ -298,37 +333,164 @@ export function BookingForm({
       case 2: // Date & Time
         return (
           <div className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
+            {/* Date Selection Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <CalendarIcon className="h-5 w-5" />
+                  Select Date
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {/* Calendar component would go here */}
+                <div className="text-center p-8 text-muted-foreground">
+                  <CalendarIcon className="h-12 w-12 mx-auto mb-2" />
+                  <p>Calendar component placeholder</p>
+                  <p className="text-sm">Selected: {format(selectedDate, 'EEEE, MMMM d, yyyy')}</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Time Selection Method */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Clock className="h-5 w-5" />
+                  Choose Time Selection Method
+                </CardTitle>
+                <CardDescription>
+                  Select from available time slots or specify a custom time
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <RadioGroup
+                  value={timeSelectionMethod}
+                  onValueChange={(value) => {
+                    setTimeSelectionMethod(value as 'slots' | 'custom')
+                    // Reset selections when switching methods
+                    setSelectedTimeSlot(null)
+                    setCustomStartTime('')
+                  }}
+                  className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                  disabled={disabled}
+                >
+                  <Card className="flex items-center space-x-2">
+                    <CardContent className="p-4 flex items-center space-x-2 w-full">
+                      <RadioGroupItem value="slots" id="slots" />
+                      <div className="flex-1">
+                        <Label htmlFor="slots" className="font-medium">Available Time Slots</Label>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Choose from staff availability ({selectedStaff ? 'with selected staff' : 'any staff'})
+                        </p>
+                      </div>
+                      <Badge variant="outline" className="ml-auto">
+                        {selectedStaff ? 'Staff-specific' : 'Flexible'}
+                      </Badge>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="flex items-center space-x-2">
+                    <CardContent className="p-4 flex items-center space-x-2 w-full">
+                      <RadioGroupItem value="custom" id="custom" />
+                      <div className="flex-1">
+                        <Label htmlFor="custom" className="font-medium">Custom Time</Label>
+                        <p className="text-sm text-muted-foreground mt-1">
+                        Select any time (subject to availability confirmation)
+                      </p>
+                    </div>
+                    <Badge variant="secondary" className="ml-auto">
+                      Flexible
+                    </Badge>
+                    </CardContent>
+                  </Card>
+                </RadioGroup>
+              </CardContent>
+            </Card>
+
+            {/* Time Slot Selection */}
+            {timeSelectionMethod === 'slots' && selectedStaff && (
+              <TimeSlotPicker
+                staffId={selectedStaff.id}
+                locationId={locationId}
+                selectedDate={selectedDate}
+                serviceDurationMinutes={totals.totalDuration}
+                onTimeSlotSelect={setSelectedTimeSlot}
+                selectedTimeSlot={selectedTimeSlot}
+                minAdvanceHours={businessRules.min_advance_hours}
+                disabled={disabled}
+              />
+            )}
+
+            {/* Custom Time Selection */}
+            {timeSelectionMethod === 'custom' && (
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <CalendarIcon className="h-5 w-5" />
-                    Select Date
+                    <Clock className="h-5 w-5" />
+                    Select Custom Time
                   </CardTitle>
+                  <CardDescription>
+                    Choose your preferred start time. Duration: {totals.totalDuration} minutes
+                  </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  {/* Calendar component would go here */}
-                  <div className="text-center p-8 text-muted-foreground">
-                    <CalendarIcon className="h-12 w-12 mx-auto mb-2" />
-                    <p>Calendar component placeholder</p>
-                    <p className="text-sm">Selected: {format(selectedDate, 'EEEE, MMMM d, yyyy')}</p>
+                <CardContent className="space-y-4">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <TimePicker
+                      label="Start Time"
+                      placeholder="Select start time"
+                      value={customStartTime}
+                      onChange={setCustomStartTime}
+                      minTime="08:00"
+                      maxTime="20:00"
+                      interval={15}
+                      disabled={disabled}
+                    />
+                    
+                    <div className="space-y-2">
+                      <Label>End Time (Calculated)</Label>
+                      <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
+                        <Clock className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm">
+                          {customStartTime 
+                            ? (() => {
+                                const endTime = calculateEndTime(customStartTime + ':00', totals.totalDuration)
+                                const [hour, minute] = endTime.split(':').map(Number)
+                                const period = hour >= 12 ? 'PM' : 'AM'
+                                const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour
+                                return `${displayHour}:${minute.toString().padStart(2, '0')} ${period}`
+                              })()
+                            : 'Select start time first'
+                          }
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Automatically calculated based on service duration
+                      </p>
+                    </div>
                   </div>
+
+                  {customStartTime && (
+                    <Alert>
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>
+                        <strong>Note:</strong> Custom time selections are subject to staff availability. 
+                        We'll confirm your appointment time and notify you of any necessary adjustments.
+                      </AlertDescription>
+                    </Alert>
+                  )}
                 </CardContent>
               </Card>
+            )}
 
-              {selectedStaff && (
-                <TimeSlotPicker
-                  staffId={selectedStaff.id}
-                  locationId={locationId}
-                  selectedDate={selectedDate}
-                  serviceDurationMinutes={totals.totalDuration}
-                  onTimeSlotSelect={setSelectedTimeSlot}
-                  selectedTimeSlot={selectedTimeSlot}
-                  minAdvanceHours={businessRules.min_advance_hours}
-                  disabled={disabled}
-                />
-              )}
-            </div>
+            {/* No Staff Selected Message */}
+            {timeSelectionMethod === 'slots' && !selectedStaff && (
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  Please select a staff member first to see available time slots, or choose the custom time option.
+                </AlertDescription>
+              </Alert>
+            )}
           </div>
         )
 
@@ -638,17 +800,35 @@ export function BookingForm({
                 {/* Date & Time */}
                 <div>
                   <h4 className="font-medium mb-2">Date & Time</h4>
-                  <div className="flex items-center gap-4 text-sm">
-                    <div className="flex items-center gap-1">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1 text-sm">
                       <CalendarIcon className="h-4 w-4" />
                       <span>{format(selectedDate, 'EEEE, MMMM d, yyyy')}</span>
                     </div>
-                    {selectedTimeSlot && (
-                      <div className="flex items-center gap-1">
-                        <Clock className="h-4 w-4" />
+                    <div className="flex items-center gap-1 text-sm">
+                      <Clock className="h-4 w-4" />
+                      {timeSelectionMethod === 'slots' && selectedTimeSlot ? (
                         <span>{selectedTimeSlot.start_time.slice(0, 5)} - {selectedTimeSlot.end_time.slice(0, 5)}</span>
-                      </div>
-                    )}
+                      ) : timeSelectionMethod === 'custom' && customStartTime ? (
+                        <span>
+                          {(() => {
+                            const startTime = customStartTime + ':00'
+                            const endTime = calculateEndTime(startTime, totals.totalDuration)
+                            return `${startTime.slice(0, 5)} - ${endTime.slice(0, 5)}`
+                          })()}
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground">Time not selected</span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <Badge variant="outline" className="text-xs">
+                        {timeSelectionMethod === 'slots' ? 'Available Slot' : 'Custom Time'}
+                      </Badge>
+                      {timeSelectionMethod === 'custom' && (
+                        <span className="ml-2">Subject to availability confirmation</span>
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -841,11 +1021,20 @@ export function BookingForm({
               )}
 
               {/* Selected Date/Time */}
-              {selectedTimeSlot && (
+              {((timeSelectionMethod === 'slots' && selectedTimeSlot) || (timeSelectionMethod === 'custom' && customStartTime)) && (
                 <div>
                   <h5 className="font-medium mb-1">Date & Time</h5>
                   <p className="text-muted-foreground">
-                    {format(selectedDate, 'MMM d')} at {selectedTimeSlot.start_time.slice(0, 5)}
+                    {format(selectedDate, 'MMM d')} at {
+                      timeSelectionMethod === 'slots' && selectedTimeSlot
+                        ? selectedTimeSlot.start_time.slice(0, 5)
+                        : timeSelectionMethod === 'custom' && customStartTime
+                          ? customStartTime
+                          : 'Not set'
+                    }
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {timeSelectionMethod === 'custom' && 'Custom time (pending confirmation)'}
                   </p>
                 </div>
               )}

@@ -318,7 +318,7 @@ export async function generateEarningsReport(
     .from('staff_earnings')
     .select(`
       staff_id,
-      staff:staff_profiles(full_name),
+      staff:staff_profiles(profiles:user_id(full_name)),
       total_earnings,
       commission_amount,
       tip_amount,

@@ -5,7 +5,7 @@
 
 import { Resend } from 'resend'
 import { createClient } from '@/lib/database/supabase/server'
-import type { Database } from '@/types/database'
+import type { Database } from '@/types/database.types'
 
 const resend = new Resend(process.env.RESEND_API_KEY!)
 

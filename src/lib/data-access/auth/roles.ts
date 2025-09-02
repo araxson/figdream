@@ -1,7 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/database/supabase/server'
-import type { Database } from '@/types/database'
+import type { Database } from '@/types/database.types'
 import { getUserWithRole } from './verify'
 
 type UserRole = Database['public']['Enums']['user_role_type']

@@ -120,7 +120,7 @@ export const createReviewSchema = z.object({
   
   visited_date: z.string().datetime().optional(),
   
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 })
 
 export type CreateReviewInput = z.infer<typeof createReviewSchema>

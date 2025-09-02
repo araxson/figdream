@@ -28,13 +28,11 @@ const timezones = [
 ]
 
 // Loyalty tier enum
-const LoyaltyTier = z.enum(['bronze', 'silver', 'gold', 'platinum'], {
-  errorMap: () => ({ message: 'Invalid loyalty tier' })
-})
+export const LoyaltyTier = z.enum(['bronze', 'silver', 'gold', 'platinum'])
 
 // Base validation schemas
 export const userIdSchema = z
-  .string({ required_error: 'User ID is required' })
+  .string()
   .regex(uuidRegex, 'Invalid user ID format')
 
 export const avatarUrlSchema = z
@@ -120,10 +118,10 @@ export const zipCodeSchema = z
 
 export const countrySchema = z
   .string()
-  .nullable()
-  .optional()
   .min(2, 'Country must be at least 2 characters')
   .max(50, 'Country must be less than 50 characters')
+  .nullable()
+  .optional()
   .transform((val) => val?.trim() || null)
 
 // User profile schema
@@ -175,9 +173,9 @@ export const userPreferencesSchema = z.object({
     .default('12h'),
   currency: z
     .string()
-    .optional()
-    .length(3, 'Currency code must be 3 characters')
+    .refine((val) => val.length === 3, 'Currency code must be 3 characters')
     .regex(/^[A-Z]{3}$/, 'Currency code must be uppercase letters')
+    .optional()
     .default('USD'),
   theme: z
     .enum(['light', 'dark', 'system'])
@@ -264,7 +262,7 @@ export const emergencyContactSchema = z.object({
     message: 'Emergency contact phone is required'
   }),
   relationship: z
-    .string({ required_error: 'Relationship is required' })
+    .string()
     .min(1, 'Relationship is required')
     .max(50, 'Relationship must be less than 50 characters')
     .transform((val) => val.trim()),
@@ -442,6 +440,3 @@ export type UserProfileUpdateInput = z.infer<typeof userProfileUpdateSchema>
 export type StaffProfileUpdateInput = z.infer<typeof staffProfileUpdateSchema>
 export type UserPreferencesUpdateInput = z.infer<typeof userPreferencesUpdateSchema>
 export type NotificationPreferencesUpdateInput = z.infer<typeof notificationPreferencesUpdateSchema>
-
-// Re-export loyalty tier enum
-export { LoyaltyTier }

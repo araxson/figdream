@@ -23,15 +23,17 @@ export async function getBlockedTimes(options?: {
       *,
       staff_profiles (
         id,
-        full_name,
-        email
+        profiles:user_id (
+          full_name,
+          email
+        )
       ),
       salons (
         id,
         name
       )
     `)
-    .order('start_time', { ascending: false })
+    .order('start_datetime', { ascending: false })
 
   if (options?.salonId) {
     query = query.eq('salon_id', options.salonId)
@@ -43,8 +45,8 @@ export async function getBlockedTimes(options?: {
 
   if (options?.startDate && options?.endDate) {
     query = query
-      .gte('start_time', options.startDate)
-      .lte('end_time', options.endDate)
+      .gte('start_datetime', options.startDate)
+      .lte('end_datetime', options.endDate)
   }
 
   const { data, error } = await query
@@ -61,7 +63,7 @@ export async function createBlockedTime(blockedTime: BlockedTimeInsert) {
   const supabase = await createClient()
   
   // Validate that end time is after start time
-  if (new Date(blockedTime.end_time) <= new Date(blockedTime.start_time)) {
+  if (new Date(blockedTime.end_datetime) <= new Date(blockedTime.start_datetime)) {
     throw new Error('End time must be after start time')
   }
 
@@ -69,8 +71,8 @@ export async function createBlockedTime(blockedTime: BlockedTimeInsert) {
   const overlapping = await checkOverlappingBlockedTimes({
     staffId: blockedTime.staff_id,
     salonId: blockedTime.salon_id,
-    startTime: blockedTime.start_time,
-    endTime: blockedTime.end_time
+    startTime: blockedTime.start_datetime,
+    endTime: blockedTime.end_datetime
   })
 
   if (overlapping) {
@@ -88,7 +90,7 @@ export async function createBlockedTime(blockedTime: BlockedTimeInsert) {
     throw new Error('Failed to create blocked time')
   }
 
-  revalidatePath('/salon-admin/blocked-times')
+  revalidatePath('/salon-admin/blocked')
   revalidatePath('/staff/schedule')
   
   return data
@@ -98,8 +100,8 @@ export async function updateBlockedTime(id: string, updates: BlockedTimeUpdate) 
   const supabase = await createClient()
   
   // Validate times if both are provided
-  if (updates.start_time && updates.end_time) {
-    if (new Date(updates.end_time) <= new Date(updates.start_time)) {
+  if (updates.start_datetime && updates.end_datetime) {
+    if (new Date(updates.end_datetime) <= new Date(updates.start_datetime)) {
       throw new Error('End time must be after start time')
     }
   }
@@ -116,7 +118,7 @@ export async function updateBlockedTime(id: string, updates: BlockedTimeUpdate) 
     throw new Error('Failed to update blocked time')
   }
 
-  revalidatePath('/salon-admin/blocked-times')
+  revalidatePath('/salon-admin/blocked')
   revalidatePath('/staff/schedule')
   
   return data
@@ -135,7 +137,7 @@ export async function deleteBlockedTime(id: string) {
     throw new Error('Failed to delete blocked time')
   }
 
-  revalidatePath('/salon-admin/blocked-times')
+  revalidatePath('/salon-admin/blocked')
   revalidatePath('/staff/schedule')
   
   return { success: true }
@@ -150,7 +152,7 @@ export async function createRecurringBlockedTimes(params: {
   timeSlot: { startTime: string; endTime: string }
   daysOfWeek: number[] // 0 = Sunday, 6 = Saturday
   reason: string
-  blockType: Database['public']['Enums']['block_type']
+  // blockType field removed - doesn't exist in schema
 }) {
   const supabase = await createClient()
   const blockedTimes: BlockedTimeInsert[] = []
@@ -171,11 +173,10 @@ export async function createRecurringBlockedTimes(params: {
       blockedTimes.push({
         staff_id: params.staffId,
         salon_id: params.salonId,
-        start_time: startDateTime.toISOString(),
-        end_time: endDateTime.toISOString(),
-        reason: params.reason,
-        block_type: params.blockType,
-        is_recurring: true
+        start_datetime: startDateTime.toISOString(),
+        end_datetime: endDateTime.toISOString(),
+        reason: params.reason
+        // block_type and is_recurring fields removed - don't exist in schema
       })
     }
     
@@ -196,7 +197,7 @@ export async function createRecurringBlockedTimes(params: {
     throw new Error('Failed to create recurring blocked times')
   }
 
-  revalidatePath('/salon-admin/blocked-times')
+  revalidatePath('/salon-admin/blocked')
   revalidatePath('/staff/schedule')
   
   return data
@@ -226,7 +227,7 @@ async function checkOverlappingBlockedTimes(params: {
   let query = supabase
     .from('blocked_times')
     .select('id')
-    .or(`and(start_time.lt.${params.endTime},end_time.gt.${params.startTime})`)
+    .or(`and(start_datetime.lt.${params.endTime},end_datetime.gt.${params.startTime})`)
 
   if (params.staffId) {
     query = query.eq('staff_id', params.staffId)

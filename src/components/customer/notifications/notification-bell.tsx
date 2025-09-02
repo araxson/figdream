@@ -2,18 +2,22 @@
 
 import { useState, useEffect } from 'react'
 import { Bell, Check, X, Calendar, CreditCard, Star, MessageSquare, Gift, AlertCircle, CheckCircle2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import {
+  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Badge } from '@/components/ui/badge'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+  Badge,
+  ScrollArea,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui'
 import { formatDistanceToNow } from 'date-fns'
 
 interface Notification {
@@ -181,9 +185,10 @@ export function NotificationBell({ userId, initialCount = 0 }: NotificationBellP
               {notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`group relative p-3 hover:bg-accent cursor-pointer ${
-                    !notification.is_read ? 'bg-accent/50' : ''
-                  }`}
+                  className={cn(
+                    "group relative p-3 hover:bg-accent cursor-pointer",
+                    !notification.is_read && "bg-accent/50"
+                  )}
                   onClick={() => {
                     if (!notification.is_read) {
                       markAsRead(notification.id)

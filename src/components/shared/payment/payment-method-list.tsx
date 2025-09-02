@@ -6,26 +6,18 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Skeleton } from '@/components/ui/skeleton'
 import {
+  Button,
+  Card,
+  CardContent,
+  Badge,
+  Alert,
+  AlertDescription,
+  Skeleton,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -35,7 +27,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
+} from '@/components/ui'
 import {
   CreditCard,
   Plus,
@@ -140,12 +132,17 @@ function PaymentMethodCard({
 
   return (
     <Card 
-      className={`transition-all cursor-pointer hover:shadow-md ${
+      className={`transition-all hover:shadow-md ${
         isSelected ? 'ring-2 ring-blue-500 border-blue-200' : ''
       }`}
-      onClick={() => allowSelection && onSelect?.(paymentMethod.id)}
     >
-      <CardContent>
+      <CardContent className="p-0">
+        <Button
+          variant="ghost"
+          className="w-full h-auto p-4 justify-start"
+          onClick={() => allowSelection && onSelect?.(paymentMethod.id)}
+          disabled={!allowSelection}
+        >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             {getPaymentMethodIcon(paymentMethod.type)}
@@ -254,6 +251,7 @@ function PaymentMethodCard({
             )}
           </div>
         </div>
+        </Button>
       </CardContent>
     </Card>
   )

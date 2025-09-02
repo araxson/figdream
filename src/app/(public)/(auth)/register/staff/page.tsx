@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui'
 import { RegisterForm } from '@/components/auth/register-form'
 import { UserCheck, Clock, Calendar, TrendingUp, Shield, Award } from 'lucide-react'
 

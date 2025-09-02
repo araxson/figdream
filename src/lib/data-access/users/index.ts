@@ -1,7 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/database/supabase/server'
-import type { Database } from '@/types/database'
+import type { Database } from '@/types/database.types'
 import { getUserWithRole } from '../auth/verify'
 import { isSuperAdmin } from '../auth/roles'
 
@@ -328,10 +328,17 @@ export async function deleteUser(userId: string): Promise<UserDeleteResult> {
     const supabase = await createClient()
 
     // Instead of hard delete, we deactivate the auth user
-    const { error } = await supabase.auth.admin.updateUserById(userId, {
+    const { error: authError } = await supabase.auth.admin.updateUserById(userId, {
       ban_duration: 'none', // This effectively disables the user
-      raw_app_meta_data: { is_active: false }
     })
+    
+    // Also deactivate in user_roles table
+    const { error: roleError } = await supabase
+      .from('user_roles')
+      .update({ is_active: false })
+      .eq('user_id', userId)
+    
+    const error = authError || roleError
 
     if (error) {
       return { success: false, error: error.message }
@@ -361,17 +368,18 @@ export async function getUsersByRole(role: Database['public']['Enums']['user_rol
 
     const supabase = await createClient()
 
-    // We need to query auth.users to get role from raw_app_meta_data
-    // This requires admin access
-    const { data: users, error } = await supabase.auth.admin.listUsers()
+    // Query user_roles table to get users by role
+    const { data: userRoles, error: userRolesError } = await supabase
+      .from('user_roles')
+      .select('user_id')
+      .eq('role', role)
+      .eq('is_active', true)
 
-    if (error) {
-      return { data: null, error: error.message }
+    if (userRolesError) {
+      return { data: null, error: userRolesError.message }
     }
 
-    const filteredUserIds = users.users
-      .filter(user => user.raw_app_meta_data?.role === role)
-      .map(user => user.id)
+    const filteredUserIds = userRoles.map(ur => ur.user_id)
 
     if (filteredUserIds.length === 0) {
       return { data: [], error: null }

@@ -1,0 +1,152 @@
+{
+  "generated_at": "2025-09-01T18:28:35.902146",
+  "project_root": "/Users/afshin/Desktop/zss/clients/009-figdream/03-website-development/figdream",
+  "sections": [
+    {
+      "title": "Executive Summary",
+      "findings": [
+        {
+          "severity": "info",
+          "title": "No critical blockers",
+          "message": "No critical issues found in high-level checks.",
+          "recommendation": "Address warnings and infos to improve robustness.",
+          "evidence": null,
+          "steps": []
+        }
+      ],
+      "notes": []
+    },
+    {
+      "title": "Environment",
+      "findings": [
+        {
+          "severity": "info",
+          "title": "Node.js detected",
+          "message": "Node version: v24.7.0",
+          "recommendation": "Ensure Node.js version meets Next.js requirements (typically LTS).",
+          "evidence": "v24.7.0",
+          "steps": []
+        },
+        {
+          "severity": "info",
+          "title": "Supabase CLI detected",
+          "message": "Supabase CLI version: 2.39.2",
+          "recommendation": "Keep Supabase CLI up to date for local dev and migrations.",
+          "evidence": "2.39.2",
+          "steps": []
+        },
+        {
+          "severity": "info",
+          "title": "Git repository detected",
+          "message": "Project is inside a Git repository.",
+          "recommendation": "Use branches and conventional commits to track changes.",
+          "evidence": null,
+          "steps": []
+        }
+      ],
+      "notes": [
+        "Detected package manager: npm"
+      ]
+    },
+    {
+      "title": "Project Structure",
+      "findings": [
+        {
+          "severity": "info",
+          "title": "middleware.ts present",
+          "message": "Middleware detected.",
+          "recommendation": "Ensure auth and rewrites are intentional and tested.",
+          "evidence": null,
+          "steps": []
+        },
+        {
+          "severity": "info",
+          "title": "Prettier config not found",
+          "message": "Prettier isn't configured (optional but recommended).",
+          "recommendation": "Add Prettier for formatting consistency.",
+          "evidence": null,
+          "steps": []
+        }
+      ],
+      "notes": [
+        "Routing dirs \u2014 app/: True, pages/: False",
+        "API routes found: 11"
+      ]
+    },
+    {
+      "title": "Dependency Health",
+      "findings": [],
+      "notes": [
+        "next version: ^15.5.2",
+        "typescript version: ^5",
+        "@supabase/supabase-js version: ^2.56.0"
+      ]
+    },
+    {
+      "title": "TypeScript Configuration",
+      "findings": [
+        {
+          "severity": "info",
+          "title": "jsx setting not optimized",
+          "message": "`compilerOptions.jsx` is `preserve`.",
+          "recommendation": "Use `react-jsx` for modern JSX transform.",
+          "evidence": null,
+          "steps": []
+        }
+      ],
+      "notes": [
+        "Using tsconfig.json"
+      ]
+    },
+    {
+      "title": "Next.js Configuration",
+      "findings": [],
+      "notes": [
+        "Using next.config.ts",
+        "Images domain configuration detected.",
+        "Experimental flags detected; validate compatibility.",
+        "Standalone output detected (good for Docker)."
+      ]
+    },
+    {
+      "title": "Supabase Integration",
+      "findings": [],
+      "notes": [
+        "Env files present: .env.local",
+        "Anon key exp: 2035-08-23T07:41:57Z",
+        "REST probe status: 200",
+        "Files referencing supabase-js: 139"
+      ]
+    },
+    {
+      "title": "Tooling Run Results",
+      "findings": [
+        {
+          "severity": "warning",
+          "title": "TypeScript typecheck failed",
+          "message": "> figdream@0.1.0 typecheck\n> tsc --noEmit\n\nsrc/app/(customer)/loyalty/page.tsx(112,36): error TS2339: Property 'current_tier' does not exist on type '{ success: boolean; data: CustomerLoyalty; error?: undefined; } | { success: boolean; error: string; data?: undefined; }'.\n  Property 'current_tier' does not exist on type '{ success: boolean; data: CustomerLoyalty; error?: undefined; }'.\nsrc/app/(customer)/loyalty/page.tsx(113,33): error TS2339: Property 'next_tier' does not exist on type '{ succe",
+          "recommendation": "Investigate TypeScript typecheck output for errors.",
+          "evidence": null,
+          "steps": []
+        },
+        {
+          "severity": "warning",
+          "title": "ESLint failed",
+          "message": "> figdream@0.1.0 lint\n> eslint\n\n\n/Users/afshin/Desktop/zss/clients/009-figdream/03-website-development/figdream/src/app/(customer)/appointments/[id]/page.tsx\n   30:3   error  'ArrowLeft' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars\n  144:87  error  Unexpected any. Specify a different type                                     @typescript-eslint/no-explicit-any\n  148:89  error  Unexpected any. Specify a different type                            ",
+          "recommendation": "Investigate ESLint output for errors.",
+          "evidence": null,
+          "steps": []
+        },
+        {
+          "severity": "warning",
+          "title": "Next.js build failed",
+          "message": "Failed to compile.\n\nsrc/app/(customer)/appointments/[id]/page.tsx\nYou cannot have two parallel pages that resolve to the same path. Please check /(customer)/appointments/[id]/page and /(staff)/appointments/[id]/page. Refer to the route group docs for more information: https://nextjs.org/docs/app/building-your-application/routing/route-groups\n\nsrc/app/(customer)/appointments/page.tsx\nYou cannot have two parallel pages that resolve to the same path. Please check /(customer)/appointments/page and /",
+          "recommendation": "Investigate Next.js build output for errors.",
+          "evidence": null,
+          "steps": []
+        }
+      ],
+      "notes": []
+    }
+  ]
+}

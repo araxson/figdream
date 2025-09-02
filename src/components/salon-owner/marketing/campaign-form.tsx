@@ -22,45 +22,45 @@ import {
   Settings
 } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Switch } from '@/components/ui/switch'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Badge } from '@/components/ui/badge'
-import { 
-  Form, 
-  FormControl, 
-  FormDescription, 
-  FormField, 
-  FormItem, 
-  FormLabel, 
-  FormMessage 
-} from '@/components/ui/form'
 import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Input,
+  Label,
+  Textarea,
+  Switch,
+  Checkbox,
+  Badge,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from '@/components/ui/tabs'
-import { 
-  Popover, 
-  PopoverContent, 
-  PopoverTrigger 
-} from '@/components/ui/popover'
-import { Calendar as CalendarComponent } from '@/components/ui/calendar'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Progress } from '@/components/ui/progress'
-import { Separator } from '@/components/ui/separator'
+  RadioGroup,
+  RadioGroupItem,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Calendar as CalendarComponent,
+  Alert,
+  AlertDescription,
+  Progress,
+  Separator
+} from '@/components/ui'
 import { cn } from '@/lib/utils'
 
 import { 
@@ -71,7 +71,7 @@ import {
   campaignTypes,
   campaignStatuses
 } from '@/lib/validations/marketing-schema'
-import type { Database } from '@/types/database'
+import type { Database } from '@/types/database.types'
 
 type Campaign = Database['public']['Tables']['marketing_campaigns']['Row']
 type EmailTemplate = Database['public']['Tables']['email_templates']['Row']
@@ -329,32 +329,42 @@ export function CampaignForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Campaign Type *</FormLabel>
-                  <Select 
-                    onValueChange={field.onChange} 
-                    value={field.value}
-                    disabled={isEditing || isSubmitting}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      disabled={isEditing || isSubmitting}
+                      className="grid grid-cols-1 gap-4"
+                    >
                       {campaignTypes.map((type) => {
                         const Icon = campaignTypeInfo[type].icon
+                        const info = campaignTypeInfo[type]
                         return (
-                          <SelectItem key={type} value={type}>
-                            <div className="flex items-center gap-2">
-                              <Icon className="h-4 w-4" />
-                              <span className="capitalize">{type}</span>
+                          <div key={type} className="flex items-start space-x-3 rounded-lg border p-3 hover:bg-muted/50">
+                            <RadioGroupItem
+                              value={type}
+                              id={`type-${type}`}
+                              className="mt-1"
+                            />
+                            <div className="flex-1">
+                              <label
+                                htmlFor={`type-${type}`}
+                                className="flex items-center gap-2 cursor-pointer font-medium"
+                              >
+                                <Icon className="h-4 w-4" />
+                                <span>{info.label}</span>
+                              </label>
+                              <p className="text-sm text-muted-foreground mt-1">
+                                {info.description}
+                              </p>
                             </div>
-                          </SelectItem>
+                          </div>
                         )
                       })}
-                    </SelectContent>
-                  </Select>
+                    </RadioGroup>
+                  </FormControl>
                   <FormDescription>
-                    {typeInfo.description}
+                    Select the delivery method for your campaign
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

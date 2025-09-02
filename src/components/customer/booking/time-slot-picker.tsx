@@ -1,14 +1,27 @@
 'use client'
 
 import * as React from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Badge,
+  ScrollArea,
+  Skeleton,
+  Alert,
+  AlertDescription,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui'
 import { 
   Clock, 
   AlertCircle, 
@@ -416,7 +429,7 @@ export function TimeSlotPicker({
       </Card>
 
       {selectedTimeSlot && (
-        <Card className="border-primary">
+        <Card>
           <CardContent>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -441,18 +454,15 @@ export function TimeSlotPicker({
 
       {/* Legend */}
       <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground border-t pt-4">
-        <div className="flex items-center gap-1">
-          <div className="w-2 h-2 rounded-full bg-green-100 border border-green-300" />
-          <span>Available</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <div className="w-2 h-2 rounded-full bg-blue-100 border border-blue-300" />
-          <span>Selected</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <div className="w-2 h-2 rounded-full bg-gray-100 border border-gray-300" />
-          <span>Unavailable</span>
-        </div>
+        <Badge variant="outline" className="text-green-700">
+          Available
+        </Badge>
+        <Badge variant="default">
+          Selected
+        </Badge>
+        <Badge variant="secondary">
+          Unavailable
+        </Badge>
       </div>
       </div>
     </TooltipProvider>

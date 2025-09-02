@@ -2,18 +2,31 @@
 
 import { useRouter } from 'next/navigation'
 import { Database } from '@/types/database.types'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Badge,
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Button,
+} from '@/components/ui'
 import { Clock, MapPin, Phone, Star, ChevronRight } from 'lucide-react'
 
 type Salon = Database['public']['Tables']['salons']['Row'] & {
   salon_locations?: Array<{
     id: string
-    address: string | null
+    address_line_1: string | null
+    address_line_2?: string | null
     city: string | null
-    state: string | null
+    state_province: string | null
     postal_code: string | null
     phone: string | null
   }>
@@ -112,11 +125,14 @@ export default function SalonBookingTabs({
                   <h3 className="font-semibold mb-3">{category}</h3>
                   <div className="grid gap-3">
                     {categoryServices.map((service) => (
-                      <div
+                      <Button
                         key={service.id}
-                        className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
+                        variant="ghost"
+                        className="h-auto p-4 justify-between"
                         onClick={() => handleBookService(service.id)}
+                        asChild
                       >
+                        <div className="flex items-center justify-between w-full">
                         <div className="flex-1">
                           <h4 className="font-medium">{service.name}</h4>
                           {service.description && (
@@ -135,7 +151,8 @@ export default function SalonBookingTabs({
                           </div>
                         </div>
                         <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                      </div>
+                        </div>
+                      </Button>
                     ))}
                   </div>
                 </div>
@@ -157,9 +174,10 @@ export default function SalonBookingTabs({
           <CardContent>
             <div className="grid md:grid-cols-2 gap-4">
               {staff.map((member) => (
-                <div
+                <Button
                   key={member.id}
-                  className="flex items-start gap-4 p-4 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
+                  variant="ghost"
+                  className="flex items-start gap-4 p-4 h-auto justify-start border rounded-lg hover:bg-muted/50 transition-colors"
                   onClick={() => handleBookWithStaff(member.id)}
                 >
                   <Avatar className="h-12 w-12">
@@ -189,7 +207,7 @@ export default function SalonBookingTabs({
                     </div>
                   </div>
                   <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                </div>
+                </Button>
               ))}
             </div>
             {staff.length === 0 && (
@@ -253,8 +271,8 @@ export default function SalonBookingTabs({
                   <div className="flex items-center gap-2">
                     <MapPin className="h-4 w-4 text-muted-foreground" />
                     <span>
-                      {salon.salon_locations[0].address}, {salon.salon_locations[0].city}, 
-                      {salon.salon_locations[0].state} {salon.salon_locations[0].postal_code}
+                      {salon.salon_locations[0].address_line_1}, {salon.salon_locations[0].city}, 
+                      {salon.salon_locations[0].state_province} {salon.salon_locations[0].postal_code}
                     </span>
                   </div>
                   {salon.salon_locations[0].phone && (

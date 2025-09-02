@@ -1,16 +1,29 @@
 'use client'
 
 import * as React from 'react'
-import { Calendar } from '@/components/ui/calendar'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Separator } from '@/components/ui/separator'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+  Calendar,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Badge,
+  ScrollArea,
+  Separator,
+  Skeleton,
+  Alert,
+  AlertDescription,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui'
 import { 
   Calendar as CalendarIcon, 
   ChevronLeft, 
@@ -21,7 +34,8 @@ import {
   RefreshCw
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { Database } from '@/types/database'
+import { AppointmentHoverCard } from '@/components/shared/hovers'
+import type { Database } from '@/types/database.types'
 
 type Booking = Database['public']['Tables']['bookings']['Row']
 type BookingStatus = Database['public']['Enums']['booking_status']
@@ -338,21 +352,22 @@ export function BookingCalendar({
               <CardContent>
                 <div className="space-y-1">
                   {dayBookings.slice(0, 3).map(booking => (
-                    <div
-                      key={booking.id}
-                      className="text-xs p-1 rounded bg-background border cursor-pointer hover:bg-accent"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleBookingSelect(booking)
-                      }}
-                    >
-                      <div className="font-medium truncate">
-                        {booking.customer?.first_name} {booking.customer?.last_name}
+                    <AppointmentHoverCard appointment={booking} key={booking.id}>
+                      <div
+                        className="text-xs p-1 rounded bg-background border cursor-pointer hover:bg-accent"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleBookingSelect(booking)
+                        }}
+                      >
+                        <div className="font-medium truncate">
+                          {booking.customer?.first_name} {booking.customer?.last_name}
+                        </div>
+                        <div className="text-muted-foreground">
+                          {booking.start_time.slice(0, 5)}
+                        </div>
                       </div>
-                      <div className="text-muted-foreground">
-                        {booking.start_time.slice(0, 5)}
-                      </div>
-                    </div>
+                    </AppointmentHoverCard>
                   ))}
                   {dayBookings.length > 3 && (
                     <div className="text-xs text-muted-foreground text-center">

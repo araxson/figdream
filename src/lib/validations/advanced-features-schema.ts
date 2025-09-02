@@ -86,7 +86,7 @@ export const trackRecommendationInteractionSchema = z.object({
   
   session_id: z.string().optional(),
   
-  context_data: z.record(z.any()).optional(),
+  context_data: z.record(z.string(), z.any()).optional(),
 })
 
 export type TrackRecommendationInteractionInput = z.infer<typeof trackRecommendationInteractionSchema>
@@ -177,7 +177,7 @@ export const createLoyaltyProgramSchema = z.object({
   earning_rules: z.array(z.object({
     action: z.enum(['booking', 'referral', 'review', 'birthday', 'signup', 'social_share']),
     points: z.number().min(0),
-    conditions: z.record(z.any()).optional(),
+    conditions: z.record(z.string(), z.any()).optional(),
   })).optional(),
   
   redemption_rules: z.array(z.object({
@@ -185,7 +185,7 @@ export const createLoyaltyProgramSchema = z.object({
     points_required: z.number().min(1),
     value: z.number().optional(),
     description: z.string(),
-    restrictions: z.record(z.any()).optional(),
+    restrictions: z.record(z.string(), z.any()).optional(),
   })).optional(),
 })
 
@@ -404,7 +404,7 @@ export const trackReferralSchema = z.object({
   
   booking_id: z.string().uuid().optional(),
   
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 })
 
 export type TrackReferralInput = z.infer<typeof trackReferralSchema>

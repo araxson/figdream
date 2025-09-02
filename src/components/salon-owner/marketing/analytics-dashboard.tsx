@@ -6,6 +6,8 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { DateRange } from 'react-day-picker'
+import { DateRangePicker } from '@/components/shared/date-range-picker'
 import {
   BarChart3,
   TrendingUp,
@@ -29,29 +31,23 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@/components/ui/tabs'
-import { Button } from '@/components/ui/button'
-import { Progress } from '@/components/ui/progress'
-import { Badge } from '@/components/ui/badge'
-import {
+  Button,
+  Progress,
+  Badge,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip'
+} from '@/components/ui'
 
 interface CampaignMetric {
   campaign_id: string
@@ -103,9 +99,19 @@ interface AnalyticsDashboardProps {
 }
 
 export function AnalyticsDashboard({ data, onRefresh, onExport }: AnalyticsDashboardProps) {
-  const [dateRange, setDateRange] = useState('30d')
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: new Date(new Date().setDate(new Date().getDate() - 30)),
+    to: new Date(),
+  })
   const [campaignType, setCampaignType] = useState<string>('all')
   const [selectedMetric, setSelectedMetric] = useState<'revenue' | 'engagement' | 'growth'>('engagement')
+
+  // Predefined date range functions
+  const setPresetRange = (days: number) => {
+    const from = new Date()
+    from.setDate(from.getDate() - days)
+    setDateRange({ from, to: new Date() })
+  }
 
   // Calculate percentage changes
   const calculateChange = (current: number, previous: number): number => {
@@ -192,21 +198,99 @@ export function AnalyticsDashboard({ data, onRefresh, onExport }: AnalyticsDashb
   return (
     <div className="space-y-6">
       {/* Header Controls */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-          <Select value={dateRange} onValueChange={setDateRange}>
-            <SelectTrigger className="w-[180px]">
-              <Calendar className="mr-2 h-4 w-4" />
-              <SelectValue placeholder="Select date range" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="7d">Last 7 days</SelectItem>
-              <SelectItem value="30d">Last 30 days</SelectItem>
-              <SelectItem value="90d">Last 90 days</SelectItem>
-              <SelectItem value="365d">Last year</SelectItem>
-              <SelectItem value="all">All time</SelectItem>
-            </SelectContent>
-          </Select>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+          {/* Date Range Picker */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <DateRangePicker
+                onDateChange={setDateRange}
+                placeholder="Select date range"
+                className="w-auto"
+              />
+              {dateRange?.from && dateRange?.to && (
+                <Badge variant="secondary" className="text-xs">
+                  {Math.ceil((dateRange.to.getTime() - dateRange.from.getTime()) / (1000 * 60 * 60 * 24))} days
+                </Badge>
+              )}
+            </div>
+            
+            {/* Quick Date Range Buttons */}
+            <div className="flex flex-wrap gap-2">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setPresetRange(7)}
+                      className="text-xs"
+                    >
+                      7d
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Last 7 days</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setPresetRange(30)}
+                      className="text-xs"
+                    >
+                      30d
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Last 30 days</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setPresetRange(90)}
+                      className="text-xs"
+                    >
+                      90d
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Last 90 days</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setPresetRange(365)}
+                      className="text-xs"
+                    >
+                      1y
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Last year</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setDateRange(undefined)}
+                className="text-xs text-muted-foreground hover:text-foreground"
+              >
+                Clear
+              </Button>
+            </div>
+          </div>
 
           <Select value={campaignType} onValueChange={setCampaignType}>
             <SelectTrigger className="w-[150px]">

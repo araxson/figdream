@@ -1,13 +1,18 @@
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from '@/components/ui/carousel'
+  Separator,
+} from '@/components/ui'
 import { 
   Sparkles, 
   Calendar, 
@@ -18,6 +23,7 @@ import {
   ArrowRight,
   CheckCircle
 } from 'lucide-react'
+
 
 export default function HomePage() {
   return (
@@ -243,6 +249,7 @@ export default function HomePage() {
           </Carousel>
         </div>
       </section>
+
 
       {/* CTA Section */}
       <section className="py-20 container">

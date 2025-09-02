@@ -1,23 +1,35 @@
 'use client'
 
 import * as React from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Input } from '@/components/ui/input'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Label } from '@/components/ui/label'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+import {
+  Button,
+  Card,
+  CardContent,
+  Badge,
+  ScrollArea,
+  Skeleton,
+  Alert,
+  AlertDescription,
+  Input,
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  RadioGroup,
+  RadioGroupItem,
+  Label,
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from '@/components/ui'
 import { 
   Search, 
   Star, 
   Clock, 
-  Calendar,
   AlertCircle,
   CheckCircle,
   User,
@@ -26,7 +38,7 @@ import {
   Shuffle
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { format, addHours, isToday, isTomorrow } from 'date-fns'
+import { format, isToday, isTomorrow } from 'date-fns'
 import type { Database } from '@/types/database.types'
 
 // Use proper database types
@@ -223,15 +235,20 @@ export function StaffSelector({
       <Card
         key={member.id}
         className={cn(
-          "cursor-pointer transition-all hover:shadow-md",
+          "transition-all hover:shadow-md",
           isSelected && "ring-2 ring-primary border-primary",
           !isAvailable && "opacity-60",
           disabled && "cursor-not-allowed opacity-50"
         )}
-        onClick={() => !disabled && handleStaffSelect(member)}
       >
-        <CardContent>
-          <div className="flex items-start gap-3">
+        <CardContent className="p-0">
+          <Button
+            variant="ghost"
+            className="w-full h-auto p-4 justify-start"
+            onClick={() => !disabled && handleStaffSelect(member)}
+            disabled={disabled}
+          >
+            <div className="flex items-start gap-3">
             <HoverCard>
               <HoverCardTrigger asChild>
                 <Avatar className="h-12 w-12 cursor-pointer">
@@ -336,7 +353,7 @@ export function StaffSelector({
                 {showAvailability && (
                   <div className="mt-2">
                     {isAvailable ? (
-                      <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                      <Badge variant="outline" className="text-green-700">
                         Available
                       </Badge>
                     ) : member.next_available ? (
@@ -345,7 +362,7 @@ export function StaffSelector({
                         <span>Next: {formatNextAvailable(member.next_available)}</span>
                       </div>
                     ) : (
-                      <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
+                      <Badge variant="destructive">
                         Unavailable
                       </Badge>
                     )}
@@ -358,6 +375,7 @@ export function StaffSelector({
               </div>
             </div>
           </div>
+          </Button>
         </CardContent>
       </Card>
     )
@@ -369,15 +387,17 @@ export function StaffSelector({
     const isAvailable = !selectedDate || !selectedTime || member.is_available_on_date
 
     return (
-      <div
+      <Button
         key={member.id}
+        variant="ghost"
         className={cn(
-          "flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-colors hover:bg-accent",
+          "flex items-center space-x-3 h-auto justify-start",
           isSelected && "bg-primary/5 border-primary",
           !isAvailable && "opacity-60",
           disabled && "cursor-not-allowed opacity-50"
         )}
         onClick={() => !disabled && handleStaffSelect(member)}
+        disabled={disabled}
       >
         <RadioGroupItem
           value={member.id}
@@ -414,7 +434,7 @@ export function StaffSelector({
             {showAvailability && (
               <div>
                 {isAvailable ? (
-                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 text-xs">
+                  <Badge variant="outline" className="text-green-700 text-xs">
                     Available
                   </Badge>
                 ) : (
@@ -426,7 +446,7 @@ export function StaffSelector({
             )}
           </div>
         </div>
-      </div>
+      </Button>
     )
   }
 
@@ -466,7 +486,7 @@ export function StaffSelector({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
+          <Select value={sortBy} onValueChange={(value: 'name' | 'rating' | 'availability' | 'experience') => setSortBy(value)}>
             <SelectTrigger className="w-auto min-w-32">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
@@ -547,13 +567,18 @@ export function StaffSelector({
       {allowAnyStaff && (
         <Card 
           className={cn(
-            "cursor-pointer border-dashed transition-colors hover:bg-accent",
+            "border-dashed cursor-pointer hover:bg-accent/50",
             selectedStaff === null && "ring-2 ring-primary border-primary",
             disabled && "cursor-not-allowed opacity-50"
           )}
-          onClick={() => !disabled && handleStaffSelect(null)}
         >
-          <CardContent>
+          <CardContent className="p-0">
+            <Button
+              variant="ghost"
+              className="w-full h-auto p-4 justify-start border-dashed"
+              onClick={() => !disabled && handleStaffSelect(null)}
+              disabled={disabled}
+            >
             <div className="flex items-center gap-3">
               <div className="h-12 w-12 rounded-full border-2 border-dashed border-muted-foreground flex items-center justify-center">
                 <Shuffle className="h-5 w-5 text-muted-foreground" />
@@ -568,13 +593,14 @@ export function StaffSelector({
                 <CheckCircle className="h-5 w-5 text-primary ml-auto" />
               )}
             </div>
+            </Button>
           </CardContent>
         </Card>
       )}
 
       {/* Selected Staff Summary */}
       {selectedStaff && (
-        <Card className="border-primary">
+        <Card>
           <CardContent>
             <div className="flex items-center gap-3">
               <CheckCircle className="h-5 w-5 text-primary" />

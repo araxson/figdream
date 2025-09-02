@@ -1,7 +1,5 @@
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Button, Separator } from '@/components/ui'
 import { LoginForm } from '@/components/auth/login-form'
 import { UserCheck, Calendar, Clock, TrendingUp, ChevronRight } from 'lucide-react'
 

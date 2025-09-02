@@ -3,16 +3,28 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Database } from '@/types/database.types'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
-import { Textarea } from '@/components/ui/textarea'
-import { Separator } from '@/components/ui/separator'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Button,
+  Input,
+  Label,
+  Switch,
+  Toggle,
+  Slider,
+  Textarea,
+  Separator,
+  Alert,
+  AlertDescription,
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from '@/components/ui'
 import { toast } from 'sonner'
-import { Loader2, Save, AlertCircle, DollarSign, Gift, Trophy, Settings2 } from 'lucide-react'
+import { Loader2, Save, AlertCircle, DollarSign, Gift, Trophy, Settings2, HelpCircle } from 'lucide-react'
 
 type LoyaltyProgram = Database['public']['Tables']['loyalty_programs']['Row']
 
@@ -123,11 +135,15 @@ export default function LoyaltyProgramSettings({
                 When enabled, customers can earn and redeem points
               </p>
             </div>
-            <Switch
+            <Toggle
               id="program-active"
-              checked={isActive}
-              onCheckedChange={setIsActive}
-            />
+              pressed={isActive}
+              onPressedChange={setIsActive}
+              variant={isActive ? 'default' : 'outline'}
+              className="data-[state=on]:bg-green-100 data-[state=on]:text-green-800 data-[state=on]:border-green-200"
+            >
+              {isActive ? 'Active' : 'Inactive'}
+            </Toggle>
           </div>
         </CardContent>
       </Card>
@@ -146,18 +162,40 @@ export default function LoyaltyProgramSettings({
         <CardContent className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="points-per-dollar">Points per Dollar Spent</Label>
-              <Input
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Label htmlFor="points-per-dollar">Points per Dollar Spent</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-auto p-1">
+                        <HelpCircle className="h-3 w-3" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80">
+                      <div className="space-y-2">
+                        <h4 className="font-medium">Points Earning Rate</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Sets the base rate for how many points customers earn per dollar spent. 
+                          Higher rates encourage more spending but reduce profit margins. 
+                          Typical rates range from 1-3 points per dollar.
+                        </p>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                <span className="text-sm font-medium">{pointsPerDollar} points</span>
+              </div>
+              <Slider
                 id="points-per-dollar"
-                type="number"
-                step="0.1"
-                min="0"
-                value={pointsPerDollar}
-                onChange={(e) => setPointsPerDollar(e.target.value)}
-                placeholder="1"
+                min={0.1}
+                max={5}
+                step={0.1}
+                value={[parseFloat(pointsPerDollar) || 1]}
+                onValueChange={(value) => setPointsPerDollar(value[0].toString())}
+                className="w-full"
               />
               <p className="text-xs text-muted-foreground">
-                Base points earned for every dollar spent
+                Base points earned for every dollar spent (0.1 - 5.0 range)
               </p>
             </div>
 
@@ -238,22 +276,40 @@ export default function LoyaltyProgramSettings({
         <CardContent className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="redemption-value">Redemption Value (per point)</Label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-                <Input
-                  id="redemption-value"
-                  type="number"
-                  step="0.001"
-                  min="0"
-                  value={redemptionValue}
-                  onChange={(e) => setRedemptionValue(e.target.value)}
-                  className="pl-8"
-                  placeholder="0.01"
-                />
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Label htmlFor="redemption-value">Redemption Value (per point)</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-auto p-1">
+                        <HelpCircle className="h-3 w-3" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80">
+                      <div className="space-y-2">
+                        <h4 className="font-medium">Point Value</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Determines how much each point is worth when redeemed. 
+                          Lower values (like $0.01) mean customers need more points for rewards, 
+                          while higher values provide more immediate gratification but cost more.
+                        </p>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                <span className="text-sm font-medium">${redemptionValue}</span>
               </div>
+              <Slider
+                id="redemption-value"
+                min={0.001}
+                max={0.1}
+                step={0.001}
+                value={[parseFloat(redemptionValue) || 0.01]}
+                onValueChange={(value) => setRedemptionValue(value[0].toFixed(3))}
+                className="w-full"
+              />
               <p className="text-xs text-muted-foreground">
-                Dollar value of each point when redeemed
+                Dollar value of each point when redeemed ($0.001 - $0.1 range)
               </p>
             </div>
 
@@ -361,58 +417,74 @@ export default function LoyaltyProgramSettings({
 
             <div>
               <h4 className="text-sm font-medium mb-4">Earning Multipliers</h4>
-              <div className="grid gap-4 md:grid-cols-4">
-                <div className="space-y-2">
-                  <Label htmlFor="bronze-multiplier">Bronze (1x base)</Label>
-                  <Input
-                    id="bronze-multiplier"
-                    type="number"
-                    step="0.25"
-                    min="1"
-                    value={bronzeMultiplier}
-                    onChange={(e) => setBronzeMultiplier(e.target.value)}
-                    placeholder="1"
-                  />
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="bronze-multiplier">Bronze Tier</Label>
+                      <span className="text-sm font-medium">{bronzeMultiplier}x</span>
+                    </div>
+                    <Slider
+                      id="bronze-multiplier"
+                      min={1}
+                      max={3}
+                      step={0.25}
+                      value={[parseFloat(bronzeMultiplier) || 1]}
+                      onValueChange={(value) => setBronzeMultiplier(value[0].toString())}
+                      className="w-full"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="silver-multiplier">Silver Tier</Label>
+                      <span className="text-sm font-medium">{silverMultiplier}x</span>
+                    </div>
+                    <Slider
+                      id="silver-multiplier"
+                      min={1}
+                      max={3}
+                      step={0.25}
+                      value={[parseFloat(silverMultiplier) || 1.25]}
+                      onValueChange={(value) => setSilverMultiplier(value[0].toString())}
+                      className="w-full"
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="silver-multiplier">Silver Multiplier</Label>
-                  <Input
-                    id="silver-multiplier"
-                    type="number"
-                    step="0.25"
-                    min="1"
-                    value={silverMultiplier}
-                    onChange={(e) => setSilverMultiplier(e.target.value)}
-                    placeholder="1.25"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="gold-multiplier">Gold Multiplier</Label>
-                  <Input
-                    id="gold-multiplier"
-                    type="number"
-                    step="0.25"
-                    min="1"
-                    value={goldMultiplier}
-                    onChange={(e) => setGoldMultiplier(e.target.value)}
-                    placeholder="1.5"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="platinum-multiplier">Platinum Multiplier</Label>
-                  <Input
-                    id="platinum-multiplier"
-                    type="number"
-                    step="0.25"
-                    min="1"
-                    value={platinumMultiplier}
-                    onChange={(e) => setPlatinumMultiplier(e.target.value)}
-                    placeholder="2"
-                  />
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="gold-multiplier">Gold Tier</Label>
+                      <span className="text-sm font-medium">{goldMultiplier}x</span>
+                    </div>
+                    <Slider
+                      id="gold-multiplier"
+                      min={1}
+                      max={3}
+                      step={0.25}
+                      value={[parseFloat(goldMultiplier) || 1.5]}
+                      onValueChange={(value) => setGoldMultiplier(value[0].toString())}
+                      className="w-full"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="platinum-multiplier">Platinum Tier</Label>
+                      <span className="text-sm font-medium">{platinumMultiplier}x</span>
+                    </div>
+                    <Slider
+                      id="platinum-multiplier"
+                      min={1}
+                      max={3}
+                      step={0.25}
+                      value={[parseFloat(platinumMultiplier) || 2]}
+                      onValueChange={(value) => setPlatinumMultiplier(value[0].toString())}
+                      className="w-full"
+                    />
+                  </div>
                 </div>
               </div>
               <p className="text-xs text-muted-foreground mt-2">
-                Higher tier customers earn points at an increased rate
+                Higher tier customers earn points at an increased rate (1x - 3x range)
               </p>
             </div>
           </div>

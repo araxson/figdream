@@ -3,19 +3,27 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Button } from '@/components/ui'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui'
+import { Input } from '@/components/ui'
+import { Label } from '@/components/ui'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
+import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from '@/components/ui'
+import { Progress } from '@/components/ui'
+import { Badge } from '@/components/ui'
+import { Separator } from '@/components/ui'
 import { toast } from 'sonner'
-import { Building, Shield, Users, User, Loader2 } from 'lucide-react'
+import { Building, Shield, Users, User, Loader2, Lock, Smartphone, Mail, KeyRound } from 'lucide-react'
 
 export default function LoginPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [loginStep, setLoginStep] = useState<'credentials' | 'otp' | 'success'>('credentials')
+  const [otpValue, setOtpValue] = useState('')
+  const [selectedRole, setSelectedRole] = useState<string>('')
+  const [otpProgress, setOtpProgress] = useState(0)
 
   const handleLogin = async (role: string) => {
     if (!email || !password) {
@@ -24,11 +32,73 @@ export default function LoginPage() {
     }
 
     setIsLoading(true)
+    setSelectedRole(role)
     
-    // Simulate login - In production, this would call Supabase auth
-    await new Promise(resolve => setTimeout(resolve, 1500))
+    try {
+      // Simulate initial login - In production, this would call Supabase auth
+      await new Promise(resolve => setTimeout(resolve, 1500))
+      
+      // Simulate checking if user has 2FA enabled
+      const has2FA = Math.random() > 0.3 // 70% chance user has 2FA enabled
+      
+      if (has2FA) {
+        toast.success('Credentials verified! Please enter your verification code.')
+        setLoginStep('otp')
+        setOtpProgress(50)
+        
+        // Simulate sending OTP
+        setTimeout(() => {
+          toast.info('Verification code sent to your device')
+        }, 500)
+      } else {
+        // Direct login without OTP
+        completeLogin(role)
+      }
+    } catch (error) {
+      toast.error('Login failed. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleOtpSubmit = async () => {
+    if (otpValue.length !== 6) {
+      toast.error('Please enter the complete 6-digit code')
+      return
+    }
+
+    setIsLoading(true)
+    setOtpProgress(75)
     
-    // Route based on role
+    try {
+      // Simulate OTP verification
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      // Simulate OTP validation (90% success rate for demo)
+      const isValidOtp = Math.random() > 0.1
+      
+      if (isValidOtp) {
+        setOtpProgress(100)
+        toast.success('Verification successful!')
+        setLoginStep('success')
+        
+        setTimeout(() => {
+          completeLogin(selectedRole)
+        }, 1000)
+      } else {
+        setOtpProgress(50)
+        toast.error('Invalid verification code. Please try again.')
+        setOtpValue('')
+      }
+    } catch (error) {
+      setOtpProgress(50)
+      toast.error('Verification failed. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const completeLogin = (role: string) => {
     const roleRoutes: Record<string, string> = {
       'customer': '/customer',
       'staff': '/staff',
@@ -38,6 +108,26 @@ export default function LoginPage() {
     
     toast.success(`Welcome back! Logging in as ${role}`)
     router.push(roleRoutes[role] || '/')
+  }
+
+  const handleOtpResend = async () => {
+    setIsLoading(true)
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      toast.success('New verification code sent!')
+      setOtpValue('')
+    } catch (error) {
+      toast.error('Failed to resend code. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const resetLogin = () => {
+    setLoginStep('credentials')
+    setOtpValue('')
+    setOtpProgress(0)
+    setSelectedRole('')
   }
 
   const roleCards = [
@@ -85,102 +175,409 @@ export default function LoginPage() {
         </p>
       </div>
 
+      {/* Authentication Progress */}
+      {(loginStep === 'otp' || loginStep === 'success') && (
+        <Card className="mb-6">
+          <CardContent className="pt-6">
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-medium">Authentication Progress</span>
+                <Badge variant="outline">
+                  {loginStep === 'otp' ? 'Verification' : 'Success'}
+                </Badge>
+              </div>
+              <Progress value={otpProgress} className="w-full" />
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>Credentials ✓</span>
+                <span>{loginStep === 'success' ? 'Complete ✓' : 'Verifying...'}</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Login Tabs */}
       <Tabs defaultValue="quick" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="quick">Quick Login</TabsTrigger>
-          <TabsTrigger value="role">Login by Role</TabsTrigger>
+          <TabsTrigger value="quick" disabled={loginStep !== 'credentials'}>Quick Login</TabsTrigger>
+          <TabsTrigger value="role" disabled={loginStep !== 'credentials'}>Login by Role</TabsTrigger>
         </TabsList>
 
         {/* Quick Login Tab */}
         <TabsContent value="quick">
-          <Card>
-            <CardHeader>
-              <CardTitle>Sign In</CardTitle>
-              <CardDescription>
-                Enter your credentials to access your account
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+          {loginStep === 'credentials' && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Sign In</CardTitle>
+                <CardDescription>
+                  Enter your credentials to access your account
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={isLoading}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password">Password</Label>
+                    <Link
+                      href="/auth/forgot-password"
+                      className="text-sm text-primary hover:underline"
+                    >
+                      Forgot password?
+                    </Link>
+                  </div>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={isLoading}
+                  />
+                </div>
+              </CardContent>
+              <CardFooter className="flex flex-col gap-4">
+                <Button
+                  className="w-full"
+                  onClick={() => handleLogin('customer')}
                   disabled={isLoading}
-                />
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Password</Label>
-                  <Link
-                    href="/auth/forgot-password"
-                    className="text-sm text-primary hover:underline"
-                  >
-                    Forgot password?
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Signing in...
+                    </>
+                  ) : (
+                    'Sign In'
+                  )}
+                </Button>
+                <div className="text-center text-sm text-muted-foreground">
+                  Don&apos;t have an account?{' '}
+                  <Link href="/auth/register" className="text-primary hover:underline">
+                    Sign up
                   </Link>
                 </div>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+              </CardFooter>
+            </Card>
+          )}
+
+          {/* OTP Verification Step */}
+          {loginStep === 'otp' && (
+            <Card>
+              <CardHeader className="text-center">
+                <div className="flex justify-center mb-4">
+                  <Badge variant="secondary" className="h-12 w-12 rounded-full p-0 flex items-center justify-center bg-primary/10">
+                    <Smartphone className="h-6 w-6 text-primary" />
+                  </Badge>
+                </div>
+                <CardTitle className="flex items-center justify-center gap-2">
+                  <Lock className="h-5 w-5" />
+                  Two-Factor Authentication
+                </CardTitle>
+                <CardDescription>
+                  Enter the 6-digit verification code sent to your authenticator app or device
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="flex justify-center">
+                  <InputOTP 
+                    maxLength={6}
+                    value={otpValue}
+                    onChange={(value) => setOtpValue(value)}
+                    disabled={isLoading}
+                  >
+                    <InputOTPGroup>
+                      <InputOTPSlot index={0} />
+                      <InputOTPSlot index={1} />
+                      <InputOTPSlot index={2} />
+                    </InputOTPGroup>
+                    <InputOTPSeparator />
+                    <InputOTPGroup>
+                      <InputOTPSlot index={3} />
+                      <InputOTPSlot index={4} />
+                      <InputOTPSlot index={5} />
+                    </InputOTPGroup>
+                  </InputOTP>
+                </div>
+                
+                <div className="text-center space-y-2">
+                  <p className="text-sm text-muted-foreground">
+                    Didn&apos;t receive the code?
+                  </p>
+                  <Button 
+                    variant="link" 
+                    className="h-auto p-0"
+                    onClick={handleOtpResend}
+                    disabled={isLoading}
+                  >
+                    <Mail className="h-3 w-3 mr-1" />
+                    Resend code
+                  </Button>
+                </div>
+              </CardContent>
+              <CardFooter className="flex flex-col gap-3">
+                <Button
+                  className="w-full"
+                  onClick={handleOtpSubmit}
+                  disabled={isLoading || otpValue.length !== 6}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Verifying...
+                    </>
+                  ) : (
+                    <>
+                      <KeyRound className="mr-2 h-4 w-4" />
+                      Verify & Continue
+                    </>
+                  )}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={resetLogin}
                   disabled={isLoading}
-                />
+                  className="w-full"
+                >
+                  Back to Login
+                </Button>
+              </CardFooter>
+            </Card>
+          )}
+
+          {/* Success Step */}
+          {loginStep === 'success' && (
+            <Card>
+              <CardContent className="pt-6">
+                <div className="text-center space-y-4">
+                  <Badge variant="secondary" className="h-12 w-12 rounded-full p-0 flex items-center justify-center bg-green-100 mx-auto">
+                    <Lock className="h-6 w-6 text-green-600" />
+                  </Badge>
+                  <div>
+                    <h3 className="text-lg font-semibold text-green-900">Authentication Complete</h3>
+                    <p className="text-sm text-green-700">
+                      Successfully verified! Redirecting you now...
+                    </p>
+                  </div>
+                  <div className="flex justify-center">
+                    <Loader2 className="h-5 w-5 animate-spin text-green-600" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
+        {/* Role-Based Login Tab */}
+        <TabsContent value="role">
+          {loginStep === 'credentials' && (
+            <>
+              <Card className="mb-4">
+                <CardHeader>
+                  <CardTitle className="text-center">Choose Your Role</CardTitle>
+                  <CardDescription className="text-center">
+                    Select your account type to continue with authentication
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="role-email">Email</Label>
+                    <Input
+                      id="role-email"
+                      type="email"
+                      placeholder="you@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      disabled={isLoading}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="role-password">Password</Label>
+                      <Link
+                        href="/auth/forgot-password"
+                        className="text-sm text-primary hover:underline"
+                      >
+                        Forgot password?
+                      </Link>
+                    </div>
+                    <Input
+                      id="role-password"
+                      type="password"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      disabled={isLoading}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="grid gap-3">
+                {roleCards.map((role) => (
+                  <Card
+                    key={role.role}
+                    className="cursor-pointer hover:shadow-md transition-shadow"
+                    onClick={() => handleLogin(role.role)}
+                  >
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className={`p-2 rounded-lg bg-${role.color.split('-')[1]}-50 border border-${role.color.split('-')[1]}-200`}>
+                            <role.icon className={`h-6 w-6 ${role.color}`} />
+                          </div>
+                          <div className="flex-1">
+                            <CardTitle className="text-base">{role.title}</CardTitle>
+                            <CardDescription className="text-sm">
+                              {role.description}
+                            </CardDescription>
+                          </div>
+                        </div>
+                        <Badge variant="outline" className="text-xs">
+                          {role.role.replace('-', ' ')}
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                  </Card>
+                ))}
               </div>
-            </CardContent>
-            <CardFooter className="flex flex-col gap-4">
-              <Button
-                className="w-full"
-                onClick={() => handleLogin('customer')}
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Signing in...
-                  </>
-                ) : (
-                  'Sign In'
-                )}
-              </Button>
+
+              <Separator className="my-4" />
+
               <div className="text-center text-sm text-muted-foreground">
                 Don&apos;t have an account?{' '}
                 <Link href="/auth/register" className="text-primary hover:underline">
                   Sign up
                 </Link>
               </div>
-            </CardFooter>
-          </Card>
-        </TabsContent>
+            </>
+          )}
 
-        {/* Role-Based Login Tab */}
-        <TabsContent value="role">
-          <div className="grid gap-4">
-            {roleCards.map((role) => (
-              <Card
-                key={role.role}
-                className="cursor-pointer hover:shadow-md transition-shadow"
-                onClick={() => router.push(role.href)}
-              >
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <role.icon className={`h-8 w-8 ${role.color}`} />
-                    <div className="flex-1">
-                      <CardTitle className="text-lg">{role.title}</CardTitle>
-                      <CardDescription className="text-sm">
-                        {role.description}
-                      </CardDescription>
-                    </div>
+          {/* OTP Step for Role-Based Login */}
+          {loginStep === 'otp' && (
+            <Card>
+              <CardHeader className="text-center">
+                <div className="flex justify-center mb-4">
+                  <Badge variant="secondary" className="h-12 w-12 rounded-full p-0 flex items-center justify-center bg-primary/10">
+                    <Smartphone className="h-6 w-6 text-primary" />
+                  </Badge>
+                </div>
+                <CardTitle className="flex items-center justify-center gap-2">
+                  <Lock className="h-5 w-5" />
+                  Verify Your Identity
+                </CardTitle>
+                <CardDescription>
+                  Enter the 6-digit code from your authenticator app
+                  {selectedRole && (
+                    <>
+                      <br />
+                      <Badge variant="outline" className="mt-2">
+                        Logging in as: {roleCards.find(r => r.role === selectedRole)?.title}
+                      </Badge>
+                    </>
+                  )}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="flex justify-center">
+                  <InputOTP 
+                    maxLength={6}
+                    value={otpValue}
+                    onChange={(value) => setOtpValue(value)}
+                    disabled={isLoading}
+                  >
+                    <InputOTPGroup>
+                      <InputOTPSlot index={0} />
+                      <InputOTPSlot index={1} />
+                      <InputOTPSlot index={2} />
+                    </InputOTPGroup>
+                    <InputOTPSeparator />
+                    <InputOTPGroup>
+                      <InputOTPSlot index={3} />
+                      <InputOTPSlot index={4} />
+                      <InputOTPSlot index={5} />
+                    </InputOTPGroup>
+                  </InputOTP>
+                </div>
+                
+                <div className="text-center space-y-2">
+                  <p className="text-sm text-muted-foreground">
+                    Didn&apos;t receive the code?
+                  </p>
+                  <Button 
+                    variant="link" 
+                    className="h-auto p-0"
+                    onClick={handleOtpResend}
+                    disabled={isLoading}
+                  >
+                    <Mail className="h-3 w-3 mr-1" />
+                    Resend verification code
+                  </Button>
+                </div>
+              </CardContent>
+              <CardFooter className="flex flex-col gap-3">
+                <Button
+                  className="w-full"
+                  onClick={handleOtpSubmit}
+                  disabled={isLoading || otpValue.length !== 6}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Verifying...
+                    </>
+                  ) : (
+                    <>
+                      <KeyRound className="mr-2 h-4 w-4" />
+                      Complete Authentication
+                    </>
+                  )}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={resetLogin}
+                  disabled={isLoading}
+                  className="w-full"
+                >
+                  Back to Role Selection
+                </Button>
+              </CardFooter>
+            </Card>
+          )}
+
+          {/* Success Step for Role-Based Login */}
+          {loginStep === 'success' && (
+            <Card>
+              <CardContent className="pt-6">
+                <div className="text-center space-y-4">
+                  <Badge variant="secondary" className="h-12 w-12 rounded-full p-0 flex items-center justify-center bg-green-100 mx-auto">
+                    <Lock className="h-6 w-6 text-green-600" />
+                  </Badge>
+                  <div>
+                    <h3 className="text-lg font-semibold text-green-900">Welcome!</h3>
+                    <p className="text-sm text-green-700">
+                      Authentication complete for {roleCards.find(r => r.role === selectedRole)?.title}
+                    </p>
+                    <p className="text-xs text-green-600 mt-1">
+                      Redirecting to your dashboard...
+                    </p>
                   </div>
-                </CardHeader>
-              </Card>
-            ))}
-          </div>
+                  <div className="flex justify-center">
+                    <Loader2 className="h-5 w-5 animate-spin text-green-600" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
       </Tabs>
 

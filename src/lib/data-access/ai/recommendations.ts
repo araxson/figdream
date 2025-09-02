@@ -7,7 +7,7 @@
 
 import { createClient } from '@/lib/database/supabase/server'
 import { getUser } from '@/lib/data-access/auth'
-import type { Database } from '@/types/database'
+import type { Database } from '@/types/database.types'
 import {
   createRecommendationRequestSchema,
   trackRecommendationInteractionSchema,

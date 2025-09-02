@@ -1,4 +1,4 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui'
 import { CheckCircle, Heart, Shield, Star, Target, Users } from 'lucide-react'
 
 export default function AboutPage() {

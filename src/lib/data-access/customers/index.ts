@@ -240,10 +240,7 @@ export async function getCustomerAppointments(customerId: string) {
         )
       ),
       salons (
-        name,
-        address,
-        city,
-        state
+        name
       )
     `)
     .eq('customer_id', customerId)

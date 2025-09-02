@@ -1,9 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { Button, Input, Label } from '@/components/ui'
 import { toast } from 'sonner'
 import { Loader2, Mail, CheckCircle } from 'lucide-react'
 import { resetPasswordAction } from '@/app/_actions/auth'

@@ -1,7 +1,16 @@
 'use client'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui'
 import { Bar, BarChart, CartesianGrid, Line, LineChart, ComposedChart, XAxis, YAxis, Legend, ResponsiveContainer } from 'recharts'
 
 interface AppointmentOverviewProps {

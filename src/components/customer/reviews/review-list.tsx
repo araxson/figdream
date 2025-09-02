@@ -1,12 +1,15 @@
 'use client'
 
 import * as React from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { DatePicker } from '@/components/ui/date-picker'
 import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Input,
+  Label,
+  DatePicker,
   Pagination,
   PaginationContent,
   PaginationEllipsis,
@@ -14,14 +17,22 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from '@/components/ui/pagination'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
-import { Badge } from '@/components/ui/badge'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Skeleton } from '@/components/ui/skeleton'
-import { ScrollArea } from '@/components/ui/scroll-area'
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Separator,
+  Badge,
+  Checkbox,
+  Alert,
+  AlertDescription,
+  Skeleton,
+  ScrollArea,
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/components/ui'
 import { 
   Search,
   Filter,
@@ -44,7 +55,8 @@ import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { getReviews } from '@/lib/data-access/reviews/reviews'
 import type { ReviewFilterInput } from '@/lib/validations/review-schema'
-import type { Database } from '@/types/database'
+import type { Database } from '@/types/database.types'
+import { CustomerHoverCard, StaffHoverCard, ServiceHoverCard } from '@/components/shared/hovers'
 import { ReviewCard } from './review-card'
 
 type Review = Database['public']['Tables']['reviews']['Row'] & {
@@ -233,12 +245,14 @@ export function ReviewList({
         <Card>
           <CardContent>
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <MessageSquare className="h-4 w-4 text-primary" />
-              </div>
+              <Avatar className="h-8 w-8">
+                <AvatarFallback>
+                  <MessageSquare className="h-4 w-4" />
+                </AvatarFallback>
+              </Avatar>
               <div>
                 <p className="text-2xl font-bold">{total}</p>
-                <p className="text-xs text-muted-foreground">Total Reviews</p>
+                <p className="text-sm text-muted-foreground">Total Reviews</p>
               </div>
             </div>
           </CardContent>
@@ -247,9 +261,11 @@ export function ReviewList({
         <Card>
           <CardContent>
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-yellow-500/10 rounded-lg">
-                <Star className="h-4 w-4 text-yellow-600" />
-              </div>
+              <Avatar className="h-8 w-8">
+                <AvatarFallback>
+                  <Star className="h-4 w-4" />
+                </AvatarFallback>
+              </Avatar>
               <div>
                 <p className="text-2xl font-bold">{averageRating.toFixed(1)}</p>
                 <div className="flex items-center gap-1">
@@ -273,14 +289,16 @@ export function ReviewList({
         <Card>
           <CardContent>
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-500/10 rounded-lg">
-                <CheckCircle className="h-4 w-4 text-green-600" />
-              </div>
+              <Avatar className="h-8 w-8">
+                <AvatarFallback>
+                  <CheckCircle className="h-4 w-4" />
+                </AvatarFallback>
+              </Avatar>
               <div>
                 <p className="text-2xl font-bold">
                   {reviews.filter(r => r.verified_purchase).length}
                 </p>
-                <p className="text-xs text-muted-foreground">Verified</p>
+                <p className="text-sm text-muted-foreground">Verified</p>
               </div>
             </div>
           </CardContent>
@@ -289,14 +307,16 @@ export function ReviewList({
         <Card>
           <CardContent>
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-purple-500/10 rounded-lg">
-                <Camera className="h-4 w-4 text-purple-600" />
-              </div>
+              <Avatar className="h-8 w-8">
+                <AvatarFallback>
+                  <Camera className="h-4 w-4" />
+                </AvatarFallback>
+              </Avatar>
               <div>
                 <p className="text-2xl font-bold">
                   {reviews.filter(r => r.photos && r.photos.length > 0).length}
                 </p>
-                <p className="text-xs text-muted-foreground">With Photos</p>
+                <p className="text-sm text-muted-foreground">With Photos</p>
               </div>
             </div>
           </CardContent>
@@ -328,7 +348,7 @@ export function ReviewList({
                 onClick={handleRefresh}
                 disabled={isLoading}
               >
-                <RefreshCw className={cn("h-3 w-3 mr-1", isLoading && "animate-spin")} />
+                {isLoading ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <RefreshCw className="h-3 w-3 mr-1" />}
                 Refresh
               </Button>
               {getActiveFilterCount() > 0 && (
@@ -641,9 +661,9 @@ export function ReviewList({
           <CardContent>
             <div className="text-center space-y-4">
               <div className="flex justify-center">
-                <div className="p-4 bg-muted rounded-full">
+                <Badge variant="secondary" className="h-16 w-16 rounded-full p-0 flex items-center justify-center bg-muted">
                   <MessageSquare className="h-8 w-8 text-muted-foreground" />
-                </div>
+                </Badge>
               </div>
               <div>
                 <h3 className="text-lg font-semibold">No reviews found</h3>

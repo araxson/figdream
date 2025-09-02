@@ -1,15 +1,18 @@
 'use client'
 
 import * as React from 'react'
-import { Card, CardContent } from '@/components/ui/card'
 import {
+  Card,
+  CardContent,
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from '@/components/ui/carousel'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/components/ui'
 import { Star } from 'lucide-react'
 import Autoplay from 'embla-carousel-autoplay'
 

@@ -11,7 +11,6 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-  Separator,
 } from '@/components/ui'
 import { 
   Sparkles, 
@@ -23,8 +22,6 @@ import {
   ArrowRight,
   CheckCircle
 } from 'lucide-react'
-
-
 export default function HomePage() {
   return (
     <div className="min-h-screen">
@@ -55,7 +52,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
       {/* Features Section */}
       <section className="py-20 bg-muted/50">
         <div className="container mx-auto max-w-6xl">
@@ -67,7 +63,6 @@ export default function HomePage() {
               Streamline operations and enhance customer experience
             </p>
           </div>
-          
           <Carousel
             opts={{
               align: "start",
@@ -104,7 +99,6 @@ export default function HomePage() {
                 </Card>
               </CarouselItem>
               <CarouselItem className="md:basis-1/2 lg:basis-1/3">
-
                 <Card className="h-full">
                   <CardHeader>
                     <Users className="h-10 w-10 mb-4 text-primary" />
@@ -132,7 +126,6 @@ export default function HomePage() {
                 </Card>
               </CarouselItem>
               <CarouselItem className="md:basis-1/2 lg:basis-1/3">
-
                 <Card className="h-full">
                   <CardHeader>
                     <Sparkles className="h-10 w-10 mb-4 text-primary" />
@@ -160,7 +153,6 @@ export default function HomePage() {
                 </Card>
               </CarouselItem>
               <CarouselItem className="md:basis-1/2 lg:basis-1/3">
-
                 <Card className="h-full">
                   <CardHeader>
                     <Star className="h-10 w-10 mb-4 text-primary" />
@@ -188,7 +180,6 @@ export default function HomePage() {
                 </Card>
               </CarouselItem>
               <CarouselItem className="md:basis-1/2 lg:basis-1/3">
-
                 <Card className="h-full">
                   <CardHeader>
                     <Clock className="h-10 w-10 mb-4 text-primary" />
@@ -216,7 +207,6 @@ export default function HomePage() {
                 </Card>
               </CarouselItem>
               <CarouselItem className="md:basis-1/2 lg:basis-1/3">
-
                 <Card className="h-full">
                   <CardHeader>
                     <Shield className="h-10 w-10 mb-4 text-primary" />
@@ -249,8 +239,6 @@ export default function HomePage() {
           </Carousel>
         </div>
       </section>
-
-
       {/* CTA Section */}
       <section className="py-20 container">
         <div className="container mx-auto max-w-4xl text-center">
@@ -275,7 +263,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
       {/* Footer Links */}
       <footer className="border-t py-12 container">
         <div className="container mx-auto max-w-6xl">
@@ -284,12 +271,12 @@ export default function HomePage() {
               <h3 className="font-semibold mb-3">Product</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
-                  <Link href="/features" className="hover:text-foreground">
+                  <Link href="/features" className="hover:underline">
                     Features
                   </Link>
                 </li>
                 <li>
-                  <Link href="/pricing" className="hover:text-foreground">
+                  <Link href="/pricing" className="hover:underline">
                     Pricing
                   </Link>
                 </li>
@@ -299,12 +286,12 @@ export default function HomePage() {
               <h3 className="font-semibold mb-3">Company</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
-                  <Link href="/about" className="hover:text-foreground">
+                  <Link href="/about" className="hover:underline">
                     About
                   </Link>
                 </li>
                 <li>
-                  <Link href="/contact" className="hover:text-foreground">
+                  <Link href="/contact" className="hover:underline">
                     Contact
                   </Link>
                 </li>
@@ -314,12 +301,12 @@ export default function HomePage() {
               <h3 className="font-semibold mb-3">For Customers</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
-                  <Link href="/book" className="hover:text-foreground">
+                  <Link href="/book" className="hover:underline">
                     Book Appointment
                   </Link>
                 </li>
                 <li>
-                  <Link href="/login/customer" className="hover:text-foreground">
+                  <Link href="/login/customer" className="hover:underline">
                     Customer Login
                   </Link>
                 </li>
@@ -329,12 +316,12 @@ export default function HomePage() {
               <h3 className="font-semibold mb-3">For Salons</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
-                  <Link href="/login/salon-owner" className="hover:text-foreground">
+                  <Link href="/login/salon" className="hover:underline">
                     Salon Login
                   </Link>
                 </li>
                 <li>
-                  <Link href="/login/staff" className="hover:text-foreground">
+                  <Link href="/login/staff" className="hover:underline">
                     Staff Login
                   </Link>
                 </li>

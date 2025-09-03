@@ -1,20 +1,37 @@
 "use client"
-
 import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Calendar, Clock, User, MapPin, Search, Filter, MoreHorizontal } from "lucide-react"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Button,
+  Badge,
+  Input,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from "@/components/ui"
+import { Calendar, Clock, User, MapPin, Search, MoreHorizontal } from "lucide-react"
 import { hasPermission } from "@/lib/permissions"
 import type { Database } from "@/types/database.types"
-
 type UserRole = Database["public"]["Enums"]["user_role_type"]
 type AppointmentStatus = Database["public"]["Enums"]["appointment_status"]
-
 interface Appointment {
   id: string
   appointment_date: string
@@ -46,7 +63,6 @@ interface Appointment {
     address: string
   }
 }
-
 interface AppointmentsListProps {
   appointments: Appointment[]
   userRole: UserRole
@@ -61,7 +77,6 @@ interface AppointmentsListProps {
   title?: string
   description?: string
 }
-
 export function AppointmentsList({
   appointments,
   userRole,
@@ -79,20 +94,16 @@ export function AppointmentsList({
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<AppointmentStatus | "all">("all")
   const [dateFilter, setDateFilter] = useState<"all" | "today" | "week" | "month">("all")
-
   // Filter appointments based on search and filters
   const filteredAppointments = appointments.filter(appointment => {
     const matchesSearch = searchTerm === "" || 
       appointment.customers?.profiles?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       appointment.services?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       appointment.staff_profiles?.display_name?.toLowerCase().includes(searchTerm.toLowerCase())
-
     const matchesStatus = statusFilter === "all" || appointment.status === statusFilter
-
     const matchesDate = dateFilter === "all" || (() => {
       const appointmentDate = new Date(appointment.appointment_date)
       const today = new Date()
-      
       switch (dateFilter) {
         case "today":
           return appointmentDate.toDateString() === today.toDateString()
@@ -106,10 +117,8 @@ export function AppointmentsList({
           return true
       }
     })()
-
     return matchesSearch && matchesStatus && matchesDate
   })
-
   const getStatusColor = (status: AppointmentStatus) => {
     switch (status) {
       case "confirmed": return "default"
@@ -120,13 +129,11 @@ export function AppointmentsList({
       default: return "outline"
     }
   }
-
-  const canViewAll = hasPermission(userRole, "appointments.view_all")
+  const _canViewAll = hasPermission(userRole, "appointments.view_all")
   const canEditAll = hasPermission(userRole, "appointments.edit_all")
   const canCancelAll = hasPermission(userRole, "appointments.cancel_all")
   const canRescheduleAll = hasPermission(userRole, "appointments.reschedule_all")
   const canDeleteAll = hasPermission(userRole, "appointments.delete_all")
-
   return (
     <Card>
       <CardHeader>
@@ -182,7 +189,6 @@ export function AppointmentsList({
               </Select>
             </div>
           </div>
-
           {/* Appointments Table */}
           <div className="rounded-md border">
             <Table>

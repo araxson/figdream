@@ -2,13 +2,10 @@
  * Payment validation schemas for FigDream
  * Comprehensive Zod schemas for payment processing, refunds, and financial operations
  */
-
 import { z } from 'zod'
-
 // Import reusable schemas
 import { userIdSchema } from './user-schema'
 import { bookingIdSchema } from './booking-schema'
-
 // Common regex patterns
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 const creditCardRegex = /^\d{4}\s?\d{4}\s?\d{4}\s?\d{4}$/
@@ -17,43 +14,35 @@ const expirationRegex = /^(0[1-9]|1[0-2])\/\d{2}$/
 const routingNumberRegex = /^\d{9}$/
 const accountNumberRegex = /^\d{4,20}$/
 const postalCodeRegex = /^[A-Za-z0-9\s\-]{3,10}$/
-
 // Payment method enum
 const PaymentMethod = z.enum(['cash', 'card', 'online', 'gift_card', 'bank_transfer', 'digital_wallet'], {
   message: 'Invalid payment method'
 })
-
 // Payment status enum
 const PaymentStatus = z.enum(['pending', 'processing', 'completed', 'failed', 'cancelled', 'refunded', 'partially_refunded'], {
   message: 'Invalid payment status'
 })
-
 // Currency enum
 const Currency = z.enum(['USD', 'CAD', 'EUR', 'GBP', 'AUD', 'JPY'], {
   message: 'Unsupported currency'
 })
-
 // Card type enum
 const CardType = z.enum(['visa', 'mastercard', 'amex', 'discover', 'jcb', 'diners', 'unknown'], {
   message: 'Invalid card type'
 })
-
 // Digital wallet providers
 const DigitalWalletProvider = z.enum(['apple_pay', 'google_pay', 'samsung_pay', 'paypal', 'venmo'], {
   message: 'Invalid digital wallet provider'
 })
-
 // Base validation schemas
 export const paymentIdSchema = z
   .string()
   .regex(uuidRegex, 'Invalid payment ID format')
-
 export const amountSchema = z
   .number()
   .min(0.01, 'Amount must be at least $0.01')
   .max(50000, 'Amount cannot exceed $50,000')
   .multipleOf(0.01, 'Amount must have at most 2 decimal places')
-
 export const tipAmountSchema = z
   .number()
   .min(0, 'Tip amount cannot be negative')
@@ -61,7 +50,6 @@ export const tipAmountSchema = z
   .multipleOf(0.01, 'Tip amount must have at most 2 decimal places')
   .optional()
   .default(0)
-
 export const transactionIdSchema = z
   .string()
   .nullable()
@@ -70,7 +58,6 @@ export const transactionIdSchema = z
     message: 'Transaction ID must be between 5 and 100 characters'
   })
   .transform((val) => val?.trim() || null)
-
 export const referenceNumberSchema = z
   .string()
   .nullable()
@@ -79,7 +66,6 @@ export const referenceNumberSchema = z
     message: 'Reference number must be between 3 and 50 characters'
   })
   .transform((val) => val?.trim() || null)
-
 // Credit card validation schemas
 export const creditCardNumberSchema = z
   .string()
@@ -89,30 +75,24 @@ export const creditCardNumberSchema = z
     // Luhn algorithm validation
     let sum = 0
     let isEven = false
-    
     for (let i = val.length - 1; i >= 0; i--) {
       let digit = parseInt(val[i], 10)
-      
       if (isEven) {
         digit *= 2
         if (digit > 9) {
           digit -= 9
         }
       }
-      
       sum += digit
       isEven = !isEven
     }
-    
     return sum % 10 === 0
   }, {
     message: 'Invalid card number'
   })
-
 export const cvvSchema = z
   .string()
   .regex(cvvRegex, 'CVV must be 3 or 4 digits')
-
 export const expirationDateSchema = z
   .string()
   .regex(expirationRegex, 'Expiration date must be in MM/YY format')
@@ -120,25 +100,20 @@ export const expirationDateSchema = z
     const [month, year] = val.split('/').map(Number)
     const currentDate = new Date()
     const currentMonth = currentDate.getMonth() + 1
-    
     const expYear = year < 50 ? 2000 + year : 1900 + year
     const currentFullYear = currentDate.getFullYear()
-    
     if (expYear < currentFullYear) return false
     if (expYear === currentFullYear && month < currentMonth) return false
-    
     return true
   }, {
     message: 'Card has expired'
   })
-
 export const cardholderNameSchema = z
   .string()
   .min(1, 'Cardholder name is required')
   .max(100, 'Cardholder name must be less than 100 characters')
   .regex(/^[a-zA-Z\s\-\'\.]+$/, 'Cardholder name can only contain letters, spaces, hyphens, apostrophes, and periods')
   .trim()
-
 // Billing address schema
 export const billingAddressSchema = z.object({
   street_address: z
@@ -167,7 +142,6 @@ export const billingAddressSchema = z.object({
     .max(50, 'Country must be less than 50 characters')
     .default('United States')
 })
-
 // Bank account validation schemas
 export const bankAccountSchema = z.object({
   account_holder_name: z
@@ -186,7 +160,6 @@ export const bankAccountSchema = z.object({
     .enum(['checking', 'savings'])
     .default('checking')
 })
-
 // Credit card payment schema
 export const creditCardPaymentSchema = z.object({
   card_number: creditCardNumberSchema,
@@ -197,7 +170,6 @@ export const creditCardPaymentSchema = z.object({
   save_card: z.boolean().optional().default(false),
   card_type: CardType.optional()
 })
-
 // Digital wallet payment schema
 export const digitalWalletPaymentSchema = z.object({
   provider: DigitalWalletProvider,
@@ -213,7 +185,6 @@ export const digitalWalletPaymentSchema = z.object({
       message: 'Device ID must be less than 100 characters'
     })
 })
-
 // Bank transfer payment schema
 export const bankTransferPaymentSchema = z.object({
   bank_account: bankAccountSchema,
@@ -229,7 +200,6 @@ export const bankTransferPaymentSchema = z.object({
     })
     .transform((val) => val?.trim() || null)
 })
-
 // Gift card payment schema
 export const giftCardPaymentSchema = z.object({
   gift_card_code: z
@@ -246,7 +216,6 @@ export const giftCardPaymentSchema = z.object({
       message: 'PIN must be 4-8 digits'
     })
 })
-
 // Base payment schema
 export const createPaymentSchema = z.object({
   booking_id: bookingIdSchema,
@@ -298,7 +267,6 @@ export const createPaymentSchema = z.object({
     })
   ])
 )
-
 // Payment confirmation schema
 export const confirmPaymentSchema = z.object({
   payment_id: paymentIdSchema,
@@ -315,7 +283,6 @@ export const confirmPaymentSchema = z.object({
     .optional()
     .nullable()
 })
-
 // Payment refund schema
 export const refundPaymentSchema = z.object({
   payment_id: paymentIdSchema,
@@ -336,7 +303,6 @@ export const refundPaymentSchema = z.object({
     })
     .transform((val) => val?.trim() || null)
 })
-
 // Payment dispute schema
 export const paymentDisputeSchema = z.object({
   payment_id: paymentIdSchema,
@@ -358,7 +324,6 @@ export const paymentDisputeSchema = z.object({
     .enum(['open', 'under_review', 'won', 'lost', 'withdrawn'])
     .default('open')
 })
-
 // Saved payment method schema
 export const savedPaymentMethodSchema = z.object({
   customer_id: userIdSchema,
@@ -397,7 +362,6 @@ export const savedPaymentMethodSchema = z.object({
     })
   ])
 )
-
 // Payment analytics schema
 export const paymentAnalyticsSchema = z.object({
   start_date: z
@@ -422,7 +386,6 @@ export const paymentAnalyticsSchema = z.object({
   message: 'Start date must be before or equal to end date',
   path: ['end_date']
 })
-
 // Payment search/filter schema
 export const paymentFilterSchema = z.object({
   customer_id: userIdSchema.optional(),
@@ -480,7 +443,6 @@ export const paymentFilterSchema = z.object({
   message: 'Start date must be before or equal to end date',
   path: ['end_date']
 })
-
 // Bulk payment operations schema
 export const bulkPaymentUpdateSchema = z.object({
   payment_ids: z
@@ -501,7 +463,6 @@ export const bulkPaymentUpdateSchema = z.object({
     message: 'At least one update field must be provided'
   })
 })
-
 // Partial schemas for updates
 // Note: Since createPaymentSchema uses intersection, we can't use .partial() directly
 // For updates, specific update schemas should be created as needed
@@ -511,7 +472,6 @@ export const createPaymentUpdateSchema = z.object({
   description: z.string().optional().nullable(),
   metadata: z.record(z.string(), z.any()).optional()
 })
-
 // Type exports
 export type CreatePaymentInput = z.infer<typeof createPaymentSchema>
 export type ConfirmPaymentInput = z.infer<typeof confirmPaymentSchema>
@@ -527,6 +487,5 @@ export type BankTransferPaymentInput = z.infer<typeof bankTransferPaymentSchema>
 export type GiftCardPaymentInput = z.infer<typeof giftCardPaymentSchema>
 export type BillingAddressInput = z.infer<typeof billingAddressSchema>
 export type BankAccountInput = z.infer<typeof bankAccountSchema>
-
 // Update type exports
 export type CreatePaymentUpdateInput = z.infer<typeof createPaymentUpdateSchema>

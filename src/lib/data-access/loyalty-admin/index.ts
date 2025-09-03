@@ -1,32 +1,22 @@
 import { Database } from '@/types/database.types'
 import { createClient } from '@/lib/database/supabase/server'
 import { cache } from 'react'
-
 type LoyaltyProgram = Database['public']['Tables']['loyalty_programs']['Row']
-type LoyaltyPointsLedger = Database['public']['Tables']['loyalty_points_ledger']['Row']
-type LoyaltyTransaction = Database['public']['Tables']['loyalty_transactions']['Row']
-type Customer = Database['public']['Tables']['customers']['Row']
-
 /**
  * Get loyalty program configuration for a salon
  */
 export const getLoyaltyProgram = cache(async (salonId: string) => {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('loyalty_programs')
     .select('*')
     .eq('salon_id', salonId)
     .single()
-
   if (error) {
-    console.error('Error fetching loyalty program:', error)
     return null
   }
-
   return data
 })
-
 /**
  * Create or update loyalty program configuration
  */
@@ -35,10 +25,8 @@ export async function upsertLoyaltyProgram(
   program: Partial<LoyaltyProgram>
 ) {
   const supabase = await createClient()
-  
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Unauthorized')
-
   const { data, error } = await supabase
     .from('loyalty_programs')
     .upsert({
@@ -48,46 +36,36 @@ export async function upsertLoyaltyProgram(
     })
     .select()
     .single()
-
   if (error) {
-    console.error('Error upserting loyalty program:', error)
     throw new Error('Failed to save loyalty program')
   }
-
   return data
 }
-
 /**
  * Get customer points balance
  */
 export const getCustomerPoints = cache(async (customerId: string, salonId: string) => {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('loyalty_points_ledger')
     .select('points_balance')
     .eq('customer_id', customerId)
     .eq('salon_id', salonId)
     .single()
-
   if (error) {
     if (error.code === 'PGRST116') {
       // No record found, return 0 points
       return { points_balance: 0, tier: 'bronze' }
     }
-    console.error('Error fetching customer points:', error)
     return { points_balance: 0, tier: 'bronze' }
   }
-
   // Calculate tier based on points
   let tier = 'bronze'
   if (data.points_balance >= 5000) tier = 'platinum'
   else if (data.points_balance >= 2000) tier = 'gold'
   else if (data.points_balance >= 500) tier = 'silver'
-
   return { ...data, tier }
 })
-
 /**
  * Adjust customer loyalty points
  */
@@ -103,14 +81,11 @@ export async function adjustCustomerPoints(
   }
 ) {
   const supabase = await createClient()
-  
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Unauthorized')
-
   // Get current balance
   const currentBalance = await getCustomerPoints(customerId, salonId)
   const newBalance = Math.max(0, currentBalance.points_balance + adjustment.points)
-
   // Start transaction
   const { error: ledgerError } = await supabase
     .from('loyalty_points_ledger')
@@ -131,12 +106,9 @@ export async function adjustCustomerPoints(
         ? new Date().toISOString()
         : undefined
     })
-
   if (ledgerError) {
-    console.error('Error updating points ledger:', ledgerError)
     throw new Error('Failed to update points balance')
   }
-
   // Record transaction
   const { data: transaction, error: transactionError } = await supabase
     .from('loyalty_transactions')
@@ -153,12 +125,9 @@ export async function adjustCustomerPoints(
     })
     .select()
     .single()
-
   if (transactionError) {
-    console.error('Error creating transaction:', transactionError)
     throw new Error('Failed to record transaction')
   }
-
   return { 
     newBalance, 
     transaction,
@@ -167,7 +136,6 @@ export async function adjustCustomerPoints(
           newBalance >= 500 ? 'silver' : 'bronze'
   }
 }
-
 /**
  * Get loyalty transactions history
  */
@@ -183,7 +151,6 @@ export const getLoyaltyTransactions = cache(async (
   }
 ) => {
   const supabase = await createClient()
-  
   let query = supabase
     .from('loyalty_transactions')
     .select(`
@@ -198,57 +165,43 @@ export const getLoyaltyTransactions = cache(async (
     `, { count: 'exact' })
     .eq('salon_id', salonId)
     .order('created_at', { ascending: false })
-
   if (filters?.customerId) {
     query = query.eq('customer_id', filters.customerId)
   }
-  
   if (filters?.startDate) {
     query = query.gte('created_at', filters.startDate)
   }
-  
   if (filters?.endDate) {
     query = query.lte('created_at', filters.endDate)
   }
-  
   if (filters?.type) {
     query = query.eq('type', filters.type)
   }
-  
   if (filters?.limit) {
     query = query.limit(filters.limit)
   }
-  
   if (filters?.offset) {
     query = query.range(filters.offset, filters.offset + (filters.limit || 10) - 1)
   }
-
   const { data, error, count } = await query
-
   if (error) {
-    console.error('Error fetching transactions:', error)
     return { transactions: [], total: 0 }
   }
-
   return { transactions: data || [], total: count || 0 }
 })
-
 /**
  * Get loyalty program statistics
  */
 export const getLoyaltyStats = cache(async (salonId: string) => {
   const supabase = await createClient()
-  
   const [program, ledger, transactions] = await Promise.all([
     // Get program config
     getLoyaltyProgram(salonId),
-    
     // Get total customers enrolled and total points
     supabase
       .from('loyalty_points_ledger')
       .select('points_balance', { count: 'exact' })
       .eq('salon_id', salonId),
-    
     // Get recent transactions
     supabase
       .from('loyalty_transactions')
@@ -256,20 +209,16 @@ export const getLoyaltyStats = cache(async (salonId: string) => {
       .eq('salon_id', salonId)
       .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
   ])
-
   const totalCustomers = ledger.count || 0
   const totalPoints = ledger.data?.reduce((sum, l) => sum + l.points_balance, 0) || 0
   const avgPointsPerCustomer = totalCustomers > 0 ? Math.round(totalPoints / totalCustomers) : 0
-  
   // Calculate monthly activity
   const monthlyEarned = transactions.data
     ?.filter(t => t.type === 'earned')
     .reduce((sum, t) => sum + t.points, 0) || 0
-  
   const monthlyRedeemed = transactions.data
     ?.filter(t => t.type === 'redeemed')
     .reduce((sum, t) => sum + Math.abs(t.points), 0) || 0
-
   // Calculate tier distribution
   const tierDistribution = {
     bronze: 0,
@@ -277,14 +226,12 @@ export const getLoyaltyStats = cache(async (salonId: string) => {
     gold: 0,
     platinum: 0
   }
-  
   ledger.data?.forEach(l => {
     if (l.points_balance >= 5000) tierDistribution.platinum++
     else if (l.points_balance >= 2000) tierDistribution.gold++
     else if (l.points_balance >= 500) tierDistribution.silver++
     else tierDistribution.bronze++
   })
-
   return {
     program,
     stats: {
@@ -297,13 +244,11 @@ export const getLoyaltyStats = cache(async (salonId: string) => {
     }
   }
 })
-
 /**
  * Get top loyalty customers
  */
 export const getTopLoyaltyCustomers = cache(async (salonId: string, limit = 10) => {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('loyalty_points_ledger')
     .select(`
@@ -320,12 +265,9 @@ export const getTopLoyaltyCustomers = cache(async (salonId: string, limit = 10) 
     .eq('salon_id', salonId)
     .order('points_balance', { ascending: false })
     .limit(limit)
-
   if (error) {
-    console.error('Error fetching top customers:', error)
     return []
   }
-
   return data?.map(item => ({
     ...item,
     tier: item.points_balance >= 5000 ? 'platinum' : 
@@ -333,7 +275,6 @@ export const getTopLoyaltyCustomers = cache(async (salonId: string, limit = 10) 
           item.points_balance >= 500 ? 'silver' : 'bronze'
   })) || []
 })
-
 /**
  * Search customers for points adjustment
  */
@@ -342,7 +283,6 @@ export const searchLoyaltyCustomers = cache(async (
   search: string
 ) => {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('customers')
     .select(`
@@ -354,18 +294,14 @@ export const searchLoyaltyCustomers = cache(async (
     .eq('salon_id', salonId)
     .or(`first_name.ilike.%${search}%,last_name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`)
     .limit(20)
-
   if (error) {
-    console.error('Error searching customers:', error)
     return []
   }
-
   return data?.map(customer => ({
     ...customer,
     points_balance: customer.loyalty_points_ledger?.[0]?.points_balance || 0
   })) || []
 })
-
 /**
  * Bulk adjust points for multiple customers
  */
@@ -378,13 +314,10 @@ export async function bulkAdjustPoints(
   }>
 ) {
   const supabase = await createClient()
-  
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Unauthorized')
-
   const results = []
   const errors = []
-
   for (const adjustment of adjustments) {
     try {
       const result = await adjustCustomerPoints(
@@ -398,37 +331,31 @@ export async function bulkAdjustPoints(
       )
       results.push({ customerId: adjustment.customerId, success: true, result })
     } catch (error) {
-      errors.push({ customerId: adjustment.customerId, error: error.message })
+      errors.push({ customerId: adjustment.customerId, error: (error as Error).message })
     }
   }
-
   return { results, errors }
 }
-
 /**
  * Get loyalty rewards for a salon
  * NOTE: loyalty_rewards table does not exist in database
  * This function is non-functional until the table is created
  */
-export const getLoyaltyRewards = cache(async (salonId: string) => {
+export const getLoyaltyRewards = cache(async (_salonId: string) => {
   // WARNING: loyalty_rewards table doesn't exist in database
-  console.warn('getLoyaltyRewards called but loyalty_rewards table does not exist in database')
+  // getLoyaltyRewards called but loyalty_rewards table does not exist in database
   return []
-  
   /* Commented out until loyalty_rewards table is created
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('loyalty_rewards')
     .select('*')
     .eq('salon_id', salonId)
     .order('points_cost', { ascending: true })
-
   if (error) {
-    console.error('Error fetching loyalty rewards:', error)
+    // Error fetching loyalty rewards
     return []
   }
-
   return data || []
   */
 })

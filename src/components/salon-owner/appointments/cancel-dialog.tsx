@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import { Database } from '@/types/database.types'
 import {
@@ -20,9 +19,7 @@ import {
 } from '@/components/ui'
 import { toast } from 'sonner'
 import { X, AlertTriangle } from 'lucide-react'
-
 type Appointment = Database['public']['Tables']['appointments']['Row']
-
 interface CancelAppointmentDialogProps {
   appointment: Appointment & {
     services?: Array<{
@@ -40,7 +37,6 @@ interface CancelAppointmentDialogProps {
   onCancel?: (appointmentId: string, reason: string) => Promise<void>
   trigger?: React.ReactNode
 }
-
 export default function CancelAppointmentDialog({
   appointment,
   onCancel,
@@ -49,18 +45,15 @@ export default function CancelAppointmentDialog({
   const [isOpen, setIsOpen] = useState(false)
   const [cancellationReason, setCancellationReason] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-
   // Calculate if within cancellation window (e.g., 24 hours)
   const appointmentDate = new Date(`${appointment.date} ${appointment.start_time}`)
   const hoursUntilAppointment = (appointmentDate.getTime() - Date.now()) / (1000 * 60 * 60)
   const isWithinCancellationWindow = hoursUntilAppointment > 24
-
   const handleCancel = async () => {
     if (!onCancel) {
       // Default cancellation logic if no handler provided
       try {
         setIsLoading(true)
-        
         const response = await fetch(`/api/appointments/${appointment.id}/cancel`, {
           method: 'POST',
           headers: {
@@ -70,18 +63,14 @@ export default function CancelAppointmentDialog({
             reason: cancellationReason,
           }),
         })
-
         if (!response.ok) {
           throw new Error('Failed to cancel appointment')
         }
-
         toast.success('Appointment cancelled successfully')
         setIsOpen(false)
-        
         // Refresh the page to show updated status
         window.location.reload()
-      } catch (error) {
-        console.error('Error cancelling appointment:', error)
+      } catch (_error) {
         toast.error('Failed to cancel appointment. Please try again.')
       } finally {
         setIsLoading(false)
@@ -93,15 +82,13 @@ export default function CancelAppointmentDialog({
         await onCancel(appointment.id, cancellationReason)
         toast.success('Appointment cancelled successfully')
         setIsOpen(false)
-      } catch (error) {
-        console.error('Error cancelling appointment:', error)
+      } catch (_error) {
         toast.error('Failed to cancel appointment. Please try again.')
       } finally {
         setIsLoading(false)
       }
     }
   }
-
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogTrigger asChild>
@@ -119,7 +106,6 @@ export default function CancelAppointmentDialog({
             Are you sure you want to cancel this appointment?
           </AlertDialogDescription>
         </AlertDialogHeader>
-        
         <div className="space-y-4 py-4">
           {/* Appointment Details */}
           <div className="bg-muted p-4 rounded-lg space-y-2">
@@ -158,7 +144,6 @@ export default function CancelAppointmentDialog({
               </div>
             )}
           </div>
-
           {/* Cancellation Policy Warning */}
           {!isWithinCancellationWindow && (
             <Alert variant="destructive">
@@ -170,7 +155,6 @@ export default function CancelAppointmentDialog({
               </AlertDescription>
             </Alert>
           )}
-
           {/* Cancellation Reason */}
           <div className="space-y-2">
             <Label htmlFor="reason">
@@ -178,20 +162,19 @@ export default function CancelAppointmentDialog({
             </Label>
             <Textarea
               id="reason"
-              placeholder="Please let us know why you're cancelling..."
+              placeholder="Please let us know why you&apos;re cancelling..."
               value={cancellationReason}
               onChange={(e) => setCancellationReason(e.target.value)}
               rows={3}
             />
           </div>
         </div>
-
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isLoading}>Keep Appointment</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleCancel}
             disabled={isLoading}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            className="bg-destructive text-destructive-foreground"
           >
             {isLoading ? 'Cancelling...' : 'Cancel Appointment'}
           </AlertDialogAction>

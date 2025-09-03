@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useTransition, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {
@@ -13,11 +12,10 @@ import {
 } from '@/components/ui'
 import { toast } from 'sonner'
 import { Loader2, Mail, CheckCircle, RefreshCw } from 'lucide-react'
-import { verifyOtpAction } from '@/app/_actions/auth'
+import { verifyOtpAction } from '@/lib/actions/auth'
 import { useCSRFToken, CSRFTokenField } from '@/lib/hooks/use-csrf-token'
-
 export function VerifyEmailForm() {
-  const router = useRouter()
+  const _router = useRouter()
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
   const [isResending, setIsResending] = useState(false)
@@ -26,7 +24,6 @@ export function VerifyEmailForm() {
   const [verified, setVerified] = useState(false)
   const [resendCooldown, setResendCooldown] = useState(0)
   const { token: csrfToken, loading: csrfLoading, error: csrfError } = useCSRFToken()
-
   // Get email from URL params if available
   useEffect(() => {
     const emailParam = searchParams.get('email')
@@ -34,7 +31,6 @@ export function VerifyEmailForm() {
       setEmail(emailParam)
     }
   }, [searchParams])
-
   // Cooldown timer for resend button
   useEffect(() => {
     if (resendCooldown > 0) {
@@ -44,32 +40,25 @@ export function VerifyEmailForm() {
       return () => clearTimeout(timer)
     }
   }, [resendCooldown])
-
   const handleVerify = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    
     if (!csrfToken) {
       toast.error('Security token not loaded. Please refresh the page.')
       return
     }
-
     if (!email) {
       toast.error('Please enter your email address')
       return
     }
-
     if (otp.length !== 6) {
       toast.error('Please enter the complete 6-digit code')
       return
     }
-
     const formData = new FormData(e.currentTarget)
     formData.append('token', otp)
-    
     startTransition(async () => {
       try {
         const result = await verifyOtpAction(formData)
-        
         if (result?.error) {
           toast.error(result.error)
         } else if (result?.success === false) {
@@ -79,36 +68,30 @@ export function VerifyEmailForm() {
           toast.success('Email verified successfully!')
           // Redirect will be handled by server action
         }
-      } catch (error) {
-        console.error('Verification error:', error)
+      } catch (_error) {
         toast.error('An unexpected error occurred. Please try again.')
       }
     })
   }
-
   const handleResend = async () => {
     if (!email) {
       toast.error('Please enter your email address')
       return
     }
-
     setIsResending(true)
-    
     try {
       // In a real implementation, this would call a resend action
-      // For now, we'll simulate it
+      // For now, we&apos;ll simulate it
       await new Promise(resolve => setTimeout(resolve, 2000))
-      
       toast.success('Verification code sent! Check your email.')
       setResendCooldown(60) // 60 second cooldown
       setOtp('') // Clear the OTP input
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to resend verification code')
     } finally {
       setIsResending(false)
     }
   }
-
   if (csrfError) {
     return (
       <div className="text-center py-8">
@@ -119,16 +102,13 @@ export function VerifyEmailForm() {
       </div>
     )
   }
-
   if (verified) {
     return (
       <div className="text-center py-8 space-y-4">
         <div className="flex justify-center">
-          <Card className="w-fit">
-            <CardContent className="p-3 flex items-center justify-center bg-green-100 dark:bg-green-900/20">
-              <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
-            </CardContent>
-          </Card>
+          <div className="p-3 bg-green-100 dark:bg-green-900/20 rounded-full">
+            <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
+          </div>
         </div>
         <div className="space-y-2">
           <h3 className="text-lg font-semibold">Email Verified!</h3>
@@ -139,11 +119,9 @@ export function VerifyEmailForm() {
       </div>
     )
   }
-
   return (
     <form onSubmit={handleVerify} className="space-y-4">
       <CSRFTokenField />
-      
       {/* Email Field */}
       <div className="space-y-2">
         <Label htmlFor="email">Email Address</Label>
@@ -159,10 +137,9 @@ export function VerifyEmailForm() {
             disabled={isPending || csrfLoading}
             className="pl-10"
           />
-          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         </div>
       </div>
-
       {/* OTP Input */}
       <div className="space-y-2">
         <Label htmlFor="otp">Verification Code</Label>
@@ -191,7 +168,6 @@ export function VerifyEmailForm() {
           Enter the 6-digit code from your email
         </p>
       </div>
-
       {/* Action Buttons */}
       <div className="space-y-2">
         <Button
@@ -213,7 +189,6 @@ export function VerifyEmailForm() {
             'Verify Email'
           )}
         </Button>
-
         <Button
           type="button"
           variant="outline"

@@ -1,8 +1,7 @@
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Alert, AlertDescription, Button } from '@/components/ui'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Alert, AlertDescription } from '@/components/ui'
 import { VerifyEmailForm } from '@/components/auth/verify-email-form'
 import { Mail, Info } from 'lucide-react'
-
 export default function VerifyEmailPage() {
   return (
     <div className="space-y-6">
@@ -18,7 +17,6 @@ export default function VerifyEmailPage() {
           We sent a verification code to your email address
         </p>
       </div>
-
       {/* Verification Card */}
       <Card>
         <CardHeader>
@@ -34,13 +32,12 @@ export default function VerifyEmailPage() {
           <Alert>
             <Info className="h-4 w-4" />
             <AlertDescription>
-              Didn't receive the email? Check your spam folder or request a new verification code. 
+              Didn&apos;t receive the email? Check your spam folder or request a new verification code. 
               Verification codes expire after 10 minutes.
             </AlertDescription>
           </Alert>
         </CardFooter>
       </Card>
-
       {/* Help Section */}
       <Card>
         <CardHeader>
@@ -58,16 +55,15 @@ export default function VerifyEmailPage() {
           </div>
           <div className="pt-2">
             <p className="text-sm text-muted-foreground">
-              Having trouble? <Link href="/contact" className="text-primary hover:underline">Contact support</Link>
+              Having trouble? <Link href="/contact" className="text-primary">Contact support</Link>
             </p>
           </div>
         </CardContent>
       </Card>
-
       {/* Login Link */}
       <div className="text-center text-sm text-muted-foreground">
         <p>Already verified?</p>
-        <Link href="/login" className="text-primary hover:underline">
+        <Link href="/login" className="text-primary">
           Sign in to your account
         </Link>
       </div>

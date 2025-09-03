@@ -2,31 +2,24 @@
  * Booking validation schemas for FigDream
  * Comprehensive Zod schemas for booking creation, updates, cancellation, and management
  */
-
 import { z } from 'zod'
 import { locationIdSchema } from './salon-schema'
 import { serviceIdSchema } from './service-schema'
 import { userIdSchema } from './user-schema'
-
 // Booking status enum
 const BookingStatus = z.enum(['pending', 'confirmed', 'cancelled', 'completed', 'no_show'], {
   message: 'Invalid booking status'
 })
-
 // Time format regex (HH:MM or HH:MM:SS)
 const timeRegex = /^([01]?\d|2[0-3]):([0-5]?\d)(?::([0-5]?\d))?$/
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/
-
 // UUID regex for ID validation
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-
 // Base validation schemas
 export const bookingIdSchema = z
   .string()
   .regex(uuidRegex, 'Invalid booking ID format')
-
 // Import these from salon-schema to avoid duplicate exports
-
 export const staffIdSchema = z
   .string()
   .nullable()
@@ -34,7 +27,6 @@ export const staffIdSchema = z
   .refine((val) => !val || uuidRegex.test(val), {
     message: 'Invalid staff ID format'
   })
-
 export const bookingDateSchema = z
   .string()
   .regex(dateRegex, 'Date must be in YYYY-MM-DD format')
@@ -54,7 +46,6 @@ export const bookingDateSchema = z
   }, {
     message: 'Booking date cannot be more than 6 months in advance'
   })
-
 export const timeSchema = z
   .string()
   .regex(timeRegex, 'Time must be in HH:MM format')
@@ -64,19 +55,16 @@ export const timeSchema = z
   }, {
     message: 'Invalid time format'
   })
-
 export const priceSchema = z
   .number()
   .min(0, 'Price cannot be negative')
   .max(10000, 'Price cannot exceed $10,000')
   .multipleOf(0.01, 'Price must have at most 2 decimal places')
-
 export const durationSchema = z
   .number()
   .min(15, 'Service duration must be at least 15 minutes')
   .max(480, 'Service duration cannot exceed 8 hours')
   .multipleOf(15, 'Duration must be in 15-minute increments')
-
 export const notesSchema = z
   .string()
   .optional()
@@ -85,7 +73,6 @@ export const notesSchema = z
     message: 'Notes must be less than 500 characters'
   })
   .transform((val) => val?.trim() || null)
-
 // Booking service schema
 export const bookingServiceSchema = z.object({
   service_id: serviceIdSchema,
@@ -93,7 +80,6 @@ export const bookingServiceSchema = z.object({
   duration_minutes: durationSchema,
   staff_id: staffIdSchema
 })
-
 // Create booking schema
 export const createBookingSchema = z.object({
   customer_id: userIdSchema,
@@ -122,7 +108,6 @@ export const createBookingSchema = z.object({
   const startMinutesTotal = startHours * 60 + startMinutes
   const endMinutesTotal = startMinutesTotal + totalDuration
   const endHours = Math.floor(endMinutesTotal / 60)
-  
   return endHours < 24 // Don't allow bookings that go past midnight
 }, {
   message: 'Booking duration extends beyond business hours',
@@ -137,7 +122,6 @@ export const createBookingSchema = z.object({
   message: 'All services must be performed by the same staff member',
   path: ['services']
 })
-
 // Update booking schema
 export const updateBookingSchema = z.object({
   booking_id: bookingIdSchema,
@@ -163,7 +147,6 @@ export const updateBookingSchema = z.object({
 }, {
   message: 'At least one field must be provided for update'
 })
-
 // Cancel booking schema
 export const cancelBookingSchema = z.object({
   booking_id: bookingIdSchema,
@@ -186,7 +169,6 @@ export const cancelBookingSchema = z.object({
   message: 'Reason is required when requesting a refund',
   path: ['reason']
 })
-
 // Confirm booking schema
 export const confirmBookingSchema = z.object({
   booking_id: bookingIdSchema,
@@ -200,7 +182,6 @@ export const confirmBookingSchema = z.object({
     })
     .transform((val) => val?.trim() || null)
 })
-
 // Complete booking schema
 export const completeBookingSchema = z.object({
   booking_id: bookingIdSchema,
@@ -231,7 +212,6 @@ export const completeBookingSchema = z.object({
       message: 'Tip amount cannot exceed $1,000'
     })
 })
-
 // Mark no-show schema
 export const markNoShowSchema = z.object({
   booking_id: bookingIdSchema,
@@ -245,7 +225,6 @@ export const markNoShowSchema = z.object({
     })
     .transform((val) => val?.trim() || null)
 })
-
 // Reschedule booking schema
 export const rescheduleBookingSchema = z.object({
   booking_id: bookingIdSchema,
@@ -264,13 +243,11 @@ export const rescheduleBookingSchema = z.object({
   const newDateTime = new Date(`${data.new_booking_date}T${data.new_start_time}`)
   const now = new Date()
   const minRescheduleTime = new Date(now.getTime() + 2 * 60 * 60 * 1000) // 2 hours minimum notice
-  
   return newDateTime >= minRescheduleTime
 }, {
   message: 'Bookings must be rescheduled at least 2 hours in advance',
   path: ['new_booking_date']
 })
-
 // Booking search/filter schema
 export const bookingFilterSchema = z.object({
   customer_id: userIdSchema.optional(),
@@ -318,7 +295,6 @@ export const bookingFilterSchema = z.object({
   message: 'Start date must be before or equal to end date',
   path: ['end_date']
 })
-
 // Booking availability check schema
 export const availabilityCheckSchema = z.object({
   location_id: locationIdSchema,
@@ -332,7 +308,6 @@ export const availabilityCheckSchema = z.object({
     .optional()
     .default('any')
 })
-
 // Booking reminder preferences schema
 export const reminderPreferencesSchema = z.object({
   booking_id: bookingIdSchema,
@@ -346,7 +321,6 @@ export const reminderPreferencesSchema = z.object({
     .optional()
     .default(24)
 })
-
 // Bulk operations schema
 export const bulkUpdateBookingsSchema = z.object({
   booking_ids: z
@@ -363,11 +337,9 @@ export const bulkUpdateBookingsSchema = z.object({
     message: 'At least one update field must be provided'
   })
 })
-
 // Partial schemas for updates
 export const createBookingUpdateSchema = createBookingSchema.partial().omit({ customer_id: true })
 export const updateBookingPartialSchema = updateBookingSchema.partial()
-
 // Type exports
 export type CreateBookingInput = z.infer<typeof createBookingSchema>
 export type UpdateBookingInput = z.infer<typeof updateBookingSchema>
@@ -381,7 +353,6 @@ export type AvailabilityCheckInput = z.infer<typeof availabilityCheckSchema>
 export type ReminderPreferencesInput = z.infer<typeof reminderPreferencesSchema>
 export type BulkUpdateBookingsInput = z.infer<typeof bulkUpdateBookingsSchema>
 export type BookingServiceInput = z.infer<typeof bookingServiceSchema>
-
 // Update type exports
 export type CreateBookingUpdateInput = z.infer<typeof createBookingUpdateSchema>
 export type UpdateBookingPartialInput = z.infer<typeof updateBookingPartialSchema>

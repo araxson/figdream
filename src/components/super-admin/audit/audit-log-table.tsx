@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import {
   Button,
@@ -30,9 +29,7 @@ import { Database } from '@/types/database.types'
 import { exportAuditLogs } from '@/lib/data-access/audit-logs'
 import { toast } from 'sonner'
 import type { VariantProps } from 'class-variance-authority'
-
 type BadgeVariant = VariantProps<typeof badgeVariants>['variant']
-
 type AuditLog = Database['public']['Tables']['audit_logs']['Row'] & {
   profiles?: {
     id: string
@@ -40,16 +37,13 @@ type AuditLog = Database['public']['Tables']['audit_logs']['Row'] & {
     full_name: string | null
   } | null
 }
-
 interface AuditLogTableProps {
   logs: AuditLog[]
 }
-
 export function AuditLogTable({ logs }: AuditLogTableProps) {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null)
   const [showDetails, setShowDetails] = useState(false)
-
   // Filter logs based on search
   const filteredLogs = logs.filter(log => {
     const search = searchTerm.toLowerCase()
@@ -61,17 +55,14 @@ export function AuditLogTable({ logs }: AuditLogTableProps) {
       log.profiles?.full_name?.toLowerCase().includes(search)
     )
   })
-
   const handleExport = async () => {
     try {
       const data = await exportAuditLogs()
-      
       // Create CSV content
       const csvContent = [
         data.headers.join(','),
         ...data.rows.map(row => row.map(cell => `"${cell}"`).join(','))
       ].join('\n')
-
       // Download file
       const blob = new Blob([csvContent], { type: 'text/csv' })
       const url = window.URL.createObjectURL(blob)
@@ -80,30 +71,24 @@ export function AuditLogTable({ logs }: AuditLogTableProps) {
       a.download = `audit-logs-${format(new Date(), 'yyyy-MM-dd')}.csv`
       a.click()
       window.URL.revokeObjectURL(url)
-      
       toast.success(`Exported ${data.count} audit logs`)
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to export audit logs')
-      console.error(error)
     }
   }
-
   const handleCopyLogId = (log: AuditLog) => {
     navigator.clipboard.writeText(log.id)
     toast.success('Log ID copied to clipboard')
   }
-
   const handleViewDetails = (log: AuditLog) => {
     setSelectedLog(log)
     setShowDetails(true)
   }
-
   const handleExportSingle = (log: AuditLog) => {
     const csvContent = [
       'ID,Action,Entity Type,Entity ID,User ID,User Email,IP Address,Created At,Metadata',
       `"${log.id}","${log.action}","${log.entity_type}","${log.entity_id || ''}","${log.user_id}","${log.profiles?.email || ''}","${log.ip_address || ''}","${log.created_at}","${log.metadata ? JSON.stringify(log.metadata) : ''}"`
     ].join('\n')
-
     const blob = new Blob([csvContent], { type: 'text/csv' })
     const url = window.URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -111,10 +96,8 @@ export function AuditLogTable({ logs }: AuditLogTableProps) {
     a.download = `audit-log-${log.id.substring(0, 8)}.csv`
     a.click()
     window.URL.revokeObjectURL(url)
-    
     toast.success('Single log exported')
   }
-
   const getActionBadge = (action: string) => {
     const actionTypes: Record<string, { variant: BadgeVariant; icon: LucideIcon }> = {
       'login': { variant: 'default', icon: User },
@@ -129,10 +112,8 @@ export function AuditLogTable({ logs }: AuditLogTableProps) {
       'access_denied': { variant: 'destructive', icon: Shield },
       'suspicious_activity': { variant: 'destructive', icon: Shield },
     }
-    
     const config = actionTypes[action] || { variant: 'secondary', icon: Activity }
     const Icon = config.icon
-    
     return (
       <Badge variant={config.variant} className="gap-1">
         <Icon className="h-3 w-3" />
@@ -140,11 +121,9 @@ export function AuditLogTable({ logs }: AuditLogTableProps) {
       </Badge>
     )
   }
-
   const getEntityBadge = (entity: string) => {
     return <Badge variant="outline">{entity}</Badge>
   }
-
   return (
     <>
       <div className="space-y-4">
@@ -164,12 +143,10 @@ export function AuditLogTable({ logs }: AuditLogTableProps) {
             Export
           </Button>
         </div>
-
         {/* Results count */}
         <p className="text-sm text-muted-foreground">
           Showing {filteredLogs.length} of {logs.length} events
         </p>
-
         {/* Table */}
         <div className="rounded-md border">
           <Table>
@@ -270,7 +247,6 @@ export function AuditLogTable({ logs }: AuditLogTableProps) {
           </Table>
         </div>
       </div>
-
       {/* Details Dialog */}
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
         <DialogContent className="max-w-2xl">
@@ -280,7 +256,6 @@ export function AuditLogTable({ logs }: AuditLogTableProps) {
               Complete information about this event
             </DialogDescription>
           </DialogHeader>
-          
           {selectedLog && (
             <ScrollArea className="max-h-[600px] pr-4">
               <div className="space-y-4">
@@ -322,7 +297,6 @@ export function AuditLogTable({ logs }: AuditLogTableProps) {
                     <p className="text-sm truncate">{selectedLog.user_agent || 'N/A'}</p>
                   </div>
                 </div>
-                
                 {selectedLog.changes && (
                   <div>
                     <p className="text-sm font-medium text-muted-foreground mb-2">Changes</p>
@@ -331,7 +305,6 @@ export function AuditLogTable({ logs }: AuditLogTableProps) {
                     </pre>
                   </div>
                 )}
-                
                 {selectedLog.metadata && (
                   <div>
                     <p className="text-sm font-medium text-muted-foreground mb-2">Metadata</p>

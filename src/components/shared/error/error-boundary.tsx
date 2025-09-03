@@ -1,30 +1,25 @@
 'use client'
-
 import React, { Component, ErrorInfo, ReactNode } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button } from '@/components/ui'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button, Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui'
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
 import Link from 'next/link'
 import { logError } from '@/lib/data-access/monitoring/error-logs'
-
 interface Props {
   children: ReactNode
   fallback?: ReactNode
   onError?: (error: Error, errorInfo: ErrorInfo) => void
 }
-
 interface State {
   hasError: boolean
   error: Error | null
   errorInfo: ErrorInfo | null
 }
-
 export default class ErrorBoundary extends Component<Props, State> {
   public state: State = {
     hasError: false,
     error: null,
     errorInfo: null
   }
-
   public static getDerivedStateFromError(error: Error): State {
     return {
       hasError: true,
@@ -32,23 +27,17 @@ export default class ErrorBoundary extends Component<Props, State> {
       errorInfo: null
     }
   }
-
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('ErrorBoundary caught an error:', error, errorInfo)
-    
     this.setState({
       errorInfo
     })
-
     // Call custom error handler if provided
     if (this.props.onError) {
       this.props.onError(error, errorInfo)
     }
-
     // Log to error reporting service
     this.logErrorToService(error, errorInfo)
   }
-
   private async logErrorToService(error: Error, errorInfo: ErrorInfo) {
     // Log to database using error logging DAL
     try {
@@ -64,17 +53,10 @@ export default class ErrorBoundary extends Component<Props, State> {
         },
         error.stack
       )
-    } catch (logErr) {
+    } catch (_logErr) {
       // Fallback to console if DAL fails
-      console.error('Failed to log error to DAL:', logErr)
-      console.error('Original error:', {
-        message: error.message,
-        stack: error.stack,
-        componentStack: errorInfo.componentStack
-      })
     }
   }
-
   private handleReset = () => {
     this.setState({
       hasError: false,
@@ -82,14 +64,12 @@ export default class ErrorBoundary extends Component<Props, State> {
       errorInfo: null
     })
   }
-
   public render() {
     if (this.state.hasError) {
       // Custom fallback UI provided
       if (this.props.fallback) {
         return <>{this.props.fallback}</>
       }
-
       // Default error UI
       return (
         <div className="min-h-screen flex items-center justify-center p-4">
@@ -112,18 +92,21 @@ export default class ErrorBoundary extends Component<Props, State> {
                     {this.state.error.message}
                   </pre>
                   {this.state.error.stack && (
-                    <details className="text-xs">
-                      <summary className="cursor-pointer text-muted-foreground">
-                        Stack trace
-                      </summary>
-                      <pre className="mt-2 overflow-auto text-xs">
-                        {this.state.error.stack}
-                      </pre>
-                    </details>
+                    <Accordion type="single" collapsible className="text-xs">
+                      <AccordionItem value="stack-trace">
+                        <AccordionTrigger className="text-muted-foreground text-xs py-2">
+                          Stack trace
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <pre className="overflow-auto text-xs">
+                            {this.state.error.stack}
+                          </pre>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
                   )}
                 </div>
               )}
-
               {/* Actions */}
               <div className="flex gap-2">
                 <Button onClick={this.handleReset} className="flex-1">
@@ -137,7 +120,6 @@ export default class ErrorBoundary extends Component<Props, State> {
                   </Link>
                 </Button>
               </div>
-
               {/* Support message */}
               <p className="text-sm text-muted-foreground text-center">
                 If this problem persists, please contact support.
@@ -147,7 +129,6 @@ export default class ErrorBoundary extends Component<Props, State> {
         </div>
       )
     }
-
     return this.props.children
   }
 }

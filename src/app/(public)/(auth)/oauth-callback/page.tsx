@@ -1,6 +1,5 @@
 'use client'
-
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {
   Card,
@@ -18,10 +17,8 @@ import {
   Loader2, CheckCircle, XCircle, AlertTriangle, 
   ShieldCheck, User, RefreshCw, Home
 } from 'lucide-react'
-
 type OAuthProvider = 'google' | 'facebook' | 'apple' | 'github'
 type AuthState = 'processing' | 'success' | 'error' | 'requires-info'
-
 interface UserInfo {
   email?: string
   name?: string
@@ -29,26 +26,55 @@ interface UserInfo {
   needsOnboarding?: boolean
   role?: string
 }
-
 export default function OAuthCallbackPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [authState, setAuthState] = useState<AuthState>('processing')
   const [errorMessage, setErrorMessage] = useState('')
-  const [userInfo, setUserInfo] = useState<UserInfo>({})
+  const [userInfo, _setUserInfo] = useState<UserInfo>({})
   const [countdown, setCountdown] = useState(3)
-  
   // Get OAuth parameters from URL
   const code = searchParams.get('code')
   const state = searchParams.get('state')
   const error = searchParams.get('error')
   const errorDescription = searchParams.get('error_description')
   const provider = searchParams.get('provider') as OAuthProvider
-  
+  const handleOAuthCallback = async () => {
+    // Check for OAuth errors
+    if (error) {
+      setAuthState('error')
+      setErrorMessage(errorDescription || 'Authentication failed')
+      if (error === 'access_denied') {
+        toast.error('You denied access to your account')
+      } else {
+        toast.error('Authentication failed')
+      }
+      return
+    }
+    // Verify we have required parameters
+    if (!code || !state) {
+      setAuthState('error')
+      setErrorMessage('Invalid authentication response. Missing required parameters.')
+      toast.error('Invalid authentication response')
+      return
+    }
+    try {
+      // TODO: Implement actual OAuth token exchange with Supabase
+      // This should use supabase.auth.exchangeCodeForSession(code)
+      // and handle the actual OAuth flow
+      setAuthState('error')
+      setErrorMessage('OAuth implementation pending - use email login')
+      toast.error('OAuth not yet implemented - please use email login')
+    } catch (_err) {
+      setAuthState('error')
+      setErrorMessage('Failed to complete authentication. Please try again.')
+      toast.error('Authentication failed')
+    }
+  }
   useEffect(() => {
     handleOAuthCallback()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [code, error])
-
   useEffect(() => {
     // Countdown timer for redirect
     if (authState === 'success' && countdown > 0) {
@@ -59,70 +85,8 @@ export default function OAuthCallbackPage() {
     } else if (authState === 'success' && countdown === 0) {
       redirectToDashboard()
     }
-  }, [authState, countdown])
-
-  const handleOAuthCallback = async () => {
-    // Check for OAuth errors
-    if (error) {
-      setAuthState('error')
-      setErrorMessage(errorDescription || 'Authentication failed')
-      
-      if (error === 'access_denied') {
-        toast.error('You denied access to your account')
-      } else {
-        toast.error('Authentication failed')
-      }
-      return
-    }
-    
-    // Verify we have required parameters
-    if (!code || !state) {
-      setAuthState('error')
-      setErrorMessage('Invalid authentication response. Missing required parameters.')
-      toast.error('Invalid authentication response')
-      return
-    }
-    
-    try {
-      // Simulate OAuth token exchange and user creation/login
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      
-      // Simulate different scenarios
-      const scenario = Math.random()
-      
-      if (scenario < 0.7) {
-        // Success - existing user
-        setAuthState('success')
-        setUserInfo({
-          email: 'user@example.com',
-          name: 'John Doe',
-          provider: provider || 'google',
-          role: 'customer',
-          needsOnboarding: false
-        })
-        toast.success('Welcome back!')
-      } else if (scenario < 0.9) {
-        // Success - new user needs onboarding
-        setAuthState('requires-info')
-        setUserInfo({
-          email: 'newuser@example.com',
-          name: 'Jane Smith',
-          provider: provider || 'google',
-          needsOnboarding: true
-        })
-      } else {
-        // Error
-        throw new Error('Failed to authenticate with OAuth provider')
-      }
-    } catch (err) {
-      console.error('OAuth callback error:', err)
-      setAuthState('error')
-      setErrorMessage('Failed to complete authentication. Please try again.')
-      toast.error('Authentication failed')
-    }
-  }
-
-  const redirectToDashboard = () => {
+  }, [authState, countdown, redirectToDashboard])
+  const redirectToDashboard = useCallback(() => {
     const role = userInfo.role || 'customer'
     const dashboardRoutes: Record<string, string> = {
       super_admin: '/admin',
@@ -130,20 +94,16 @@ export default function OAuthCallbackPage() {
       staff: '/staff',
       customer: '/dashboard'
     }
-    
     router.push(dashboardRoutes[role] || '/dashboard')
-  }
-
+  }, [router, userInfo.role])
   const handleCompleteProfile = () => {
     // Redirect to profile completion with OAuth data
     router.push(`/onboarding?provider=${userInfo.provider}&email=${userInfo.email}`)
   }
-
   const handleRetry = () => {
     // Go back to login with the provider
     router.push(`/auth/login?retry=true&provider=${provider}`)
   }
-
   // Processing state
   if (authState === 'processing') {
     return (
@@ -170,7 +130,6 @@ export default function OAuthCallbackPage() {
       </div>
     )
   }
-
   // Success state
   if (authState === 'success') {
     return (
@@ -197,7 +156,6 @@ export default function OAuthCallbackPage() {
                 </div>
               </AlertDescription>
             </Alert>
-            
             <div className="text-center space-y-2">
               <p className="text-sm text-muted-foreground">
                 Redirecting to your dashboard in {countdown} seconds...
@@ -206,7 +164,6 @@ export default function OAuthCallbackPage() {
                 <Progress value={((3 - countdown) / 3) * 100} className="w-32" />
               </div>
             </div>
-            
             <Button
               className="w-full"
               onClick={redirectToDashboard}
@@ -219,7 +176,6 @@ export default function OAuthCallbackPage() {
       </div>
     )
   }
-
   // Requires additional info state (new user)
   if (authState === 'requires-info') {
     return (
@@ -243,7 +199,6 @@ export default function OAuthCallbackPage() {
                 Account created successfully with {userInfo.provider}
               </AlertDescription>
             </Alert>
-            
             <div className="p-4 bg-muted rounded-lg space-y-3">
               <p className="text-sm font-medium">We just need a few more details:</p>
               <ul className="text-sm text-muted-foreground space-y-1">
@@ -252,7 +207,6 @@ export default function OAuthCallbackPage() {
                 <li>• Your beauty preferences for personalized recommendations</li>
               </ul>
             </div>
-            
             <div className="space-y-2">
               <Button
                 className="w-full"
@@ -273,7 +227,6 @@ export default function OAuthCallbackPage() {
       </div>
     )
   }
-
   // Error state
   if (authState === 'error') {
     return (
@@ -297,7 +250,6 @@ export default function OAuthCallbackPage() {
                 {errorMessage || 'An unexpected error occurred during authentication'}
               </AlertDescription>
             </Alert>
-            
             <div className="p-4 bg-muted rounded-lg space-y-2">
               <p className="text-sm font-medium">Common issues:</p>
               <ul className="text-sm text-muted-foreground space-y-1">
@@ -307,7 +259,6 @@ export default function OAuthCallbackPage() {
                 <li>• Network connection issues</li>
               </ul>
             </div>
-            
             <div className="space-y-2">
               <Button
                 className="w-full"
@@ -329,6 +280,5 @@ export default function OAuthCallbackPage() {
       </div>
     )
   }
-
   return null
 }

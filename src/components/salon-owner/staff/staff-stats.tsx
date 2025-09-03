@@ -1,5 +1,4 @@
 'use client'
-
 import {
   Card,
   CardContent,
@@ -16,36 +15,28 @@ import {
   Award 
 } from 'lucide-react'
 import type { Database } from '@/types/database.types'
-
 type StaffProfile = Database['public']['Tables']['staff_profiles']['Row']
 type Profile = Database['public']['Tables']['profiles']['Row']
-
 type StaffMember = StaffProfile & {
   profiles?: Profile | null
   appointments_count?: number
   revenue_generated?: number
   average_rating?: number
 }
-
 interface StaffStatsProps {
   staff: StaffMember[]
 }
-
 export function StaffStats({ staff }: StaffStatsProps) {
   const totalStaff = staff.length
   const activeStaff = staff.filter(s => s.is_active).length
   const inactiveStaff = totalStaff - activeStaff
-  
   const totalRevenue = staff.reduce((sum, s) => sum + (s.revenue_generated || 0), 0)
   const avgRevenue = totalStaff > 0 ? totalRevenue / totalStaff : 0
-  
   const totalAppointments = staff.reduce((sum, s) => sum + (s.appointments_count || 0), 0)
-  
   const staffWithRatings = staff.filter(s => s.average_rating && s.average_rating > 0)
   const avgRating = staffWithRatings.length > 0 
     ? staffWithRatings.reduce((sum, s) => sum + (s.average_rating || 0), 0) / staffWithRatings.length
     : 0
-
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -54,7 +45,6 @@ export function StaffStats({ staff }: StaffStatsProps) {
       maximumFractionDigits: 0
     }).format(amount)
   }
-
   const stats = [
     {
       title: 'Total Staff',
@@ -99,7 +89,6 @@ export function StaffStats({ staff }: StaffStatsProps) {
       color: 'text-yellow-600'
     }
   ]
-
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {stats.map((stat) => {

@@ -1,5 +1,4 @@
 'use client'
-
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { LogOut, LucideIcon } from 'lucide-react'
@@ -9,7 +8,6 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -23,7 +21,6 @@ import {
   CollapsibleTrigger
 } from '@/components/ui'
 import { ChevronRight } from 'lucide-react'
-
 export interface SidebarNavItem {
   title: string
   href: string
@@ -33,30 +30,25 @@ export interface SidebarNavItem {
     href: string
   }[]
 }
-
 export interface SidebarUserInfo {
   name: string
   email: string
   role: string
   avatar?: string
 }
-
 export interface AppSidebarConfig {
   title: string
   subtitle: string
   icon: LucideIcon
   navigation: SidebarNavItem[]
 }
-
 interface AppSidebarProps {
   config: AppSidebarConfig
   user: SidebarUserInfo
   onSignOut?: () => void
 }
-
 export function AppSidebar({ config, user, onSignOut }: AppSidebarProps) {
   const pathname = usePathname()
-
   const isActiveItem = (href: string, subItems?: { href: string }[]) => {
     if (pathname === href) return true
     if (subItems) {
@@ -64,11 +56,9 @@ export function AppSidebar({ config, user, onSignOut }: AppSidebarProps) {
     }
     return false
   }
-
   const isActiveSubItem = (href: string) => {
     return pathname === href
   }
-
   const handleSignOut = () => {
     if (onSignOut) {
       onSignOut()
@@ -82,7 +72,6 @@ export function AppSidebar({ config, user, onSignOut }: AppSidebarProps) {
       document.body.removeChild(form)
     }
   }
-
   return (
     <Sidebar>
       <SidebarHeader>
@@ -96,7 +85,6 @@ export function AppSidebar({ config, user, onSignOut }: AppSidebarProps) {
           </div>
         </div>
       </SidebarHeader>
-
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
@@ -116,7 +104,7 @@ export function AppSidebar({ config, user, onSignOut }: AppSidebarProps) {
                             <item.icon className="size-4" />
                             <span>{item.title}</span>
                           </div>
-                          <ChevronRight className="size-4 transition-transform ui-open:rotate-90" />
+                          <ChevronRight className="size-4 ui-open:rotate-90" />
                         </SidebarMenuButton>
                       </CollapsibleTrigger>
                       <CollapsibleContent>
@@ -153,7 +141,6 @@ export function AppSidebar({ config, user, onSignOut }: AppSidebarProps) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>

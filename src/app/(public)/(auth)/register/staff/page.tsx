@@ -1,8 +1,7 @@
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui'
 import { RegisterForm } from '@/components/auth/register-form'
-import { UserCheck, Clock, Calendar, TrendingUp, Shield, Award } from 'lucide-react'
-
+import { UserCheck, Clock, Calendar, TrendingUp, Award } from 'lucide-react'
 export default function StaffRegistrationPage() {
   return (
     <div className="space-y-6">
@@ -18,7 +17,6 @@ export default function StaffRegistrationPage() {
           Start your career with leading salons in your area
         </p>
       </div>
-
       {/* Registration Card */}
       <Card>
         <CardHeader>
@@ -37,13 +35,12 @@ export default function StaffRegistrationPage() {
         <CardFooter className="flex flex-col space-y-4">
           <div className="text-center text-sm">
             Already have an account?{' '}
-            <Link href="/login/staff" className="text-primary hover:underline">
+            <Link href="/login/staff" className="text-primary">
               Sign in
             </Link>
           </div>
         </CardFooter>
       </Card>
-
       {/* Benefits Section */}
       <Card>
         <CardHeader>
@@ -90,7 +87,6 @@ export default function StaffRegistrationPage() {
           </div>
         </CardContent>
       </Card>
-
       {/* Process Info */}
       <Card>
         <CardHeader>
@@ -117,16 +113,15 @@ export default function StaffRegistrationPage() {
           </ol>
         </CardContent>
       </Card>
-
       {/* Other Registration Options */}
       <div className="text-center text-sm text-muted-foreground">
         <p>Different account type?</p>
         <div className="flex justify-center gap-4 mt-2">
-          <Link href="/register/customer" className="text-primary hover:underline">
+          <Link href="/register/customer" className="text-primary">
             Customer
           </Link>
           <span>•</span>
-          <Link href="/register/salon" className="text-primary hover:underline">
+          <Link href="/register/salon" className="text-primary">
             Salon Owner
           </Link>
         </div>

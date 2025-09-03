@@ -1,5 +1,4 @@
 'use client'
-
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -28,7 +27,6 @@ import {
   Input,
   Label,
   Badge,
-  Separator,
 } from "@/components/ui"
 import { toast } from "sonner"
 import {
@@ -41,17 +39,12 @@ import {
   List,
   Mail,
   MessageSquare,
-  Palette,
   Printer,
   RefreshCw,
   Search,
-  Sun,
-  Moon,
-  Laptop,
   Bookmark,
   Clock
 } from "lucide-react"
-
 interface AppMenubarProps {
   currentView?: 'calendar' | 'list' | 'grid'
   onViewChange?: (view: 'calendar' | 'list' | 'grid') => void
@@ -60,21 +53,19 @@ interface AppMenubarProps {
   theme?: 'light' | 'dark' | 'system'
   onThemeChange?: (theme: 'light' | 'dark' | 'system') => void
 }
-
 export function AppMenubar({
   currentView = 'list',
   onViewChange,
   showArchived = false,
   onShowArchivedChange,
-  theme = 'system',
-  onThemeChange
+  theme: _theme = 'system',
+  onThemeChange: _onThemeChange
 }: AppMenubarProps) {
   const router = useRouter()
   const [isNewServiceOpen, setIsNewServiceOpen] = React.useState(false)
   const [isNewStaffOpen, setIsNewStaffOpen] = React.useState(false)
   const [serviceName, setServiceName] = React.useState('')
   const [staffName, setStaffName] = React.useState('')
-
   // Keyboard shortcuts
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -104,48 +95,40 @@ export function AppMenubar({
         }
       }
     }
-
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [])
-
   const handleNewService = async () => {
     if (!serviceName.trim()) {
       toast.error('Please enter a service name')
       return
     }
-
     try {
       // In a real app, this would save to the database
-      console.log('Creating service:', serviceName)
       toast.success(`Service "${serviceName}" created successfully!`)
       setServiceName('')
       setIsNewServiceOpen(false)
       // Optionally navigate to the service editing page
-      router.push('/salon-owner/services')
-    } catch (error) {
+      router.push('/salon/services')
+    } catch (_error) {
       toast.error('Failed to create service')
     }
   }
-
   const handleNewStaff = async () => {
     if (!staffName.trim()) {
       toast.error('Please enter a staff member name')
       return
     }
-
     try {
       // In a real app, this would save to the database
-      console.log('Creating staff member:', staffName)
       toast.success(`Staff member "${staffName}" added successfully!`)
       setStaffName('')
       setIsNewStaffOpen(false)
-      router.push('/salon-owner/staff')
-    } catch (error) {
+      router.push('/salon/staff')
+    } catch (_error) {
       toast.error('Failed to add staff member')
     }
   }
-
   const handleExport = (type: 'services' | 'staff' | 'appointments' | 'customers') => {
     toast.promise(
       new Promise(resolve => setTimeout(resolve, 2000)),
@@ -156,7 +139,6 @@ export function AppMenubar({
       }
     )
   }
-
   const handleImportData = () => {
     const fileInput = document.createElement('input')
     fileInput.type = 'file'
@@ -176,28 +158,23 @@ export function AppMenubar({
     }
     fileInput.click()
   }
-
   const handlePrint = () => {
     window.print()
     toast.success('Print dialog opened')
   }
-
   const handleBulkAction = (action: string) => {
     toast.info(`${action} functionality coming soon!`)
   }
-
   const recentItems = [
-    { name: 'Appointment #1234', href: '/salon-owner/appointments/1234', time: '2 min ago' },
-    { name: 'Staff Schedule Update', href: '/salon-owner/staff/schedule', time: '5 min ago' },
-    { name: 'Service Price Update', href: '/salon-owner/services', time: '10 min ago' },
+    { name: 'Appointment #1234', href: '/salon/appointments/1234', time: '2 min ago' },
+    { name: 'Staff Schedule Update', href: '/salon/staff/schedule', time: '5 min ago' },
+    { name: 'Service Price Update', href: '/salon/services', time: '10 min ago' },
   ]
-
   const bookmarkedPages = [
-    { name: 'Today\'s Dashboard', href: '/salon-owner', icon: Calendar },
-    { name: 'Analytics Overview', href: '/salon-owner/analytics', icon: FileText },
-    { name: 'Customer Management', href: '/salon-owner/customers', icon: Search },
+    { name: 'Today\'s Dashboard', href: '/salon', icon: Calendar },
+    { name: 'Analytics Overview', href: '/salon/analytics', icon: FileText },
+    { name: 'Customer Management', href: '/salon/customers', icon: Search },
   ]
-
   return (
     <>
       <Menubar className="border-none">
@@ -214,7 +191,6 @@ export function AppMenubar({
                 </MenubarItem>
               </DialogTrigger>
             </Dialog>
-
             <Dialog open={isNewStaffOpen} onOpenChange={setIsNewStaffOpen}>
               <DialogTrigger asChild>
                 <MenubarItem>
@@ -222,15 +198,12 @@ export function AppMenubar({
                 </MenubarItem>
               </DialogTrigger>
             </Dialog>
-
             <MenubarItem asChild>
-              <Link href="/role-salon-owner/appointments/new">
+              <Link href="/salon/appointments/new">
                 New Appointment
               </Link>
             </MenubarItem>
-
             <MenubarSeparator />
-
             <MenubarSub>
               <MenubarSubTrigger>
                 <Download className="mr-2 h-4 w-4" />
@@ -251,14 +224,11 @@ export function AppMenubar({
                 </MenubarItem>
               </MenubarSubContent>
             </MenubarSub>
-
             <MenubarItem onClick={handleImportData}>
               <Upload className="mr-2 h-4 w-4" />
               Import Data
             </MenubarItem>
-
             <MenubarSeparator />
-
             <MenubarSub>
               <MenubarSubTrigger>
                 <Clock className="mr-2 h-4 w-4" />
@@ -269,7 +239,7 @@ export function AppMenubar({
                   <MenubarItem key={index} asChild>
                     <Link href={item.href} className="flex justify-between">
                       <span>{item.name}</span>
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline">
                         {item.time}
                       </Badge>
                     </Link>
@@ -277,16 +247,13 @@ export function AppMenubar({
                 ))}
               </MenubarSubContent>
             </MenubarSub>
-
             <MenubarSeparator />
-
             <MenubarItem onClick={handlePrint}>
               <Printer className="mr-2 h-4 w-4" />
               Print <MenubarShortcut>⌘P</MenubarShortcut>
             </MenubarItem>
           </MenubarContent>
         </MenubarMenu>
-
         <MenubarMenu>
           <MenubarTrigger>Edit</MenubarTrigger>
           <MenubarContent>
@@ -308,7 +275,6 @@ export function AppMenubar({
             </MenubarItem>
           </MenubarContent>
         </MenubarMenu>
-
         <MenubarMenu>
           <MenubarTrigger className="flex items-center gap-2">
             <Grid className="h-4 w-4" />
@@ -337,14 +303,13 @@ export function AppMenubar({
               Show Archived Items
             </MenubarCheckboxItem>
             <MenubarItem asChild>
-              <Link href="/role-salon-owner/settings/display">
+              <Link href="/salon/settings/display">
                 <Settings className="mr-2 h-4 w-4" />
                 Display Settings
               </Link>
             </MenubarItem>
           </MenubarContent>
         </MenubarMenu>
-
         <MenubarMenu>
           <MenubarTrigger className="flex items-center gap-2">
             <Settings className="h-4 w-4" />
@@ -352,13 +317,13 @@ export function AppMenubar({
           </MenubarTrigger>
           <MenubarContent>
             <MenubarItem asChild>
-              <Link href="/role-salon-owner/marketing/sms">
+              <Link href="/salon/marketing/sms">
                 <MessageSquare className="mr-2 h-4 w-4" />
                 Bulk SMS
               </Link>
             </MenubarItem>
             <MenubarItem asChild>
-              <Link href="/role-salon-owner/marketing/email">
+              <Link href="/salon/marketing/email">
                 <Mail className="mr-2 h-4 w-4" />
                 Email Campaign
               </Link>
@@ -373,14 +338,13 @@ export function AppMenubar({
             </MenubarItem>
             <MenubarSeparator />
             <MenubarItem asChild>
-              <Link href="/role-salon-owner/settings">
+              <Link href="/salon/settings">
                 <Settings className="mr-2 h-4 w-4" />
                 Settings
               </Link>
             </MenubarItem>
           </MenubarContent>
         </MenubarMenu>
-
         <MenubarMenu>
           <MenubarTrigger className="flex items-center gap-2">
             <Bookmark className="h-4 w-4" />
@@ -403,7 +367,6 @@ export function AppMenubar({
           </MenubarContent>
         </MenubarMenu>
       </Menubar>
-
       {/* New Service Dialog */}
       <Dialog open={isNewServiceOpen} onOpenChange={setIsNewServiceOpen}>
         <DialogContent>
@@ -435,7 +398,6 @@ export function AppMenubar({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
       {/* New Staff Dialog */}
       <Dialog open={isNewStaffOpen} onOpenChange={setIsNewStaffOpen}>
         <DialogContent>

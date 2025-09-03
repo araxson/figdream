@@ -1,20 +1,17 @@
 'use client'
-
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button, Input, Label, Checkbox } from '@/components/ui'
 import { toast } from 'sonner'
 import { Loader2, Mail, Lock, Eye, EyeOff, User, Phone } from 'lucide-react'
-import { signUpAction } from '@/app/_actions/auth'
+import { signUpAction } from '@/lib/actions/auth'
 import { useCSRFToken, CSRFTokenField } from '@/lib/hooks/use-csrf-token'
-
 interface RegisterFormProps {
   role?: 'customer' | 'staff' | 'salon_owner' | 'location_manager' | 'super_admin'
   redirectTo?: string
   includePhone?: boolean
   includeBusinessInfo?: boolean
 }
-
 export function RegisterForm({ 
   role = 'customer', 
   redirectTo,
@@ -28,27 +25,21 @@ export function RegisterForm({
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [agreedToMarketing, setAgreedToMarketing] = useState(false)
   const { token: csrfToken, loading: csrfLoading, error: csrfError } = useCSRFToken()
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    
     if (!csrfToken) {
       toast.error('Security token not loaded. Please refresh the page.')
       return
     }
-
     if (!agreedToTerms) {
       toast.error('Please agree to the terms and conditions')
       return
     }
-
     const formData = new FormData(e.currentTarget)
     formData.append('role', role)
-    
     startTransition(async () => {
       try {
         const result = await signUpAction(formData)
-        
         if (result?.error) {
           toast.error(result.error)
         } else if (result?.errors) {
@@ -61,7 +52,6 @@ export function RegisterForm({
         } else {
           // Success - redirect will happen automatically
           toast.success('Registration successful! Please check your email to verify your account.')
-          
           // Fallback redirect if server action doesn't redirect
           setTimeout(() => {
             if (redirectTo) {
@@ -71,13 +61,11 @@ export function RegisterForm({
             }
           }, 1000)
         }
-      } catch (error) {
-        console.error('Registration error:', error)
+      } catch (_error) {
         toast.error('An unexpected error occurred. Please try again.')
       }
     })
   }
-
   if (csrfError) {
     return (
       <div className="text-center py-8">
@@ -88,11 +76,9 @@ export function RegisterForm({
       </div>
     )
   }
-
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <CSRFTokenField />
-      
       {/* Name Fields */}
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
@@ -107,10 +93,9 @@ export function RegisterForm({
               disabled={isPending || csrfLoading}
               className="pl-10"
             />
-            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           </div>
         </div>
-        
         <div className="space-y-2">
           <Label htmlFor="lastName">Last Name</Label>
           <Input
@@ -123,7 +108,6 @@ export function RegisterForm({
           />
         </div>
       </div>
-
       {/* Email Field */}
       <div className="space-y-2">
         <Label htmlFor="email">Email Address</Label>
@@ -137,10 +121,9 @@ export function RegisterForm({
             disabled={isPending || csrfLoading}
             className="pl-10"
           />
-          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         </div>
       </div>
-
       {/* Phone Field (optional) */}
       {includePhone && (
         <div className="space-y-2">
@@ -154,11 +137,10 @@ export function RegisterForm({
               disabled={isPending || csrfLoading}
               className="pl-10"
             />
-            <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           </div>
         </div>
       )}
-
       {/* Business Info (for salon owners) */}
       {includeBusinessInfo && (
         <>
@@ -173,7 +155,6 @@ export function RegisterForm({
               disabled={isPending || csrfLoading}
             />
           </div>
-          
           <div className="space-y-2">
             <Label htmlFor="businessAddress">Business Address</Label>
             <Input
@@ -187,7 +168,6 @@ export function RegisterForm({
           </div>
         </>
       )}
-
       {/* Password Fields */}
       <div className="space-y-2">
         <Label htmlFor="password">Password</Label>
@@ -201,13 +181,13 @@ export function RegisterForm({
             disabled={isPending || csrfLoading}
             className="pl-10 pr-10"
           />
-          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 h-auto p-1"
+            className="absolute right-3 top-1/2 -translate-y-1/2 h-auto p-1"
             tabIndex={-1}
           >
             {showPassword ? (
@@ -221,7 +201,6 @@ export function RegisterForm({
           Must be at least 8 characters
         </p>
       </div>
-
       <div className="space-y-2">
         <Label htmlFor="confirmPassword">Confirm Password</Label>
         <div className="relative">
@@ -234,13 +213,13 @@ export function RegisterForm({
             disabled={isPending || csrfLoading}
             className="pl-10 pr-10"
           />
-          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 h-auto p-1"
+            className="absolute right-3 top-1/2 -translate-y-1/2 h-auto p-1"
             tabIndex={-1}
           >
             {showConfirmPassword ? (
@@ -251,7 +230,6 @@ export function RegisterForm({
           </Button>
         </div>
       </div>
-
       {/* Terms and Marketing */}
       <div className="space-y-3">
         <div className="flex items-start space-x-2">
@@ -267,16 +245,15 @@ export function RegisterForm({
             className="text-sm font-normal cursor-pointer leading-relaxed"
           >
             I agree to the{' '}
-            <a href="/terms" className="text-primary hover:underline" target="_blank">
+            <a href="/terms" className="text-primary" target="_blank">
               Terms and Conditions
             </a>
             {' '}and{' '}
-            <a href="/privacy" className="text-primary hover:underline" target="_blank">
+            <a href="/privacy" className="text-primary" target="_blank">
               Privacy Policy
             </a>
           </Label>
         </div>
-
         <div className="flex items-start space-x-2">
           <Checkbox 
             id="marketing" 
@@ -293,7 +270,6 @@ export function RegisterForm({
           </Label>
         </div>
       </div>
-
       <Button
         type="submit"
         className="w-full"

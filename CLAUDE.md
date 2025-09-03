@@ -1,31 +1,46 @@
-# Claude Code Instructions
+# 🚀 Claude Code Instructions - ULTRA-PERFORMANCE EDITION
 
-## 🚀 Project Context
+## ⚡ AUTOMATED PERFORMANCE SYSTEM
 
-This project uses automated tools to help Claude Code understand the codebase structure. 
+### 🤖 Automatic Hook Integration
+**The hook runs with EVERY message and provides:**
+1. **Fresh PROJECT_TREE.md** - Updated statistics every message
+2. **Diagnostic Report** - ESLint, TypeScript, and code quality status
+3. **Subagent Recommendations** - Automatic agent suggestions based on issues
+4. **Quick Commands** - Ready-to-use commands for immediate fixes
 
-### Automatic Setup
+### 📋 MANDATORY READING ORDER (Every Message)
+1. **Check Hook Output** - Review diagnostic report and recommendations
+2. **Read PROJECT_TREE.md** - Get latest project statistics
+3. **Read .claude/agents/README.md** - If agents are recommended
+4. **Apply Suggested Commands** - Use recommended subagents immediately
 
-**IMPORTANT: The hook runs with EVERY message, not just at conversation start!**
+## 🎯 SUBAGENT INTEGRATION
 
-With EVERY message you send:
-1. The hook automatically regenerates `PROJECT_TREE.md` with fresh statistics
-2. Claude MUST read `PROJECT_TREE.md` with EVERY response to stay current
-3. This ensures Claude always has the latest project structure and changes
+### Priority Response Matrix
+Based on hook diagnostics, use these agents:
 
-### Key Files to Check
+| Hook Alert | Required Agent | Command |
+|------------|---------------|---------|
+| 🔴 ESLint Errors | typescript-eslint-enforcer | `"Fix all ESLint errors"` |
+| ⚠️ 'any' Types > 20 | type-alignment-specialist | `"Replace all any types"` |
+| ⚠️ Mock Data > 5 | data-authenticity-enforcer | `"Remove all mock data"` |
+| ⚠️ Relative Imports > 10 | import-path-optimization | `"Fix all imports"` |
 
-1. **PROJECT_TREE.md** - Contains:
-   - Total file and line counts
-   - File distribution by extension
-   - Largest files in the project
-   - Complete directory tree with statistics
-   - Generated fresh at the start of each conversation
+### Agent Chaining for Maximum Performance
+```bash
+# If multiple issues detected, chain agents:
+"Use typescript-eslint-enforcer, then type-alignment-specialist, then import-path-optimization"
+```
 
-2. **package.json** - Contains all npm scripts and dependencies
+## 📊 Key Files & Their Purpose
 
-3. **docs/architecture/** - Contains:
-   - `rules.md` - Project rules and conventions
+| File | Purpose | When to Read |
+|------|---------|--------------|
+| **PROJECT_TREE.md** | Current statistics | EVERY message |
+| **.claude/agents/README.md** | Agent guide | When issues detected |
+| **docs/architecture/rules.md** | Project rules | For compliance checks |
+| **.claude/hooks/user-prompt-submit-hook** | Diagnostic system | Automatic (runs itself) |
 
 ### Important Commands
 

@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import {
@@ -15,14 +14,12 @@ import {
   Progress,
 } from '@/components/ui'
 import { 
-  WifiOff, RefreshCw, Home, ArrowLeft, Settings, 
+  WifiOff, RefreshCw, Settings, 
   CheckCircle, XCircle, AlertTriangle, Loader2,
-  HelpCircle, Mail, Phone, MessageSquare
+  HelpCircle, Mail, MessageSquare
 } from 'lucide-react'
-import { NetworkError, NetworkErrorType, networkMonitor, waitForNetwork } from '@/lib/errors/network'
-import { ApiError, isStatusCode } from '@/lib/errors/api-errors'
-import { retry } from '@/lib/errors/retry'
-
+import { NetworkError, NetworkErrorType, networkMonitor, waitForNetwork } from '@/lib/utils/errors/network'
+import { ApiError, isStatusCode } from '@/lib/utils/errors/api-errors'
 /**
  * Network recovery component
  */
@@ -31,24 +28,21 @@ export interface NetworkRecoveryProps {
   onRetry?: () => Promise<void>
   onCancel?: () => void
 }
-
 export function NetworkRecovery({ error, onRetry, onCancel }: NetworkRecoveryProps) {
   const [isRetrying, setIsRetrying] = useState(false)
   const [networkStatus, setNetworkStatus] = useState(networkMonitor.getStatus())
   const [countdown, setCountdown] = useState(0)
-  
   useEffect(() => {
     const unsubscribe = networkMonitor.subscribe(setNetworkStatus)
     return unsubscribe
   }, [])
-  
   useEffect(() => {
     // Auto-retry when network comes back online
     if (networkStatus === 'online' && countdown === 0) {
       setCountdown(3)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [networkStatus])
-  
   useEffect(() => {
     if (countdown > 0) {
       const timer = setTimeout(() => {
@@ -59,8 +53,8 @@ export function NetworkRecovery({ error, onRetry, onCancel }: NetworkRecoveryPro
       }, 1000)
       return () => clearTimeout(timer)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countdown])
-  
   const handleRetry = async () => {
     if (onRetry) {
       setIsRetrying(true)
@@ -72,7 +66,6 @@ export function NetworkRecovery({ error, onRetry, onCancel }: NetworkRecoveryPro
       }
     }
   }
-  
   const getStatusColor = () => {
     switch (networkStatus) {
       case 'online': return 'text-green-600'
@@ -81,30 +74,27 @@ export function NetworkRecovery({ error, onRetry, onCancel }: NetworkRecoveryPro
       default: return 'text-gray-600'
     }
   }
-  
   return (
     <Card>
       <CardHeader className="text-center">
         <div className="flex justify-center mb-4">
-          <div className="p-3 bg-destructive/10 rounded-full">
-            <WifiOff className="h-8 w-8 text-destructive" />
-          </div>
+          <WifiOff className="h-12 w-12 text-destructive" />
         </div>
         <CardTitle>Network Connection Issue</CardTitle>
         <CardDescription>
           {error.message}
         </CardDescription>
       </CardHeader>
-      
       <CardContent className="space-y-4">
         {/* Network status indicator */}
-        <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-          <span className="text-sm font-medium">Network Status:</span>
-          <span className={`text-sm font-medium ${getStatusColor()}`}>
-            {networkStatus.charAt(0).toUpperCase() + networkStatus.slice(1)}
-          </span>
-        </div>
-        
+        <Alert>
+          <AlertDescription className="flex items-center justify-between">
+            <span className="font-medium">Network Status:</span>
+            <span className={`font-medium ${getStatusColor()}`}>
+              {networkStatus.charAt(0).toUpperCase() + networkStatus.slice(1)}
+            </span>
+          </AlertDescription>
+        </Alert>
         {/* Auto-retry countdown */}
         {countdown > 0 && (
           <Alert>
@@ -114,7 +104,6 @@ export function NetworkRecovery({ error, onRetry, onCancel }: NetworkRecoveryPro
             </AlertDescription>
           </Alert>
         )}
-        
         {/* Recovery suggestions */}
         {error.type === NetworkErrorType.OFFLINE && (
           <div className="space-y-2">
@@ -127,7 +116,6 @@ export function NetworkRecovery({ error, onRetry, onCancel }: NetworkRecoveryPro
             </ul>
           </div>
         )}
-        
         {error.type === NetworkErrorType.SLOW_NETWORK && (
           <Alert>
             <AlertTriangle className="h-4 w-4" />
@@ -137,7 +125,6 @@ export function NetworkRecovery({ error, onRetry, onCancel }: NetworkRecoveryPro
           </Alert>
         )}
       </CardContent>
-      
       <CardFooter className="flex gap-2">
         <Button
           onClick={handleRetry}
@@ -156,7 +143,6 @@ export function NetworkRecovery({ error, onRetry, onCancel }: NetworkRecoveryPro
             </>
           )}
         </Button>
-        
         {onCancel && (
           <Button onClick={onCancel} variant="outline" className="flex-1">
             Cancel
@@ -166,7 +152,6 @@ export function NetworkRecovery({ error, onRetry, onCancel }: NetworkRecoveryPro
     </Card>
   )
 }
-
 /**
  * API error recovery component
  */
@@ -176,11 +161,9 @@ export interface ApiErrorRecoveryProps {
   onGoBack?: () => void
   onGoHome?: () => void
 }
-
 export function ApiErrorRecovery({ error, onRetry, onGoBack, onGoHome }: ApiErrorRecoveryProps) {
   const router = useRouter()
   const [isRetrying, setIsRetrying] = useState(false)
-  
   const handleRetry = async () => {
     if (onRetry) {
       setIsRetrying(true)
@@ -191,7 +174,6 @@ export function ApiErrorRecovery({ error, onRetry, onGoBack, onGoHome }: ApiErro
       }
     }
   }
-  
   const getRecoveryOptions = () => {
     if (isStatusCode(error, 401)) {
       return {
@@ -202,7 +184,6 @@ export function ApiErrorRecovery({ error, onRetry, onGoBack, onGoHome }: ApiErro
         ]
       }
     }
-    
     if (isStatusCode(error, 403)) {
       return {
         title: 'Access Denied',
@@ -213,7 +194,6 @@ export function ApiErrorRecovery({ error, onRetry, onGoBack, onGoHome }: ApiErro
         ]
       }
     }
-    
     if (isStatusCode(error, 404)) {
       return {
         title: 'Not Found',
@@ -224,7 +204,6 @@ export function ApiErrorRecovery({ error, onRetry, onGoBack, onGoHome }: ApiErro
         ]
       }
     }
-    
     if (isStatusCode(error, 429)) {
       return {
         title: 'Too Many Requests',
@@ -234,7 +213,6 @@ export function ApiErrorRecovery({ error, onRetry, onGoBack, onGoHome }: ApiErro
         ]
       }
     }
-    
     if (error.statusCode >= 500) {
       return {
         title: 'Server Error',
@@ -245,7 +223,6 @@ export function ApiErrorRecovery({ error, onRetry, onGoBack, onGoHome }: ApiErro
         ]
       }
     }
-    
     return {
       title: 'Error',
       description: error.message,
@@ -255,16 +232,13 @@ export function ApiErrorRecovery({ error, onRetry, onGoBack, onGoHome }: ApiErro
       ]
     }
   }
-  
   const recovery = getRecoveryOptions()
-  
   return (
     <Card>
       <CardHeader>
         <CardTitle>{recovery.title}</CardTitle>
         <CardDescription>{recovery.description}</CardDescription>
       </CardHeader>
-      
       {error.details !== undefined && error.details !== null && (
         <CardContent>
           <Alert>
@@ -279,7 +253,6 @@ export function ApiErrorRecovery({ error, onRetry, onGoBack, onGoHome }: ApiErro
           </Alert>
         </CardContent>
       )}
-      
       <CardFooter className="flex gap-2">
         {recovery.actions.map((action, index) => (
           <Button
@@ -296,7 +269,6 @@ export function ApiErrorRecovery({ error, onRetry, onGoBack, onGoHome }: ApiErro
     </Card>
   )
 }
-
 /**
  * Progressive error recovery with multiple strategies
  */
@@ -311,9 +283,8 @@ export interface ProgressiveRecoveryProps {
   onSuccess?: () => void
   onFailure?: () => void
 }
-
 export function ProgressiveRecovery({ 
-  error, 
+  error: _error, 
   strategies = [], 
   onSuccess, 
   onFailure 
@@ -322,7 +293,6 @@ export function ProgressiveRecovery({
   const [isRecovering, setIsRecovering] = useState(false)
   const [attempts, setAttempts] = useState<Record<number, boolean>>({})
   const [progress, setProgress] = useState(0)
-  
   const defaultStrategies = [
     {
       name: 'Retry Operation',
@@ -353,19 +323,15 @@ export function ProgressiveRecovery({
       icon: Settings
     }
   ]
-  
   const allStrategies = strategies.length > 0 ? strategies : defaultStrategies
-  
   const tryStrategy = async (index: number) => {
     if (index >= allStrategies.length) {
       onFailure?.()
       return
     }
-    
     setCurrentStrategy(index)
     setIsRecovering(true)
     setProgress((index / allStrategies.length) * 100)
-    
     try {
       await allStrategies[index].action()
       setAttempts({ ...attempts, [index]: true })
@@ -378,12 +344,10 @@ export function ProgressiveRecovery({
       setIsRecovering(false)
     }
   }
-  
   const handleStartRecovery = () => {
     setAttempts({})
     tryStrategy(0)
   }
-  
   return (
     <Card>
       <CardHeader>
@@ -392,23 +356,19 @@ export function ProgressiveRecovery({
           We&apos;re trying different methods to resolve the issue
         </CardDescription>
       </CardHeader>
-      
       <CardContent className="space-y-4">
         <Progress value={progress} className="h-2" />
-        
         <div className="space-y-2">
           {allStrategies.map((strategy, index) => {
             const Icon = strategy.icon || HelpCircle
             const attempted = attempts[index]
             const isCurrent = index === currentStrategy && isRecovering
-            
             return (
-              <div
+              <Alert
                 key={index}
-                className={`flex items-center gap-3 p-3 rounded-lg ${
-                  isCurrent ? 'bg-primary/10' : 'bg-muted'
-                }`}
+                className={isCurrent ? 'border-primary bg-primary/5' : ''}
               >
+                <AlertDescription className="flex items-center gap-3">
                 <div className="flex-shrink-0">
                   {isCurrent ? (
                     <Loader2 className="h-5 w-5 animate-spin text-primary" />
@@ -424,19 +384,18 @@ export function ProgressiveRecovery({
                   <p className="text-sm font-medium">{strategy.name}</p>
                   <p className="text-xs text-muted-foreground">{strategy.description}</p>
                 </div>
-              </div>
+                </AlertDescription>
+              </Alert>
             )
           })}
         </div>
       </CardContent>
-      
       <CardFooter>
         {!isRecovering && Object.keys(attempts).length === 0 && (
           <Button onClick={handleStartRecovery} className="w-full">
             Start Recovery
           </Button>
         )}
-        
         {Object.keys(attempts).length === allStrategies.length && (
           <div className="w-full space-y-3">
             <Alert variant="destructive">
@@ -445,7 +404,6 @@ export function ProgressiveRecovery({
                 Recovery attempts failed. Please contact support.
               </AlertDescription>
             </Alert>
-            
             <div className="flex gap-2">
               <Button variant="outline" className="flex-1" asChild>
                 <a href="mailto:support@figdream.com">

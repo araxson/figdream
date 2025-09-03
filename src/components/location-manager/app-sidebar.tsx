@@ -1,5 +1,4 @@
 "use client"
-
 import {
   Sidebar,
   SidebarContent,
@@ -21,24 +20,20 @@ import {
 import Link from "next/link"
 import { User } from "@supabase/supabase-js"
 import type { Database } from "@/types/database.types"
-
 type Profile = Database['public']['Tables']['profiles']['Row']
-
 const menuItems = [
-  { title: "Dashboard", url: "/role-location-manager", icon: LayoutDashboard },
-  { title: "Appointments", url: "/role-location-manager/appointments", icon: Calendar },
-  { title: "Staff", url: "/role-location-manager/staff", icon: Users },
-  { title: "Schedule", url: "/role-location-manager/schedule", icon: Clock },
-  { title: "Reports", url: "/role-location-manager/reports", icon: FileText },
-  { title: "Settings", url: "/role-location-manager/settings", icon: Settings },
+  { title: "Dashboard", url: "/location-manager", icon: LayoutDashboard },
+  { title: "Appointments", url: "/location-manager/appointments", icon: Calendar },
+  { title: "Staff", url: "/location-manager/staff", icon: Users },
+  { title: "Schedule", url: "/location-manager/schedule", icon: Clock },
+  { title: "Reports", url: "/location-manager/reports", icon: FileText },
+  { title: "Settings", url: "/location-manager/settings", icon: Settings },
 ]
-
 interface LocationManagerSidebarProps {
   user: User
   profile: Profile
 }
-
-export function LocationManagerSidebar({ user, profile }: LocationManagerSidebarProps) {
+export function LocationManagerSidebar({ user: _user, profile: _profile }: LocationManagerSidebarProps) {
   return (
     <Sidebar>
       <SidebarContent>

@@ -1,5 +1,4 @@
 'use client'
-
 import * as React from 'react'
 import {
   Card,
@@ -16,9 +15,6 @@ import {
   TabsTrigger,
   Alert,
   AlertDescription,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
   Skeleton,
 } from '@/components/ui'
 import {
@@ -43,59 +39,47 @@ import {
   Medal,
   Target,
   Zap,
-  Loader2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { format, formatDistanceToNow } from 'date-fns'
 import { getCustomerLoyalty, getPointsHistory } from '@/lib/data-access/loyalty/loyalty-program'
 import type { CustomerLoyalty, PointsTransaction } from '@/lib/data-access/loyalty/loyalty-program'
-
 interface LoyaltyDashboardProps {
   customerId: string
   programId: string
   className?: string
 }
-
 export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDashboardProps) {
   const [loyaltyData, setLoyaltyData] = React.useState<CustomerLoyalty | null>(null)
   const [pointsHistory, setPointsHistory] = React.useState<PointsTransaction[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
   const [activeTab, setActiveTab] = React.useState('overview')
-
   // Load loyalty data
   React.useEffect(() => {
     async function loadLoyaltyData() {
       try {
         setIsLoading(true)
         setError(null)
-
         const [loyaltyResult, historyResult] = await Promise.all([
           getCustomerLoyalty(customerId, programId),
           getPointsHistory(customerId, programId, 20)
         ])
-
         if (!loyaltyResult.success) {
           throw new Error(loyaltyResult.error || 'Failed to load loyalty data')
         }
-
         if (!historyResult.success) {
-          console.warn('Failed to load points history:', historyResult.error)
         }
-
         setLoyaltyData(loyaltyResult.data)
         setPointsHistory(historyResult.data || [])
       } catch (err) {
-        console.error('Error loading loyalty dashboard:', err)
         setError(err instanceof Error ? err.message : 'Failed to load loyalty data')
       } finally {
         setIsLoading(false)
       }
     }
-
     loadLoyaltyData()
   }, [customerId, programId])
-
   const getTierIcon = (tier: string) => {
     switch (tier) {
       case 'bronze':
@@ -112,7 +96,6 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
         return <Star className="h-5 w-5 text-muted-foreground/60" />
     }
   }
-
   const getTierColor = (tier: string) => {
     switch (tier) {
       case 'bronze':
@@ -129,7 +112,6 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
         return 'from-muted/50 to-muted/30 border-border'
     }
   }
-
   const getTransactionIcon = (type: string) => {
     if (type.startsWith('earned_')) {
       switch (type) {
@@ -151,25 +133,19 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
     }
     return <Target className="h-4 w-4 text-muted-foreground" />
   }
-
   const formatTransactionType = (type: string) => {
     return type
       .replace(/_/g, ' ')
       .replace(/\b\w/g, l => l.toUpperCase())
   }
-
   const copyReferralCode = async () => {
     if (!loyaltyData?.referral_code) return
-    
     try {
       await navigator.clipboard.writeText(loyaltyData.referral_code)
       // In a real app, you'd show a toast notification
-      console.log('Referral code copied to clipboard')
-    } catch (err) {
-      console.error('Failed to copy referral code:', err)
+    } catch (_err) {
     }
   }
-
   if (isLoading) {
     return (
       <div className={cn("space-y-6", className)}>
@@ -192,7 +168,6 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
       </div>
     )
   }
-
   if (error || !loyaltyData) {
     return (
       <Alert>
@@ -203,7 +178,6 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
       </Alert>
     )
   }
-
   return (
     <div className={cn("space-y-6", className)}>
       {/* Tier Status Card */}
@@ -243,7 +217,6 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
           )}
         </CardContent>
       </Card>
-
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
@@ -259,7 +232,6 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
             </div>
           </CardContent>
         </Card>
-
         <Card>
           <CardContent>
             <div className="flex items-center gap-3">
@@ -273,7 +245,6 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
             </div>
           </CardContent>
         </Card>
-
         <Card>
           <CardContent>
             <div className="flex items-center gap-3">
@@ -287,7 +258,6 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
             </div>
           </CardContent>
         </Card>
-
         <Card>
           <CardContent>
             <div className="flex items-center gap-3">
@@ -302,7 +272,6 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
           </CardContent>
         </Card>
       </div>
-
       {/* Tabs for detailed information */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-3">
@@ -310,7 +279,6 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
           <TabsTrigger value="history">Points History</TabsTrigger>
           <TabsTrigger value="referrals">Referrals</TabsTrigger>
         </TabsList>
-
         <TabsContent value="overview" className="space-y-4">
           {/* Current Tier Benefits */}
           <Card>
@@ -346,7 +314,6 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
               </div>
             </CardContent>
           </Card>
-
           {/* Quick Actions */}
           <Card>
             <CardHeader>
@@ -354,7 +321,7 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Button className="h-auto justify-start" variant="outline">
+                <Button className="justify-start" variant="outline">
                   <div className="flex items-center gap-3">
                     <Calendar className="h-5 w-5" />
                     <div className="text-left">
@@ -364,8 +331,7 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
                   </div>
                   <ArrowRight className="h-4 w-4 ml-auto" />
                 </Button>
-
-                <Button className="h-auto justify-start" variant="outline">
+                <Button className="justify-start" variant="outline">
                   <div className="flex items-center gap-3">
                     <Gift className="h-5 w-5" />
                     <div className="text-left">
@@ -379,7 +345,6 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
             </CardContent>
           </Card>
         </TabsContent>
-
         <TabsContent value="history" className="space-y-4">
           <Card>
             <CardHeader>
@@ -434,7 +399,6 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
             </CardContent>
           </Card>
         </TabsContent>
-
         <TabsContent value="referrals" className="space-y-4">
           <Card>
             <CardHeader>
@@ -460,9 +424,8 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
                       </Button>
                     </div>
                   </div>
-
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <Button className="h-auto justify-start" variant="outline">
+                    <Button className="justify-start" variant="outline">
                       <div className="flex items-center gap-3">
                         <Share2 className="h-5 w-5" />
                         <div className="text-left">
@@ -472,8 +435,7 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
                       </div>
                       <ExternalLink className="h-4 w-4 ml-auto" />
                     </Button>
-
-                    <Button className="h-auto justify-start" variant="outline">
+                    <Button className="justify-start" variant="outline">
                       <div className="flex items-center gap-3">
                         <Heart className="h-5 w-5" />
                         <div className="text-left">
@@ -484,11 +446,10 @@ export function LoyaltyDashboard({ customerId, programId, className }: LoyaltyDa
                       <ExternalLink className="h-4 w-4 ml-auto" />
                     </Button>
                   </div>
-
                   <Alert>
                     <Info className="h-4 w-4" />
                     <AlertDescription>
-                      You'll earn 100 bonus points when your friend makes their first appointment!
+                      You&apos;ll earn 100 bonus points when your friend makes their first appointment!
                     </AlertDescription>
                   </Alert>
                 </div>

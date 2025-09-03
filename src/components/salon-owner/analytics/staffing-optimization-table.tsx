@@ -1,5 +1,4 @@
 'use client'
-
 import {
   Badge,
   Table,
@@ -15,7 +14,6 @@ import {
   CheckCircle,
   XCircle
 } from 'lucide-react'
-
 interface StaffingOptimizationTableProps {
   recommendations: Array<{
     date: string
@@ -28,27 +26,23 @@ interface StaffingOptimizationTableProps {
     peakHours: number[]
   }>
 }
-
 export default function StaffingOptimizationTable({ recommendations }: StaffingOptimizationTableProps) {
   const getStatusIcon = (gap: number) => {
     if (gap > 0) return <XCircle className="h-4 w-4 text-red-600" />
     if (gap < -1) return <AlertCircle className="h-4 w-4 text-yellow-600" />
     return <CheckCircle className="h-4 w-4 text-green-600" />
   }
-
   const getStatusBadge = (gap: number) => {
     if (gap > 0) return { label: 'Understaffed', variant: 'destructive' as const }
     if (gap < -1) return { label: 'Overstaffed', variant: 'secondary' as const }
     return { label: 'Optimal', variant: 'default' as const }
   }
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric'
     })
   }
-
   return (
     <div className="rounded-md border">
       <Table>

@@ -1,34 +1,31 @@
 'use client'
-
 import { useState, useTransition, useEffect } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { Button, Input, Label, Progress } from '@/components/ui'
 import { toast } from 'sonner'
 import { Loader2, Lock, Eye, EyeOff, CheckCircle, XCircle } from 'lucide-react'
-import { updatePasswordAction } from '@/app/_actions/auth'
+import { updatePasswordWithOtpAction } from '@/lib/actions/auth'
 import { useCSRFToken, CSRFTokenField } from '@/lib/hooks/use-csrf-token'
-
 interface PasswordStrength {
   score: number
   label: string
   color: string
 }
-
 export function ResetPasswordForm() {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [email, setEmail] = useState('')
+  const [token, setToken] = useState('')
   const [passwordStrength, setPasswordStrength] = useState<PasswordStrength>({
     score: 0,
     label: 'Weak',
     color: 'bg-red-500'
   })
   const { token: csrfToken, loading: csrfLoading, error: csrfError } = useCSRFToken()
-
   // Password requirements
   const [requirements, setRequirements] = useState({
     length: false,
@@ -37,7 +34,21 @@ export function ResetPasswordForm() {
     number: false,
     special: false
   })
-
+  // Get email and token from sessionStorage on mount
+  useEffect(() => {
+    const storedEmail = sessionStorage.getItem('reset_email')
+    const storedToken = sessionStorage.getItem('reset_token')
+    if (!storedEmail || !storedToken) {
+      toast.error('Verification session expired. Please start over.')
+      router.push('/forgot-password')
+      return
+    }
+    setEmail(storedEmail)
+    setToken(storedToken)
+    // Clear session storage after retrieving
+    sessionStorage.removeItem('reset_email')
+    sessionStorage.removeItem('reset_token')
+  }, [router])
   // Check password strength
   useEffect(() => {
     if (!password) {
@@ -51,7 +62,6 @@ export function ResetPasswordForm() {
       })
       return
     }
-
     const newRequirements = {
       length: password.length >= 8,
       uppercase: /[A-Z]/.test(password),
@@ -60,10 +70,8 @@ export function ResetPasswordForm() {
       special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
     }
     setRequirements(newRequirements)
-
     const score = Object.values(newRequirements).filter(Boolean).length
     let strength: PasswordStrength
-
     if (score === 5) {
       strength = { score: 100, label: 'Strong', color: 'bg-green-500' }
     } else if (score === 4) {
@@ -75,36 +83,41 @@ export function ResetPasswordForm() {
     } else {
       strength = { score: 20, label: 'Very Weak', color: 'bg-red-500' }
     }
-
     setPasswordStrength(strength)
   }, [password])
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    
     if (!csrfToken) {
       toast.error('Security token not loaded. Please refresh the page.')
       return
     }
-
+    if (!email || !token) {
+      toast.error('Verification session expired. Please start over.')
+      router.push('/forgot-password')
+      return
+    }
     if (password !== confirmPassword) {
       toast.error('Passwords do not match')
       return
     }
-
     if (passwordStrength.score < 60) {
       toast.error('Please choose a stronger password')
       return
     }
-
     const formData = new FormData(e.currentTarget)
-    
+    formData.append('email', email)
+    formData.append('token', token)
     startTransition(async () => {
       try {
-        const result = await updatePasswordAction(formData)
-        
+        const result = await updatePasswordWithOtpAction(formData)
         if (result?.error) {
           toast.error(result.error)
+          // If token is invalid or expired, redirect to start over
+          if (result.error.includes('expired') || result.error.includes('invalid')) {
+            setTimeout(() => {
+              router.push('/forgot-password')
+            }, 2000)
+          }
         } else if (result?.errors) {
           Object.entries(result.errors).forEach(([field, errors]) => {
             if (Array.isArray(errors)) {
@@ -113,15 +126,16 @@ export function ResetPasswordForm() {
           })
         } else {
           toast.success('Password updated successfully!')
-          // Redirect handled by server action
+          // Redirect to login
+          setTimeout(() => {
+            router.push('/login?message=Password+updated+successfully.+Please+sign+in.')
+          }, 1500)
         }
-      } catch (error) {
-        console.error('Password update error:', error)
+      } catch (_error) {
         toast.error('An unexpected error occurred. Please try again.')
       }
     })
   }
-
   if (csrfError) {
     return (
       <div className="text-center py-8">
@@ -132,11 +146,23 @@ export function ResetPasswordForm() {
       </div>
     )
   }
-
+  if (!email || !token) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-muted-foreground mb-4">Loading verification data...</p>
+        <Loader2 className="h-8 w-8 animate-spin mx-auto" />
+      </div>
+    )
+  }
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <CSRFTokenField />
-      
+      {/* Show verified email */}
+      <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg text-center">
+        <p className="text-sm text-green-600 dark:text-green-400">
+          Verified for: <span className="font-medium">{email}</span>
+        </p>
+      </div>
       {/* Password Field */}
       <div className="space-y-2">
         <Label htmlFor="password">New Password</Label>
@@ -152,13 +178,13 @@ export function ResetPasswordForm() {
             disabled={isPending || csrfLoading}
             className="pl-10 pr-10"
           />
-          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 h-auto p-1"
+            className="absolute right-3 top-1/2 -translate-y-1/2 h-auto p-1"
             tabIndex={-1}
           >
             {showPassword ? (
@@ -169,7 +195,6 @@ export function ResetPasswordForm() {
           </Button>
         </div>
       </div>
-
       {/* Password Strength Indicator */}
       {password && (
         <div className="space-y-2">
@@ -180,7 +205,6 @@ export function ResetPasswordForm() {
           <Progress value={passwordStrength.score} className="h-2" />
         </div>
       )}
-
       {/* Password Requirements */}
       {password && (
         <div className="space-y-1">
@@ -191,7 +215,6 @@ export function ResetPasswordForm() {
           <RequirementCheck met={requirements.special} text="One special character" />
         </div>
       )}
-
       {/* Confirm Password Field */}
       <div className="space-y-2">
         <Label htmlFor="confirmPassword">Confirm Password</Label>
@@ -207,13 +230,13 @@ export function ResetPasswordForm() {
             disabled={isPending || csrfLoading}
             className="pl-10 pr-10"
           />
-          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 h-auto p-1"
+            className="absolute right-3 top-1/2 -translate-y-1/2 h-auto p-1"
             tabIndex={-1}
           >
             {showConfirmPassword ? (
@@ -227,7 +250,6 @@ export function ResetPasswordForm() {
           <p className="text-xs text-red-500">Passwords do not match</p>
         )}
       </div>
-
       <Button
         type="submit"
         className="w-full"
@@ -250,7 +272,6 @@ export function ResetPasswordForm() {
     </form>
   )
 }
-
 function RequirementCheck({ met, text }: { met: boolean; text: string }) {
   return (
     <div className="flex items-center space-x-2 text-xs">

@@ -2,24 +2,19 @@
  * Email Service for FigDream Marketing
  * Handles email sending through Resend API
  */
-
 import { Resend } from 'resend'
 import { createClient } from '@/lib/database/supabase/server'
 import type { Database } from '@/types/database.types'
-
 const resend = new Resend(process.env.RESEND_API_KEY!)
-
 type EmailTemplate = Database['public']['Tables']['email_templates']['Row']
 type Campaign = Database['public']['Tables']['marketing_campaigns']['Row']
-
 interface EmailRecipient {
   id: string
   email: string
   first_name?: string
   last_name?: string
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }
-
 interface EmailVariables {
   customer_name?: string
   salon_name?: string
@@ -31,9 +26,8 @@ interface EmailVariables {
   location_name?: string
   location_address?: string
   unsubscribe_url?: string
-  [key: string]: any
+  [key: string]: unknown
 }
-
 /**
  * Send marketing campaign emails
  */
@@ -50,12 +44,10 @@ export async function sendCampaignEmails(
   const errors: string[] = []
   let sent = 0
   let failed = 0
-
   // Process in batches
   const batchSize = 50
   for (let i = 0; i < recipients.length; i += batchSize) {
     const batch = recipients.slice(i, i + batchSize)
-    
     try {
       const emails = batch.map(recipient => ({
         from: campaign.from_email || 'noreply@figdream.com',
@@ -86,12 +78,10 @@ export async function sendCampaignEmails(
           },
         ],
       }))
-
       // Send batch
       const results = await Promise.allSettled(
         emails.map(email => resend.emails.send(email))
       )
-
       // Process results
       results.forEach((result, index) => {
         if (result.status === 'fulfilled') {
@@ -103,21 +93,17 @@ export async function sendCampaignEmails(
           trackEmailFailed(campaign.id, batch[index].id, result.reason)
         }
       })
-
       // Add delay between batches
       if (i + batchSize < recipients.length) {
         await new Promise(resolve => setTimeout(resolve, 1000))
       }
-    } catch (error) {
-      console.error('Error sending email batch:', error)
+    } catch (_error) {
       failed += batch.length
       errors.push(`Batch error: ${error}`)
     }
   }
-
   // Update campaign metrics
   await updateCampaignMetrics(campaign.id, { sent, failed })
-
   return {
     success: failed === 0,
     sent,
@@ -125,7 +111,6 @@ export async function sendCampaignEmails(
     errors,
   }
 }
-
 /**
  * Send transactional email
  */
@@ -137,7 +122,7 @@ export async function sendTransactionalEmail(params: {
   from?: string
   replyTo?: string
   category: 'booking_confirmation' | 'booking_reminder' | 'review_request' | 'password_reset' | 'welcome'
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }): Promise<{ success: boolean; messageId?: string; error?: string }> {
   try {
     const result = await resend.emails.send({
@@ -155,28 +140,23 @@ export async function sendTransactionalEmail(params: {
         value: String(value),
       })),
     })
-
     if (result.error) {
-      console.error('Resend error:', result.error)
       return {
         success: false,
         error: result.error.message,
       }
     }
-
     return {
       success: true,
       messageId: result.data?.id,
     }
-  } catch (error) {
-    console.error('Error sending transactional email:', error)
+  } catch (_error) {
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to send email',
     }
   }
 }
-
 /**
  * Send booking confirmation email
  */
@@ -216,7 +196,6 @@ export async function sendBookingConfirmationEmail(booking: {
         <div class="content">
           <p>Hi ${booking.customer_name},</p>
           <p>Your appointment at ${booking.salon_name} has been confirmed. We look forward to seeing you!</p>
-          
           <div class="booking-details">
             <h2>Booking Details</h2>
             <div class="detail-row">
@@ -244,11 +223,9 @@ export async function sendBookingConfirmationEmail(booking: {
               <span>$${booking.total_amount.toFixed(2)}</span>
             </div>
           </div>
-          
           <div style="text-align: center;">
             <a href="${process.env.NEXT_PUBLIC_APP_URL}/customer/bookings/${booking.id}" class="button">View Booking</a>
           </div>
-          
           <p><strong>Need to make changes?</strong><br>
           You can reschedule or cancel your appointment from your dashboard.</p>
         </div>
@@ -260,7 +237,6 @@ export async function sendBookingConfirmationEmail(booking: {
     </body>
     </html>
   `
-
   return sendTransactionalEmail({
     to: booking.customer_email,
     subject: `Booking Confirmed - ${booking.salon_name}`,
@@ -271,7 +247,6 @@ export async function sendBookingConfirmationEmail(booking: {
     },
   })
 }
-
 /**
  * Send appointment reminder email
  */
@@ -306,14 +281,12 @@ export async function sendAppointmentReminderEmail(booking: {
         <div class="content">
           <p>Hi ${booking.customer_name},</p>
           <p>This is a friendly reminder about your upcoming appointment:</p>
-          
           <div class="reminder-box">
             <h2>${booking.service_name}</h2>
             <p><strong>When:</strong> ${new Date(booking.start_time).toLocaleString()}</p>
             <p><strong>Where:</strong> ${booking.salon_name} - ${booking.location_name}</p>
             <p><strong>With:</strong> ${booking.staff_name}</p>
           </div>
-          
           <div style="text-align: center; margin: 30px 0;">
             <a href="${process.env.NEXT_PUBLIC_APP_URL}/customer/bookings/${booking.id}" class="button">View Details</a>
           </div>
@@ -322,7 +295,6 @@ export async function sendAppointmentReminderEmail(booking: {
     </body>
     </html>
   `
-
   return sendTransactionalEmail({
     to: booking.customer_email,
     subject: `Reminder: Your appointment at ${booking.salon_name}`,
@@ -333,21 +305,17 @@ export async function sendAppointmentReminderEmail(booking: {
     },
   })
 }
-
 /**
  * Replace variables in template
  */
 function replaceVariables(template: string, variables: EmailVariables): string {
   let result = template
-  
   Object.entries(variables).forEach(([key, value]) => {
     const regex = new RegExp(`{{\\s*${key}\\s*}}`, 'g')
     result = result.replace(regex, value || '')
   })
-  
   return result
 }
-
 /**
  * Generate unsubscribe token
  */
@@ -355,13 +323,11 @@ function generateUnsubscribeToken(customerId: string): string {
   // In production, use a proper JWT or encrypted token
   return Buffer.from(`${customerId}:${Date.now()}`).toString('base64')
 }
-
 /**
  * Track email sent
  */
 async function trackEmailSent(campaignId: string, recipientId: string): Promise<void> {
   const supabase = await createClient()
-  
   try {
     await supabase
       .from('email_events')
@@ -371,17 +337,14 @@ async function trackEmailSent(campaignId: string, recipientId: string): Promise<
         event_type: 'sent',
         timestamp: new Date().toISOString(),
       })
-  } catch (error) {
-    console.error('Error tracking email sent:', error)
+  } catch (_error) {
   }
 }
-
 /**
  * Track email failed
  */
-async function trackEmailFailed(campaignId: string, recipientId: string, reason: any): Promise<void> {
+async function trackEmailFailed(campaignId: string, recipientId: string, reason: unknown): Promise<void> {
   const supabase = await createClient()
-  
   try {
     await supabase
       .from('email_events')
@@ -392,11 +355,9 @@ async function trackEmailFailed(campaignId: string, recipientId: string, reason:
         timestamp: new Date().toISOString(),
         metadata: { error: String(reason) },
       })
-  } catch (error) {
-    console.error('Error tracking email failed:', error)
+  } catch (_error) {
   }
 }
-
 /**
  * Update campaign metrics
  */
@@ -405,14 +366,12 @@ async function updateCampaignMetrics(
   metrics: { sent?: number; failed?: number }
 ): Promise<void> {
   const supabase = await createClient()
-  
   try {
     const { data: existing } = await supabase
       .from('campaign_metrics')
       .select('*')
       .eq('campaign_id', campaignId)
       .single()
-    
     if (existing) {
       await supabase
         .from('campaign_metrics')
@@ -432,7 +391,6 @@ async function updateCampaignMetrics(
           last_updated: new Date().toISOString(),
         })
     }
-  } catch (error) {
-    console.error('Error updating campaign metrics:', error)
+  } catch (_error) {
   }
 }

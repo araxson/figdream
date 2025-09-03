@@ -1,7 +1,6 @@
 'use client'
-
 import { useState } from 'react'
-import { DateRangePicker } from '@/components/shared/date-range-picker'
+import { DateRangePicker } from '@/components/shared/ui-elements/date-range-picker'
 import { DateRange } from 'react-day-picker'
 import { 
   Card, 
@@ -28,28 +27,21 @@ import {
   DrawerClose 
 } from '@/components/ui'
 import { Filter, Download, RefreshCw } from 'lucide-react'
-
 export function AppointmentsFilter() {
-  const [dateRange, setDateRange] = useState<DateRange | undefined>()
+  const [_dateRange, setDateRange] = useState<DateRange | undefined>()
   const [status, setStatus] = useState<string>('all')
   const [staff, setStaff] = useState<string>('all')
-
   const handleFilter = () => {
-    // In a real app, this would trigger a data fetch with the filters
-    console.log('Filtering appointments:', { dateRange, status, staff })
+    // TODO: Implement filter with actual data fetch
   }
-
   const handleExport = () => {
-    // In a real app, this would export the filtered data
-    console.log('Exporting appointments')
+    // TODO: Implement export functionality
   }
-
   const handleReset = () => {
     setDateRange(undefined)
     setStatus('all')
     setStaff('all')
   }
-
   const FilterContent = () => (
     <div className="space-y-4">
       <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3">
@@ -60,7 +52,6 @@ export function AppointmentsFilter() {
             placeholder="Select date range"
           />
         </div>
-        
         <div className="space-y-3 col-span-2">
           <Label>Status Filter</Label>
           <ToggleGroup type="single" value={status} onValueChange={(value) => setStatus(value || 'all')} className="grid grid-cols-3 lg:grid-cols-6 gap-1">
@@ -74,7 +65,6 @@ export function AppointmentsFilter() {
           </ToggleGroup>
         </div>
       </div>
-      
       <div className="flex flex-col sm:flex-row gap-4 items-end">
         <div className="space-y-2 flex-1">
           <Label>Staff Member</Label>
@@ -84,13 +74,10 @@ export function AppointmentsFilter() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Staff</SelectItem>
-              <SelectItem value="staff1">John Doe</SelectItem>
-              <SelectItem value="staff2">Jane Smith</SelectItem>
-              <SelectItem value="staff3">Mike Johnson</SelectItem>
+              {/* TODO: Fetch actual staff members from database */}
             </SelectContent>
           </Select>
         </div>
-        
         <div className="flex gap-2">
           <Button onClick={handleFilter}>
             <Filter className="mr-2 h-4 w-4" />
@@ -102,7 +89,6 @@ export function AppointmentsFilter() {
           </Button>
         </div>
       </div>
-      
       <div className="flex justify-end">
         <Button onClick={handleExport} variant="outline">
           <Download className="mr-2 h-4 w-4" />
@@ -111,7 +97,6 @@ export function AppointmentsFilter() {
       </div>
     </div>
   )
-
   return (
     <>
       {/* Desktop Filter Card */}
@@ -126,7 +111,6 @@ export function AppointmentsFilter() {
           <FilterContent />
         </CardContent>
       </Card>
-
       {/* Mobile Filter Drawer */}
       <div className="md:hidden flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold">Appointments</h3>

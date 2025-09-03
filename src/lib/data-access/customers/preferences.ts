@@ -1,13 +1,10 @@
 'use server'
-
 import { createClient } from '@/lib/database/supabase/server'
 import { Database } from '@/types/database.types'
-
 // Type definitions from database
 type CustomerPreference = Database['public']['Tables']['customer_preferences']['Row']
 type CustomerPreferenceInsert = Database['public']['Tables']['customer_preferences']['Insert']
 type CustomerPreferenceUpdate = Database['public']['Tables']['customer_preferences']['Update']
-
 export interface PreferenceSettings {
   preferred_staff?: string[]
   preferred_services?: string[]
@@ -23,7 +20,6 @@ export interface PreferenceSettings {
   language?: string
   notes?: string
 }
-
 export interface NotificationPreferences {
   appointment_reminders: boolean
   appointment_confirmations: boolean
@@ -33,7 +29,6 @@ export interface NotificationPreferences {
   review_requests: boolean
   birthday_wishes: boolean
 }
-
 /**
  * Get customer preferences
  * @param customerId - The customer ID
@@ -43,21 +38,16 @@ export async function getCustomerPreferences(
   customerId: string
 ): Promise<CustomerPreference | null> {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('customer_preferences')
     .select('*')
     .eq('customer_id', customerId)
     .single()
-  
   if (error && error.code !== 'PGRST116') {
-    console.error('Error fetching customer preferences:', error)
     throw new Error('Failed to fetch customer preferences')
   }
-  
   return data
 }
-
 /**
  * Create or update customer preferences
  * @param customerId - The customer ID
@@ -69,7 +59,6 @@ export async function upsertCustomerPreferences(
   preferences: Omit<CustomerPreferenceInsert, 'customer_id'>
 ): Promise<CustomerPreference> {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('customer_preferences')
     .upsert({
@@ -81,15 +70,11 @@ export async function upsertCustomerPreferences(
     })
     .select()
     .single()
-  
   if (error) {
-    console.error('Error upserting customer preferences:', error)
     throw new Error('Failed to update customer preferences')
   }
-  
   return data
 }
-
 /**
  * Update specific customer preferences
  * @param customerId - The customer ID
@@ -101,7 +86,6 @@ export async function updateCustomerPreferences(
   updates: CustomerPreferenceUpdate
 ): Promise<CustomerPreference> {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('customer_preferences')
     .update({
@@ -111,15 +95,11 @@ export async function updateCustomerPreferences(
     .eq('customer_id', customerId)
     .select()
     .single()
-  
   if (error) {
-    console.error('Error updating customer preferences:', error)
     throw new Error('Failed to update customer preferences')
   }
-  
   return data
 }
-
 /**
  * Set preferred staff members for a customer
  * @param customerId - The customer ID
@@ -134,7 +114,6 @@ export async function setPreferredStaff(
     preferred_staff_ids: staffIds
   })
 }
-
 /**
  * Set preferred services for a customer
  * @param customerId - The customer ID
@@ -149,7 +128,6 @@ export async function setPreferredServices(
     preferred_service_ids: serviceIds
   })
 }
-
 /**
  * Update notification preferences
  * @param customerId - The customer ID
@@ -167,7 +145,6 @@ export async function updateNotificationPreferences(
     marketing_sms: notifications.marketing_sms
   })
 }
-
 /**
  * Get customers with specific preferences
  * @param filters - Preference filters
@@ -182,9 +159,7 @@ export async function getCustomersByPreferences(filters: {
   marketing_sms?: boolean
 }): Promise<CustomerPreference[]> {
   const supabase = await createClient()
-  
   let query = supabase.from('customer_preferences').select('*')
-  
   if (filters.preferred_staff_id) {
     query = query.contains('preferred_staff_ids', [filters.preferred_staff_id])
   }
@@ -203,17 +178,12 @@ export async function getCustomersByPreferences(filters: {
   if (filters.marketing_sms !== undefined) {
     query = query.eq('marketing_sms', filters.marketing_sms)
   }
-  
   const { data, error } = await query
-  
   if (error) {
-    console.error('Error fetching customers by preferences:', error)
     throw new Error('Failed to fetch customers')
   }
-  
   return data || []
 }
-
 /**
  * Check if customer wants reminders
  * @param customerId - The customer ID
@@ -225,16 +195,13 @@ export async function checkReminderPreference(
   type: 'email' | 'sms'
 ): Promise<boolean> {
   const preferences = await getCustomerPreferences(customerId)
-  
   if (!preferences) {
     return true // Default to sending reminders if no preferences set
   }
-  
   return type === 'email' ? 
     preferences.email_reminders !== false : 
     preferences.sms_reminders !== false
 }
-
 /**
  * Check if customer wants marketing communications
  * @param customerId - The customer ID
@@ -246,16 +213,13 @@ export async function checkMarketingPreference(
   type: 'email' | 'sms'
 ): Promise<boolean> {
   const preferences = await getCustomerPreferences(customerId)
-  
   if (!preferences) {
     return false // Default to no marketing if no preferences set
   }
-  
   return type === 'email' ? 
     preferences.marketing_emails === true : 
     preferences.marketing_sms === true
 }
-
 /**
  * Set customer's preferred booking times
  * @param customerId - The customer ID
@@ -270,7 +234,6 @@ export async function setPreferredTimes(
     preferred_time_slots: timeSlots
   })
 }
-
 /**
  * Set customer's preferred days of week
  * @param customerId - The customer ID
@@ -285,7 +248,6 @@ export async function setPreferredDays(
     preferred_days_of_week: days
   })
 }
-
 /**
  * Add a note to customer preferences
  * @param customerId - The customer ID
@@ -298,12 +260,10 @@ export async function addCustomerNote(
 ): Promise<CustomerPreference> {
   const current = await getCustomerPreferences(customerId)
   const existingNotes = current?.notes || ''
-  
   return upsertCustomerPreferences(customerId, {
     notes: existingNotes ? `${existingNotes}\n${note}` : note
   })
 }
-
 /**
  * Get customer's preferred staff members
  * @param customerId - The customer ID
@@ -313,7 +273,6 @@ export async function getPreferredStaffIds(customerId: string): Promise<string[]
   const preferences = await getCustomerPreferences(customerId)
   return preferences?.preferred_staff_ids || []
 }
-
 /**
  * Get customer's preferred services
  * @param customerId - The customer ID
@@ -323,7 +282,6 @@ export async function getPreferredServiceIds(customerId: string): Promise<string
   const preferences = await getCustomerPreferences(customerId)
   return preferences?.preferred_service_ids || []
 }
-
 /**
  * Bulk update preferences for multiple customers
  * @param updates - Array of customer preference updates
@@ -333,27 +291,21 @@ export async function bulkUpdatePreferences(
   updates: Array<{ customer_id: string } & Partial<CustomerPreferenceUpdate>>
 ): Promise<number> {
   const supabase = await createClient()
-  
   const updatesWithTimestamp = updates.map(update => ({
     ...update,
     updated_at: new Date().toISOString()
   }))
-  
   const { data, error } = await supabase
     .from('customer_preferences')
     .upsert(updatesWithTimestamp, {
       onConflict: 'customer_id'
     })
     .select()
-  
   if (error) {
-    console.error('Error bulk updating preferences:', error)
     throw new Error('Failed to bulk update preferences')
   }
-  
   return data?.length || 0
 }
-
 /**
  * Reset customer preferences to defaults
  * @param customerId - The customer ID
@@ -372,7 +324,6 @@ export async function resetCustomerPreferences(customerId: string): Promise<Cust
     notes: null
   })
 }
-
 /**
  * Copy preferences from one customer to another
  * @param sourceCustomerId - Source customer ID
@@ -384,11 +335,9 @@ export async function copyCustomerPreferences(
   targetCustomerId: string
 ): Promise<CustomerPreference> {
   const sourcePrefs = await getCustomerPreferences(sourceCustomerId)
-  
   if (!sourcePrefs) {
     throw new Error('Source customer has no preferences')
   }
-  
   return upsertCustomerPreferences(targetCustomerId, {
     preferred_staff_ids: sourcePrefs.preferred_staff_ids,
     preferred_service_ids: sourcePrefs.preferred_service_ids,

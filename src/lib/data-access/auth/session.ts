@@ -1,44 +1,39 @@
 'use server'
-
 import { cookies } from 'next/headers'
 import { createClient } from '@/lib/database/supabase/server'
 import { User } from '@supabase/supabase-js'
 import { getUserRole, type UserRole } from './utils'
-
 export interface SessionUser {
   id: string
   email: string
   role: UserRole | null
-  metadata: Record<string, unknown>
+  metadata: {
+    salon_id?: string
+    location_id?: string
+    staff_id?: string
+  }
 }
-
 /**
  * Get current user from session
  * This follows the DAL pattern - server-side only
  */
 export async function getCurrentUser(): Promise<User | null> {
   const supabase = await createClient()
-  
   const { data: { user }, error } = await supabase.auth.getUser()
-  
   if (error || !user) {
     return null
   }
-  
   return user
 }
-
 /**
  * Get current session
  * Note: We use getUser() instead of getSession() per best practices
  */
 export async function getCurrentSession(): Promise<SessionUser | null> {
   const user = await getCurrentUser()
-  
   if (!user) {
     return null
   }
-  
   // Get user metadata from database instead of raw_app_meta_data
   const supabase = await createClient()
   const { data: userRole } = await supabase
@@ -46,57 +41,44 @@ export async function getCurrentSession(): Promise<SessionUser | null> {
     .select('salon_id, location_id')
     .eq('user_id', user.id)
     .maybeSingle()
-  
-  const metadata: Record<string, unknown> = {}
+  const metadata: SessionUser['metadata'] = {}
   if (userRole) {
     if (userRole.salon_id) metadata.salon_id = userRole.salon_id
     if (userRole.location_id) metadata.location_id = userRole.location_id
   }
-  
   return {
     id: user.id,
     email: user.email || '',
-    role: getUserRole(user),
+    role: await getUserRole(user.id),
     metadata
   }
 }
-
 /**
  * Refresh session if needed
  */
 export async function refreshSession(): Promise<boolean> {
   const supabase = await createClient()
-  
   const { data: { session }, error } = await supabase.auth.refreshSession()
-  
   if (error || !session) {
-    console.error('Failed to refresh session:', error)
     return false
   }
-  
   return true
 }
-
 /**
  * Sign out user and clear session
  */
 export async function signOut(): Promise<void> {
   const supabase = await createClient()
-  
   const { error } = await supabase.auth.signOut()
-  
   if (error) {
-    console.error('Sign out error:', error)
     throw new Error('Failed to sign out')
   }
-  
   // Clear any additional cookies if needed
   const cookieStore = await cookies()
   cookieStore.delete('user-role')
   cookieStore.delete('salon-id')
   cookieStore.delete('location-id')
 }
-
 /**
  * Check if user is authenticated
  */
@@ -104,15 +86,14 @@ export async function isAuthenticated(): Promise<boolean> {
   const user = await getCurrentUser()
   return user !== null
 }
-
 /**
  * Get user role from session
  */
 export async function getSessionRole(): Promise<UserRole | null> {
   const user = await getCurrentUser()
-  return getUserRole(user)
+  if (!user) return null
+  return getUserRole(user.id)
 }
-
 /**
  * Check if current user has specific role
  */
@@ -120,7 +101,6 @@ export async function currentUserHasRole(role: UserRole): Promise<boolean> {
   const userRole = await getSessionRole()
   return userRole === role
 }
-
 /**
  * Check if current user has any of the specified roles
  */
@@ -128,21 +108,18 @@ export async function currentUserHasAnyRole(roles: UserRole[]): Promise<boolean>
   const userRole = await getSessionRole()
   return userRole !== null && roles.includes(userRole)
 }
-
 /**
  * Check if current user is admin (any admin role)
  */
 export async function currentUserIsAdmin(): Promise<boolean> {
   return currentUserHasAnyRole(['super_admin', 'salon_owner', 'location_manager'])
 }
-
 /**
  * Get user's salon ID from session
  */
 export async function getSessionSalonId(): Promise<string | null> {
   const user = await getCurrentUser()
   if (!user) return null
-  
   // Get salon_id from user_roles table instead of raw_app_meta_data
   const supabase = await createClient()
   const { data: userRole } = await supabase
@@ -150,17 +127,14 @@ export async function getSessionSalonId(): Promise<string | null> {
     .select('salon_id')
     .eq('user_id', user.id)
     .maybeSingle()
-  
   return userRole?.salon_id || null
 }
-
 /**
  * Get user's location ID from session
  */
 export async function getSessionLocationId(): Promise<string | null> {
   const user = await getCurrentUser()
   if (!user) return null
-  
   // Get location_id from user_roles table instead of raw_app_meta_data
   const supabase = await createClient()
   const { data: userRole } = await supabase
@@ -168,17 +142,14 @@ export async function getSessionLocationId(): Promise<string | null> {
     .select('location_id')
     .eq('user_id', user.id)
     .maybeSingle()
-  
   return userRole?.location_id || null
 }
-
 /**
  * Get user's staff ID from session
  */
 export async function getSessionStaffId(): Promise<string | null> {
   const user = await getCurrentUser()
   if (!user) return null
-  
   // Get staff_id from staff_profiles table instead of raw_app_meta_data
   const supabase = await createClient()
   const { data: staffProfile } = await supabase
@@ -186,54 +157,43 @@ export async function getSessionStaffId(): Promise<string | null> {
     .select('id')
     .eq('user_id', user.id)
     .maybeSingle()
-  
   return staffProfile?.id || null
 }
-
 /**
  * Validate session and get user
  * Throws error if not authenticated
  */
 export async function requireAuth(): Promise<User> {
   const user = await getCurrentUser()
-  
   if (!user) {
     throw new Error('Authentication required')
   }
-  
   return user
 }
-
 /**
  * Validate session and require specific role
  * Throws error if not authenticated or wrong role
  */
 export async function requireRole(role: UserRole): Promise<User> {
   const user = await requireAuth()
-  const userRole = getUserRole(user)
-  
+  const userRole = await getUserRole(user.id)
   if (userRole !== role) {
     throw new Error(`Unauthorized: ${role} role required`)
   }
-  
   return user
 }
-
 /**
  * Validate session and require any of specified roles
  * Throws error if not authenticated or wrong role
  */
 export async function requireAnyRole(roles: UserRole[]): Promise<User> {
   const user = await requireAuth()
-  const userRole = getUserRole(user)
-  
+  const userRole = await getUserRole(user.id)
   if (!userRole || !roles.includes(userRole)) {
     throw new Error(`Unauthorized: One of ${roles.join(', ')} roles required`)
   }
-  
   return user
 }
-
 /**
  * Validate session and require admin role
  * Throws error if not authenticated or not admin
@@ -241,7 +201,6 @@ export async function requireAnyRole(roles: UserRole[]): Promise<User> {
 export async function requireAdmin(): Promise<User> {
   return requireAnyRole(['super_admin', 'salon_owner', 'location_manager'])
 }
-
 /**
  * Store additional session data in cookies
  * Used for quick access without database queries
@@ -252,7 +211,6 @@ export async function storeSessionMetadata(
   locationId?: string
 ): Promise<void> {
   const cookieStore = await cookies()
-  
   // Store role
   cookieStore.set('user-role', role, {
     httpOnly: true,
@@ -260,7 +218,6 @@ export async function storeSessionMetadata(
     sameSite: 'lax',
     maxAge: 60 * 60 * 24 * 7 // 7 days
   })
-  
   // Store salon ID if provided
   if (salonId) {
     cookieStore.set('salon-id', salonId, {
@@ -270,7 +227,6 @@ export async function storeSessionMetadata(
       maxAge: 60 * 60 * 24 * 7
     })
   }
-  
   // Store location ID if provided
   if (locationId) {
     cookieStore.set('location-id', locationId, {
@@ -281,7 +237,6 @@ export async function storeSessionMetadata(
     })
   }
 }
-
 /**
  * Get stored session metadata from cookies
  * Used for quick checks without database queries
@@ -292,20 +247,17 @@ export async function getSessionMetadata(): Promise<{
   locationId?: string
 }> {
   const cookieStore = await cookies()
-  
   return {
     role: cookieStore.get('user-role')?.value,
     salonId: cookieStore.get('salon-id')?.value,
     locationId: cookieStore.get('location-id')?.value
   }
 }
-
 /**
  * Clear session metadata cookies
  */
 export async function clearSessionMetadata(): Promise<void> {
   const cookieStore = await cookies()
-  
   cookieStore.delete('user-role')
   cookieStore.delete('salon-id')
   cookieStore.delete('location-id')

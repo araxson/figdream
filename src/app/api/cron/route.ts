@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/database/supabase/server'
 import { logError, logCriticalError, logApiError } from '@/src/lib/errors/logger'
-
 // Types for cron tasks
 interface CronTask {
   name: string
@@ -9,7 +8,6 @@ interface CronTask {
   schedule: string
   handler: () => Promise<void>
 }
-
 interface CronTaskResult {
   task: string
   success: boolean
@@ -17,41 +15,31 @@ interface CronTaskResult {
   error?: string
   itemsProcessed?: number
 }
-
 // Verify cron request is authorized
 function verifyCronAuth(request: NextRequest): boolean {
   const authHeader = request.headers.get('authorization')
   const cronSecret = process.env.CRON_SECRET
-  
   if (!cronSecret) {
-    console.warn('CRON_SECRET not configured - allowing all cron requests')
     return true
   }
-  
   if (!authHeader) {
     return false
   }
-  
   const token = authHeader.replace('Bearer ', '')
   return token === cronSecret
 }
-
 // Send appointment reminders for upcoming appointments
 async function sendAppointmentReminders(): Promise<CronTaskResult> {
   const startTime = Date.now()
   let itemsProcessed = 0
-  
   try {
     const supabase = await createClient()
-    
     // Get appointments scheduled for tomorrow that don't have reminders sent yet
     const tomorrow = new Date()
     tomorrow.setDate(tomorrow.getDate() + 1)
     tomorrow.setHours(0, 0, 0, 0)
-    
     const dayAfterTomorrow = new Date(tomorrow)
     dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 1)
-    
     const { data: appointments, error } = await supabase
       .from('appointments')
       .select(`
@@ -89,13 +77,10 @@ async function sendAppointmentReminders(): Promise<CronTaskResult> {
       .gte('appointment_date', tomorrow.toISOString())
       .lt('appointment_date', dayAfterTomorrow.toISOString())
       .eq('status', 'confirmed')
-      
     if (error) {
       throw new Error(`Failed to fetch appointments: ${error.message}`)
     }
-    
     if (!appointments || appointments.length === 0) {
-      console.log('No appointments found for reminder sending')
       return {
         task: 'sendAppointmentReminders',
         success: true,
@@ -103,7 +88,6 @@ async function sendAppointmentReminders(): Promise<CronTaskResult> {
         itemsProcessed: 0
       }
     }
-    
     // Process each appointment for reminders
     for (const appointment of appointments) {
       try {
@@ -113,12 +97,9 @@ async function sendAppointmentReminders(): Promise<CronTaskResult> {
           .select('email_notifications, sms_notifications, appointment_reminders')
           .eq('user_id', appointment.customer_id)
           .single()
-        
         if (!preferences) {
-          console.log(`No notification preferences found for customer ${appointment.customer_id}`)
           continue
         }
-        
         // Create notification record
         const notificationData = {
           user_id: appointment.customer_id,
@@ -130,14 +111,12 @@ async function sendAppointmentReminders(): Promise<CronTaskResult> {
             appointment_date: appointment.appointment_date,
             location_name: appointment.locations?.name,
             staff_name: appointment.staff?.display_name,
-            services: appointment.appointment_services?.map((bs: any) => bs.services?.name).join(', ')
+            services: appointment.appointment_services?.map((bs: { services?: { name?: string } }) => bs.services?.name).join(', ')
           }
         }
-        
         const { error: notificationError } = await supabase
           .from('notifications')
           .insert(notificationData)
-          
         if (notificationError) {
           logError(
             `Failed to create notification for appointment ${appointment.id}: ${notificationError.message}`,
@@ -146,19 +125,13 @@ async function sendAppointmentReminders(): Promise<CronTaskResult> {
           )
           continue
         }
-        
         // TODO: Send actual email/SMS notifications
         // For now, just log what would be sent
         if (preferences.email_notifications && preferences.appointment_reminders && appointment.profiles?.email) {
-          console.log(`Would send email reminder to ${appointment.profiles.email} for appointment ${appointment.id}`)
         }
-        
         if (preferences.sms_notifications && preferences.appointment_reminders && appointment.profiles?.phone) {
-          console.log(`Would send SMS reminder to ${appointment.profiles.phone} for appointment ${appointment.id}`)
         }
-        
         itemsProcessed++
-        
       } catch (appointmentError) {
         logError(
           `Failed to process reminder for appointment ${appointment.id}: ${appointmentError}`,
@@ -168,23 +141,18 @@ async function sendAppointmentReminders(): Promise<CronTaskResult> {
         )
       }
     }
-    
-    console.log(`Processed ${itemsProcessed} appointment reminders`)
-    
     return {
       task: 'sendAppointmentReminders',
       success: true,
       duration: Date.now() - startTime,
       itemsProcessed
     }
-    
-  } catch (error) {
+  } catch (_error) {
     logCriticalError(
       error as Error,
       'api',
       { context: 'appointment_reminders_cron' }
     )
-    
     return {
       task: 'sendAppointmentReminders',
       success: false,
@@ -193,31 +161,24 @@ async function sendAppointmentReminders(): Promise<CronTaskResult> {
     }
   }
 }
-
 // Clean up expired waitlist entries
 async function cleanupExpiredWaitlist(): Promise<CronTaskResult> {
   const startTime = Date.now()
   let itemsProcessed = 0
-  
   try {
     const supabase = await createClient()
-    
     // Mark waitlist entries as expired if their preferred date has passed
     const today = new Date()
     today.setHours(23, 59, 59, 999) // End of today
-    
     const { data: expiredEntries, error: fetchError } = await supabase
       .from('waitlist')
       .select('id')
       .eq('status', 'waiting')
       .lt('preferred_date', today.toISOString())
-      
     if (fetchError) {
       throw new Error(`Failed to fetch expired waitlist entries: ${fetchError.message}`)
     }
-    
     if (!expiredEntries || expiredEntries.length === 0) {
-      console.log('No expired waitlist entries found')
       return {
         task: 'cleanupExpiredWaitlist',
         success: true,
@@ -225,7 +186,6 @@ async function cleanupExpiredWaitlist(): Promise<CronTaskResult> {
         itemsProcessed: 0
       }
     }
-    
     // Update expired entries
     const { error: updateError } = await supabase
       .from('waitlist')
@@ -235,29 +195,23 @@ async function cleanupExpiredWaitlist(): Promise<CronTaskResult> {
       })
       .eq('status', 'waiting')
       .lt('preferred_date', today.toISOString())
-    
     if (updateError) {
       throw new Error(`Failed to update expired waitlist entries: ${updateError.message}`)
     }
-    
     itemsProcessed = expiredEntries.length
-    console.log(`Marked ${itemsProcessed} waitlist entries as expired`)
-    
     return {
       task: 'cleanupExpiredWaitlist',
       success: true,
       duration: Date.now() - startTime,
       itemsProcessed
     }
-    
-  } catch (error) {
+  } catch (_error) {
     logError(
       error as Error,
       'medium',
       'api',
       { context: 'waitlist_cleanup_cron' }
     )
-    
     return {
       task: 'cleanupExpiredWaitlist',
       success: false,
@@ -266,35 +220,27 @@ async function cleanupExpiredWaitlist(): Promise<CronTaskResult> {
     }
   }
 }
-
 // Update daily analytics
 async function updateDailyAnalytics(): Promise<CronTaskResult> {
   const startTime = Date.now()
   let itemsProcessed = 0
-  
   try {
     const supabase = await createClient()
-    
     // Calculate analytics for yesterday
     const yesterday = new Date()
     yesterday.setDate(yesterday.getDate() - 1)
     yesterday.setHours(0, 0, 0, 0)
-    
     const today = new Date(yesterday)
     today.setDate(today.getDate() + 1)
-    
     // Get all locations
     const { data: locations, error: locationsError } = await supabase
       .from('locations')
       .select('id')
       .eq('is_active', true)
-      
     if (locationsError) {
       throw new Error(`Failed to fetch locations: ${locationsError.message}`)
     }
-    
     if (!locations || locations.length === 0) {
-      console.log('No active locations found for analytics')
       return {
         task: 'updateDailyAnalytics',
         success: true,
@@ -302,7 +248,6 @@ async function updateDailyAnalytics(): Promise<CronTaskResult> {
         itemsProcessed: 0
       }
     }
-    
     // Process analytics for each location
     for (const location of locations) {
       try {
@@ -319,7 +264,6 @@ async function updateDailyAnalytics(): Promise<CronTaskResult> {
           .eq('location_id', location.id)
           .gte('appointment_date', yesterday.toISOString())
           .lt('appointment_date', today.toISOString())
-          
         if (appointmentsError) {
           logError(
             `Failed to fetch appointments for location ${location.id}: ${appointmentsError.message}`,
@@ -328,28 +272,22 @@ async function updateDailyAnalytics(): Promise<CronTaskResult> {
           )
           continue
         }
-        
         const appointmentsArray = appointments || []
-        
         // Calculate metrics
         const totalAppointments = appointmentsArray.length
         const totalRevenue = appointmentsArray
           .filter(b => b.status === 'completed')
           .reduce((sum, b) => sum + (b.total_price || 0), 0)
-        
         const noShowCount = appointmentsArray.filter(b => b.status === 'no_show').length
         const cancellationCount = appointmentsArray.filter(b => b.status === 'cancelled').length
-        
         const completedAppointments = appointmentsArray.filter(b => b.status === 'completed')
         const averageBookingValue = completedAppointments.length > 0 
           ? totalRevenue / completedAppointments.length 
           : 0
-        
         // Count new vs returning customers
         const uniqueCustomers = [...new Set(appointmentsArray.map(b => b.customer_id))]
         let newCustomers = 0
         let returningCustomers = 0
-        
         for (const customerId of uniqueCustomers) {
           // Check if customer had appointments before yesterday
           const { data: previousAppointments } = await supabase
@@ -358,14 +296,12 @@ async function updateDailyAnalytics(): Promise<CronTaskResult> {
             .eq('customer_id', customerId)
             .lt('created_at', yesterday.toISOString())
             .limit(1)
-            
           if (previousAppointments && previousAppointments.length > 0) {
             returningCustomers++
           } else {
             newCustomers++
           }
         }
-        
         // Insert or update daily analytics
         const analyticsData = {
           location_id: location.id,
@@ -378,13 +314,11 @@ async function updateDailyAnalytics(): Promise<CronTaskResult> {
           no_show_count: noShowCount,
           cancellation_count: cancellationCount,
         }
-        
         const { error: analyticsError } = await supabase
           .from('analytics_daily')
           .upsert(analyticsData, {
             onConflict: 'location_id,date'
           })
-          
         if (analyticsError) {
           logError(
             `Failed to insert analytics for location ${location.id}: ${analyticsError.message}`,
@@ -393,9 +327,7 @@ async function updateDailyAnalytics(): Promise<CronTaskResult> {
           )
           continue
         }
-        
         itemsProcessed++
-        
       } catch (locationError) {
         logError(
           `Failed to process analytics for location ${location.id}: ${locationError}`,
@@ -405,23 +337,18 @@ async function updateDailyAnalytics(): Promise<CronTaskResult> {
         )
       }
     }
-    
-    console.log(`Updated daily analytics for ${itemsProcessed} locations`)
-    
     return {
       task: 'updateDailyAnalytics',
       success: true,
       duration: Date.now() - startTime,
       itemsProcessed
     }
-    
-  } catch (error) {
+  } catch (_error) {
     logCriticalError(
       error as Error,
       'api',
       { context: 'daily_analytics_cron' }
     )
-    
     return {
       task: 'updateDailyAnalytics',
       success: false,
@@ -430,47 +357,37 @@ async function updateDailyAnalytics(): Promise<CronTaskResult> {
     }
   }
 }
-
 // Clean up old notifications
 async function cleanupOldNotifications(): Promise<CronTaskResult> {
   const startTime = Date.now()
   let itemsProcessed = 0
-  
   try {
     const supabase = await createClient()
-    
     // Delete notifications older than 30 days
     const thirtyDaysAgo = new Date()
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-    
     const { data: deletedNotifications, error } = await supabase
       .from('notifications')
       .delete()
       .lt('created_at', thirtyDaysAgo.toISOString())
       .select('id')
-      
     if (error) {
       throw new Error(`Failed to delete old notifications: ${error.message}`)
     }
-    
     itemsProcessed = deletedNotifications?.length || 0
-    console.log(`Deleted ${itemsProcessed} old notifications`)
-    
     return {
       task: 'cleanupOldNotifications',
       success: true,
       duration: Date.now() - startTime,
       itemsProcessed
     }
-    
-  } catch (error) {
+  } catch (_error) {
     logError(
       error as Error,
       'low',
       'api',
       { context: 'notification_cleanup_cron' }
     )
-    
     return {
       task: 'cleanupOldNotifications',
       success: false,
@@ -479,7 +396,6 @@ async function cleanupOldNotifications(): Promise<CronTaskResult> {
     }
   }
 }
-
 // Available cron tasks
 const CRON_TASKS: Record<string, CronTask> = {
   'appointment-reminders': {
@@ -507,7 +423,6 @@ const CRON_TASKS: Record<string, CronTask> = {
     handler: cleanupOldNotifications
   }
 }
-
 // POST handler for running cron tasks
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
@@ -523,19 +438,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         { status: 401 }
       )
     }
-    
     const { searchParams } = new URL(request.url)
     const taskName = searchParams.get('task')
-    
     // If no task specified, run all tasks
     const tasksToRun = taskName 
       ? [taskName]
       : Object.keys(CRON_TASKS)
-    
-    console.log(`Running cron tasks: ${tasksToRun.join(', ')}`)
-    
+    // Running cron tasks: ${tasksToRun.join(', ')}
     const results: CronTaskResult[] = []
-    
     // Execute tasks sequentially to avoid overwhelming the system
     for (const task of tasksToRun) {
       if (!CRON_TASKS[task]) {
@@ -547,19 +457,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         })
         continue
       }
-      
-      console.log(`Executing cron task: ${task}`)
       const result = await CRON_TASKS[task].handler()
       results.push(result)
-      
-      console.log(`Cron task ${task} completed in ${result.duration}ms`)
     }
-    
     // Calculate summary
     const totalDuration = results.reduce((sum, r) => sum + r.duration, 0)
     const successCount = results.filter(r => r.success).length
     const totalProcessed = results.reduce((sum, r) => sum + (r.itemsProcessed || 0), 0)
-    
     const response = {
       success: true,
       tasksRun: tasksToRun.length,
@@ -570,18 +474,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       timestamp: new Date().toISOString(),
       results
     }
-    
-    console.log(`Cron execution completed: ${successCount}/${tasksToRun.length} tasks successful`)
-    
     return NextResponse.json(response)
-    
-  } catch (error) {
+  } catch (_error) {
     logCriticalError(
       error as Error,
       'api',
       { context: 'cron_handler', endpoint: '/api/cron' }
     )
-    
     return NextResponse.json(
       {
         error: 'Internal server error',
@@ -591,7 +490,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     )
   }
 }
-
 // GET handler for cron status and task list
 export async function GET(): Promise<NextResponse> {
   try {
@@ -600,7 +498,6 @@ export async function GET(): Promise<NextResponse> {
       description: task.description,
       schedule: task.schedule
     }))
-    
     return NextResponse.json({
       status: 'active',
       totalTasks: tasks.length,
@@ -608,15 +505,13 @@ export async function GET(): Promise<NextResponse> {
       timestamp: new Date().toISOString(),
       authConfigured: !!process.env.CRON_SECRET
     })
-    
-  } catch (error) {
+  } catch (_error) {
     logError(
       error as Error,
       'low',
       'api',
       { context: 'cron_status_check' }
     )
-    
     return NextResponse.json(
       { error: 'Failed to get cron status' },
       { status: 500 }

@@ -1,7 +1,6 @@
 'use client'
-
-import { useState, useEffect } from 'react'
-import { Bell, Check, X, Calendar, CreditCard, Star, MessageSquare, Gift, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { useState, useEffect, useCallback } from 'react'
+import { Bell, Check, X, Calendar, CreditCard, Star, Gift, AlertCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
   Button,
@@ -13,13 +12,13 @@ import {
   DropdownMenuTrigger,
   Badge,
   ScrollArea,
+  Skeleton,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui'
 import { formatDistanceToNow } from 'date-fns'
-
 interface Notification {
   id: string
   title: string
@@ -30,45 +29,37 @@ interface Notification {
   action_url?: string
   icon?: React.ReactNode
 }
-
 interface NotificationBellProps {
   userId: string
   initialCount?: number
 }
-
 export function NotificationBell({ userId, initialCount = 0 }: NotificationBellProps) {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [unreadCount, setUnreadCount] = useState(initialCount)
   const [isOpen, setIsOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-
   // Fetch notifications when dropdown opens
   useEffect(() => {
     if (isOpen && notifications.length === 0) {
       fetchNotifications()
     }
-  }, [isOpen])
-
-  const fetchNotifications = async () => {
+  }, [isOpen, fetchNotifications, notifications.length])
+  const fetchNotifications = useCallback(async () => {
     setLoading(true)
     try {
       const response = await fetch(`/api/notifications?userId=${userId}`)
       const data = await response.json()
-      
       const notificationsWithIcons = data.notifications.map((notif: Notification) => ({
         ...notif,
         icon: getNotificationIcon(notif.type)
       }))
-      
       setNotifications(notificationsWithIcons)
       setUnreadCount(data.unreadCount)
-    } catch (error) {
-      console.error('Failed to fetch notifications:', error)
+    } catch (_error) {
     } finally {
       setLoading(false)
     }
-  }
-
+  }, [userId])
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'booking':
@@ -85,51 +76,41 @@ export function NotificationBell({ userId, initialCount = 0 }: NotificationBellP
         return <Bell className="h-4 w-4" />
     }
   }
-
   const markAsRead = async (notificationId: string) => {
     try {
       await fetch(`/api/notifications/${notificationId}/read`, {
         method: 'POST'
       })
-      
       setNotifications(prev => 
         prev.map(n => n.id === notificationId ? { ...n, is_read: true } : n)
       )
       setUnreadCount(prev => Math.max(0, prev - 1))
-    } catch (error) {
-      console.error('Failed to mark notification as read:', error)
+    } catch (_error) {
     }
   }
-
   const markAllAsRead = async () => {
     try {
       await fetch(`/api/notifications/mark-all-read`, {
         method: 'POST',
         body: JSON.stringify({ userId })
       })
-      
       setNotifications(prev => prev.map(n => ({ ...n, is_read: true })))
       setUnreadCount(0)
-    } catch (error) {
-      console.error('Failed to mark all as read:', error)
+    } catch (_error) {
     }
   }
-
   const deleteNotification = async (notificationId: string) => {
     try {
       await fetch(`/api/notifications/${notificationId}`, {
         method: 'DELETE'
       })
-      
       setNotifications(prev => prev.filter(n => n.id !== notificationId))
       if (notifications.find(n => n.id === notificationId)?.is_read === false) {
         setUnreadCount(prev => Math.max(0, prev - 1))
       }
-    } catch (error) {
-      console.error('Failed to delete notification:', error)
+    } catch (_error) {
     }
   }
-
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <TooltipProvider>
@@ -169,11 +150,21 @@ export function NotificationBell({ userId, initialCount = 0 }: NotificationBellP
           )}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        
         <ScrollArea className="h-[400px]">
           {loading ? (
-            <div className="p-4 text-center text-muted-foreground">
-              Loading notifications...
+            <div className="space-y-1">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="p-3">
+                  <div className="flex gap-3">
+                    <Skeleton className="h-4 w-4 rounded-full flex-shrink-0 mt-1" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-3 w-full" />
+                      <Skeleton className="h-3 w-1/2" />
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           ) : notifications.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground">
@@ -186,7 +177,7 @@ export function NotificationBell({ userId, initialCount = 0 }: NotificationBellP
                 <div
                   key={notification.id}
                   className={cn(
-                    "group relative p-3 hover:bg-accent cursor-pointer",
+                    "group relative p-3 cursor-pointer",
                     !notification.is_read && "bg-accent/50"
                   )}
                   onClick={() => {
@@ -213,7 +204,7 @@ export function NotificationBell({ userId, initialCount = 0 }: NotificationBellP
                         {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
                       </p>
                     </div>
-                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex gap-1">
                       {!notification.is_read && (
                         <Button
                           variant="ghost"
@@ -248,7 +239,6 @@ export function NotificationBell({ userId, initialCount = 0 }: NotificationBellP
             </div>
           )}
         </ScrollArea>
-        
         {notifications.length > 0 && (
           <>
             <DropdownMenuSeparator />

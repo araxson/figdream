@@ -2,45 +2,36 @@
  * Service validation schemas for FigDream
  * Comprehensive Zod schemas for service management, categories, and pricing
  */
-
 import { z } from 'zod'
-
 // Import reusable schemas
 import { salonIdSchema, locationIdSchema } from './salon-schema'
 import { userIdSchema } from './user-schema'
 import { priceSchema, durationSchema } from './booking-schema'
-
 // Common regex patterns
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 const colorHexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
 // const urlRegex = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/ // Reserved for future use
-
 // Service difficulty levels
 export const ServiceDifficulty = z.enum(['beginner', 'intermediate', 'advanced', 'expert'], {
   message: 'Invalid service difficulty level'
 })
-
 // Service status
 export const ServiceStatus = z.enum(['active', 'inactive', 'discontinued', 'seasonal'], {
   message: 'Invalid service status'
 })
-
 // Base validation schemas
 export const serviceIdSchema = z
   .string({ message: 'Service ID is required' })
   .regex(uuidRegex, 'Invalid service ID format')
-
 export const categoryIdSchema = z
   .string({ message: 'Category ID is required' })
   .regex(uuidRegex, 'Invalid category ID format')
-
 export const serviceNameSchema = z
   .string({ message: 'Service name is required' })
   .min(1, 'Service name is required')
   .max(100, 'Service name must be less than 100 characters')
   .regex(/^[a-zA-Z0-9\s\-\'&\.!(),]+$/, 'Service name contains invalid characters')
   .trim()
-
 export const serviceDescriptionSchema = z
   .string()
   .nullable()
@@ -49,14 +40,12 @@ export const serviceDescriptionSchema = z
     message: 'Service description must be between 10 and 500 characters'
   })
   .transform((val) => val?.trim() || null)
-
 export const categoryNameSchema = z
   .string({ message: 'Category name is required' })
   .min(1, 'Category name is required')
   .max(50, 'Category name must be less than 50 characters')
   .regex(/^[a-zA-Z0-9\s\-\'&\.!(),]+$/, 'Category name contains invalid characters')
   .trim()
-
 export const displayOrderSchema = z
   .number()
   .int()
@@ -64,7 +53,6 @@ export const displayOrderSchema = z
   .max(9999, 'Display order cannot exceed 9999')
   .optional()
   .default(0)
-
 export const skillLevelSchema = z
   .number()
   .int()
@@ -72,7 +60,6 @@ export const skillLevelSchema = z
   .max(5, 'Skill level cannot exceed 5')
   .optional()
   .nullable()
-
 export const preparationTimeSchema = z
   .number()
   .int()
@@ -80,7 +67,6 @@ export const preparationTimeSchema = z
   .max(120, 'Preparation time cannot exceed 2 hours')
   .optional()
   .default(0)
-
 export const cleanupTimeSchema = z
   .number()
   .int()
@@ -88,7 +74,6 @@ export const cleanupTimeSchema = z
   .max(60, 'Cleanup time cannot exceed 1 hour')
   .optional()
   .default(0)
-
 // Service category schema
 export const serviceCategorySchema = z.object({
   name: categoryNameSchema,
@@ -117,12 +102,10 @@ export const serviceCategorySchema = z.object({
   is_featured: z.boolean().optional().default(false),
   is_active: z.boolean().optional().default(true)
 })
-
 // Update service category schema
 export const updateServiceCategorySchema = serviceCategorySchema.partial().extend({
   category_id: categoryIdSchema
 })
-
 // Base service schema
 export const serviceSchema = z.object({
   name: serviceNameSchema,
@@ -236,12 +219,10 @@ export const serviceSchema = z.object({
   message: 'Consultation duration is required when consultation is enabled',
   path: ['consultation_duration']
 })
-
 // Update service schema
 export const updateServiceSchema = serviceSchema.partial().extend({
   service_id: serviceIdSchema
 })
-
 // Salon service relationship schema
 export const salonServiceSchema = z.object({
   salon_id: salonIdSchema,
@@ -285,7 +266,6 @@ export const salonServiceSchema = z.object({
     requires_previous_service: serviceIdSchema.nullable().optional()
   }).optional()
 })
-
 // Staff service relationship schema
 export const staffServiceSchema = z.object({
   staff_id: userIdSchema,
@@ -326,7 +306,6 @@ export const staffServiceSchema = z.object({
     .nullable()
     .optional()
 })
-
 // Service package schema
 export const servicePackageSchema = z.object({
   name: z
@@ -376,7 +355,6 @@ export const servicePackageSchema = z.object({
   is_gift_eligible: z.boolean().optional().default(true),
   is_active: z.boolean().optional().default(true)
 })
-
 // Service addon schema
 export const serviceAddonSchema = z.object({
   name: z
@@ -406,7 +384,6 @@ export const serviceAddonSchema = z.object({
     .default(1),
   is_active: z.boolean().optional().default(true)
 })
-
 // Service search/filter schema
 export const serviceFilterSchema = z.object({
   salon_id: salonIdSchema.optional(),
@@ -468,7 +445,6 @@ export const serviceFilterSchema = z.object({
   message: 'Minimum duration must be less than or equal to maximum duration',
   path: ['max_duration']
 })
-
 // Bulk operations schema
 export const bulkServiceUpdateSchema = z.object({
   service_ids: z
@@ -486,7 +462,6 @@ export const bulkServiceUpdateSchema = z.object({
     message: 'At least one update field must be provided'
   })
 })
-
 // Service review schema
 export const serviceReviewSchema = z.object({
   service_id: serviceIdSchema,
@@ -525,11 +500,9 @@ export const serviceReviewSchema = z.object({
     .max(5, 'Staff friendliness rating cannot exceed 5')
     .optional()
 })
-
 // Partial schemas for updates
 export const serviceUpdateSchema = serviceSchema.partial()
 export const serviceCategoryUpdateSchema = serviceCategorySchema.partial()
-
 // Type exports
 export type ServiceInput = z.infer<typeof serviceSchema>
 export type UpdateServiceInput = z.infer<typeof updateServiceSchema>
@@ -542,9 +515,7 @@ export type ServiceAddonInput = z.infer<typeof serviceAddonSchema>
 export type ServiceFilterInput = z.infer<typeof serviceFilterSchema>
 export type BulkServiceUpdateInput = z.infer<typeof bulkServiceUpdateSchema>
 export type ServiceReviewInput = z.infer<typeof serviceReviewSchema>
-
 // Update type exports
 export type ServiceUpdateInput = z.infer<typeof serviceUpdateSchema>
 export type ServiceCategoryUpdateInput = z.infer<typeof serviceCategoryUpdateSchema>
-
 // Individual field schemas are already exported at their declaration

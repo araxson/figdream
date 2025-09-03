@@ -2,9 +2,7 @@
  * User profile validation schemas for FigDream
  * Comprehensive Zod schemas for user profile management, preferences, and settings
  */
-
 import { z } from 'zod'
-
 // Import reusable schemas from auth-schema
 import { 
   emailSchema, 
@@ -13,12 +11,10 @@ import {
   Gender, 
   UserRole 
 } from './auth-schema'
-
 // Common regex patterns
 const urlRegex = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 const zipCodeRegex = /^\d{5}(-\d{4})?$/
-
 // Timezone validation
 const timezones = [
   'America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles',
@@ -26,15 +22,12 @@ const timezones = [
   'Europe/London', 'Europe/Paris', 'Europe/Berlin', 'Asia/Tokyo', 'Asia/Shanghai',
   'Australia/Sydney', 'Australia/Melbourne'
 ]
-
 // Loyalty tier enum
 export const LoyaltyTier = z.enum(['bronze', 'silver', 'gold', 'platinum'])
-
 // Base validation schemas
 export const userIdSchema = z
   .string()
   .regex(uuidRegex, 'Invalid user ID format')
-
 export const avatarUrlSchema = z
   .string()
   .nullable()
@@ -46,7 +39,6 @@ export const avatarUrlSchema = z
     message: 'Avatar URL must be less than 500 characters'
   })
   .transform((val) => val || null)
-
 export const dateOfBirthSchema = z
   .string()
   .nullable()
@@ -68,7 +60,6 @@ export const dateOfBirthSchema = z
     message: 'Age must be between 13 and 120 years'
   })
   .transform((val) => val || null)
-
 export const timezoneSchema = z
   .string()
   .optional()
@@ -76,7 +67,6 @@ export const timezoneSchema = z
     message: 'Invalid timezone'
   })
   .default('America/New_York')
-
 export const addressSchema = z
   .string()
   .nullable()
@@ -85,7 +75,6 @@ export const addressSchema = z
     message: 'Address must be between 5 and 200 characters'
   })
   .transform((val) => val?.trim() || null)
-
 export const citySchema = z
   .string()
   .nullable()
@@ -97,7 +86,6 @@ export const citySchema = z
     message: 'City can only contain letters, spaces, hyphens, apostrophes, and periods'
   })
   .transform((val) => val?.trim() || null)
-
 export const stateSchema = z
   .string()
   .nullable()
@@ -106,7 +94,6 @@ export const stateSchema = z
     message: 'State must be between 2 and 50 characters'
   })
   .transform((val) => val?.trim() || null)
-
 export const zipCodeSchema = z
   .string()
   .nullable()
@@ -115,7 +102,6 @@ export const zipCodeSchema = z
     message: 'ZIP code must be in format 12345 or 12345-6789'
   })
   .transform((val) => val || null)
-
 export const countrySchema = z
   .string()
   .min(2, 'Country must be at least 2 characters')
@@ -123,7 +109,6 @@ export const countrySchema = z
   .nullable()
   .optional()
   .transform((val) => val?.trim() || null)
-
 // User profile schema
 export const userProfileSchema = z.object({
   first_name: nameSchema,
@@ -135,12 +120,10 @@ export const userProfileSchema = z.object({
   gender: Gender.optional().nullable(),
   timezone: timezoneSchema
 })
-
 // Update user profile schema
 export const updateUserProfileSchema = userProfileSchema.partial().extend({
   user_id: userIdSchema
 })
-
 // User address schema
 export const userAddressSchema = z.object({
   user_id: userIdSchema,
@@ -151,7 +134,6 @@ export const userAddressSchema = z.object({
   country: countrySchema.default('United States'),
   is_primary: z.boolean().optional().default(true)
 })
-
 // User preferences schema
 export const userPreferencesSchema = z.object({
   user_id: userIdSchema,
@@ -182,7 +164,6 @@ export const userPreferencesSchema = z.object({
     .optional()
     .default('system')
 })
-
 // Notification preferences schema
 export const notificationPreferencesSchema = z.object({
   user_id: userIdSchema,
@@ -206,7 +187,6 @@ export const notificationPreferencesSchema = z.object({
     .optional()
     .default(24)
 })
-
 // Privacy settings schema
 export const privacySettingsSchema = z.object({
   user_id: userIdSchema,
@@ -223,7 +203,6 @@ export const privacySettingsSchema = z.object({
   marketing_consent: z.boolean().optional().default(false),
   third_party_sharing: z.boolean().optional().default(false)
 })
-
 // Account security schema
 export const accountSecuritySchema = z.object({
   user_id: userIdSchema,
@@ -253,7 +232,6 @@ export const accountSecuritySchema = z.object({
     .optional()
     .default(0)
 })
-
 // Emergency contact schema
 export const emergencyContactSchema = z.object({
   user_id: userIdSchema,
@@ -268,7 +246,6 @@ export const emergencyContactSchema = z.object({
     .transform((val) => val.trim()),
   is_primary: z.boolean().optional().default(true)
 })
-
 // User loyalty schema
 export const userLoyaltySchema = z.object({
   customer_id: userIdSchema,
@@ -295,7 +272,6 @@ export const userLoyaltySchema = z.object({
     .optional()
     .nullable()
 })
-
 // Staff profile schema (extends user profile)
 export const staffProfileSchema = userProfileSchema.extend({
   employee_id: z
@@ -346,7 +322,6 @@ export const staffProfileSchema = userProfileSchema.extend({
     .optional()
     .nullable()
 })
-
 // Bulk user operations schema
 export const bulkUserUpdateSchema = z.object({
   user_ids: z
@@ -364,7 +339,6 @@ export const bulkUserUpdateSchema = z.object({
     message: 'At least one update field must be provided'
   })
 })
-
 // User search/filter schema
 export const userFilterSchema = z.object({
   role: UserRole.optional(),
@@ -414,13 +388,11 @@ export const userFilterSchema = z.object({
   message: 'Created after date must be before or equal to created before date',
   path: ['created_before']
 })
-
 // Partial schemas for updates
 export const userProfileUpdateSchema = userProfileSchema.partial()
 export const staffProfileUpdateSchema = staffProfileSchema.partial()
 export const userPreferencesUpdateSchema = userPreferencesSchema.partial()
 export const notificationPreferencesUpdateSchema = notificationPreferencesSchema.partial()
-
 // Type exports
 export type UserProfileInput = z.infer<typeof userProfileSchema>
 export type UpdateUserProfileInput = z.infer<typeof updateUserProfileSchema>
@@ -434,7 +406,6 @@ export type UserLoyaltyInput = z.infer<typeof userLoyaltySchema>
 export type StaffProfileInput = z.infer<typeof staffProfileSchema>
 export type BulkUserUpdateInput = z.infer<typeof bulkUserUpdateSchema>
 export type UserFilterInput = z.infer<typeof userFilterSchema>
-
 // Update type exports
 export type UserProfileUpdateInput = z.infer<typeof userProfileUpdateSchema>
 export type StaffProfileUpdateInput = z.infer<typeof staffProfileUpdateSchema>

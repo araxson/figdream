@@ -1,5 +1,4 @@
 import { logApiError } from './logger'
-
 /**
  * Custom API Error class
  */
@@ -7,7 +6,6 @@ export class ApiError extends Error {
   public statusCode: number
   public code?: string
   public details?: unknown
-
   constructor(
     message: string,
     statusCode: number = 500,
@@ -19,46 +17,35 @@ export class ApiError extends Error {
     this.statusCode = statusCode
     this.code = code
     this.details = details
-    
     // Maintain proper stack trace
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, ApiError)
     }
   }
 }
-
 /**
  * Common API error types
  */
 export const ApiErrors = {
   BadRequest: (message = 'Bad Request', details?: unknown) =>
     new ApiError(message, 400, 'BAD_REQUEST', details),
-    
   Unauthorized: (message = 'Unauthorized', details?: unknown) =>
     new ApiError(message, 401, 'UNAUTHORIZED', details),
-    
   Forbidden: (message = 'Forbidden', details?: unknown) =>
     new ApiError(message, 403, 'FORBIDDEN', details),
-    
   NotFound: (message = 'Not Found', details?: unknown) =>
     new ApiError(message, 404, 'NOT_FOUND', details),
-    
   Conflict: (message = 'Conflict', details?: unknown) =>
     new ApiError(message, 409, 'CONFLICT', details),
-    
   ValidationError: (message = 'Validation Error', details?: unknown) =>
     new ApiError(message, 422, 'VALIDATION_ERROR', details),
-    
   TooManyRequests: (message = 'Too Many Requests', details?: unknown) =>
     new ApiError(message, 429, 'RATE_LIMITED', details),
-    
   InternalServer: (message = 'Internal Server Error', details?: unknown) =>
     new ApiError(message, 500, 'INTERNAL_ERROR', details),
-    
   ServiceUnavailable: (message = 'Service Unavailable', details?: unknown) =>
     new ApiError(message, 503, 'SERVICE_UNAVAILABLE', details),
 }
-
 /**
  * Handle API response and throw error if not ok
  */
@@ -66,7 +53,6 @@ export async function handleApiResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
     let errorMessage = `HTTP ${response.status}: ${response.statusText}`
     let errorDetails: unknown = null
-    
     try {
       const errorData = await response.json()
       errorMessage = errorData.message || errorData.error || errorMessage
@@ -79,10 +65,8 @@ export async function handleApiResponse<T>(response: Response): Promise<T> {
         // Could not read response body
       }
     }
-    
     // Log the error
     logApiError(errorMessage, response.url, response.status, { errorDetails })
-    
     // Throw appropriate error based on status code
     switch (response.status) {
       case 400:
@@ -108,7 +92,6 @@ export async function handleApiResponse<T>(response: Response): Promise<T> {
         throw new ApiError(errorMessage, response.status, 'API_ERROR', errorDetails)
     }
   }
-  
   // Parse successful response
   try {
     return await response.json()
@@ -117,7 +100,6 @@ export async function handleApiResponse<T>(response: Response): Promise<T> {
     return response as unknown as T
   }
 }
-
 /**
  * Create a type-safe API client
  */
@@ -129,10 +111,8 @@ export interface ApiClientConfig {
   retryDelay?: number
   onError?: (error: ApiError) => void
 }
-
 export class ApiClient {
   private config: Required<ApiClientConfig>
-  
   constructor(config?: ApiClientConfig) {
     this.config = {
       baseUrl: config?.baseUrl || '',
@@ -143,7 +123,6 @@ export class ApiClient {
       onError: config?.onError || (() => {})
     }
   }
-  
   /**
    * Make an API request with error handling and retries
    */
@@ -154,9 +133,7 @@ export class ApiClient {
   ): Promise<T> {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), this.config.timeout)
-    
     const fullUrl = this.config.baseUrl + url
-    
     try {
       const response = await fetch(fullUrl, {
         ...options,
@@ -167,47 +144,37 @@ export class ApiClient {
         },
         signal: controller.signal
       })
-      
       clearTimeout(timeoutId)
       return await handleApiResponse<T>(response)
-      
-    } catch (error) {
+    } catch (_error) {
       clearTimeout(timeoutId)
-      
       // Handle abort error
       if (error instanceof Error && error.name === 'AbortError') {
         const timeoutError = new ApiError('Request timeout', 408, 'TIMEOUT')
         logApiError(timeoutError, fullUrl)
         throw timeoutError
       }
-      
       // Handle network errors
       if (error instanceof TypeError && error.message === 'Failed to fetch') {
         const networkError = new ApiError('Network error', 0, 'NETWORK_ERROR')
         logApiError(networkError, fullUrl)
-        
         // Retry if configured
         if (retryCount < this.config.retries) {
           await new Promise(resolve => setTimeout(resolve, this.config.retryDelay * (retryCount + 1)))
           return this.request<T>(url, options, retryCount + 1)
         }
-        
         throw networkError
       }
-      
       // Handle API errors
       if (error instanceof ApiError) {
         this.config.onError(error)
-        
         // Retry on 503 or 429 if configured
         if ((error.statusCode === 503 || error.statusCode === 429) && retryCount < this.config.retries) {
           await new Promise(resolve => setTimeout(resolve, this.config.retryDelay * (retryCount + 1)))
           return this.request<T>(url, options, retryCount + 1)
         }
-        
         throw error
       }
-      
       // Handle unexpected errors
       const unexpectedError = new ApiError(
         error instanceof Error ? error.message : 'Unknown error',
@@ -218,7 +185,6 @@ export class ApiClient {
       throw unexpectedError
     }
   }
-  
   /**
    * GET request
    */
@@ -228,7 +194,6 @@ export class ApiClient {
       method: 'GET'
     })
   }
-  
   /**
    * POST request
    */
@@ -239,7 +204,6 @@ export class ApiClient {
       body: body ? JSON.stringify(body) : undefined
     })
   }
-  
   /**
    * PUT request
    */
@@ -250,7 +214,6 @@ export class ApiClient {
       body: body ? JSON.stringify(body) : undefined
     })
   }
-  
   /**
    * PATCH request
    */
@@ -261,7 +224,6 @@ export class ApiClient {
       body: body ? JSON.stringify(body) : undefined
     })
   }
-  
   /**
    * DELETE request
    */
@@ -272,7 +234,6 @@ export class ApiClient {
     })
   }
 }
-
 /**
  * Default API client instance
  */
@@ -282,7 +243,6 @@ export const apiClient = new ApiClient({
   retries: 2,
   retryDelay: 1000
 })
-
 /**
  * Format API error for display
  */
@@ -311,21 +271,17 @@ export function formatApiError(error: unknown): string {
         return error.message || 'An unexpected error occurred.'
     }
   }
-  
   if (error instanceof Error) {
     return error.message
   }
-  
   return 'An unexpected error occurred.'
 }
-
 /**
  * Check if error is an API error
  */
 export function isApiError(error: unknown): error is ApiError {
   return error instanceof ApiError
 }
-
 /**
  * Check if error is a specific status code
  */

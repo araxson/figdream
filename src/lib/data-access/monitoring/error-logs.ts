@@ -1,14 +1,10 @@
 'use server';
-
 import { createClient } from '@/lib/database/supabase/server';
 import type { Database } from '@/types/database.types';
-
 type ErrorLog = Database['public']['Tables']['error_logs']['Row'];
 type ErrorLogInsert = Database['public']['Tables']['error_logs']['Insert'];
-
 export type ErrorSeverity = 'low' | 'medium' | 'high' | 'critical';
 export type ErrorCategory = 'database' | 'api' | 'auth' | 'payment' | 'ui' | 'system' | 'business_logic' | 'third_party';
-
 export interface ErrorContext {
   userId?: string;
   salonId?: string;
@@ -18,9 +14,8 @@ export interface ErrorContext {
   ip?: string;
   requestId?: string;
   sessionId?: string;
-  [key: string]: any;
+  [key: string]: string | number | boolean | undefined;
 }
-
 export interface ErrorStats {
   totalErrors: number;
   errorsBySeverity: Record<ErrorSeverity, number>;
@@ -33,7 +28,6 @@ export interface ErrorStats {
   }>;
   errorRate: number;
 }
-
 /**
  * Log an error to the database
  */
@@ -46,7 +40,6 @@ export async function logError(
 ): Promise<void> {
   try {
     const supabase = await createClient();
-    
     const errorData: ErrorLogInsert = {
       message: message.slice(0, 500), // Truncate to avoid DB errors
       category,
@@ -58,22 +51,16 @@ export async function logError(
       created_at: new Date().toISOString(),
       resolved: false
     };
-    
     const { error } = await supabase
       .from('error_logs')
       .insert(errorData);
-      
     if (error) {
       // Log to console if DB logging fails
-      console.error('Failed to log error to database:', error);
-      console.error('Original error:', { message, category, severity, context });
     }
-  } catch (err) {
+  } catch (_err) {
     // Fail silently to prevent error logging from breaking the app
-    console.error('Error logging failed:', err);
   }
 }
-
 /**
  * Get error statistics for monitoring
  */
@@ -83,21 +70,16 @@ export async function getErrorStats(
   category?: ErrorCategory
 ): Promise<ErrorStats> {
   const supabase = await createClient();
-  
   let query = supabase
     .from('error_logs')
     .select('*')
     .gte('created_at', startDate.toISOString())
     .lte('created_at', endDate.toISOString());
-    
   if (category) {
     query = query.eq('category', category);
   }
-  
   const { data, error } = await query;
-  
   if (error || !data) {
-    console.error('Failed to get error stats:', error);
     return {
       totalErrors: 0,
       errorsBySeverity: {
@@ -121,27 +103,22 @@ export async function getErrorStats(
       errorRate: 0
     };
   }
-  
   // Calculate statistics
   const totalErrors = data.length;
-  
   const errorsBySeverity = data.reduce((acc, err) => {
     const severity = err.severity as ErrorSeverity;
     acc[severity] = (acc[severity] || 0) + 1;
     return acc;
   }, {} as Record<ErrorSeverity, number>);
-  
   const errorsByCategory = data.reduce((acc, err) => {
     const cat = err.category as ErrorCategory;
     acc[cat] = (acc[cat] || 0) + 1;
     return acc;
   }, {} as Record<ErrorCategory, number>);
-  
   // Get recent errors
   const recentErrors = data
     .sort((a, b) => new Date(b.created_at!).getTime() - new Date(a.created_at!).getTime())
     .slice(0, 10);
-  
   // Calculate top errors
   const errorMessageCounts = new Map<string, { count: number; lastOccurred: Date }>();
   data.forEach(err => {
@@ -153,7 +130,6 @@ export async function getErrorStats(
         : existing.lastOccurred
     });
   });
-  
   const topErrors = Array.from(errorMessageCounts.entries())
     .map(([message, stats]) => ({
       message,
@@ -162,10 +138,8 @@ export async function getErrorStats(
     }))
     .sort((a, b) => b.count - a.count)
     .slice(0, 10);
-  
   const timeDiffHours = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60);
   const errorRate = timeDiffHours > 0 ? totalErrors / timeDiffHours : 0;
-  
   return {
     totalErrors,
     errorsBySeverity: {
@@ -189,13 +163,11 @@ export async function getErrorStats(
     errorRate
   };
 }
-
 /**
  * Get unresolved critical errors
  */
 export async function getCriticalErrors(limit: number = 50): Promise<ErrorLog[]> {
   const supabase = await createClient();
-  
   const { data, error } = await supabase
     .from('error_logs')
     .select('*')
@@ -203,15 +175,11 @@ export async function getCriticalErrors(limit: number = 50): Promise<ErrorLog[]>
     .eq('resolved', false)
     .order('created_at', { ascending: false })
     .limit(limit);
-    
   if (error) {
-    console.error('Failed to get critical errors:', error);
     return [];
   }
-  
   return data || [];
 }
-
 /**
  * Mark an error as resolved
  */
@@ -220,7 +188,6 @@ export async function resolveError(
   resolution?: string
 ): Promise<void> {
   const supabase = await createClient();
-  
   const { error } = await supabase
     .from('error_logs')
     .update({
@@ -229,13 +196,10 @@ export async function resolveError(
       resolution: resolution || null
     })
     .eq('id', errorId);
-    
   if (error) {
-    console.error('Failed to resolve error:', error);
     throw new Error('Failed to mark error as resolved');
   }
 }
-
 /**
  * Get errors by user
  */
@@ -244,22 +208,17 @@ export async function getUserErrors(
   limit: number = 50
 ): Promise<ErrorLog[]> {
   const supabase = await createClient();
-  
   const { data, error } = await supabase
     .from('error_logs')
     .select('*')
     .eq('user_id', userId)
     .order('created_at', { ascending: false })
     .limit(limit);
-    
   if (error) {
-    console.error('Failed to get user errors:', error);
     return [];
   }
-  
   return data || [];
 }
-
 /**
  * Bulk resolve errors
  */
@@ -268,7 +227,6 @@ export async function bulkResolveErrors(
   resolution?: string
 ): Promise<void> {
   const supabase = await createClient();
-  
   const { error } = await supabase
     .from('error_logs')
     .update({
@@ -277,34 +235,26 @@ export async function bulkResolveErrors(
       resolution: resolution || null
     })
     .in('id', errorIds);
-    
   if (error) {
-    console.error('Failed to bulk resolve errors:', error);
     throw new Error('Failed to resolve errors');
   }
 }
-
 /**
  * Clean up old resolved errors
  */
 export async function cleanupOldErrors(daysToKeep: number = 90): Promise<void> {
   const supabase = await createClient();
-  
   const cutoffDate = new Date();
   cutoffDate.setDate(cutoffDate.getDate() - daysToKeep);
-  
   const { error } = await supabase
     .from('error_logs')
     .delete()
     .eq('resolved', true)
     .lt('created_at', cutoffDate.toISOString());
-    
   if (error) {
-    console.error('Failed to cleanup old errors:', error);
     throw new Error('Failed to cleanup error logs');
   }
 }
-
 /**
  * Global error handler for Next.js
  */
@@ -315,7 +265,6 @@ export async function handleError(
 ): Promise<void> {
   // Determine severity based on error type
   let severity: ErrorSeverity = 'medium';
-  
   if (error.message.toLowerCase().includes('critical') || 
       error.message.toLowerCase().includes('fatal')) {
     severity = 'critical';
@@ -323,7 +272,6 @@ export async function handleError(
              error.message.toLowerCase().includes('payment')) {
     severity = 'high';
   }
-  
   await logError(
     error.message,
     category,
@@ -332,7 +280,6 @@ export async function handleError(
     error.stack
   );
 }
-
 /**
  * React Error Boundary logger
  */

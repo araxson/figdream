@@ -2,9 +2,7 @@
  * Payment Method List Component for FigDream
  * Displays and manages user's saved payment methods
  */
-
 'use client'
-
 import { useState, useEffect } from 'react'
 import {
   Button,
@@ -41,7 +39,6 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { getPaymentMethodDisplayName, isWalletPaymentMethod } from '@/lib/integrations/stripe/client'
-
 interface PaymentMethod {
   id: string
   type: string
@@ -67,7 +64,6 @@ interface PaymentMethod {
     }
   }
 }
-
 interface PaymentMethodListProps {
   userId: string
   onPaymentMethodSelect?: (paymentMethodId: string) => void
@@ -76,7 +72,6 @@ interface PaymentMethodListProps {
   showAddButton?: boolean
   onAddNewMethod?: () => void
 }
-
 // Payment method card component
 function PaymentMethodCard({
   paymentMethod,
@@ -103,7 +98,6 @@ function PaymentMethodCard({
     if (isWalletPaymentMethod(type)) return <Smartphone className="w-5 h-5" />
     return <CreditCard className="w-5 h-5" />
   }
-
   const getPaymentMethodDetails = (pm: PaymentMethod) => {
     if (pm.type === 'card' && pm.card) {
       return {
@@ -112,7 +106,6 @@ function PaymentMethodCard({
         expiry: `${pm.card.exp_month.toString().padStart(2, '0')}/${pm.card.exp_year}`,
       }
     }
-    
     if (pm.type === 'us_bank_account' && pm.us_bank_account) {
       return {
         display: `•••• ${pm.us_bank_account.last4}`,
@@ -120,19 +113,16 @@ function PaymentMethodCard({
         expiry: pm.us_bank_account.account_type.toUpperCase(),
       }
     }
-
     return {
       display: getPaymentMethodDisplayName(pm.type),
       brand: '',
       expiry: '',
     }
   }
-
   const details = getPaymentMethodDetails(paymentMethod)
-
   return (
     <Card 
-      className={`transition-all hover:shadow-md ${
+      className={`${
         isSelected ? 'ring-2 ring-blue-500 border-blue-200' : ''
       }`}
     >
@@ -150,12 +140,12 @@ function PaymentMethodCard({
               <div className="flex items-center gap-2">
                 <span className="font-medium">{details.display}</span>
                 {details.brand && (
-                  <Badge variant="secondary" className="text-xs">
+                  <Badge variant="secondary">
                     {details.brand}
                   </Badge>
                 )}
                 {isDefault && (
-                  <Badge variant="default" className="text-xs">
+                  <Badge variant="default">
                     <Star className="w-3 h-3 mr-1" />
                     Default
                   </Badge>
@@ -177,7 +167,6 @@ function PaymentMethodCard({
               )}
             </div>
           </div>
-
           <div className="flex items-center gap-2">
             {allowSelection && (
               <div className="flex items-center">
@@ -186,7 +175,6 @@ function PaymentMethodCard({
                 )}
               </div>
             )}
-            
             {!allowSelection && (
               <div className="flex items-center gap-1">
                 {!isDefault && onSetDefault && (
@@ -210,14 +198,13 @@ function PaymentMethodCard({
                     </Tooltip>
                   </TooltipProvider>
                 )}
-                
                 {onDelete && (
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        className="text-red-600"
                         disabled={isDeleting}
                         onClick={(e) => e.stopPropagation()}
                       >
@@ -239,7 +226,7 @@ function PaymentMethodCard({
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <AlertDialogAction
                           onClick={() => onDelete(paymentMethod.id)}
-                          className="bg-red-600 hover:bg-red-700"
+                          className="bg-red-600"
                         >
                           Remove
                         </AlertDialogAction>
@@ -256,7 +243,6 @@ function PaymentMethodCard({
     </Card>
   )
 }
-
 // Loading skeleton
 function PaymentMethodSkeleton() {
   return (
@@ -279,7 +265,6 @@ function PaymentMethodSkeleton() {
     </Card>
   )
 }
-
 // Empty state
 function EmptyPaymentMethods({ onAddNew }: { onAddNew?: () => void }) {
   return (
@@ -298,7 +283,6 @@ function EmptyPaymentMethods({ onAddNew }: { onAddNew?: () => void }) {
     </div>
   )
 }
-
 // Main component
 export function PaymentMethodList({
   userId,
@@ -312,46 +296,37 @@ export function PaymentMethodList({
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
   const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set())
-
   // Load payment methods
   const loadPaymentMethods = async () => {
     try {
       setIsLoading(true)
       setError('')
-
       const response = await fetch(`/api/payment/methods?userId=${userId}`)
       if (!response.ok) {
         throw new Error('Failed to load payment methods')
       }
-
       const data = await response.json()
       setPaymentMethods(data.paymentMethods || [])
-    } catch (error) {
-      console.error('Error loading payment methods:', error)
+    } catch (_error) {
       setError('Failed to load payment methods')
       toast.error('Failed to load payment methods')
     } finally {
       setIsLoading(false)
     }
   }
-
   // Delete payment method
   const handleDeletePaymentMethod = async (paymentMethodId: string) => {
     try {
       setDeletingIds(prev => new Set(prev).add(paymentMethodId))
-
       const response = await fetch(`/api/payment/methods/${paymentMethodId}`, {
         method: 'DELETE',
       })
-
       if (!response.ok) {
         throw new Error('Failed to remove payment method')
       }
-
       setPaymentMethods(prev => prev.filter(pm => pm.id !== paymentMethodId))
       toast.success('Payment method removed')
-    } catch (error) {
-      console.error('Error removing payment method:', error)
+    } catch (_error) {
       toast.error('Failed to remove payment method')
     } finally {
       setDeletingIds(prev => {
@@ -361,34 +336,29 @@ export function PaymentMethodList({
       })
     }
   }
-
   // Set default payment method
   const handleSetDefaultPaymentMethod = async (paymentMethodId: string) => {
     try {
       const response = await fetch(`/api/payment/methods/${paymentMethodId}/default`, {
         method: 'PUT',
       })
-
       if (!response.ok) {
         throw new Error('Failed to set default payment method')
       }
-
       // Refresh payment methods to update default status
       await loadPaymentMethods()
       toast.success('Default payment method updated')
-    } catch (error) {
-      console.error('Error setting default payment method:', error)
+    } catch (_error) {
       toast.error('Failed to set default payment method')
     }
   }
-
   // Load payment methods on mount
   useEffect(() => {
     if (userId) {
       loadPaymentMethods()
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId])
-
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -398,7 +368,6 @@ export function PaymentMethodList({
       </div>
     )
   }
-
   if (error) {
     return (
       <Alert variant="destructive">
@@ -417,11 +386,9 @@ export function PaymentMethodList({
       </Alert>
     )
   }
-
   if (paymentMethods.length === 0) {
     return <EmptyPaymentMethods onAddNew={onAddNewMethod} />
   }
-
   return (
     <div className="space-y-4">
       {/* Add new button */}
@@ -435,7 +402,6 @@ export function PaymentMethodList({
           Add New Payment Method
         </Button>
       )}
-
       {/* Payment methods list */}
       <div className="space-y-3">
         {paymentMethods.map((paymentMethod, index) => (
@@ -455,5 +421,4 @@ export function PaymentMethodList({
     </div>
   )
 }
-
 export default PaymentMethodList

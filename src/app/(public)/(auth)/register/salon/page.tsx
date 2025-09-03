@@ -1,8 +1,7 @@
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui'
 import { RegisterForm } from '@/components/auth/register-form'
-import { Building, TrendingUp, Users, BarChart, Shield, Zap } from 'lucide-react'
-
+import { Building, TrendingUp, Users, BarChart, Zap } from 'lucide-react'
 export default function SalonRegistrationPage() {
   return (
     <div className="space-y-6">
@@ -18,7 +17,6 @@ export default function SalonRegistrationPage() {
           Join thousands of salons using FigDream to manage and grow their business
         </p>
       </div>
-
       {/* Registration Card */}
       <Card>
         <CardHeader>
@@ -30,7 +28,7 @@ export default function SalonRegistrationPage() {
         <CardContent>
           <RegisterForm 
             role="salon_owner" 
-            redirectTo="/salon-owner"
+            redirectTo="/salon"
             includePhone={true}
             includeBusinessInfo={true}
           />
@@ -38,13 +36,12 @@ export default function SalonRegistrationPage() {
         <CardFooter className="flex flex-col space-y-4">
           <div className="text-center text-sm">
             Already have an account?{' '}
-            <Link href="/login/salon-owner" className="text-primary hover:underline">
+            <Link href="/login/salon" className="text-primary">
               Sign in
             </Link>
           </div>
         </CardFooter>
       </Card>
-
       {/* Benefits Section */}
       <Card>
         <CardHeader>
@@ -91,7 +88,6 @@ export default function SalonRegistrationPage() {
           </div>
         </CardContent>
       </Card>
-
       {/* Pricing Preview */}
       <Card>
         <CardHeader>
@@ -130,16 +126,15 @@ export default function SalonRegistrationPage() {
           </div>
         </CardContent>
       </Card>
-
       {/* Other Registration Options */}
       <div className="text-center text-sm text-muted-foreground">
         <p>Different account type?</p>
         <div className="flex justify-center gap-4 mt-2">
-          <Link href="/register/customer" className="text-primary hover:underline">
+          <Link href="/register/customer" className="text-primary">
             Customer
           </Link>
           <span>•</span>
-          <Link href="/register/staff" className="text-primary hover:underline">
+          <Link href="/register/staff" className="text-primary">
             Staff Member
           </Link>
         </div>

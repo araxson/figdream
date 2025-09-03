@@ -1,13 +1,10 @@
 'use server'
-
 import { createClient } from '@/lib/database/supabase/server'
 import { Database } from '@/types/database.types'
-
 // Type definitions from database
 type StaffSchedule = Database['public']['Tables']['staff_schedules']['Row']
 type StaffScheduleInsert = Database['public']['Tables']['staff_schedules']['Insert']
-type StaffScheduleUpdate = Database['public']['Tables']['staff_schedules']['Update']
-
+// type StaffScheduleUpdate = Database['public']['Tables']['staff_schedules']['Update']
 export interface WeeklySchedule {
   monday: StaffSchedule | null
   tuesday: StaffSchedule | null
@@ -17,7 +14,6 @@ export interface WeeklySchedule {
   saturday: StaffSchedule | null
   sunday: StaffSchedule | null
 }
-
 export interface ScheduleAvailability {
   date: string
   dayOfWeek: number
@@ -26,13 +22,11 @@ export interface ScheduleAvailability {
   endTime: string | null
   availableSlots: TimeSlot[]
 }
-
 export interface TimeSlot {
   start: string
   end: string
   available: boolean
 }
-
 /**
  * Get staff schedule for all days of the week
  * @param staffId - The staff member ID
@@ -40,18 +34,14 @@ export interface TimeSlot {
  */
 export async function getStaffWeeklySchedule(staffId: string): Promise<WeeklySchedule> {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('staff_schedules')
     .select('*')
     .eq('staff_id', staffId)
     .order('day_of_week', { ascending: true })
-  
   if (error) {
-    console.error('Error fetching staff schedule:', error)
     throw new Error('Failed to fetch staff schedule')
   }
-  
   // Initialize weekly schedule
   const weeklySchedule: WeeklySchedule = {
     monday: null,
@@ -62,20 +52,16 @@ export async function getStaffWeeklySchedule(staffId: string): Promise<WeeklySch
     saturday: null,
     sunday: null
   }
-  
   // Map schedules to days (0 = Sunday, 1 = Monday, etc.)
   const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
-  
   data?.forEach(schedule => {
     const dayName = dayNames[schedule.day_of_week] as keyof WeeklySchedule
     if (dayName) {
       weeklySchedule[dayName] = schedule
     }
   })
-  
   return weeklySchedule
 }
-
 /**
  * Get staff schedule for a specific day
  * @param staffId - The staff member ID
@@ -87,22 +73,17 @@ export async function getStaffDaySchedule(
   dayOfWeek: number
 ): Promise<StaffSchedule | null> {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('staff_schedules')
     .select('*')
     .eq('staff_id', staffId)
     .eq('day_of_week', dayOfWeek)
     .single()
-  
   if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
-    console.error('Error fetching staff day schedule:', error)
     throw new Error('Failed to fetch staff schedule')
   }
-  
   return data
 }
-
 /**
  * Create or update staff schedule for a day
  * @param schedule - The schedule data
@@ -112,7 +93,6 @@ export async function upsertStaffSchedule(
   schedule: StaffScheduleInsert
 ): Promise<StaffSchedule> {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('staff_schedules')
     .upsert(schedule, {
@@ -120,15 +100,11 @@ export async function upsertStaffSchedule(
     })
     .select()
     .single()
-  
   if (error) {
-    console.error('Error upserting staff schedule:', error)
     throw new Error('Failed to update staff schedule')
   }
-  
   return data
 }
-
 /**
  * Update multiple staff schedules at once
  * @param staffId - The staff member ID
@@ -140,28 +116,22 @@ export async function updateStaffWeeklySchedule(
   schedules: Omit<StaffScheduleInsert, 'staff_id'>[]
 ): Promise<StaffSchedule[]> {
   const supabase = await createClient()
-  
   // Add staff_id to each schedule
   const schedulesWithStaffId = schedules.map(schedule => ({
     ...schedule,
     staff_id: staffId
   }))
-  
   const { data, error } = await supabase
     .from('staff_schedules')
     .upsert(schedulesWithStaffId, {
       onConflict: 'staff_id,day_of_week'
     })
     .select()
-  
   if (error) {
-    console.error('Error updating weekly schedule:', error)
     throw new Error('Failed to update weekly schedule')
   }
-  
   return data || []
 }
-
 /**
  * Delete staff schedule for a specific day
  * @param staffId - The staff member ID
@@ -172,19 +142,15 @@ export async function deleteStaffDaySchedule(
   dayOfWeek: number
 ): Promise<void> {
   const supabase = await createClient()
-  
   const { error } = await supabase
     .from('staff_schedules')
     .delete()
     .eq('staff_id', staffId)
     .eq('day_of_week', dayOfWeek)
-  
   if (error) {
-    console.error('Error deleting staff schedule:', error)
     throw new Error('Failed to delete staff schedule')
   }
 }
-
 /**
  * Check if staff is available at a specific time
  * @param staffId - The staff member ID
@@ -200,10 +166,8 @@ export async function checkStaffAvailability(
   endTime: string
 ): Promise<boolean> {
   const supabase = await createClient()
-  
   // Get day of week from date
   const dayOfWeek = new Date(date).getDay()
-  
   // Get staff schedule for that day
   const { data: schedule, error } = await supabase
     .from('staff_schedules')
@@ -211,24 +175,18 @@ export async function checkStaffAvailability(
     .eq('staff_id', staffId)
     .eq('day_of_week', dayOfWeek)
     .single()
-  
   if (error && error.code !== 'PGRST116') {
-    console.error('Error checking availability:', error)
     throw new Error('Failed to check availability')
   }
-  
   // If no schedule or not working, not available
   if (!schedule || !schedule.is_working) {
     return false
   }
-  
   // Check if requested time is within working hours
   const scheduleStart = schedule.start_time
   const scheduleEnd = schedule.end_time
-  
   return startTime >= scheduleStart && endTime <= scheduleEnd
 }
-
 /**
  * Get available time slots for a staff member on a date
  * @param staffId - The staff member ID
@@ -242,10 +200,8 @@ export async function getStaffAvailableSlots(
   slotDuration: number = 30
 ): Promise<TimeSlot[]> {
   const supabase = await createClient()
-  
   // Get day of week from date
   const dayOfWeek = new Date(date).getDay()
-  
   // Get staff schedule
   const { data: schedule, error: scheduleError } = await supabase
     .from('staff_schedules')
@@ -253,16 +209,12 @@ export async function getStaffAvailableSlots(
     .eq('staff_id', staffId)
     .eq('day_of_week', dayOfWeek)
     .single()
-  
   if (scheduleError && scheduleError.code !== 'PGRST116') {
-    console.error('Error fetching schedule:', scheduleError)
     throw new Error('Failed to fetch schedule')
   }
-  
   if (!schedule || !schedule.is_working) {
     return []
   }
-  
   // Get existing appointments for this staff on this date
   const { data: appointments, error: appointmentsError } = await supabase
     .from('appointments')
@@ -270,52 +222,42 @@ export async function getStaffAvailableSlots(
     .eq('staff_id', staffId)
     .eq('booking_date', date)
     .in('status', ['confirmed', 'pending'])
-  
   if (appointmentsError) {
-    console.error('Error fetching appointments:', appointmentsError)
     throw new Error('Failed to fetch appointments')
   }
-  
   // Generate all possible time slots
   const slots: TimeSlot[] = []
   const startHour = parseInt(schedule.start_time.split(':')[0])
   const startMinute = parseInt(schedule.start_time.split(':')[1])
   const endHour = parseInt(schedule.end_time.split(':')[0])
   const endMinute = parseInt(schedule.end_time.split(':')[1])
-  
   const startMinutes = startHour * 60 + startMinute
   const endMinutes = endHour * 60 + endMinute
-  
   for (let minutes = startMinutes; minutes < endMinutes; minutes += slotDuration) {
     const slotStart = `${Math.floor(minutes / 60).toString().padStart(2, '0')}:${(minutes % 60).toString().padStart(2, '0')}`
     const slotEndMinutes = minutes + slotDuration
     const slotEnd = `${Math.floor(slotEndMinutes / 60).toString().padStart(2, '0')}:${(slotEndMinutes % 60).toString().padStart(2, '0')}`
-    
     // Check if slot conflicts with any appointment
     const isAvailable = !appointments?.some(apt => {
       return (slotStart >= apt.start_time && slotStart < apt.end_time) ||
              (slotEnd > apt.start_time && slotEnd <= apt.end_time) ||
              (slotStart <= apt.start_time && slotEnd >= apt.end_time)
     })
-    
     slots.push({
       start: slotStart,
       end: slotEnd,
       available: isAvailable
     })
   }
-  
   return slots
 }
-
 /**
  * Get all staff schedules for a salon
  * @param salonId - The salon ID
  * @returns Array of staff schedules with staff details
  */
-export async function getSalonStaffSchedules(salonId: string): Promise<any[]> {
+export async function getSalonStaffSchedules(salonId: string): Promise<StaffSchedule[]> {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('staff_schedules')
     .select(`
@@ -328,15 +270,11 @@ export async function getSalonStaffSchedules(salonId: string): Promise<any[]> {
     `)
     .eq('staff.salon_id', salonId)
     .order('day_of_week', { ascending: true })
-  
   if (error) {
-    console.error('Error fetching salon staff schedules:', error)
     throw new Error('Failed to fetch staff schedules')
   }
-  
   return data || []
 }
-
 /**
  * Copy schedule from one staff to another
  * @param sourceStaffId - Source staff member ID
@@ -348,22 +286,17 @@ export async function copyStaffSchedule(
   targetStaffId: string
 ): Promise<StaffSchedule[]> {
   const supabase = await createClient()
-  
   // Get source schedule
   const { data: sourceSchedules, error: fetchError } = await supabase
     .from('staff_schedules')
     .select('*')
     .eq('staff_id', sourceStaffId)
-  
   if (fetchError) {
-    console.error('Error fetching source schedule:', fetchError)
     throw new Error('Failed to fetch source schedule')
   }
-  
   if (!sourceSchedules || sourceSchedules.length === 0) {
     return []
   }
-  
   // Create schedules for target staff
   const targetSchedules = sourceSchedules.map(schedule => ({
     staff_id: targetStaffId,
@@ -372,18 +305,14 @@ export async function copyStaffSchedule(
     end_time: schedule.end_time,
     is_working: schedule.is_working
   }))
-  
   const { data, error } = await supabase
     .from('staff_schedules')
     .upsert(targetSchedules, {
       onConflict: 'staff_id,day_of_week'
     })
     .select()
-  
   if (error) {
-    console.error('Error copying schedule:', error)
     throw new Error('Failed to copy schedule')
   }
-  
   return data || []
 }

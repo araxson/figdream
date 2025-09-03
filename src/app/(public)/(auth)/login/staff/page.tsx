@@ -1,8 +1,7 @@
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Button, Separator } from '@/components/ui'
 import { LoginForm } from '@/components/auth/login-form'
-import { UserCheck, Calendar, Clock, TrendingUp, ChevronRight } from 'lucide-react'
-
+import { UserCheck, Calendar, Clock, TrendingUp } from 'lucide-react'
 export default function StaffLoginPage() {
   return (
     <div className="space-y-6">
@@ -18,7 +17,6 @@ export default function StaffLoginPage() {
           Sign in to manage your appointments and schedule
         </p>
       </div>
-
       {/* Login Card */}
       <Card>
         <CardHeader>
@@ -29,7 +27,6 @@ export default function StaffLoginPage() {
         </CardHeader>
         <CardContent>
           <LoginForm role="staff" redirectTo="/staff" />
-          
           <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
@@ -41,7 +38,6 @@ export default function StaffLoginPage() {
                 </span>
               </div>
             </div>
-
             {/* Social Login Buttons (disabled for now) */}
             <div className="grid grid-cols-2 gap-3 mt-6">
               <Button variant="outline" type="button" disabled>
@@ -76,14 +72,13 @@ export default function StaffLoginPage() {
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
           <div className="text-center text-sm">
-            Don't have an account?{' '}
-            <Link href="/register/staff" className="text-primary hover:underline">
+            Don&apos;t have an account?{' '}
+            <Link href="/register/staff" className="text-primary">
               Register as staff
             </Link>
           </div>
         </CardFooter>
       </Card>
-
       {/* Features Section */}
       <Card>
         <CardHeader>
@@ -121,16 +116,15 @@ export default function StaffLoginPage() {
           </div>
         </CardContent>
       </Card>
-
       {/* Other Login Options */}
       <div className="text-center text-sm text-muted-foreground">
         <p>Different account type?</p>
         <div className="flex justify-center gap-4 mt-2">
-          <Link href="/login/customer" className="text-primary hover:underline">
+          <Link href="/login/customer" className="text-primary">
             Customer
           </Link>
           <span>•</span>
-          <Link href="/login/salon-owner" className="text-primary hover:underline">
+          <Link href="/login/salon" className="text-primary">
             Salon Owner
           </Link>
         </div>

@@ -1,7 +1,5 @@
 'use client'
-
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
-
 interface CategoryBreakdownChartProps {
   categories: Array<{
     category: string
@@ -10,7 +8,6 @@ interface CategoryBreakdownChartProps {
     percentage: number
   }>
 }
-
 export default function CategoryBreakdownChart({ categories }: CategoryBreakdownChartProps) {
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -20,19 +17,17 @@ export default function CategoryBreakdownChart({ categories }: CategoryBreakdown
       maximumFractionDigits: 0
     }).format(value)
   }
-
   const data = categories.map(cat => ({
     name: cat.category,
     bookings: cat.bookings,
     revenue: cat.revenue / 100, // Scale down for better visualization
     percentage: cat.percentage
   }))
-
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number; dataKey: string }>; label?: string }) => {
     if (active && payload && payload.length) {
       const category = categories.find(c => c.category === label)
       return (
-        <div className="bg-popover text-popover-foreground px-3 py-2 rounded-lg shadow-lg border">
+        <div className="bg-popover text-popover-foreground px-3 py-2 rounded-lg border">
           <p className="font-medium">{label}</p>
           <p className="text-sm">Bookings: {category?.bookings}</p>
           <p className="text-sm">Revenue: {formatCurrency(category?.revenue || 0)}</p>
@@ -42,7 +37,6 @@ export default function CategoryBreakdownChart({ categories }: CategoryBreakdown
     }
     return null
   }
-
   return (
     <ResponsiveContainer width="100%" height={300}>
       <BarChart

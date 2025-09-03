@@ -1,15 +1,13 @@
 'use client'
-
 import Link from 'next/link'
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, HoverCard, HoverCardContent, HoverCardTrigger, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, Badge, Separator, Alert, AlertDescription, Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui'
-import { Lock, Home, LogIn, RefreshCw, HelpCircle, Mail, Phone, ArrowLeft, Search, Settings, User, KeyRound, Shield, UserPlus } from 'lucide-react'
-
+import { Lock, Home, LogIn, HelpCircle, Mail, Phone, ArrowLeft, Search, Settings, User, KeyRound, Shield, UserPlus } from 'lucide-react'
 export default function Unauthorized() {
   return (
     <TooltipProvider>
       <div className="flex min-h-screen flex-col items-center justify-center px-4 bg-muted/20">
         <div className="w-full max-w-2xl">
-          <Card className="shadow-lg">
+          <Card>
             <CardHeader className="text-center">
               <div className="flex items-center justify-center mb-4">
                 <HoverCard>
@@ -32,7 +30,6 @@ export default function Unauthorized() {
                   </HoverCardContent>
                 </HoverCard>
               </div>
-              
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Badge variant="secondary" className="text-lg px-3 py-1 bg-orange-100 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400">
                   401
@@ -40,13 +37,11 @@ export default function Unauthorized() {
                 <Separator orientation="vertical" className="h-6" />
                 <Badge variant="outline">Unauthorized</Badge>
               </div>
-              
               <CardTitle className="text-2xl font-semibold mb-2">Authentication Required</CardTitle>
               <CardDescription className="text-base">
                 Please sign in to access this page.
               </CardDescription>
             </CardHeader>
-            
             <CardContent className="space-y-6">
               <Alert>
                 <Shield className="h-4 w-4" />
@@ -55,7 +50,6 @@ export default function Unauthorized() {
                   and ensures you only see content meant for you.
                 </AlertDescription>
               </Alert>
-              
               <div className="space-y-4">
                 <h3 className="font-medium text-center">Authentication Options</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -72,7 +66,6 @@ export default function Unauthorized() {
                       <p>Sign in to your existing account</p>
                     </TooltipContent>
                   </Tooltip>
-                  
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button variant="outline" asChild className="w-full">
@@ -87,7 +80,6 @@ export default function Unauthorized() {
                     </TooltipContent>
                   </Tooltip>
                 </div>
-                
                 <div className="flex gap-3">
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -100,7 +92,6 @@ export default function Unauthorized() {
                       <p>Return to the previous page</p>
                     </TooltipContent>
                   </Tooltip>
-                  
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button variant="ghost" asChild className="flex-1">
@@ -116,15 +107,13 @@ export default function Unauthorized() {
                   </Tooltip>
                 </div>
               </div>
-              
               <Separator />
-              
               <div className="space-y-3">
                 <h3 className="font-medium text-center">Account Types</h3>
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <HoverCard>
                     <HoverCardTrigger asChild>
-                      <div className="p-3 border rounded-lg cursor-help hover:bg-muted/50 transition-colors">
+                      <div className="p-3 border rounded-lg cursor-help">
                         <div className="flex items-center gap-2 mb-1">
                           <User className="h-4 w-4 text-blue-500" />
                           <span className="font-medium">Customer</span>
@@ -136,10 +125,9 @@ export default function Unauthorized() {
                       <p className="text-sm">Customer accounts let you book appointments, manage favorites, and earn loyalty rewards.</p>
                     </HoverCardContent>
                   </HoverCard>
-                  
                   <HoverCard>
                     <HoverCardTrigger asChild>
-                      <div className="p-3 border rounded-lg cursor-help hover:bg-muted/50 transition-colors">
+                      <div className="p-3 border rounded-lg cursor-help">
                         <div className="flex items-center gap-2 mb-1">
                           <Settings className="h-4 w-4 text-green-500" />
                           <span className="font-medium">Business</span>
@@ -153,7 +141,6 @@ export default function Unauthorized() {
                   </HoverCard>
                 </div>
               </div>
-              
               <div className="space-y-3">
                 <h3 className="font-medium text-center">Need Help?</h3>
                 <div className="flex justify-center">
@@ -170,7 +157,7 @@ export default function Unauthorized() {
                           <AlertDialogHeader>
                             <AlertDialogTitle>Authentication Support</AlertDialogTitle>
                             <AlertDialogDescription>
-                              If you're having trouble signing in or need help with your account, 
+                              If you&apos;re having trouble signing in or need help with your account, 
                               our support team is here to help. We can assist with password resets, 
                               account recovery, and technical issues.
                             </AlertDialogDescription>
@@ -201,7 +188,6 @@ export default function Unauthorized() {
                   </ContextMenu>
                 </div>
               </div>
-              
               <Command className="rounded-lg border">
                 <CommandInput placeholder="Search for help or navigate..." />
                 <CommandList>

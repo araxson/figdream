@@ -2,13 +2,10 @@
  * Stripe Create Payment Intent API Route for FigDream
  * Handles creating payment intents for bookings and deposits
  */
-
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { getUser } from '@/lib/data-access/auth'
 import { createBookingPaymentIntent } from '@/lib/data-access/payments/stripe'
-import { createPaymentSchema } from '@/lib/validations/payment-schema'
-
 // Request validation schema
 const createPaymentIntentSchema = z.object({
   bookingId: z.string().uuid('Invalid booking ID'),
@@ -20,7 +17,6 @@ const createPaymentIntentSchema = z.object({
   metadata: z.record(z.string()).optional().default({}),
   savePaymentMethod: z.boolean().optional().default(false),
 })
-
 export async function POST(request: NextRequest) {
   try {
     // Check authentication
@@ -31,11 +27,9 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       )
     }
-
     // Parse and validate request body
     const body = await request.json()
     const validatedData = createPaymentIntentSchema.parse(body)
-
     const {
       bookingId,
       amount,
@@ -46,7 +40,6 @@ export async function POST(request: NextRequest) {
       metadata,
       savePaymentMethod,
     } = validatedData
-
     // Validate deposit amount if provided
     if (isDeposit && depositAmount && depositAmount >= amount) {
       return NextResponse.json(
@@ -54,7 +47,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
-
     // Create payment intent
     const result = await createBookingPaymentIntent({
       bookingId,
@@ -69,7 +61,6 @@ export async function POST(request: NextRequest) {
         description: description || `Booking payment${isDeposit ? ' (deposit)' : ''}`,
       },
     })
-
     // Return payment intent client secret and payment record
     return NextResponse.json({
       success: true,
@@ -81,10 +72,7 @@ export async function POST(request: NextRequest) {
       isDeposit,
       metadata: result.paymentIntent.metadata,
     })
-
-  } catch (error) {
-    console.error('Error creating payment intent:', error)
-
+  } catch (_error) {
     // Handle validation errors
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -95,7 +83,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
-
     // Handle known errors
     if (error instanceof Error) {
       if (error.message.includes('Booking not found')) {
@@ -104,7 +91,6 @@ export async function POST(request: NextRequest) {
           { status: 404 }
         )
       }
-
       if (error.message.includes('Unauthorized')) {
         return NextResponse.json(
           { error: 'Unauthorized to access this booking' },
@@ -112,7 +98,6 @@ export async function POST(request: NextRequest) {
         )
       }
     }
-
     // Generic error response
     return NextResponse.json(
       { error: 'Failed to create payment intent' },
@@ -120,7 +105,6 @@ export async function POST(request: NextRequest) {
     )
   }
 }
-
 /**
  * GET endpoint to retrieve payment intent details
  */
@@ -134,28 +118,23 @@ export async function GET(request: NextRequest) {
         { status: 401 }
       )
     }
-
     const { searchParams } = new URL(request.url)
     const paymentIntentId = searchParams.get('payment_intent_id')
-
     if (!paymentIntentId) {
       return NextResponse.json(
         { error: 'Payment intent ID is required' },
         { status: 400 }
       )
     }
-
     // Get payment intent from Stripe
     const { getPaymentIntent } = await import('@/lib/integrations/stripe/server')
     const paymentIntent = await getPaymentIntent(paymentIntentId)
-
     if (!paymentIntent) {
       return NextResponse.json(
         { error: 'Payment intent not found' },
         { status: 404 }
       )
     }
-
     // Verify user owns this payment intent
     const paymentUserId = paymentIntent.metadata?.user_id
     if (paymentUserId !== user.id) {
@@ -164,7 +143,6 @@ export async function GET(request: NextRequest) {
         { status: 403 }
       )
     }
-
     return NextResponse.json({
       success: true,
       paymentIntent: {
@@ -178,16 +156,13 @@ export async function GET(request: NextRequest) {
         description: paymentIntent.description,
       }
     })
-
-  } catch (error) {
-    console.error('Error retrieving payment intent:', error)
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to retrieve payment intent' },
       { status: 500 }
     )
   }
 }
-
 /**
  * PUT endpoint to update payment intent
  */
@@ -201,7 +176,6 @@ export async function PUT(request: NextRequest) {
         { status: 401 }
       )
     }
-
     // Parse request body
     const body = await request.json()
     const updateSchema = z.object({
@@ -210,20 +184,16 @@ export async function PUT(request: NextRequest) {
       metadata: z.record(z.string()).optional(),
       description: z.string().optional(),
     })
-
     const { paymentIntentId, amount, metadata, description } = updateSchema.parse(body)
-
     // Get payment intent to verify ownership
     const { getPaymentIntent, stripe } = await import('@/lib/integrations/stripe/server')
     const existingPaymentIntent = await getPaymentIntent(paymentIntentId)
-
     if (!existingPaymentIntent) {
       return NextResponse.json(
         { error: 'Payment intent not found' },
         { status: 404 }
       )
     }
-
     // Verify user owns this payment intent
     if (existingPaymentIntent.metadata?.user_id !== user.id) {
       return NextResponse.json(
@@ -231,7 +201,6 @@ export async function PUT(request: NextRequest) {
         { status: 403 }
       )
     }
-
     // Check if payment intent can be updated
     if (existingPaymentIntent.status !== 'requires_payment_method' && 
         existingPaymentIntent.status !== 'requires_confirmation') {
@@ -240,32 +209,29 @@ export async function PUT(request: NextRequest) {
         { status: 400 }
       )
     }
-
     // Prepare update parameters
-    const updateParams: any = {}
-    
+    const updateParams: {
+      amount?: number;
+      metadata?: Record<string, string>;
+    } = {}
     if (amount !== undefined) {
       const { formatAmountForStripe } = await import('@/lib/integrations/stripe/client')
-      updateParams.amount = formatAmountForStripe(amount, existingPaymentIntent.currency as any)
+      updateParams.amount = formatAmountForStripe(amount, existingPaymentIntent.currency as string)
     }
-    
     if (metadata !== undefined) {
       updateParams.metadata = {
         ...existingPaymentIntent.metadata,
         ...metadata,
       }
     }
-    
     if (description !== undefined) {
       updateParams.description = description
     }
-
     // Update payment intent
     const updatedPaymentIntent = await stripe.paymentIntents.update(
       paymentIntentId,
       updateParams
     )
-
     return NextResponse.json({
       success: true,
       paymentIntent: {
@@ -278,10 +244,7 @@ export async function PUT(request: NextRequest) {
         description: updatedPaymentIntent.description,
       }
     })
-
-  } catch (error) {
-    console.error('Error updating payment intent:', error)
-
+  } catch (_error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { 
@@ -291,14 +254,12 @@ export async function PUT(request: NextRequest) {
         { status: 400 }
       )
     }
-
     return NextResponse.json(
       { error: 'Failed to update payment intent' },
       { status: 500 }
     )
   }
 }
-
 /**
  * DELETE endpoint to cancel payment intent
  */
@@ -312,28 +273,23 @@ export async function DELETE(request: NextRequest) {
         { status: 401 }
       )
     }
-
     const { searchParams } = new URL(request.url)
     const paymentIntentId = searchParams.get('payment_intent_id')
-
     if (!paymentIntentId) {
       return NextResponse.json(
         { error: 'Payment intent ID is required' },
         { status: 400 }
       )
     }
-
     // Get payment intent to verify ownership
     const { getPaymentIntent, stripe } = await import('@/lib/integrations/stripe/server')
     const paymentIntent = await getPaymentIntent(paymentIntentId)
-
     if (!paymentIntent) {
       return NextResponse.json(
         { error: 'Payment intent not found' },
         { status: 404 }
       )
     }
-
     // Verify user owns this payment intent
     if (paymentIntent.metadata?.user_id !== user.id) {
       return NextResponse.json(
@@ -341,7 +297,6 @@ export async function DELETE(request: NextRequest) {
         { status: 403 }
       )
     }
-
     // Check if payment intent can be canceled
     const cancelableStatuses = ['requires_payment_method', 'requires_confirmation', 'requires_action']
     if (!cancelableStatuses.includes(paymentIntent.status)) {
@@ -350,23 +305,18 @@ export async function DELETE(request: NextRequest) {
         { status: 400 }
       )
     }
-
     // Cancel payment intent
     const canceledPaymentIntent = await stripe.paymentIntents.cancel(paymentIntentId)
-
     // Update payment record status
     const { updatePaymentFromStripe } = await import('@/lib/data-access/payments/stripe')
     await updatePaymentFromStripe(paymentIntentId, 'cancelled', canceledPaymentIntent)
-
     return NextResponse.json({
       success: true,
       message: 'Payment intent canceled successfully',
       paymentIntentId: canceledPaymentIntent.id,
       status: canceledPaymentIntent.status,
     })
-
-  } catch (error) {
-    console.error('Error canceling payment intent:', error)
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to cancel payment intent' },
       { status: 500 }

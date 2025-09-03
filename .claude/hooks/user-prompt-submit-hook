@@ -1,31 +1,149 @@
 #!/bin/bash
 
-# Claude Code Hook: Runs before each user prompt submission
-# This hook generates the project tree and prepares context for Claude
+# 🚀 Claude Code Hook: ULTRA-PERFORMANCE OPTIMIZER
+# Runs before each user prompt submission
+# This hook prepares comprehensive context and triggers appropriate subagents
 
-# Always generate fresh project tree (whether new or continuing conversation)
-echo "📊 Generating fresh project tree for Claude..."
+# Color codes for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+MAGENTA='\033[0;35m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
 
-# Generate the project tree
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${CYAN}🚀 CLAUDE CODE ULTRA-PERFORMANCE SYSTEM INITIALIZING...${NC}"
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
+
+# 1. Generate fresh project tree
+echo -e "${BLUE}📊 PHASE 1: Generating fresh project tree...${NC}"
 python3 scripts/utilities/generate_project_tree.py 2>/dev/null || {
-    echo "⚠️ Could not generate project tree. Python script may be missing."
+    echo -e "${YELLOW}⚠️  Could not generate project tree. Python script may be missing.${NC}"
 }
 
-# Check if PROJECT_TREE.md exists and instruct Claude to read it
-if [ -f "PROJECT_TREE.md" ]; then
-    echo ""
-    echo "📋 MANDATORY ACTION FOR CLAUDE:"
-    echo "   1. Read PROJECT_TREE.md to get the latest project statistics"
-    echo "   2. Check for any structural changes since last message"
-    echo ""
-    echo "   The file has been freshly generated and contains:"
-    echo "   • Updated file and line counts"
-    echo "   • Current file distribution"
-    echo "   • Latest project structure"
-    echo ""
-    echo "⚠️  CLAUDE: You MUST read PROJECT_TREE.md with EVERY response to stay current."
+# 2. Run quick error checks
+echo -e "${BLUE}🔍 PHASE 2: Running diagnostics...${NC}"
+
+# Check ESLint errors (with timeout to prevent hanging)
+ESLINT_COUNT=$(timeout 5 npm run lint 2>&1 | grep -oE '[0-9]+ problems' | grep -oE '[0-9]+' | head -1 || echo "0")
+if [ -z "$ESLINT_COUNT" ]; then
+    ESLINT_COUNT="0"
+fi
+
+# Check for any types (quick grep)
+ANY_COUNT=$(grep -r "any" src/ --include="*.ts" --include="*.tsx" 2>/dev/null | grep -v "// @ts-" | wc -l || echo "0")
+
+# Check for mock data
+MOCK_COUNT=$(grep -r "mock\|fake\|sample\|dummy" src/ --include="*.ts" --include="*.tsx" 2>/dev/null | wc -l || echo "0")
+
+# Check for relative imports
+RELATIVE_COUNT=$(grep -r "\.\./\.\." src/ --include="*.ts" --include="*.tsx" 2>/dev/null | wc -l || echo "0")
+
+# 3. Generate diagnostic report
+echo ""
+echo -e "${MAGENTA}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${MAGENTA}📋 CODEBASE STATUS REPORT${NC}"
+echo -e "${MAGENTA}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+
+# Color-code the status based on error counts
+if [ "$ESLINT_COUNT" -gt 0 ]; then
+    echo -e "${RED}🔴 ESLint Errors: $ESLINT_COUNT${NC}"
+else
+    echo -e "${GREEN}✅ ESLint: Clean${NC}"
+fi
+
+if [ "$ANY_COUNT" -gt 0 ]; then
+    echo -e "${YELLOW}⚠️  'any' Types: $ANY_COUNT occurrences${NC}"
+else
+    echo -e "${GREEN}✅ Type Safety: No 'any' types${NC}"
+fi
+
+if [ "$MOCK_COUNT" -gt 0 ]; then
+    echo -e "${YELLOW}⚠️  Potential Mock Data: $MOCK_COUNT references${NC}"
+else
+    echo -e "${GREEN}✅ Data Authenticity: No mock data detected${NC}"
+fi
+
+if [ "$RELATIVE_COUNT" -gt 0 ]; then
+    echo -e "${YELLOW}⚠️  Relative Imports: $RELATIVE_COUNT instances${NC}"
+else
+    echo -e "${GREEN}✅ Import Paths: All using @ aliases${NC}"
+fi
+
+echo -e "${MAGENTA}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
+
+# 4. Suggest appropriate subagents based on diagnostics
+echo -e "${CYAN}🤖 RECOMMENDED SUBAGENTS:${NC}"
+
+SUGGESTED_AGENTS=""
+
+if [ "$ESLINT_COUNT" -gt 0 ]; then
+    echo -e "${RED}   ⚡ typescript-eslint-enforcer${NC} - Fix $ESLINT_COUNT ESLint errors"
+    SUGGESTED_AGENTS="typescript-eslint-enforcer"
+fi
+
+if [ "$ANY_COUNT" -gt 20 ]; then
+    echo -e "${YELLOW}   🎯 type-alignment-specialist${NC} - Replace 'any' types with proper types"
+    SUGGESTED_AGENTS="$SUGGESTED_AGENTS type-alignment-specialist"
+fi
+
+if [ "$MOCK_COUNT" -gt 5 ]; then
+    echo -e "${YELLOW}   🔐 data-authenticity-enforcer${NC} - Remove mock data"
+    SUGGESTED_AGENTS="$SUGGESTED_AGENTS data-authenticity-enforcer"
+fi
+
+if [ "$RELATIVE_COUNT" -gt 10 ]; then
+    echo -e "${YELLOW}   🔗 import-path-optimization${NC} - Fix import paths"
+    SUGGESTED_AGENTS="$SUGGESTED_AGENTS import-path-optimization"
+fi
+
+if [ -z "$SUGGESTED_AGENTS" ]; then
+    echo -e "${GREEN}   ✨ Codebase is clean! Consider:${NC}"
+    echo -e "${GREEN}      • server-first-architecture for new features${NC}"
+    echo -e "${GREEN}      • ui-component-compliance for UI work${NC}"
+    echo -e "${GREEN}      • supabase-integration for database optimization${NC}"
+fi
+
+echo ""
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
+
+# 5. Provide context instructions to Claude
+echo -e "${GREEN}📋 MANDATORY ACTIONS FOR CLAUDE:${NC}"
+echo ""
+echo "   1. Read PROJECT_TREE.md for latest statistics"
+echo "   2. Read .claude/agents/README.md for subagent guide"
+echo "   3. Check CLAUDE.md for project rules"
+echo ""
+
+if [ "$ESLINT_COUNT" -gt 0 ] || [ "$ANY_COUNT" -gt 20 ]; then
+    echo -e "${RED}⚠️  CRITICAL: TypeScript/ESLint errors detected!${NC}"
+    echo "   CLAUDE: Consider using typescript-eslint-enforcer IMMEDIATELY"
     echo ""
 fi
+
+# 6. Generate quick command suggestions
+if [ "$ESLINT_COUNT" -gt 0 ]; then
+    echo -e "${YELLOW}📝 SUGGESTED COMMAND:${NC}"
+    echo '   "Use typescript-eslint-enforcer to fix all ESLint errors"'
+    echo ""
+fi
+
+# 7. Check for recent file changes (optional)
+RECENT_CHANGES=$(find src -type f \( -name "*.ts" -o -name "*.tsx" \) -mmin -5 2>/dev/null | wc -l || echo "0")
+if [ "$RECENT_CHANGES" -gt 0 ]; then
+    echo -e "${BLUE}📝 Note: $RECENT_CHANGES files modified in last 5 minutes${NC}"
+    echo ""
+fi
+
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${GREEN}✅ ULTRA-PERFORMANCE SYSTEM READY${NC}"
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
 
 # Always allow the prompt to continue
 exit 0

@@ -7,7 +7,6 @@ import {
   CardHeader,
   CardTitle,
   Button,
-  Badge,
   Separator,
   Tooltip,
   TooltipContent,
@@ -15,8 +14,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui'
 import { LoginForm } from '@/components/auth/login-form'
-import { User, Heart, Calendar, Gift, ChevronRight } from 'lucide-react'
-
+import { User, Heart, Calendar, Gift } from 'lucide-react'
 export default function CustomerLoginPage() {
   return (
     <TooltipProvider>
@@ -24,16 +22,15 @@ export default function CustomerLoginPage() {
       {/* Header */}
       <div className="text-center space-y-2">
         <div className="flex justify-center">
-          <Badge variant="secondary" className="h-14 w-14 rounded-full p-0 flex items-center justify-center bg-blue-100 dark:bg-blue-900/20">
+          <div className="h-14 w-14 rounded-full flex items-center justify-center bg-blue-100 dark:bg-blue-900/20">
             <User className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-          </Badge>
+          </div>
         </div>
         <h1 className="text-2xl font-bold">Welcome Back!</h1>
         <p className="text-muted-foreground">
           Sign in to book appointments and manage your beauty routine
         </p>
       </div>
-
       {/* Login Card */}
       <Card>
         <CardHeader>
@@ -44,7 +41,6 @@ export default function CustomerLoginPage() {
         </CardHeader>
         <CardContent>
           <LoginForm role="customer" redirectTo="/customer" />
-          
           <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
@@ -56,7 +52,6 @@ export default function CustomerLoginPage() {
                 </span>
               </div>
             </div>
-
             {/* Social Login Buttons */}
             <div className="grid grid-cols-2 gap-3 mt-6">
               <Button variant="outline" type="button" disabled>
@@ -91,14 +86,13 @@ export default function CustomerLoginPage() {
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
           <div className="text-center text-sm">
-            Don't have an account?{' '}
-            <Link href="/register/customer" className="text-primary hover:underline">
+            Don&apos;t have an account?{' '}
+            <Link href="/register/customer" className="text-primary">
               Sign up
             </Link>
           </div>
         </CardFooter>
       </Card>
-
       {/* Benefits Section */}
       <Card>
         <CardHeader>
@@ -136,7 +130,6 @@ export default function CustomerLoginPage() {
           </div>
         </CardContent>
       </Card>
-
       {/* Other Login Options */}
       <Card className="bg-muted/30">
         <CardContent className="pt-6">
@@ -145,7 +138,7 @@ export default function CustomerLoginPage() {
             <div className="flex justify-center gap-4">
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Link href="/login/salon-owner" className="text-primary hover:underline font-medium">
+                  <Link href="/login/salon" className="text-primary font-medium">
                     Salon Owner
                   </Link>
                 </TooltipTrigger>
@@ -156,7 +149,7 @@ export default function CustomerLoginPage() {
               <Separator orientation="vertical" className="h-4" />
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Link href="/login/staff" className="text-primary hover:underline font-medium">
+                  <Link href="/login/staff" className="text-primary font-medium">
                     Staff Member
                   </Link>
                 </TooltipTrigger>

@@ -1,5 +1,4 @@
 'use client'
-
 import { Badge, Button, Progress, Card, CardContent } from '@/components/ui'
 import { 
   AlertTriangle,
@@ -8,7 +7,6 @@ import {
   Calendar,
   User
 } from 'lucide-react'
-
 interface ChurnRiskListProps {
   customers: Array<{
     customerId: string
@@ -22,7 +20,6 @@ interface ChurnRiskListProps {
     customerSince: string
   }>
 }
-
 export default function ChurnRiskList({ customers }: ChurnRiskListProps) {
   const getRiskColor = (level: string) => {
     switch (level) {
@@ -34,7 +31,6 @@ export default function ChurnRiskList({ customers }: ChurnRiskListProps) {
         return 'text-yellow-600'
     }
   }
-
   const getRiskBadgeVariant = (level: string) => {
     switch (level) {
       case 'high':
@@ -45,7 +41,6 @@ export default function ChurnRiskList({ customers }: ChurnRiskListProps) {
         return 'outline' as const
     }
   }
-
   const formatDate = (dateString: string | null) => {
     if (!dateString) return 'Never'
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -54,7 +49,6 @@ export default function ChurnRiskList({ customers }: ChurnRiskListProps) {
       year: 'numeric'
     })
   }
-
   const daysSinceLastVisit = (dateString: string | null) => {
     if (!dateString) return 999
     const lastVisit = new Date(dateString)
@@ -62,7 +56,6 @@ export default function ChurnRiskList({ customers }: ChurnRiskListProps) {
     const days = Math.floor((now.getTime() - lastVisit.getTime()) / (1000 * 60 * 60 * 24))
     return days
   }
-
   return (
     <div className="space-y-4">
       {customers.length === 0 ? (
@@ -89,7 +82,6 @@ export default function ChurnRiskList({ customers }: ChurnRiskListProps) {
                 {customer.riskLevel.toUpperCase()} RISK
               </Badge>
             </div>
-
             {/* Risk Score */}
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
@@ -103,7 +95,6 @@ export default function ChurnRiskList({ customers }: ChurnRiskListProps) {
                 className="h-2"
               />
             </div>
-
             {/* Risk Factors */}
             <div className="space-y-1">
               <p className="text-sm font-medium">Risk Factors:</p>
@@ -115,7 +106,6 @@ export default function ChurnRiskList({ customers }: ChurnRiskListProps) {
                 ))}
               </div>
             </div>
-
             {/* Customer Stats */}
             <div className="grid grid-cols-3 gap-2 text-xs">
               <div className="space-y-1">
@@ -134,7 +124,6 @@ export default function ChurnRiskList({ customers }: ChurnRiskListProps) {
                 <p className="font-medium">{formatDate(customer.customerSince)}</p>
               </div>
             </div>
-
             {/* Action Buttons */}
             <div className="flex gap-2 pt-2 border-t">
               <Button variant="outline" size="sm" className="flex-1">

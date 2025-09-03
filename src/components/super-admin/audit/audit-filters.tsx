@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import {
   Button,
@@ -12,13 +11,13 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Badge,
 } from '@/components/ui'
 import { CalendarIcon, Filter, X } from 'lucide-react'
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { AUDIT_ACTIONS, ENTITY_TYPES } from '@/lib/data-access/audit-logs'
-
 interface AuditFiltersProps {
   initialFilters: {
     action?: string
@@ -27,11 +26,9 @@ interface AuditFiltersProps {
     endDate?: string
   }
 }
-
 export function AuditFilters({ initialFilters }: AuditFiltersProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  
   const [filters, setFilters] = useState(initialFilters)
   const [startDate, setStartDate] = useState<Date | undefined>(
     initialFilters.startDate ? new Date(initialFilters.startDate) : undefined
@@ -39,34 +36,27 @@ export function AuditFilters({ initialFilters }: AuditFiltersProps) {
   const [endDate, setEndDate] = useState<Date | undefined>(
     initialFilters.endDate ? new Date(initialFilters.endDate) : undefined
   )
-
   const applyFilters = () => {
     const params = new URLSearchParams(searchParams)
-    
     // Clear existing filters
     params.delete('action')
     params.delete('entity')
     params.delete('startDate')
     params.delete('endDate')
-    
     // Apply new filters
     if (filters.action) params.set('action', filters.action)
     if (filters.entity) params.set('entity', filters.entity)
     if (startDate) params.set('startDate', format(startDate, 'yyyy-MM-dd'))
     if (endDate) params.set('endDate', format(endDate, 'yyyy-MM-dd'))
-    
-    router.push(`/super-admin/audit?${params.toString()}`)
+    router.push(`/admin/audit?${params.toString()}`)
   }
-
   const clearFilters = () => {
     setFilters({})
     setStartDate(undefined)
     setEndDate(undefined)
-    router.push('/super-admin/audit')
+    router.push('/admin/audit')
   }
-
   const hasFilters = filters.action || filters.entity || startDate || endDate
-
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap gap-4">
@@ -89,7 +79,6 @@ export function AuditFilters({ initialFilters }: AuditFiltersProps) {
             </SelectContent>
           </Select>
         </div>
-
         {/* Entity Filter */}
         <div className="flex-1 min-w-[200px]">
           <Select
@@ -109,7 +98,6 @@ export function AuditFilters({ initialFilters }: AuditFiltersProps) {
             </SelectContent>
           </Select>
         </div>
-
         {/* Start Date */}
         <Popover>
           <PopoverTrigger asChild>
@@ -133,7 +121,6 @@ export function AuditFilters({ initialFilters }: AuditFiltersProps) {
             />
           </PopoverContent>
         </Popover>
-
         {/* End Date */}
         <Popover>
           <PopoverTrigger asChild>
@@ -158,13 +145,11 @@ export function AuditFilters({ initialFilters }: AuditFiltersProps) {
             />
           </PopoverContent>
         </Popover>
-
         {/* Apply Button */}
         <Button onClick={applyFilters}>
           <Filter className="mr-2 h-4 w-4" />
           Apply Filters
         </Button>
-
         {/* Clear Button */}
         {hasFilters && (
           <Button variant="ghost" onClick={clearFilters}>
@@ -173,7 +158,6 @@ export function AuditFilters({ initialFilters }: AuditFiltersProps) {
           </Button>
         )}
       </div>
-
       {/* Active Filters Display */}
       {hasFilters && (
         <div className="flex flex-wrap gap-2">
@@ -184,7 +168,7 @@ export function AuditFilters({ initialFilters }: AuditFiltersProps) {
                 variant="ghost"
                 size="sm"
                 onClick={() => setFilters({ ...filters, action: undefined })}
-                className="ml-2 h-auto p-1 hover:text-destructive"
+                className="ml-2 h-auto p-1"
               >
                 <X className="h-3 w-3" />
               </Button>
@@ -197,7 +181,7 @@ export function AuditFilters({ initialFilters }: AuditFiltersProps) {
                 variant="ghost"
                 size="sm"
                 onClick={() => setFilters({ ...filters, entity: undefined })}
-                className="ml-2 h-auto p-1 hover:text-destructive"
+                className="ml-2 h-auto p-1"
               >
                 <X className="h-3 w-3" />
               </Button>
@@ -210,7 +194,7 @@ export function AuditFilters({ initialFilters }: AuditFiltersProps) {
                 variant="ghost"
                 size="sm"
                 onClick={() => setStartDate(undefined)}
-                className="ml-2 h-auto p-1 hover:text-destructive"
+                className="ml-2 h-auto p-1"
               >
                 <X className="h-3 w-3" />
               </Button>
@@ -223,7 +207,7 @@ export function AuditFilters({ initialFilters }: AuditFiltersProps) {
                 variant="ghost"
                 size="sm"
                 onClick={() => setEndDate(undefined)}
-                className="ml-2 h-auto p-1 hover:text-destructive"
+                className="ml-2 h-auto p-1"
               >
                 <X className="h-3 w-3" />
               </Button>

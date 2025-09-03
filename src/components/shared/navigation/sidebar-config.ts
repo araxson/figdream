@@ -9,7 +9,6 @@ import {
   Bell,
   Star
 } from 'lucide-react'
-
 export const sidebarConfig = {
   admin: [
     { title: 'Dashboard', href: '/admin', icon: LayoutDashboard },

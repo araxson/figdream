@@ -1,5 +1,4 @@
 'use client'
-
 import { useRouter } from 'next/navigation'
 import { Database } from '@/types/database.types'
 import {
@@ -19,7 +18,6 @@ import {
   Button,
 } from '@/components/ui'
 import { Clock, MapPin, Phone, Star, ChevronRight } from 'lucide-react'
-
 type Salon = Database['public']['Tables']['salons']['Row'] & {
   salon_locations?: Array<{
     id: string
@@ -31,7 +29,6 @@ type Salon = Database['public']['Tables']['salons']['Row'] & {
     phone: string | null
   }>
 }
-
 type Service = Database['public']['Tables']['services']['Row'] & {
   service_categories?: {
     id: string
@@ -39,7 +36,6 @@ type Service = Database['public']['Tables']['services']['Row'] & {
     description: string | null
   } | null
 }
-
 type StaffProfile = Database['public']['Tables']['staff_profiles']['Row'] & {
   profiles?: {
     email: string
@@ -53,7 +49,6 @@ type StaffProfile = Database['public']['Tables']['staff_profiles']['Row'] & {
     is_available: boolean
   }>
 }
-
 interface SalonBookingTabsProps {
   salon: Salon
   services: Service[]
@@ -61,7 +56,6 @@ interface SalonBookingTabsProps {
   reviewCount: number
   avgRating: number
 }
-
 export default function SalonBookingTabs({ 
   salon, 
   services, 
@@ -70,7 +64,6 @@ export default function SalonBookingTabs({
   avgRating 
 }: SalonBookingTabsProps) {
   const router = useRouter()
-  
   // Group services by category
   const servicesByCategory = services.reduce((acc, service) => {
     const category = service.service_categories?.name || 'Other'
@@ -78,28 +71,22 @@ export default function SalonBookingTabs({
     acc[category].push(service)
     return acc
   }, {} as Record<string, Service[]>)
-  
   const handleBookService = (serviceId: string) => {
     router.push(`/book/${salon.id}/service/${serviceId}`)
   }
-  
   const handleBookWithStaff = (staffId: string) => {
     router.push(`/book/${salon.id}/staff/${staffId}`)
   }
-  
   // Format operating hours
   const formatSchedule = (schedules?: Array<{ day_of_week: number; start_time: string; end_time: string; is_available: boolean }>) => {
     if (!schedules || schedules.length === 0) return 'Schedule not available'
-    
     const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
     const available = schedules
       .filter(s => s.is_available)
       .map(s => days[s.day_of_week])
       .join(', ')
-    
     return available || 'By appointment'
   }
-
   return (
     <Tabs defaultValue="services" className="space-y-6">
       <TabsList className="grid w-full grid-cols-4">
@@ -108,7 +95,6 @@ export default function SalonBookingTabs({
         <TabsTrigger value="about">About</TabsTrigger>
         <TabsTrigger value="reviews">Reviews</TabsTrigger>
       </TabsList>
-
       {/* Services Tab */}
       <TabsContent value="services" className="space-y-6">
         <Card>
@@ -161,7 +147,6 @@ export default function SalonBookingTabs({
           </CardContent>
         </Card>
       </TabsContent>
-
       {/* Staff Tab */}
       <TabsContent value="staff" className="space-y-6">
         <Card>
@@ -177,7 +162,7 @@ export default function SalonBookingTabs({
                 <Button
                   key={member.id}
                   variant="ghost"
-                  className="flex items-start gap-4 p-4 h-auto justify-start border rounded-lg hover:bg-muted/50 transition-colors"
+                  className="flex items-start gap-4 p-4 h-auto justify-start border rounded-lg"
                   onClick={() => handleBookWithStaff(member.id)}
                 >
                   <Avatar className="h-12 w-12">
@@ -218,7 +203,6 @@ export default function SalonBookingTabs({
           </CardContent>
         </Card>
       </TabsContent>
-
       {/* About Tab */}
       <TabsContent value="about" className="space-y-6">
         <Card>
@@ -233,7 +217,6 @@ export default function SalonBookingTabs({
                 </p>
               </div>
             )}
-            
             {salon.operating_hours && (
               <div>
                 <h3 className="font-semibold mb-3">Business Hours</h3>
@@ -263,7 +246,6 @@ export default function SalonBookingTabs({
                 </div>
               </div>
             )}
-
             {salon.salon_locations?.[0] && (
               <div>
                 <h3 className="font-semibold mb-3">Contact Information</h3>
@@ -284,7 +266,6 @@ export default function SalonBookingTabs({
                 </div>
               </div>
             )}
-
             {salon.amenities && salon.amenities.length > 0 && (
               <div>
                 <h3 className="font-semibold mb-3">Amenities</h3>
@@ -300,7 +281,6 @@ export default function SalonBookingTabs({
           </CardContent>
         </Card>
       </TabsContent>
-
       {/* Reviews Tab */}
       <TabsContent value="reviews" className="space-y-6">
         <Card>

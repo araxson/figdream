@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useEffect } from 'react'
 import { Database } from '@/types/database.types'
 import {
@@ -20,9 +19,7 @@ import {
 import { toast } from 'sonner'
 import { CalendarDays, Clock, Loader2 } from 'lucide-react'
 import { format } from 'date-fns'
-
 type Appointment = Database['public']['Tables']['appointments']['Row']
-
 interface RescheduleAppointmentFormProps {
   appointment: Appointment & {
     services?: Array<{
@@ -38,12 +35,10 @@ interface RescheduleAppointmentFormProps {
   onReschedule?: (appointmentId: string, newDate: string, newTime: string) => Promise<void>
   trigger?: React.ReactNode
 }
-
 interface TimeSlot {
   time: string
   available: boolean
 }
-
 export default function RescheduleAppointmentForm({
   appointment,
   onReschedule,
@@ -55,34 +50,28 @@ export default function RescheduleAppointmentForm({
   const [availableSlots, setAvailableSlots] = useState<TimeSlot[]>([])
   const [isLoadingSlots, setIsLoadingSlots] = useState(false)
   const [isRescheduling, setIsRescheduling] = useState(false)
-
   // Load available time slots when date changes
   useEffect(() => {
     if (selectedDate && appointment.staff_id) {
       loadAvailableSlots()
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate])
-
   const loadAvailableSlots = async () => {
     if (!selectedDate || !appointment.staff_id) return
-
     setIsLoadingSlots(true)
     try {
       const dateStr = format(selectedDate, 'yyyy-MM-dd')
       const serviceId = appointment.services?.[0]?.id
-      
       const response = await fetch(
         `/api/availability?staff_id=${appointment.staff_id}&date=${dateStr}&service_id=${serviceId || ''}`
       )
-      
       if (!response.ok) {
         throw new Error('Failed to load available slots')
       }
-      
       const data = await response.json()
       setAvailableSlots(data.slots || [])
-    } catch (error) {
-      console.error('Error loading slots:', error)
+    } catch (_error) {
       // Fallback to generic slots
       const slots: TimeSlot[] = []
       for (let hour = 9; hour < 18; hour++) {
@@ -100,20 +89,16 @@ export default function RescheduleAppointmentForm({
       setIsLoadingSlots(false)
     }
   }
-
   const handleReschedule = async () => {
     if (!selectedDate || !selectedTime) {
       toast.error('Please select both date and time')
       return
     }
-
     const newDate = format(selectedDate, 'yyyy-MM-dd')
-
     if (!onReschedule) {
       // Default reschedule logic
       try {
         setIsRescheduling(true)
-        
         const response = await fetch(`/api/appointments/${appointment.id}/reschedule`, {
           method: 'POST',
           headers: {
@@ -124,18 +109,14 @@ export default function RescheduleAppointmentForm({
             start_time: selectedTime,
           }),
         })
-
         if (!response.ok) {
           throw new Error('Failed to reschedule appointment')
         }
-
         toast.success('Appointment rescheduled successfully')
         setIsOpen(false)
-        
         // Refresh the page
         window.location.reload()
-      } catch (error) {
-        console.error('Error rescheduling appointment:', error)
+      } catch (_error) {
         toast.error('Failed to reschedule appointment. Please try again.')
       } finally {
         setIsRescheduling(false)
@@ -147,25 +128,21 @@ export default function RescheduleAppointmentForm({
         await onReschedule(appointment.id, newDate, selectedTime)
         toast.success('Appointment rescheduled successfully')
         setIsOpen(false)
-      } catch (error) {
-        console.error('Error rescheduling appointment:', error)
+      } catch (_error) {
         toast.error('Failed to reschedule appointment. Please try again.')
       } finally {
         setIsRescheduling(false)
       }
     }
   }
-
   // Disable past dates and dates more than 60 days in future
   const disabledDays = (date: Date) => {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
     const maxDate = new Date()
     maxDate.setDate(maxDate.getDate() + 60)
-    
     return date < today || date > maxDate
   }
-
   const formatTime = (time: string) => {
     const [hours, minutes] = time.split(':')
     const hour = parseInt(hours)
@@ -173,7 +150,6 @@ export default function RescheduleAppointmentForm({
     const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour
     return `${displayHour}:${minutes} ${ampm}`
   }
-
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -191,7 +167,6 @@ export default function RescheduleAppointmentForm({
             Select a new date and time for your appointment
           </DialogDescription>
         </DialogHeader>
-
         <div className="grid md:grid-cols-2 gap-6 py-4">
           {/* Date Selection */}
           <div className="space-y-4">
@@ -209,7 +184,6 @@ export default function RescheduleAppointmentForm({
               initialFocus
             />
           </div>
-
           {/* Time Selection */}
           <div className="space-y-4">
             <div>
@@ -218,7 +192,6 @@ export default function RescheduleAppointmentForm({
                 Available time slots for {selectedDate ? format(selectedDate, 'MMM dd, yyyy') : 'selected date'}
               </p>
             </div>
-            
             {selectedDate ? (
               isLoadingSlots ? (
                 <div className="flex items-center justify-center h-64">
@@ -262,7 +235,6 @@ export default function RescheduleAppointmentForm({
             )}
           </div>
         </div>
-
         {/* Current Appointment Info */}
         <div className="bg-muted p-3 rounded-lg text-sm">
           <p className="font-medium mb-1">Current Appointment:</p>
@@ -275,7 +247,6 @@ export default function RescheduleAppointmentForm({
             {appointment.staff_profiles && ` with ${appointment.staff_profiles.display_name}`}
           </p>
         </div>
-
         <DialogFooter>
           <Button
             variant="outline"

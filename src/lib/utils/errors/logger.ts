@@ -1,10 +1,8 @@
 /**
  * Error logging utilities for the application
  */
-
 export type ErrorSeverity = 'low' | 'medium' | 'high' | 'critical'
 export type ErrorCategory = 'auth' | 'api' | 'validation' | 'network' | 'ui' | 'unknown'
-
 export interface ErrorLog {
   id: string
   message: string
@@ -18,7 +16,6 @@ export interface ErrorLog {
   url?: string
   userAgent?: string
 }
-
 export interface ErrorLoggerConfig {
   enableConsoleLog: boolean
   enableRemoteLogging: boolean
@@ -27,13 +24,11 @@ export interface ErrorLoggerConfig {
   userId?: string
   sessionId?: string
 }
-
 class ErrorLogger {
   private config: ErrorLoggerConfig
   private errorQueue: ErrorLog[] = []
   private maxQueueSize = 50
   private flushInterval = 30000 // 30 seconds
-
   constructor(config?: Partial<ErrorLoggerConfig>) {
     this.config = {
       enableConsoleLog: process.env.NODE_ENV === 'development',
@@ -41,13 +36,11 @@ class ErrorLogger {
       environment: (process.env.NODE_ENV as 'development' | 'production') || 'development',
       ...config
     }
-
     // Start flush interval for remote logging
     if (this.config.enableRemoteLogging) {
       this.startFlushInterval()
     }
   }
-
   /**
    * Log an error with severity and category
    */
@@ -58,27 +51,22 @@ class ErrorLogger {
     context?: Record<string, unknown>
   ): string {
     const errorLog = this.createErrorLog(error, severity, category, context)
-    
     // Console logging
     if (this.config.enableConsoleLog) {
       this.logToConsole(errorLog)
     }
-
     // Add to queue for remote logging
     if (this.config.enableRemoteLogging) {
       this.addToQueue(errorLog)
     }
-
     return errorLog.id
   }
-
   /**
    * Log authentication errors
    */
   public logAuthError(error: Error | string, context?: Record<string, unknown>): string {
     return this.logError(error, 'high', 'auth', context)
   }
-
   /**
    * Log API errors
    */
@@ -94,7 +82,6 @@ class ErrorLogger {
       ...context
     })
   }
-
   /**
    * Log validation errors
    */
@@ -108,7 +95,6 @@ class ErrorLogger {
       ...context
     })
   }
-
   /**
    * Log network errors
    */
@@ -122,7 +108,6 @@ class ErrorLogger {
       ...context
     })
   }
-
   /**
    * Log UI errors
    */
@@ -136,7 +121,6 @@ class ErrorLogger {
       ...context
     })
   }
-
   /**
    * Log critical errors that need immediate attention
    */
@@ -146,15 +130,12 @@ class ErrorLogger {
     context?: Record<string, unknown>
   ): string {
     const id = this.logError(error, 'critical', category, context)
-    
     // Immediately flush critical errors
     if (this.config.enableRemoteLogging) {
       this.flushErrors()
     }
-    
     return id
   }
-
   /**
    * Create error log object
    */
@@ -166,7 +147,6 @@ class ErrorLogger {
   ): ErrorLog {
     const message = typeof error === 'string' ? error : error.message
     const stack = typeof error === 'object' ? error.stack : undefined
-
     return {
       id: this.generateId(),
       message,
@@ -181,28 +161,19 @@ class ErrorLogger {
       userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : undefined
     }
   }
-
   /**
    * Log to console with appropriate styling
    */
   private logToConsole(errorLog: ErrorLog): void {
     const style = this.getConsoleStyle(errorLog.severity)
     const prefix = `[${errorLog.severity.toUpperCase()}] [${errorLog.category}]`
-    
     console.group(`%c${prefix} ${errorLog.message}`, style)
-    console.log('Timestamp:', errorLog.timestamp)
-    
     if (errorLog.context) {
-      console.log('Context:', errorLog.context)
     }
-    
     if (errorLog.stack) {
-      console.log('Stack trace:', errorLog.stack)
     }
-    
     console.groupEnd()
   }
-
   /**
    * Get console style based on severity
    */
@@ -215,28 +186,23 @@ class ErrorLogger {
     }
     return styles[severity]
   }
-
   /**
    * Add error to queue for batch sending
    */
   private addToQueue(errorLog: ErrorLog): void {
     this.errorQueue.push(errorLog)
-    
     // Flush if queue is full
     if (this.errorQueue.length >= this.maxQueueSize) {
       this.flushErrors()
     }
   }
-
   /**
    * Send errors to remote logging service
    */
   private async flushErrors(): Promise<void> {
     if (this.errorQueue.length === 0) return
-    
     const errors = [...this.errorQueue]
     this.errorQueue = []
-    
     try {
       if (this.config.remoteEndpoint) {
         const response = await fetch(this.config.remoteEndpoint, {
@@ -249,18 +215,14 @@ class ErrorLogger {
             environment: this.config.environment
           })
         })
-        
         if (!response.ok) {
-          console.error('Failed to send error logs to remote service')
         }
       }
-    } catch (err) {
-      console.error('Error sending logs to remote service:', err)
+    } catch (_err) {
       // Re-add errors to queue if sending failed
       this.errorQueue.unshift(...errors)
     }
   }
-
   /**
    * Start interval for flushing errors
    */
@@ -269,14 +231,12 @@ class ErrorLogger {
       this.flushErrors()
     }, this.flushInterval)
   }
-
   /**
    * Generate unique ID for error log
    */
   private generateId(): string {
     return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
   }
-
   /**
    * Set user context for all future logs
    */
@@ -284,7 +244,6 @@ class ErrorLogger {
     this.config.userId = userId
     this.config.sessionId = sessionId
   }
-
   /**
    * Clear user context
    */
@@ -292,7 +251,6 @@ class ErrorLogger {
     this.config.userId = undefined
     this.config.sessionId = undefined
   }
-
   /**
    * Get error statistics
    */
@@ -318,22 +276,17 @@ class ErrorLogger {
         unknown: 0
       }
     }
-
     this.errorQueue.forEach(error => {
       stats.bySeverity[error.severity]++
       stats.byCategory[error.category]++
     })
-
     return stats
   }
 }
-
 // Create singleton instance
 const errorLogger = new ErrorLogger()
-
 // Export instance and class
 export { errorLogger, ErrorLogger }
-
 // Convenience functions
 export const logError = errorLogger.logError.bind(errorLogger)
 export const logAuthError = errorLogger.logAuthError.bind(errorLogger)

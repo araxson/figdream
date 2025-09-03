@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -14,7 +13,6 @@ import { Badge } from '@/components/ui'
 import { Separator } from '@/components/ui'
 import { toast } from 'sonner'
 import { Building, Shield, Users, User, Loader2, Lock, Smartphone, Mail, KeyRound } from 'lucide-react'
-
 export default function LoginPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
@@ -24,28 +22,22 @@ export default function LoginPage() {
   const [otpValue, setOtpValue] = useState('')
   const [selectedRole, setSelectedRole] = useState<string>('')
   const [otpProgress, setOtpProgress] = useState(0)
-
   const handleLogin = async (role: string) => {
     if (!email || !password) {
       toast.error('Please enter your email and password')
       return
     }
-
     setIsLoading(true)
     setSelectedRole(role)
-    
     try {
       // Simulate initial login - In production, this would call Supabase auth
       await new Promise(resolve => setTimeout(resolve, 1500))
-      
       // Simulate checking if user has 2FA enabled
       const has2FA = Math.random() > 0.3 // 70% chance user has 2FA enabled
-      
       if (has2FA) {
         toast.success('Credentials verified! Please enter your verification code.')
         setLoginStep('otp')
         setOtpProgress(50)
-        
         // Simulate sending OTP
         setTimeout(() => {
           toast.info('Verification code sent to your device')
@@ -54,34 +46,28 @@ export default function LoginPage() {
         // Direct login without OTP
         completeLogin(role)
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('Login failed. Please try again.')
     } finally {
       setIsLoading(false)
     }
   }
-
   const handleOtpSubmit = async () => {
     if (otpValue.length !== 6) {
       toast.error('Please enter the complete 6-digit code')
       return
     }
-
     setIsLoading(true)
     setOtpProgress(75)
-    
     try {
       // Simulate OTP verification
       await new Promise(resolve => setTimeout(resolve, 1000))
-      
       // Simulate OTP validation (90% success rate for demo)
       const isValidOtp = Math.random() > 0.1
-      
       if (isValidOtp) {
         setOtpProgress(100)
         toast.success('Verification successful!')
         setLoginStep('success')
-        
         setTimeout(() => {
           completeLogin(selectedRole)
         }, 1000)
@@ -90,14 +76,13 @@ export default function LoginPage() {
         toast.error('Invalid verification code. Please try again.')
         setOtpValue('')
       }
-    } catch (error) {
+    } catch (_error) {
       setOtpProgress(50)
       toast.error('Verification failed. Please try again.')
     } finally {
       setIsLoading(false)
     }
   }
-
   const completeLogin = (role: string) => {
     const roleRoutes: Record<string, string> = {
       'customer': '/customer',
@@ -105,31 +90,27 @@ export default function LoginPage() {
       'salon-owner': '/owner',
       'super-admin': '/admin',
     }
-    
     toast.success(`Welcome back! Logging in as ${role}`)
     router.push(roleRoutes[role] || '/')
   }
-
   const handleOtpResend = async () => {
     setIsLoading(true)
     try {
       await new Promise(resolve => setTimeout(resolve, 1000))
       toast.success('New verification code sent!')
       setOtpValue('')
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to resend code. Please try again.')
     } finally {
       setIsLoading(false)
     }
   }
-
   const resetLogin = () => {
     setLoginStep('credentials')
     setOtpValue('')
     setOtpProgress(0)
     setSelectedRole('')
   }
-
   const roleCards = [
     {
       role: 'customer',
@@ -152,7 +133,7 @@ export default function LoginPage() {
       title: 'Salon Owner',
       description: 'Manage your salon business and team',
       icon: Building,
-      href: '/auth/login/salon-owner',
+      href: '/auth/login/salon',
       color: 'text-purple-600',
     },
     {
@@ -164,7 +145,6 @@ export default function LoginPage() {
       color: 'text-red-600',
     },
   ]
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -174,7 +154,6 @@ export default function LoginPage() {
           Sign in to your FigDream account
         </p>
       </div>
-
       {/* Authentication Progress */}
       {(loginStep === 'otp' || loginStep === 'success') && (
         <Card className="mb-6">
@@ -195,14 +174,12 @@ export default function LoginPage() {
           </CardContent>
         </Card>
       )}
-
       {/* Login Tabs */}
       <Tabs defaultValue="quick" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="quick" disabled={loginStep !== 'credentials'}>Quick Login</TabsTrigger>
           <TabsTrigger value="role" disabled={loginStep !== 'credentials'}>Login by Role</TabsTrigger>
         </TabsList>
-
         {/* Quick Login Tab */}
         <TabsContent value="quick">
           {loginStep === 'credentials' && (
@@ -230,7 +207,7 @@ export default function LoginPage() {
                     <Label htmlFor="password">Password</Label>
                     <Link
                       href="/auth/forgot-password"
-                      className="text-sm text-primary hover:underline"
+                      className="text-sm text-primary"
                     >
                       Forgot password?
                     </Link>
@@ -262,22 +239,21 @@ export default function LoginPage() {
                 </Button>
                 <div className="text-center text-sm text-muted-foreground">
                   Don&apos;t have an account?{' '}
-                  <Link href="/auth/register" className="text-primary hover:underline">
+                  <Link href="/auth/register" className="text-primary">
                     Sign up
                   </Link>
                 </div>
               </CardFooter>
             </Card>
           )}
-
           {/* OTP Verification Step */}
           {loginStep === 'otp' && (
             <Card>
               <CardHeader className="text-center">
                 <div className="flex justify-center mb-4">
-                  <Badge variant="secondary" className="h-12 w-12 rounded-full p-0 flex items-center justify-center bg-primary/10">
+                  <div className="h-12 w-12 rounded-full flex items-center justify-center bg-primary/10">
                     <Smartphone className="h-6 w-6 text-primary" />
-                  </Badge>
+                  </div>
                 </div>
                 <CardTitle className="flex items-center justify-center gap-2">
                   <Lock className="h-5 w-5" />
@@ -308,7 +284,6 @@ export default function LoginPage() {
                     </InputOTPGroup>
                   </InputOTP>
                 </div>
-                
                 <div className="text-center space-y-2">
                   <p className="text-sm text-muted-foreground">
                     Didn&apos;t receive the code?
@@ -353,15 +328,14 @@ export default function LoginPage() {
               </CardFooter>
             </Card>
           )}
-
           {/* Success Step */}
           {loginStep === 'success' && (
             <Card>
               <CardContent className="pt-6">
                 <div className="text-center space-y-4">
-                  <Badge variant="secondary" className="h-12 w-12 rounded-full p-0 flex items-center justify-center bg-green-100 mx-auto">
+                  <div className="h-12 w-12 rounded-full flex items-center justify-center bg-green-100 mx-auto">
                     <Lock className="h-6 w-6 text-green-600" />
-                  </Badge>
+                  </div>
                   <div>
                     <h3 className="text-lg font-semibold text-green-900">Authentication Complete</h3>
                     <p className="text-sm text-green-700">
@@ -376,7 +350,6 @@ export default function LoginPage() {
             </Card>
           )}
         </TabsContent>
-
         {/* Role-Based Login Tab */}
         <TabsContent value="role">
           {loginStep === 'credentials' && (
@@ -405,7 +378,7 @@ export default function LoginPage() {
                       <Label htmlFor="role-password">Password</Label>
                       <Link
                         href="/auth/forgot-password"
-                        className="text-sm text-primary hover:underline"
+                        className="text-sm text-primary"
                       >
                         Forgot password?
                       </Link>
@@ -421,12 +394,11 @@ export default function LoginPage() {
                   </div>
                 </CardContent>
               </Card>
-
               <div className="grid gap-3">
                 {roleCards.map((role) => (
                   <Card
                     key={role.role}
-                    className="cursor-pointer hover:shadow-md transition-shadow"
+                    className="cursor-pointer"
                     onClick={() => handleLogin(role.role)}
                   >
                     <CardHeader className="pb-3">
@@ -442,7 +414,7 @@ export default function LoginPage() {
                             </CardDescription>
                           </div>
                         </div>
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline">
                           {role.role.replace('-', ' ')}
                         </Badge>
                       </div>
@@ -450,26 +422,23 @@ export default function LoginPage() {
                   </Card>
                 ))}
               </div>
-
               <Separator className="my-4" />
-
               <div className="text-center text-sm text-muted-foreground">
                 Don&apos;t have an account?{' '}
-                <Link href="/auth/register" className="text-primary hover:underline">
+                <Link href="/auth/register" className="text-primary">
                   Sign up
                 </Link>
               </div>
             </>
           )}
-
           {/* OTP Step for Role-Based Login */}
           {loginStep === 'otp' && (
             <Card>
               <CardHeader className="text-center">
                 <div className="flex justify-center mb-4">
-                  <Badge variant="secondary" className="h-12 w-12 rounded-full p-0 flex items-center justify-center bg-primary/10">
+                  <div className="h-12 w-12 rounded-full flex items-center justify-center bg-primary/10">
                     <Smartphone className="h-6 w-6 text-primary" />
-                  </Badge>
+                  </div>
                 </div>
                 <CardTitle className="flex items-center justify-center gap-2">
                   <Lock className="h-5 w-5" />
@@ -508,7 +477,6 @@ export default function LoginPage() {
                     </InputOTPGroup>
                   </InputOTP>
                 </div>
-                
                 <div className="text-center space-y-2">
                   <p className="text-sm text-muted-foreground">
                     Didn&apos;t receive the code?
@@ -553,15 +521,14 @@ export default function LoginPage() {
               </CardFooter>
             </Card>
           )}
-
           {/* Success Step for Role-Based Login */}
           {loginStep === 'success' && (
             <Card>
               <CardContent className="pt-6">
                 <div className="text-center space-y-4">
-                  <Badge variant="secondary" className="h-12 w-12 rounded-full p-0 flex items-center justify-center bg-green-100 mx-auto">
+                  <div className="h-12 w-12 rounded-full flex items-center justify-center bg-green-100 mx-auto">
                     <Lock className="h-6 w-6 text-green-600" />
-                  </Badge>
+                  </div>
                   <div>
                     <h3 className="text-lg font-semibold text-green-900">Welcome!</h3>
                     <p className="text-sm text-green-700">
@@ -580,7 +547,6 @@ export default function LoginPage() {
           )}
         </TabsContent>
       </Tabs>
-
       {/* OAuth Options */}
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
@@ -592,7 +558,6 @@ export default function LoginPage() {
           </span>
         </div>
       </div>
-
       <div className="grid grid-cols-2 gap-4">
         <Button variant="outline" disabled={isLoading}>
           <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">

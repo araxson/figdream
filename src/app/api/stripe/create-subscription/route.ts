@@ -2,18 +2,15 @@
  * Stripe Create Subscription API Route for FigDream
  * Handles creating and managing salon subscriptions
  */
-
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { getUser } from '@/lib/data-access/auth'
 import { createSalonSubscription, updateSubscriptionFromStripe } from '@/lib/data-access/payments/stripe'
 import { 
-  createSubscription, 
   updateSubscription, 
   cancelSubscription,
   getSubscription 
 } from '@/lib/integrations/stripe/server'
-
 // Request validation schemas
 const createSubscriptionSchema = z.object({
   salonId: z.string().uuid('Invalid salon ID'),
@@ -22,7 +19,6 @@ const createSubscriptionSchema = z.object({
   trialDays: z.number().int().min(0).max(365).optional(),
   metadata: z.record(z.string()).optional().default({}),
 })
-
 const updateSubscriptionSchema = z.object({
   subscriptionId: z.string().min(1, 'Subscription ID is required'),
   priceId: z.string().optional(),
@@ -30,13 +26,11 @@ const updateSubscriptionSchema = z.object({
   cancelAtPeriodEnd: z.boolean().optional(),
   metadata: z.record(z.string()).optional(),
 })
-
 const cancelSubscriptionSchema = z.object({
   subscriptionId: z.string().min(1, 'Subscription ID is required'),
   immediately: z.boolean().default(false),
   cancellationReason: z.string().optional(),
 })
-
 /**
  * POST - Create new subscription
  */
@@ -50,30 +44,24 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       )
     }
-
     // Parse and validate request body
     const body = await request.json()
     const validatedData = createSubscriptionSchema.parse(body)
-
     const { salonId, priceId, paymentMethodId, trialDays, metadata } = validatedData
-
     // Verify user has permission to create subscription for this salon
     const { createClient } = await import('@/lib/database/supabase/server')
     const supabase = await createClient()
-    
     const { data: salon, error: salonError } = await supabase
       .from('salons')
       .select('id, owner_id, name')
       .eq('id', salonId)
       .single()
-
     if (salonError || !salon) {
       return NextResponse.json(
         { error: 'Salon not found' },
         { status: 404 }
       )
     }
-
     // Check if user owns the salon or has admin role
     const { data: roleData } = await supabase
       .from('user_roles')
@@ -81,7 +69,6 @@ export async function POST(request: NextRequest) {
       .eq('user_id', user.id)
       .eq('is_active', true)
       .maybeSingle()
-    
     const role = roleData?.role || 'customer'
     if (salon.owner_id !== user.id && role !== 'super_admin') {
       return NextResponse.json(
@@ -89,7 +76,6 @@ export async function POST(request: NextRequest) {
         { status: 403 }
       )
     }
-
     // Check if salon already has an active subscription
     const { data: existingSubscription } = await supabase
       .from('salon_subscriptions')
@@ -97,14 +83,12 @@ export async function POST(request: NextRequest) {
       .eq('salon_id', salonId)
       .in('status', ['active', 'trialing', 'past_due'])
       .limit(1)
-
     if (existingSubscription && existingSubscription.length > 0) {
       return NextResponse.json(
         { error: 'Salon already has an active subscription' },
         { status: 400 }
       )
     }
-
     // Create subscription
     const result = await createSalonSubscription({
       salonId,
@@ -117,7 +101,6 @@ export async function POST(request: NextRequest) {
         salon_name: salon.name,
       },
     })
-
     return NextResponse.json({
       success: true,
       subscription: {
@@ -131,10 +114,7 @@ export async function POST(request: NextRequest) {
       },
       subscriptionRecord: result.subscriptionRecord,
     })
-
-  } catch (error) {
-    console.error('Error creating subscription:', error)
-
+  } catch (_error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { 
@@ -144,7 +124,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
-
     if (error instanceof Error) {
       if (error.message.includes('No such price')) {
         return NextResponse.json(
@@ -152,7 +131,6 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         )
       }
-
       if (error.message.includes('No such customer')) {
         return NextResponse.json(
           { error: 'Customer not found' },
@@ -160,14 +138,12 @@ export async function POST(request: NextRequest) {
         )
       }
     }
-
     return NextResponse.json(
       { error: 'Failed to create subscription' },
       { status: 500 }
     )
   }
 }
-
 /**
  * GET - Retrieve subscription details
  */
@@ -180,21 +156,17 @@ export async function GET(request: NextRequest) {
         { status: 401 }
       )
     }
-
     const { searchParams } = new URL(request.url)
     const subscriptionId = searchParams.get('subscription_id')
     const salonId = searchParams.get('salon_id')
-
     if (!subscriptionId && !salonId) {
       return NextResponse.json(
         { error: 'Subscription ID or Salon ID is required' },
         { status: 400 }
       )
     }
-
     const { createClient } = await import('@/lib/database/supabase/server')
     const supabase = await createClient()
-
     let query = supabase
       .from('salon_subscriptions')
       .select(`
@@ -205,22 +177,18 @@ export async function GET(request: NextRequest) {
           owner_id
         )
       `)
-
     if (subscriptionId) {
       query = query.eq('stripe_subscription_id', subscriptionId)
     } else if (salonId) {
       query = query.eq('salon_id', salonId)
     }
-
     const { data: subscriptionRecord, error: dbError } = await query.single()
-
     if (dbError || !subscriptionRecord) {
       return NextResponse.json(
         { error: 'Subscription not found' },
         { status: 404 }
       )
     }
-
     // Verify user has permission to view this subscription
     const { data: roleData } = await supabase
       .from('user_roles')
@@ -228,7 +196,6 @@ export async function GET(request: NextRequest) {
       .eq('user_id', user.id)
       .eq('is_active', true)
       .maybeSingle()
-    
     const role = roleData?.role || 'customer'
     if (subscriptionRecord.salons.owner_id !== user.id && role !== 'super_admin') {
       return NextResponse.json(
@@ -236,17 +203,14 @@ export async function GET(request: NextRequest) {
         { status: 403 }
       )
     }
-
     // Get latest subscription data from Stripe
     const stripeSubscription = await getSubscription(subscriptionRecord.stripe_subscription_id)
-
     if (!stripeSubscription) {
       return NextResponse.json(
         { error: 'Subscription not found in Stripe' },
         { status: 404 }
       )
     }
-
     return NextResponse.json({
       success: true,
       subscription: {
@@ -273,16 +237,13 @@ export async function GET(request: NextRequest) {
       },
       subscriptionRecord,
     })
-
-  } catch (error) {
-    console.error('Error retrieving subscription:', error)
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to retrieve subscription' },
       { status: 500 }
     )
   }
 }
-
 /**
  * PUT - Update subscription
  */
@@ -295,40 +256,32 @@ export async function PUT(request: NextRequest) {
         { status: 401 }
       )
     }
-
     const body = await request.json()
     const validatedData = updateSubscriptionSchema.parse(body)
-
     const { subscriptionId, priceId, paymentMethodId, cancelAtPeriodEnd, metadata } = validatedData
-
     // Get subscription to verify ownership
     const { getSubscriptionByStripeId } = await import('@/lib/data-access/payments/stripe')
     const subscriptionRecord = await getSubscriptionByStripeId(subscriptionId)
-
     if (!subscriptionRecord) {
       return NextResponse.json(
         { error: 'Subscription not found' },
         { status: 404 }
       )
     }
-
     // Verify user has permission to update this subscription
     const { createClient } = await import('@/lib/database/supabase/server')
     const supabase = await createClient()
-    
     const { data: salon } = await supabase
       .from('salons')
       .select('owner_id')
       .eq('id', subscriptionRecord.salon_id)
       .single()
-
     const { data: roleData } = await supabase
       .from('user_roles')
       .select('role')
       .eq('user_id', user.id)
       .eq('is_active', true)
       .maybeSingle()
-    
     const role = roleData?.role || 'customer'
     if (!salon || (salon.owner_id !== user.id && role !== 'super_admin')) {
       return NextResponse.json(
@@ -336,10 +289,8 @@ export async function PUT(request: NextRequest) {
         { status: 403 }
       )
     }
-
     // Prepare update parameters
-    const updateParams: any = {}
-
+    const updateParams: Record<string, unknown> = {}
     if (priceId) {
       // Get current subscription to update items
       const stripeSubscription = await getSubscription(subscriptionId)
@@ -351,15 +302,12 @@ export async function PUT(request: NextRequest) {
         updateParams.proration_behavior = 'create_prorations'
       }
     }
-
     if (paymentMethodId) {
       updateParams.default_payment_method = paymentMethodId
     }
-
     if (cancelAtPeriodEnd !== undefined) {
       updateParams.cancel_at_period_end = cancelAtPeriodEnd
     }
-
     if (metadata) {
       updateParams.metadata = {
         ...subscriptionRecord.metadata,
@@ -368,13 +316,10 @@ export async function PUT(request: NextRequest) {
         updated_at: new Date().toISOString(),
       }
     }
-
     // Update subscription in Stripe
     const updatedSubscription = await updateSubscription(subscriptionId, updateParams)
-
     // Update subscription record in database
     await updateSubscriptionFromStripe(subscriptionId, updatedSubscription)
-
     return NextResponse.json({
       success: true,
       subscription: {
@@ -387,10 +332,7 @@ export async function PUT(request: NextRequest) {
         metadata: updatedSubscription.metadata,
       }
     })
-
-  } catch (error) {
-    console.error('Error updating subscription:', error)
-
+  } catch (_error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { 
@@ -400,14 +342,12 @@ export async function PUT(request: NextRequest) {
         { status: 400 }
       )
     }
-
     return NextResponse.json(
       { error: 'Failed to update subscription' },
       { status: 500 }
     )
   }
 }
-
 /**
  * DELETE - Cancel subscription
  */
@@ -420,40 +360,32 @@ export async function DELETE(request: NextRequest) {
         { status: 401 }
       )
     }
-
     const body = await request.json()
     const validatedData = cancelSubscriptionSchema.parse(body)
-
     const { subscriptionId, immediately, cancellationReason } = validatedData
-
     // Get subscription to verify ownership
     const { getSubscriptionByStripeId } = await import('@/lib/data-access/payments/stripe')
     const subscriptionRecord = await getSubscriptionByStripeId(subscriptionId)
-
     if (!subscriptionRecord) {
       return NextResponse.json(
         { error: 'Subscription not found' },
         { status: 404 }
       )
     }
-
     // Verify user has permission to cancel this subscription
     const { createClient } = await import('@/lib/database/supabase/server')
     const supabase = await createClient()
-    
     const { data: salon } = await supabase
       .from('salons')
       .select('owner_id')
       .eq('id', subscriptionRecord.salon_id)
       .single()
-
     const { data: roleData } = await supabase
       .from('user_roles')
       .select('role')
       .eq('user_id', user.id)
       .eq('is_active', true)
       .maybeSingle()
-    
     const role = roleData?.role || 'customer'
     if (!salon || (salon.owner_id !== user.id && role !== 'super_admin')) {
       return NextResponse.json(
@@ -461,13 +393,10 @@ export async function DELETE(request: NextRequest) {
         { status: 403 }
       )
     }
-
     // Cancel subscription
     const canceledSubscription = await cancelSubscription(subscriptionId, immediately)
-
     // Update subscription record
     await updateSubscriptionFromStripe(subscriptionId, canceledSubscription)
-
     // Log cancellation reason if provided
     if (cancellationReason) {
       await supabase
@@ -482,7 +411,6 @@ export async function DELETE(request: NextRequest) {
           },
         })
     }
-
     return NextResponse.json({
       success: true,
       message: immediately ? 'Subscription canceled immediately' : 'Subscription will cancel at period end',
@@ -494,10 +422,7 @@ export async function DELETE(request: NextRequest) {
         current_period_end: canceledSubscription.current_period_end,
       }
     })
-
-  } catch (error) {
-    console.error('Error canceling subscription:', error)
-
+  } catch (_error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { 
@@ -507,7 +432,6 @@ export async function DELETE(request: NextRequest) {
         { status: 400 }
       )
     }
-
     return NextResponse.json(
       { error: 'Failed to cancel subscription' },
       { status: 500 }

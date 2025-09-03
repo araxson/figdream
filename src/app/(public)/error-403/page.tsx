@@ -1,15 +1,13 @@
 'use client'
-
 import Link from 'next/link'
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, HoverCard, HoverCardContent, HoverCardTrigger, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, Badge, Separator, Alert, AlertDescription, Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui'
 import { ShieldX, Home, LogIn, RefreshCw, HelpCircle, Mail, Phone, ArrowLeft, Search, Settings } from 'lucide-react'
-
 export default function Forbidden() {
   return (
     <TooltipProvider>
       <div className="flex min-h-screen flex-col items-center justify-center px-4 bg-muted/20">
         <div className="w-full max-w-2xl">
-          <Card className="shadow-lg">
+          <Card>
             <CardHeader className="text-center">
               <div className="flex items-center justify-center mb-4">
                 <HoverCard>
@@ -32,7 +30,6 @@ export default function Forbidden() {
                   </HoverCardContent>
                 </HoverCard>
               </div>
-              
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Badge variant="destructive" className="text-lg px-3 py-1">
                   403
@@ -40,13 +37,11 @@ export default function Forbidden() {
                 <Separator orientation="vertical" className="h-6" />
                 <Badge variant="outline">Forbidden</Badge>
               </div>
-              
               <CardTitle className="text-2xl font-semibold mb-2">Access Forbidden</CardTitle>
               <CardDescription className="text-base">
                 You don&apos;t have permission to access this resource.
               </CardDescription>
             </CardHeader>
-            
             <CardContent className="space-y-6">
               <Alert>
                 <HelpCircle className="h-4 w-4" />
@@ -55,7 +50,6 @@ export default function Forbidden() {
                   or the resource requires special access rights.
                 </AlertDescription>
               </Alert>
-              
               <div className="space-y-4">
                 <h3 className="font-medium text-center">Quick Actions</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -72,7 +66,6 @@ export default function Forbidden() {
                       <p>Return to the homepage</p>
                     </TooltipContent>
                   </Tooltip>
-                  
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button variant="outline" asChild className="w-full">
@@ -87,7 +80,6 @@ export default function Forbidden() {
                     </TooltipContent>
                   </Tooltip>
                 </div>
-                
                 <div className="flex gap-3">
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -100,7 +92,6 @@ export default function Forbidden() {
                       <p>Return to the previous page</p>
                     </TooltipContent>
                   </Tooltip>
-                  
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button variant="ghost" onClick={() => window.location.reload()} className="flex-1">
@@ -114,9 +105,7 @@ export default function Forbidden() {
                   </Tooltip>
                 </div>
               </div>
-              
               <Separator />
-              
               <div className="space-y-3">
                 <h3 className="font-medium text-center">Need Help?</h3>
                 <div className="flex justify-center">
@@ -163,7 +152,6 @@ export default function Forbidden() {
                   </ContextMenu>
                 </div>
               </div>
-              
               <Command className="rounded-lg border">
                 <CommandInput placeholder="Search for help or navigate..." />
                 <CommandList>

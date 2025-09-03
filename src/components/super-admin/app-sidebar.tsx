@@ -1,5 +1,4 @@
 'use client'
-
 import Link from 'next/link'
 import { LogOut, Shield } from 'lucide-react'
 import {
@@ -30,37 +29,31 @@ import {
   Button,
 } from '@/components/ui'
 import type { Database } from '@/types/database.types'
-
 // Use proper database type for profile
 type Profile = Database['public']['Tables']['profiles']['Row']
-
 interface SuperAdminSidebarProps {
   user: Profile
 }
-
 const mainNavigation = [
   { name: 'Dashboard', href: '/super-admin', icon: Home },
-  { name: 'Salons', href: '/super-admin/salons', icon: Building },
-  { name: 'Users', href: '/super-admin/users', icon: Users },
-  { name: 'Analytics', href: '/super-admin/analytics', icon: BarChart },
-  { name: 'Billing', href: '/super-admin/billing', icon: DollarSign },
-  { name: 'Subscriptions', href: '/super-admin/subscriptions', icon: DollarSign },
-  { name: 'Audit Logs', href: '/super-admin/audit', icon: FileText },
+  { name: 'Salons', href: '/admin/salons', icon: Building },
+  { name: 'Users', href: '/admin/users', icon: Users },
+  { name: 'Analytics', href: '/admin/analytics', icon: BarChart },
+  { name: 'Billing', href: '/admin/billing', icon: DollarSign },
+  { name: 'Subscriptions', href: '/admin/subscriptions', icon: DollarSign },
+  { name: 'Audit Logs', href: '/admin/audit', icon: FileText },
 ]
-
 const monitoringNavigation = [
-  { name: 'API Usage', href: '/super-admin/monitoring/api-usage', icon: Activity },
-  { name: 'Error Logs', href: '/super-admin/monitoring/error-logs', icon: AlertCircle },
-  { name: 'Rate Limits', href: '/super-admin/monitoring/rate-limits', icon: ShieldAlert },
+  { name: 'API Usage', href: '/admin/monitoring/api-usage', icon: Activity },
+  { name: 'Error Logs', href: '/admin/monitoring/error-logs', icon: AlertCircle },
+  { name: 'Rate Limits', href: '/admin/monitoring/rate-limits', icon: ShieldAlert },
 ]
-
 const systemNavigation = [
-  { name: 'Configuration', href: '/super-admin/system/configuration', icon: Wrench },
-  { name: 'Email Templates', href: '/super-admin/email-templates', icon: Mail },
-  { name: 'System Health', href: '/super-admin/system-health', icon: Activity },
-  { name: 'Settings', href: '/super-admin/settings', icon: Settings },
+  { name: 'Configuration', href: '/admin/system/configuration', icon: Wrench },
+  { name: 'Email Templates', href: '/admin/email-templates', icon: Mail },
+  { name: 'System Health', href: '/admin/system-health', icon: Activity },
+  { name: 'Settings', href: '/admin/settings', icon: Settings },
 ]
-
 export function SuperAdminSidebar({ user }: SuperAdminSidebarProps) {
   return (
     <Sidebar>
@@ -93,7 +86,6 @@ export function SuperAdminSidebar({ user }: SuperAdminSidebarProps) {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        
         <SidebarGroup>
           <SidebarGroupLabel>Monitoring</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -111,7 +103,6 @@ export function SuperAdminSidebar({ user }: SuperAdminSidebarProps) {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        
         <SidebarGroup>
           <SidebarGroupLabel>System</SidebarGroupLabel>
           <SidebarGroupContent>

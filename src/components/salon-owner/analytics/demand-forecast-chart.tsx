@@ -1,9 +1,7 @@
 'use client'
-
 import { Area, AreaChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, TooltipProps } from 'recharts'
 import { format } from 'date-fns'
 import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent'
-
 interface DemandForecastChartProps {
   forecast: Array<{
     date: string
@@ -12,23 +10,20 @@ interface DemandForecastChartProps {
     confidence: number
   }>
 }
-
 export default function DemandForecastChart({ forecast }: DemandForecastChartProps) {
   const data = forecast.map(day => ({
     ...day,
     upper: Math.round(day.predicted * (1 + (100 - day.confidence) / 100)),
     lower: Math.round(day.predicted * (1 - (100 - day.confidence) / 100))
   }))
-
   const formatDate = (dateString: string) => {
     return format(new Date(dateString), 'MMM dd')
   }
-
   const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameType>) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload
       return (
-        <div className="bg-popover text-popover-foreground px-3 py-2 rounded-lg shadow-lg border">
+        <div className="bg-popover text-popover-foreground px-3 py-2 rounded-lg border">
           <p className="font-medium">{formatDate(label)}</p>
           <p className="text-sm">{data.dayOfWeek}</p>
           <p className="text-sm">Predicted: {data.predicted} bookings</p>
@@ -39,7 +34,6 @@ export default function DemandForecastChart({ forecast }: DemandForecastChartPro
     }
     return null
   }
-
   return (
     <ResponsiveContainer width="100%" height={300}>
       <AreaChart

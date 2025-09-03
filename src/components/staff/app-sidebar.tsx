@@ -1,5 +1,4 @@
 'use client'
-
 import Link from 'next/link'
 import { LogOut } from 'lucide-react'
 import {
@@ -25,16 +24,13 @@ import {
   Button,
 } from '@/components/ui'
 import type { Database } from '@/types/database.types'
-
 // Use proper database types
 type Profile = Database['public']['Tables']['profiles']['Row']
 type StaffProfile = Database['public']['Tables']['staff_profiles']['Row']
-
 interface StaffSidebarProps {
   user: Profile
   staff: StaffProfile
 }
-
 const navigation = [
   { name: 'Dashboard', href: '/staff', icon: Home },
   { name: 'Schedule', href: '/staff/schedule', icon: Calendar },
@@ -45,8 +41,7 @@ const navigation = [
   { name: 'Profile', href: '/staff/profile', icon: User },
   { name: 'Settings', href: '/staff/settings', icon: Settings },
 ]
-
-export function StaffSidebar({ user, staff }: StaffSidebarProps) {
+export function StaffSidebar({ user: _user, staff }: StaffSidebarProps) {
   return (
     <Sidebar>
       <SidebarHeader>

@@ -1,24 +1,17 @@
 import { Database } from '@/types/database.types'
 import { createClient } from '@/lib/database/supabase/server'
 import { cache } from 'react'
-import { startOfMonth, endOfMonth, subMonths, startOfDay, endOfDay, subDays } from 'date-fns'
-
+import { startOfMonth, subMonths, startOfDay, subDays } from 'date-fns'
 type Appointment = Database['public']['Tables']['appointments']['Row']
-type LoyaltyTransaction = Database['public']['Tables']['loyalty_transactions']['Row']
-type Customer = Database['public']['Tables']['customers']['Row']
-type Service = Database['public']['Tables']['services']['Row']
-
 /**
  * Get revenue metrics for a salon
  */
 export const getRevenueMetrics = cache(async (salonId: string, period: 'day' | 'week' | 'month' | 'year' = 'month') => {
   const supabase = await createClient()
-  
   // Calculate date range based on period
   const now = new Date()
   let startDate: Date
   let previousStartDate: Date
-  
   switch (period) {
     case 'day':
       startDate = startOfDay(now)
@@ -37,7 +30,6 @@ export const getRevenueMetrics = cache(async (salonId: string, period: 'day' | '
       previousStartDate = subMonths(now, 24)
       break
   }
-
   // Get current period appointments with revenue
   const { data: currentAppointments, error: currentError } = await supabase
     .from('appointments')
@@ -46,7 +38,6 @@ export const getRevenueMetrics = cache(async (salonId: string, period: 'day' | '
     .eq('status', 'completed')
     .gte('created_at', startDate.toISOString())
     .lte('created_at', now.toISOString())
-
   // Get previous period appointments for comparison
   const { data: previousAppointments, error: previousError } = await supabase
     .from('appointments')
@@ -55,9 +46,7 @@ export const getRevenueMetrics = cache(async (salonId: string, period: 'day' | '
     .eq('status', 'completed')
     .gte('created_at', previousStartDate.toISOString())
     .lt('created_at', startDate.toISOString())
-
   if (currentError || previousError) {
-    console.error('Error fetching revenue metrics:', currentError || previousError)
     return {
       currentRevenue: 0,
       previousRevenue: 0,
@@ -66,22 +55,17 @@ export const getRevenueMetrics = cache(async (salonId: string, period: 'day' | '
       dailyRevenue: []
     }
   }
-
-  const currentRevenue = currentAppointments?.reduce((sum: number, apt: Appointment) => {
+  const currentRevenue = currentAppointments?.reduce((sum, apt) => {
     return sum + (apt.total_amount || 0)
   }, 0) || 0
-
-  const previousRevenue = previousAppointments?.reduce((sum: number, apt: Appointment) => {
+  const previousRevenue = previousAppointments?.reduce((sum, apt) => {
     return sum + (apt.total_amount || 0)
   }, 0) || 0
-
   const growth = previousRevenue > 0 
     ? ((currentRevenue - previousRevenue) / previousRevenue) * 100 
     : 0
-
   // Calculate daily revenue for charts
   const dailyRevenue = calculateDailyRevenue(currentAppointments || [], startDate, now)
-
   return {
     currentRevenue,
     previousRevenue,
@@ -90,30 +74,25 @@ export const getRevenueMetrics = cache(async (salonId: string, period: 'day' | '
     dailyRevenue
   }
 })
-
 /**
  * Get customer analytics for a salon
  */
 export const getCustomerMetrics = cache(async (salonId: string) => {
   const supabase = await createClient()
-  
   const now = new Date()
   const thirtyDaysAgo = subDays(now, 30)
   const sixtyDaysAgo = subDays(now, 60)
-
   // Get total customers
   const { count: totalCustomers } = await supabase
     .from('customers')
     .select('*', { count: 'exact', head: true })
     .eq('salon_id', salonId)
-
   // Get new customers in last 30 days
   const { count: newCustomers } = await supabase
     .from('customers')
     .select('*', { count: 'exact', head: true })
     .eq('salon_id', salonId)
     .gte('created_at', thirtyDaysAgo.toISOString())
-
   // Get returning customers (had appointments in both periods)
   const { data: returningData } = await supabase
     .from('appointments')
@@ -121,39 +100,32 @@ export const getCustomerMetrics = cache(async (salonId: string) => {
     .eq('salon_id', salonId)
     .gte('scheduled_at', sixtyDaysAgo.toISOString())
     .lte('scheduled_at', thirtyDaysAgo.toISOString())
-
   const { data: recentData } = await supabase
     .from('appointments')
     .select('customer_id')
     .eq('salon_id', salonId)
     .gte('scheduled_at', thirtyDaysAgo.toISOString())
-
-  const returningCustomerIds = new Set(returningData?.map((a: {customer_id: string}) => a.customer_id) || [])
-  const recentCustomerIds = new Set(recentData?.map((a: {customer_id: string}) => a.customer_id) || [])
+  const returningCustomerIds = new Set(returningData?.map((a) => a.customer_id) || [])
+  const recentCustomerIds = new Set(recentData?.map((a) => a.customer_id) || [])
   const returningCount = [...recentCustomerIds].filter(id => returningCustomerIds.has(id)).length
-
   const retentionRate = totalCustomers && totalCustomers > 0 
     ? (returningCount / totalCustomers) * 100 
     : 0
-
   // Get customer lifetime value from loyalty transactions
   const { data: ltv } = await supabase
     .from('loyalty_transactions')
     .select('customer_id, points_amount')
     .eq('salon_id', salonId)
     .eq('type', 'earned')
-
-  const customerSpending = ltv?.reduce((acc: Record<string, number>, t: LoyaltyTransaction) => {
+  const customerSpending = ltv?.reduce((acc, t) => {
     if (t.customer_id) {
       acc[t.customer_id] = (acc[t.customer_id] || 0) + (t.points_amount || 0)
     }
     return acc
   }, {} as Record<string, number>) || {}
-
   const avgLifetimeValue = Object.values(customerSpending).length > 0
-    ? Object.values(customerSpending).reduce((sum: number, val: number) => sum + val, 0) / Object.values(customerSpending).length
+    ? Object.values(customerSpending).reduce((sum, val) => sum + val, 0) / Object.values(customerSpending).length
     : 0
-
   return {
     totalCustomers: totalCustomers || 0,
     newCustomers: newCustomers || 0,
@@ -163,15 +135,12 @@ export const getCustomerMetrics = cache(async (salonId: string) => {
     customerGrowth: calculateCustomerGrowth(totalCustomers || 0, newCustomers || 0)
   }
 })
-
 /**
  * Get service popularity metrics
  */
 export const getServiceMetrics = cache(async (salonId: string) => {
   const supabase = await createClient()
-  
   const thirtyDaysAgo = subDays(new Date(), 30)
-
   // Get service bookings in last 30 days
   const { data: bookings } = await supabase
     .from('appointment_services')
@@ -196,9 +165,34 @@ export const getServiceMetrics = cache(async (salonId: string) => {
     .eq('appointments.salon_id', salonId)
     .gte('appointments.scheduled_at', thirtyDaysAgo.toISOString())
     .eq('appointments.status', 'completed')
-
   // Calculate service popularity
-  const serviceStats = bookings?.reduce((acc: Record<string, any>, booking: any) => {
+  type ServiceStat = {
+    id: string
+    name: string
+    category: string
+    bookings: number
+    revenue: number
+    avgDuration: number
+  }
+  type BookingWithService = {
+    service_id: string | null
+    services: {
+      id: string
+      name: string
+      category_id: string | null
+      price: number | null
+      duration: number | null
+      service_categories: {
+        name: string
+      } | null
+    } | null
+    appointments: {
+      scheduled_at: string
+      status: string
+      salon_id: string
+    }
+  }
+  const serviceStats = (bookings as BookingWithService[] | null)?.reduce((acc, booking) => {
     if (booking.service_id && booking.services) {
       if (!acc[booking.service_id]) {
         acc[booking.service_id] = {
@@ -214,12 +208,10 @@ export const getServiceMetrics = cache(async (salonId: string) => {
       acc[booking.service_id].revenue += booking.services.price || 0
     }
     return acc
-  }, {} as Record<string, any>) || {}
-
+  }, {} as Record<string, ServiceStat>) || {}
   const topServices = Object.values(serviceStats)
-    .sort((a: any, b: any) => b.bookings - a.bookings)
+    .sort((a, b) => b.bookings - a.bookings)
     .slice(0, 10)
-
   const categoryBreakdown = Object.values(serviceStats).reduce((acc, service) => {
     if (!acc[service.category]) {
       acc[service.category] = { bookings: 0, revenue: 0 }
@@ -227,8 +219,7 @@ export const getServiceMetrics = cache(async (salonId: string) => {
     acc[service.category].bookings += service.bookings
     acc[service.category].revenue += service.revenue
     return acc
-  }, {} as Record<string, any>)
-
+  }, {} as Record<string, { bookings: number; revenue: number }>)
   return {
     topServices,
     categoryBreakdown,
@@ -236,16 +227,13 @@ export const getServiceMetrics = cache(async (salonId: string) => {
     totalBookings: bookings?.length || 0
   }
 })
-
 /**
  * Get staff utilization metrics
  */
 export const getStaffUtilization = cache(async (salonId: string) => {
   const supabase = await createClient()
-  
   const now = new Date()
   const thirtyDaysAgo = subDays(now, 30)
-
   // Get staff with their appointments
   const { data: staffData } = await supabase
     .from('staff_profiles')
@@ -263,23 +251,19 @@ export const getStaffUtilization = cache(async (salonId: string) => {
     `)
     .eq('salon_id', salonId)
     .eq('is_active', true)
-
   const utilization = staffData?.map(staff => {
     const validAppointments = staff.appointments?.filter(
       a => a.status === 'completed' && 
       new Date(a.start_time) >= thirtyDaysAgo
     ) || []
-
     const totalMinutesWorked = validAppointments.reduce(
       (sum, a) => sum + (a.total_duration || 0), 0
     )
-
     // Assume 8 hours per day, 22 working days per month
     const availableMinutes = 8 * 60 * 22
     const utilizationRate = availableMinutes > 0 
       ? (totalMinutesWorked / availableMinutes) * 100 
       : 0
-
     return {
       id: staff.id,
       name: staff.profiles?.full_name || 'Unknown',
@@ -288,52 +272,41 @@ export const getStaffUtilization = cache(async (salonId: string) => {
       utilizationRate: Math.min(utilizationRate, 100) // Cap at 100%
     }
   }) || []
-
   const avgUtilization = utilization.length > 0
     ? utilization.reduce((sum, s) => sum + s.utilizationRate, 0) / utilization.length
     : 0
-
   return {
     staffUtilization: utilization.sort((a, b) => b.utilizationRate - a.utilizationRate),
     avgUtilization,
     totalStaff: utilization.length
   }
 })
-
 /**
  * Get booking patterns and peak hours
  */
 export const getBookingPatterns = cache(async (salonId: string) => {
   const supabase = await createClient()
-  
   const thirtyDaysAgo = subDays(new Date(), 30)
-
   const { data: appointments } = await supabase
     .from('appointments')
     .select('scheduled_at, status')
     .eq('salon_id', salonId)
     .gte('scheduled_at', thirtyDaysAgo.toISOString())
     .in('status', ['completed', 'confirmed'])
-
   // Calculate hourly distribution
   const hourlyDistribution = new Array(24).fill(0)
   const dayDistribution = new Array(7).fill(0)
-
   appointments?.forEach(apt => {
     const date = new Date(apt.scheduled_at)
     const hour = date.getHours()
     const day = date.getDay()
-    
     hourlyDistribution[hour]++
     dayDistribution[day]++
   })
-
   // Find peak hours
   const peakHour = hourlyDistribution.indexOf(Math.max(...hourlyDistribution))
   const peakDay = dayDistribution.indexOf(Math.max(...dayDistribution))
-
   const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-
   return {
     hourlyDistribution,
     dayDistribution,
@@ -342,7 +315,6 @@ export const getBookingPatterns = cache(async (salonId: string) => {
     totalBookings: appointments?.length || 0
   }
 })
-
 /**
  * Get comprehensive dashboard summary
  */
@@ -354,7 +326,6 @@ export const getDashboardSummary = cache(async (salonId: string) => {
     getStaffUtilization(salonId),
     getBookingPatterns(salonId)
   ])
-
   return {
     revenue: {
       current: revenue.currentRevenue,
@@ -381,18 +352,15 @@ export const getDashboardSummary = cache(async (salonId: string) => {
     }
   }
 })
-
 // Helper functions
 function calculateDailyRevenue(appointments: Appointment[], startDate: Date, endDate: Date) {
   const dailyMap = new Map<string, number>()
-  
   // Initialize all days with 0
   const currentDate = new Date(startDate)
   while (currentDate <= endDate) {
     dailyMap.set(currentDate.toISOString().split('T')[0], 0)
     currentDate.setDate(currentDate.getDate() + 1)
   }
-
   // Sum appointment revenue by day
   appointments.forEach(apt => {
     if (apt.created_at && apt.total_amount) {
@@ -400,13 +368,11 @@ function calculateDailyRevenue(appointments: Appointment[], startDate: Date, end
       dailyMap.set(day, (dailyMap.get(day) || 0) + apt.total_amount)
     }
   })
-
   return Array.from(dailyMap.entries()).map(([date, amount]) => ({
     date,
     amount
   }))
 }
-
 function calculateCustomerGrowth(total: number, newCustomers: number): number {
   if (total === 0) return 0
   return (newCustomers / (total - newCustomers)) * 100

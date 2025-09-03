@@ -2,9 +2,7 @@
  * Marketing Campaigns Data Access Layer for FigDream
  * Handles all marketing campaign database operations
  */
-
 'use server'
-
 import { createClient } from '@/lib/database/supabase/server'
 import { getUser, getUserRole } from '@/lib/data-access/auth'
 import type { Database } from '@/types/database.types'
@@ -22,41 +20,31 @@ import {
   type CreateSmsTemplateInput,
   type SendCampaignInput,
 } from '@/lib/validations/marketing-schema'
-
 type Campaign = Database['public']['Tables']['marketing_campaigns']['Row']
-type CampaignInsert = Database['public']['Tables']['marketing_campaigns']['Insert']
-type CampaignUpdate = Database['public']['Tables']['marketing_campaigns']['Update']
-
 // Note: customer_segments table does not exist in database
 // Segment functionality is currently not available
 type EmailTemplate = Database['public']['Tables']['email_templates']['Row']
 type SmsTemplate = Database['public']['Tables']['sms_templates']['Row']
-
 /**
  * Create a new marketing campaign
  */
 export async function createCampaign(input: CreateCampaignInput): Promise<Campaign | null> {
   const supabase = await createClient()
   const { user } = await getUser()
-  
   if (!user) {
     throw new Error('Authentication required')
   }
-
   try {
     const validated = createCampaignSchema.parse(input)
-    
     // Check permissions
     const { data: salon } = await supabase
       .from('salons')
       .select('id, owner_id')
       .eq('id', validated.salon_id)
       .single()
-    
     if (!salon || (salon.owner_id !== user.id && getUserRole(user) !== 'super_admin')) {
       throw new Error('Unauthorized to create campaigns for this salon')
     }
-
     const { data, error } = await supabase
       .from('marketing_campaigns')
       .insert({
@@ -65,79 +53,61 @@ export async function createCampaign(input: CreateCampaignInput): Promise<Campai
       })
       .select()
       .single()
-
     if (error) {
-      console.error('Error creating campaign:', error)
       return null
     }
-
     return data
-  } catch (error) {
-    console.error('Error in createCampaign:', error)
+  } catch (_error) {
     throw error
   }
 }
-
 /**
  * Update an existing campaign
  */
 export async function updateCampaign(input: UpdateCampaignInput): Promise<Campaign | null> {
   const supabase = await createClient()
   const { user } = await getUser()
-  
   if (!user) {
     throw new Error('Authentication required')
   }
-
   try {
     const validated = updateCampaignSchema.parse(input)
     const { id, ...updateData } = validated
-
     // Check permissions
     const { data: campaign } = await supabase
       .from('marketing_campaigns')
       .select('salon_id, status')
       .eq('id', id)
       .single()
-    
     if (!campaign) {
       throw new Error('Campaign not found')
     }
-
     // Can't update active or completed campaigns
     if (['active', 'completed'].includes(campaign.status)) {
       throw new Error('Cannot update active or completed campaigns')
     }
-
     const { data: salon } = await supabase
       .from('salons')
       .select('owner_id')
       .eq('id', campaign.salon_id)
       .single()
-    
     if (!salon || (salon.owner_id !== user.id && getUserRole(user) !== 'super_admin')) {
       throw new Error('Unauthorized to update this campaign')
     }
-
     const { data, error } = await supabase
       .from('marketing_campaigns')
       .update(updateData)
       .eq('id', id)
       .select()
       .single()
-
     if (error) {
-      console.error('Error updating campaign:', error)
       return null
     }
-
     return data
-  } catch (error) {
-    console.error('Error in updateCampaign:', error)
+  } catch (_error) {
     throw error
   }
 }
-
 /**
  * Get campaigns for a salon
  */
@@ -152,73 +122,56 @@ export async function getCampaigns(
 ): Promise<Campaign[]> {
   const supabase = await createClient()
   const { user } = await getUser()
-  
   if (!user) {
     throw new Error('Authentication required')
   }
-
   try {
     let query = supabase
       .from('marketing_campaigns')
       .select('*')
       .eq('salon_id', salonId)
       .order('created_at', { ascending: false })
-
     if (filters?.status) {
       query = query.eq('status', filters.status)
     }
-
     if (filters?.type) {
       query = query.eq('type', filters.type)
     }
-
     if (filters?.startDate) {
       query = query.gte('created_at', filters.startDate)
     }
-
     if (filters?.endDate) {
       query = query.lte('created_at', filters.endDate)
     }
-
     const { data, error } = await query
-
     if (error) {
-      console.error('Error fetching campaigns:', error)
       return []
     }
-
     return data || []
-  } catch (error) {
-    console.error('Error in getCampaigns:', error)
+  } catch (_error) {
     return []
   }
 }
-
 /**
  * Create audience segment
  */
 export async function createSegment(input: CreateSegmentInput): Promise<Segment | null> {
   const supabase = await createClient()
   const { user } = await getUser()
-  
   if (!user) {
     throw new Error('Authentication required')
   }
-
   try {
     const validated = createSegmentSchema.parse(input)
-    
     // Check permissions
     const { data: salon } = await supabase
       .from('salons')
       .select('owner_id')
       .eq('id', validated.salon_id)
       .single()
-    
     if (!salon || (salon.owner_id !== user.id && getUserRole(user) !== 'super_admin')) {
       throw new Error('Unauthorized to create segments for this salon')
     }
-
     const { data, error } = await supabase
       .from('customer_segments')
       .insert({
@@ -227,46 +180,35 @@ export async function createSegment(input: CreateSegmentInput): Promise<Segment 
       })
       .select()
       .single()
-
     if (error) {
-      console.error('Error creating segment:', error)
       return null
     }
-
     // Calculate segment size
     await updateSegmentSize(data.id)
-
     return data
-  } catch (error) {
-    console.error('Error in createSegment:', error)
+  } catch (_error) {
     throw error
   }
 }
-
 /**
  * Update segment size based on conditions
  */
 async function updateSegmentSize(segmentId: string): Promise<void> {
   const supabase = await createClient()
-  
   try {
     const { data: segment } = await supabase
       .from('customer_segments')
       .select('*')
       .eq('id', segmentId)
       .single()
-    
     if (!segment) return
-
     // Build dynamic query based on conditions
     let query = supabase
       .from('customers')
       .select('id', { count: 'exact', head: true })
-
     // Apply conditions
-    for (const condition of segment.conditions as any[]) {
+    for (const condition of segment.conditions as unknown[]) {
       const { field, operator, value } = condition
-      
       switch (operator) {
         case 'equals':
           query = query.eq(field, value)
@@ -300,9 +242,7 @@ async function updateSegmentSize(segmentId: string): Promise<void> {
           break
       }
     }
-
     const { count } = await query
-
     // Update segment with member count
     await supabase
       .from('customer_segments')
@@ -311,49 +251,39 @@ async function updateSegmentSize(segmentId: string): Promise<void> {
         last_calculated: new Date().toISOString(),
       })
       .eq('id', segmentId)
-
-  } catch (error) {
-    console.error('Error updating segment size:', error)
+  } catch (_error) {
   }
 }
-
 /**
  * Get segments for a salon
  * NOTE: customer_segments table does not exist in database
  * This function returns empty array until table is created
  */
-export async function getSegments(salonId: string): Promise<[]> {
+export async function getSegments(_salonId: string): Promise<[]> {
   // customer_segments table does not exist in database.types.ts
   // Returning empty array until table is implemented
-  console.warn('customer_segments table not found in database schema')
   return []
 }
-
 /**
  * Create email template
  */
 export async function createEmailTemplate(input: CreateEmailTemplateInput): Promise<EmailTemplate | null> {
   const supabase = await createClient()
   const { user } = await getUser()
-  
   if (!user) {
     throw new Error('Authentication required')
   }
-
   try {
     const validated = createEmailTemplateSchema.parse(input)
-    
     // Check permissions
     const { data: salon } = await supabase
       .from('salons')
       .select('owner_id')
       .eq('id', validated.salon_id)
       .single()
-    
     if (!salon || (salon.owner_id !== user.id && getUserRole(user) !== 'super_admin')) {
       throw new Error('Unauthorized to create templates for this salon')
     }
-
     const { data, error } = await supabase
       .from('email_templates')
       .insert({
@@ -362,44 +292,34 @@ export async function createEmailTemplate(input: CreateEmailTemplateInput): Prom
       })
       .select()
       .single()
-
     if (error) {
-      console.error('Error creating email template:', error)
       return null
     }
-
     return data
-  } catch (error) {
-    console.error('Error in createEmailTemplate:', error)
+  } catch (_error) {
     throw error
   }
 }
-
 /**
  * Create SMS template
  */
 export async function createSmsTemplate(input: CreateSmsTemplateInput): Promise<SmsTemplate | null> {
   const supabase = await createClient()
   const { user } = await getUser()
-  
   if (!user) {
     throw new Error('Authentication required')
   }
-
   try {
     const validated = createSmsTemplateSchema.parse(input)
-    
     // Check permissions
     const { data: salon } = await supabase
       .from('salons')
       .select('owner_id')
       .eq('id', validated.salon_id)
       .single()
-    
     if (!salon || (salon.owner_id !== user.id && getUserRole(user) !== 'super_admin')) {
       throw new Error('Unauthorized to create templates for this salon')
     }
-
     const { data, error } = await supabase
       .from('sms_templates')
       .insert({
@@ -408,30 +328,23 @@ export async function createSmsTemplate(input: CreateSmsTemplateInput): Promise<
       })
       .select()
       .single()
-
     if (error) {
-      console.error('Error creating SMS template:', error)
       return null
     }
-
     return data
-  } catch (error) {
-    console.error('Error in createSmsTemplate:', error)
+  } catch (_error) {
     throw error
   }
 }
-
 /**
  * Get email templates for a salon
  */
 export async function getEmailTemplates(salonId: string): Promise<EmailTemplate[]> {
   const supabase = await createClient()
   const { user } = await getUser()
-  
   if (!user) {
     throw new Error('Authentication required')
   }
-
   try {
     const { data, error } = await supabase
       .from('email_templates')
@@ -439,30 +352,23 @@ export async function getEmailTemplates(salonId: string): Promise<EmailTemplate[
       .eq('salon_id', salonId)
       .eq('is_active', true)
       .order('created_at', { ascending: false })
-
     if (error) {
-      console.error('Error fetching email templates:', error)
       return []
     }
-
     return data || []
-  } catch (error) {
-    console.error('Error in getEmailTemplates:', error)
+  } catch (_error) {
     return []
   }
 }
-
 /**
  * Get SMS templates for a salon
  */
 export async function getSmsTemplates(salonId: string): Promise<SmsTemplate[]> {
   const supabase = await createClient()
   const { user } = await getUser()
-  
   if (!user) {
     throw new Error('Authentication required')
   }
-
   try {
     const { data, error } = await supabase
       .from('sms_templates')
@@ -470,33 +376,25 @@ export async function getSmsTemplates(salonId: string): Promise<SmsTemplate[]> {
       .eq('salon_id', salonId)
       .eq('is_active', true)
       .order('created_at', { ascending: false })
-
     if (error) {
-      console.error('Error fetching SMS templates:', error)
       return []
     }
-
     return data || []
-  } catch (error) {
-    console.error('Error in getSmsTemplates:', error)
+  } catch (_error) {
     return []
   }
 }
-
 /**
  * Send a campaign
  */
 export async function sendCampaign(input: SendCampaignInput): Promise<{ success: boolean; message: string }> {
   const supabase = await createClient()
   const { user } = await getUser()
-  
   if (!user) {
     throw new Error('Authentication required')
   }
-
   try {
     const validated = sendCampaignSchema.parse(input)
-    
     // Get campaign details
     const { data: campaign } = await supabase
       .from('marketing_campaigns')
@@ -509,21 +407,17 @@ export async function sendCampaign(input: SendCampaignInput): Promise<{ success:
       `)
       .eq('id', validated.campaign_id)
       .single()
-    
     if (!campaign) {
       throw new Error('Campaign not found')
     }
-
     // Check permissions
     if (campaign.salons.owner_id !== user.id && getUserRole(user) !== 'super_admin') {
       throw new Error('Unauthorized to send this campaign')
     }
-
     // Check campaign status
     if (campaign.status !== 'draft' && campaign.status !== 'scheduled') {
       throw new Error('Campaign must be in draft or scheduled status to send')
     }
-
     // Update campaign status
     await supabase
       .from('marketing_campaigns')
@@ -532,7 +426,6 @@ export async function sendCampaign(input: SendCampaignInput): Promise<{ success:
         sent_at: validated.test_mode ? null : new Date().toISOString(),
       })
       .eq('id', validated.campaign_id)
-
     // Queue campaign for sending
     const { error: queueError } = await supabase
       .from('campaign_queue')
@@ -548,47 +441,45 @@ export async function sendCampaign(input: SendCampaignInput): Promise<{ success:
         status: 'pending',
         queued_by: user.id,
       })
-
     if (queueError) {
-      console.error('Error queueing campaign:', queueError)
       throw new Error('Failed to queue campaign for sending')
     }
-
     return {
       success: true,
       message: validated.test_mode 
         ? 'Test campaign queued for sending' 
         : 'Campaign queued for sending',
     }
-  } catch (error) {
-    console.error('Error in sendCampaign:', error)
+  } catch (_error) {
     throw error
   }
 }
-
 /**
  * Get campaign metrics
  */
-export async function getCampaignMetrics(campaignId: string): Promise<any> {
+export async function getCampaignMetrics(campaignId: string): Promise<{
+  campaign_id: string;
+  sent_count: number;
+  delivered_count: number;
+  open_count: number;
+  click_count: number;
+  unsubscribe_count: number;
+  error_count: number;
+}> {
   const supabase = await createClient()
   const { user } = await getUser()
-  
   if (!user) {
     throw new Error('Authentication required')
   }
-
   try {
     const { data, error } = await supabase
       .from('campaign_metrics')
       .select('*')
       .eq('campaign_id', campaignId)
       .single()
-
     if (error && error.code !== 'PGRST116') {
-      console.error('Error fetching campaign metrics:', error)
       return null
     }
-
     // Return default metrics if none exist
     if (!data) {
       return {
@@ -607,25 +498,20 @@ export async function getCampaignMetrics(campaignId: string): Promise<any> {
         conversions: 0,
       }
     }
-
     return data
-  } catch (error) {
-    console.error('Error in getCampaignMetrics:', error)
+  } catch (_error) {
     return null
   }
 }
-
 /**
  * Delete a campaign
  */
 export async function deleteCampaign(campaignId: string): Promise<boolean> {
   const supabase = await createClient()
   const { user } = await getUser()
-  
   if (!user) {
     throw new Error('Authentication required')
   }
-
   try {
     // Get campaign details
     const { data: campaign } = await supabase
@@ -633,40 +519,31 @@ export async function deleteCampaign(campaignId: string): Promise<boolean> {
       .select('salon_id, status')
       .eq('id', campaignId)
       .single()
-    
     if (!campaign) {
       throw new Error('Campaign not found')
     }
-
     // Can't delete active or completed campaigns
     if (['active', 'completed'].includes(campaign.status)) {
       throw new Error('Cannot delete active or completed campaigns')
     }
-
     // Check permissions
     const { data: salon } = await supabase
       .from('salons')
       .select('owner_id')
       .eq('id', campaign.salon_id)
       .single()
-    
     if (!salon || (salon.owner_id !== user.id && getUserRole(user) !== 'super_admin')) {
       throw new Error('Unauthorized to delete this campaign')
     }
-
     const { error } = await supabase
       .from('marketing_campaigns')
       .delete()
       .eq('id', campaignId)
-
     if (error) {
-      console.error('Error deleting campaign:', error)
       return false
     }
-
     return true
-  } catch (error) {
-    console.error('Error in deleteCampaign:', error)
+  } catch (_error) {
     throw error
   }
 }

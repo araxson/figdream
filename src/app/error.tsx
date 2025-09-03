@@ -1,9 +1,7 @@
 'use client'
-
 import { useEffect } from 'react'
 import { Button } from '@/components/ui'
 import { AlertCircle } from 'lucide-react'
-
 export default function Error({
   error,
   reset,
@@ -12,9 +10,7 @@ export default function Error({
   reset: () => void
 }) {
   useEffect(() => {
-    console.error(error)
   }, [error])
-
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4">
       <div className="text-center">

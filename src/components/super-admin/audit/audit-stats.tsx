@@ -1,9 +1,6 @@
 'use client'
-
-import { Card, Progress, Badge, Alert, AlertDescription } from '@/components/ui'
+import { Card, CardContent, Progress, Badge, Alert, AlertDescription } from '@/components/ui'
 import { 
-  BarChart, 
-  Bar, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
@@ -17,9 +14,7 @@ import {
 } from 'recharts'
 import { format } from 'date-fns'
 import type { Database } from '@/types/database.types'
-
 type AuditLog = Database['public']['Tables']['audit_logs']['Row']
-
 interface AuditStatsProps {
   stats: {
     totalEvents: number
@@ -29,21 +24,17 @@ interface AuditStatsProps {
     recentActivity: AuditLog[]
   }
 }
-
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D']
-
 export function AuditStats({ stats }: AuditStatsProps) {
   // Prepare data for charts
   const actionData = Object.entries(stats.byAction)
     .map(([action, count]) => ({ action, count }))
     .sort((a, b) => b.count - a.count)
     .slice(0, 10)
-
   const entityData = Object.entries(stats.byEntity)
     .map(([entity, count]) => ({ entity, count }))
     .sort((a, b) => b.count - a.count)
     .slice(0, 8)
-
   const dayData = Object.entries(stats.byDay)
     .map(([day, count]) => ({
       day: format(new Date(day), 'MMM d'),
@@ -51,9 +42,7 @@ export function AuditStats({ stats }: AuditStatsProps) {
       count
     }))
     .sort((a, b) => a.date.localeCompare(b.date))
-
   const maxActionCount = Math.max(...actionData.map(d => d.count), 1)
-
   return (
     <div className="space-y-6">
       {/* Activity Over Time */}
@@ -75,13 +64,12 @@ export function AuditStats({ stats }: AuditStatsProps) {
           </LineChart>
         </ResponsiveContainer>
       </Card>
-
       <div className="grid gap-6 md:grid-cols-2">
         {/* Actions Breakdown */}
         <Card>
           <h3 className="font-semibold mb-4">Top Actions</h3>
           <div className="space-y-3">
-            {actionData.map((item, index) => (
+            {actionData.map((item, _index) => (
               <div key={item.action} className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-medium capitalize">
@@ -99,7 +87,6 @@ export function AuditStats({ stats }: AuditStatsProps) {
             ))}
           </div>
         </Card>
-
         {/* Entity Types */}
         <Card>
           <h3 className="font-semibold mb-4">Entity Types</h3>
@@ -115,7 +102,7 @@ export function AuditStats({ stats }: AuditStatsProps) {
                 fill="#8884d8"
                 dataKey="count"
               >
-                {entityData.map((entry, index) => (
+                {entityData.map((_entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
@@ -124,7 +111,6 @@ export function AuditStats({ stats }: AuditStatsProps) {
           </ResponsiveContainer>
         </Card>
       </div>
-
       {/* Recent Activity Patterns */}
       <Card>
         <h3 className="font-semibold mb-4">Activity Patterns</h3>
@@ -158,14 +144,13 @@ export function AuditStats({ stats }: AuditStatsProps) {
           </div>
         </div>
       </Card>
-
       {/* Security Insights */}
       <Card>
         <h3 className="font-semibold mb-4">Security Insights</h3>
         <div className="space-y-3">
           {stats.byAction['login'] && (
             <Card>
-              <CardContent className="flex items-center justify-between p-3">
+              <CardContent className="flex items-center justify-between">
               <div>
                 <p className="font-medium">Login Attempts</p>
                 <p className="text-sm text-muted-foreground">Total authentication events</p>
@@ -174,7 +159,6 @@ export function AuditStats({ stats }: AuditStatsProps) {
               </CardContent>
             </Card>
           )}
-          
           {stats.byAction['access_denied'] && (
             <Alert variant="destructive">
               <AlertDescription className="flex items-center justify-between">
@@ -186,10 +170,9 @@ export function AuditStats({ stats }: AuditStatsProps) {
               </AlertDescription>
             </Alert>
           )}
-          
           {stats.byAction['permission_change'] && (
             <Card>
-              <CardContent className="flex items-center justify-between p-3">
+              <CardContent className="flex items-center justify-between">
               <div>
                 <p className="font-medium">Permission Changes</p>
                 <p className="text-sm text-muted-foreground">Role and permission updates</p>
@@ -198,7 +181,6 @@ export function AuditStats({ stats }: AuditStatsProps) {
               </CardContent>
             </Card>
           )}
-
           {!stats.byAction['access_denied'] && (
             <Alert>
               <AlertDescription className="flex items-center justify-between">

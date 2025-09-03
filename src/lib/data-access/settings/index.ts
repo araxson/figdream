@@ -1,71 +1,51 @@
 'use server'
-
 import { createClient } from '@/lib/database/supabase/server'
 import { Database } from '@/types/database.types'
 import { revalidatePath } from 'next/cache'
-
-type Settings = Database['public']['Tables']['settings']['Row']
-type SettingsInsert = Database['public']['Tables']['settings']['Insert']
-type SettingsUpdate = Database['public']['Tables']['settings']['Update']
-type SystemConfiguration = Database['public']['Tables']['system_configuration']['Row']
-
+type _Settings = Database['public']['Tables']['settings']['Row']
+type _SettingsInsert = Database['public']['Tables']['settings']['Insert']
+type _SettingsUpdate = Database['public']['Tables']['settings']['Update']
+type _SystemConfiguration = Database['public']['Tables']['system_configuration']['Row']
 // Settings Management
 export async function getSettings(category?: string, salonId?: string) {
   const supabase = await createClient()
-  
   const query = supabase
     .from('settings')
     .select('*')
     .order('category', { ascending: true })
     .order('key', { ascending: true })
-
   if (category) {
     query.eq('category', category)
   }
-
   if (salonId) {
     query.eq('salon_id', salonId)
   }
-
   const { data, error } = await query
-
   if (error) {
-    console.error('Error fetching settings:', error)
     throw new Error('Failed to fetch settings')
   }
-
   return data
 }
-
 export async function getSetting(key: string, salonId?: string) {
   const supabase = await createClient()
-  
   const query = supabase
     .from('settings')
     .select('*')
     .eq('key', key)
     .single()
-
   if (salonId) {
     query.eq('salon_id', salonId)
   }
-
   const { data, error } = await query
-
   if (error && error.code !== 'PGRST116') { // Ignore not found errors
-    console.error('Error fetching setting:', error)
     throw new Error('Failed to fetch setting')
   }
-
   return data
 }
-
-export async function updateSetting(key: string, value: any, salonId?: string) {
+export async function updateSetting(key: string, value: unknown, salonId?: string) {
   const supabase = await createClient()
-  
   // Check if setting exists
   const existing = await getSetting(key, salonId)
-  
   if (existing) {
     // Update existing setting
     const { data, error } = await supabase
@@ -78,15 +58,11 @@ export async function updateSetting(key: string, value: any, salonId?: string) {
       .eq('salon_id', salonId || existing.salon_id)
       .select()
       .single()
-
     if (error) {
-      console.error('Error updating setting:', error)
       throw new Error('Failed to update setting')
     }
-
     revalidatePath('/salon-admin/settings')
     revalidatePath('/super-admin/settings')
-    
     return data
   } else {
     // Create new setting
@@ -100,50 +76,35 @@ export async function updateSetting(key: string, value: any, salonId?: string) {
       })
       .select()
       .single()
-
     if (error) {
-      console.error('Error creating setting:', error)
       throw new Error('Failed to create setting')
     }
-
     revalidatePath('/salon-admin/settings')
     revalidatePath('/super-admin/settings')
-    
     return data
   }
 }
-
-export async function bulkUpdateSettings(settings: Array<{ key: string; value: any }>, salonId?: string) {
-  const supabase = await createClient()
-  
+export async function bulkUpdateSettings(settings: Array<{ key: string; value: unknown }>, salonId?: string) {
   const updates = await Promise.all(
     settings.map(({ key, value }) => updateSetting(key, value, salonId))
   )
-  
   return updates
 }
-
 // System Configuration (Super Admin)
 export async function getSystemConfiguration() {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('system_configuration')
     .select('*')
     .order('category', { ascending: true })
     .order('key', { ascending: true })
-
   if (error) {
-    console.error('Error fetching system configuration:', error)
     throw new Error('Failed to fetch system configuration')
   }
-
   return data
 }
-
-export async function updateSystemConfiguration(key: string, value: any) {
+export async function updateSystemConfiguration(key: string, value: unknown) {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('system_configuration')
     .update({
@@ -153,17 +114,12 @@ export async function updateSystemConfiguration(key: string, value: any) {
     .eq('key', key)
     .select()
     .single()
-
   if (error) {
-    console.error('Error updating system configuration:', error)
     throw new Error('Failed to update system configuration')
   }
-
   revalidatePath('/super-admin/settings')
-  
   return data
 }
-
 // Helper function to determine category from key
 function getCategoryFromKey(key: string): string {
   const categoryMappings: Record<string, string> = {
@@ -175,7 +131,6 @@ function getCategoryFromKey(key: string): string {
     'currency': 'general',
     'date_format': 'general',
     'time_format': 'general',
-    
     // Booking
     'booking_enabled': 'booking',
     'booking_advance_days': 'booking',
@@ -184,7 +139,6 @@ function getCategoryFromKey(key: string): string {
     'booking_requires_approval': 'booking',
     'booking_allow_cancellation': 'booking',
     'booking_cancellation_hours': 'booking',
-    
     // Notifications
     'notifications_email_enabled': 'notifications',
     'notifications_sms_enabled': 'notifications',
@@ -192,51 +146,43 @@ function getCategoryFromKey(key: string): string {
     'notifications_booking_confirmation': 'notifications',
     'notifications_booking_reminder': 'notifications',
     'notifications_review_request': 'notifications',
-    
     // Payments
     'payments_enabled': 'payments',
     'payments_stripe_enabled': 'payments',
     'payments_cash_enabled': 'payments',
     'payments_deposit_required': 'payments',
     'payments_deposit_percentage': 'payments',
-    
     // Marketing
     'marketing_enabled': 'marketing',
     'marketing_email_campaigns': 'marketing',
     'marketing_sms_campaigns': 'marketing',
     'marketing_loyalty_enabled': 'marketing',
     'marketing_referral_enabled': 'marketing',
-    
     // Staff
     'staff_commission_enabled': 'staff',
     'staff_commission_percentage': 'staff',
     'staff_schedule_visible': 'staff',
     'staff_can_manage_bookings': 'staff',
     'staff_can_view_earnings': 'staff',
-    
     // Reviews
     'reviews_enabled': 'reviews',
     'reviews_auto_request': 'reviews',
     'reviews_require_approval': 'reviews',
     'reviews_min_rating_display': 'reviews',
-    
     // Security
     'security_two_factor': 'security',
     'security_password_expiry': 'security',
     'security_session_timeout': 'security',
     'security_ip_whitelist': 'security',
   }
-  
   // Find matching category or default to 'general'
   for (const [pattern, category] of Object.entries(categoryMappings)) {
     if (key.startsWith(pattern.split('_')[0])) {
       return category
     }
   }
-  
   return 'general'
 }
-
 // Preset setting templates
 export const SETTING_TEMPLATES = {
   general: [

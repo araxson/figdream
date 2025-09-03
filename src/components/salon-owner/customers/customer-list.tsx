@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import {
   Table,
@@ -28,7 +27,6 @@ import {
 import { Search, Mail, Phone, Calendar, DollarSign, MoreHorizontal } from 'lucide-react'
 import Link from 'next/link'
 import { Database } from '@/types/database.types'
-
 // Use proper database types
 type Customer = Database['public']['Tables']['customers']['Row'] & {
   customer_analytics?: Array<{
@@ -37,32 +35,26 @@ type Customer = Database['public']['Tables']['customers']['Row'] & {
     last_visit: string | null
   }>
 }
-
 interface CustomerListProps {
   customers: Customer[]
 }
-
 export function CustomerList({ customers }: CustomerListProps) {
   const [searchTerm, setSearchTerm] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
-
   // Filter customers based on search term
   const filteredCustomers = customers.filter(customer => {
     const fullName = `${customer.first_name || ''} ${customer.last_name || ''}`.toLowerCase()
     const email = (customer.email || '').toLowerCase()
     const phone = (customer.phone || '').toLowerCase()
     const search = searchTerm.toLowerCase()
-    
     return fullName.includes(search) || email.includes(search) || phone.includes(search)
   })
-
   // Calculate pagination
   const totalPages = Math.ceil(filteredCustomers.length / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
   const endIndex = startIndex + itemsPerPage
   const currentCustomers = filteredCustomers.slice(startIndex, endIndex)
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
@@ -70,17 +62,14 @@ export function CustomerList({ customers }: CustomerListProps) {
       year: 'numeric'
     })
   }
-
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page)
     }
   }
-
   const generatePageNumbers = () => {
     const pages = []
     const maxVisiblePages = 5
-    
     if (totalPages <= maxVisiblePages) {
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i)
@@ -108,10 +97,8 @@ export function CustomerList({ customers }: CustomerListProps) {
         pages.push(totalPages)
       }
     }
-    
     return pages
   }
-
   return (
     <div className="space-y-4">
       {/* Search Bar */}
@@ -132,7 +119,6 @@ export function CustomerList({ customers }: CustomerListProps) {
           Showing {startIndex + 1} to {Math.min(endIndex, filteredCustomers.length)} of {filteredCustomers.length} customers
         </div>
       </div>
-
       {/* Table */}
       <div className="rounded-md border">
         <Table>
@@ -226,7 +212,6 @@ export function CustomerList({ customers }: CustomerListProps) {
           </TableBody>
         </Table>
       </div>
-
       {/* Pagination */}
       {totalPages > 1 && (
         <Pagination>
@@ -237,7 +222,6 @@ export function CustomerList({ customers }: CustomerListProps) {
                 className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
               />
             </PaginationItem>
-            
             {generatePageNumbers().map((page, index) => (
               <PaginationItem key={index}>
                 {page === 'ellipsis' ? (
@@ -253,7 +237,6 @@ export function CustomerList({ customers }: CustomerListProps) {
                 )}
               </PaginationItem>
             ))}
-            
             <PaginationItem>
               <PaginationNext
                 onClick={() => handlePageChange(currentPage + 1)}

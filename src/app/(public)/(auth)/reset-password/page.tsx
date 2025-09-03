@@ -1,8 +1,7 @@
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Alert, AlertDescription, Button } from '@/components/ui'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Alert, AlertDescription } from '@/components/ui'
 import { ResetPasswordForm } from '@/components/auth/reset-password-form'
 import { Lock, AlertTriangle } from 'lucide-react'
-
 export default function ResetPasswordPage() {
   return (
     <div className="space-y-6">
@@ -18,13 +17,12 @@ export default function ResetPasswordPage() {
           Create a strong password for your account
         </p>
       </div>
-
       {/* Reset Card */}
       <Card>
         <CardHeader>
           <CardTitle>New Password</CardTitle>
           <CardDescription>
-            Enter your new password below. Make sure it's strong and unique.
+            Enter your new password below. Make sure it&apos;s strong and unique.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -34,13 +32,12 @@ export default function ResetPasswordPage() {
           <Alert>
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              This password reset link will expire soon. If it has already expired, 
-              you'll need to request a new one.
+              This password reset session is temporary. If it expires, 
+              you&apos;ll need to request a new verification code.
             </AlertDescription>
           </Alert>
         </CardFooter>
       </Card>
-
       {/* Password Requirements */}
       <Card>
         <CardHeader>
@@ -71,11 +68,10 @@ export default function ResetPasswordPage() {
           </ul>
         </CardContent>
       </Card>
-
       {/* Login Link */}
       <div className="text-center text-sm text-muted-foreground">
         <p>Remember your password?</p>
-        <Link href="/login" className="text-primary hover:underline">
+        <Link href="/login" className="text-primary">
           Back to login
         </Link>
       </div>

@@ -2,12 +2,9 @@
  * Salon management validation schemas for FigDream
  * Comprehensive Zod schemas for salon creation, location management, and salon operations
  */
-
 import { z } from 'zod'
-
 // Import email and phone from auth-schema
 import { emailSchema, phoneSchema } from './auth-schema'
-
 // Import reusable schemas from user-schema
 import { 
   userIdSchema,
@@ -18,37 +15,30 @@ import {
   countrySchema,
   timezoneSchema
 } from './user-schema'
-
 // Common regex patterns
 const urlRegex = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 // const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/ // Reserved for future use
 const colorHexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
 const timeRegex = /^([01]?\d|2[0-3]):([0-5]?\d)(?::([0-5]?\d))?$/
-
 // Days of week
 const DaysOfWeek = z.enum(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'], {
   message: 'Invalid day of week'
 })
-
 // Base validation schemas
 export const salonIdSchema = z
   .string({ message: 'Salon ID is required' })
   .regex(uuidRegex, 'Invalid salon ID format')
-
 export const locationIdSchema = z
   .string({ message: 'Location ID is required' })
   .regex(uuidRegex, 'Invalid location ID format')
-
 // serviceIdSchema is exported from service-schema.ts to avoid duplication
-
 export const salonNameSchema = z
   .string({ message: 'Salon name is required' })
   .min(1, 'Salon name is required')
   .max(100, 'Salon name must be less than 100 characters')
   .regex(/^[a-zA-Z0-9\s\-\'&\.!]+$/, 'Salon name contains invalid characters')
   .trim()
-
 export const descriptionSchema = z
   .string()
   .nullable()
@@ -57,7 +47,6 @@ export const descriptionSchema = z
     message: 'Description must be between 10 and 1000 characters'
   })
   .transform((val) => val?.trim() || null)
-
 export const websiteUrlSchema = z
   .string()
   .nullable()
@@ -69,7 +58,6 @@ export const websiteUrlSchema = z
     message: 'Website URL must be less than 255 characters'
   })
   .transform((val) => val || null)
-
 export const logoUrlSchema = z
   .string()
   .nullable()
@@ -81,7 +69,6 @@ export const logoUrlSchema = z
     message: 'Logo URL must be less than 500 characters'
   })
   .transform((val) => val || null)
-
 export const businessHoursSchema = z.object({
   day: DaysOfWeek,
   open_time: z
@@ -93,18 +80,15 @@ export const businessHoursSchema = z.object({
   is_closed: z.boolean().optional().default(false)
 }).refine((data) => {
   if (data.is_closed) return true
-  
   const [openHour, openMin] = data.open_time.split(':').map(Number)
   const [closeHour, closeMin] = data.close_time.split(':').map(Number)
   const openMinutes = openHour * 60 + openMin
   const closeMinutes = closeHour * 60 + closeMin
-  
   return closeMinutes > openMinutes
 }, {
   message: 'Closing time must be after opening time',
   path: ['close_time']
 })
-
 export const coordinatesSchema = z.object({
   latitude: z
     .number()
@@ -119,7 +103,6 @@ export const coordinatesSchema = z.object({
     .nullable()
     .optional()
 })
-
 // Salon creation schema
 export const createSalonSchema = z.object({
   name: salonNameSchema,
@@ -149,12 +132,10 @@ export const createSalonSchema = z.object({
     .default('individual'),
   is_active: z.boolean().optional().default(true)
 })
-
 // Update salon schema
 export const updateSalonSchema = createSalonSchema.partial().extend({
   salon_id: salonIdSchema
 })
-
 // Location creation schema
 export const createLocationSchema = z.object({
   salon_id: salonIdSchema,
@@ -216,12 +197,10 @@ export const createLocationSchema = z.object({
   message: 'Business hours cannot have duplicate days',
   path: ['business_hours']
 })
-
 // Update location schema
 export const updateLocationSchema = createLocationSchema.partial().extend({
   location_id: locationIdSchema
 })
-
 // Salon settings schema
 export const salonSettingsSchema = z.object({
   salon_id: salonIdSchema,
@@ -285,7 +264,6 @@ export const salonSettingsSchema = z.object({
     .default(1),
   time_zone: timezoneSchema
 })
-
 // Salon branding schema
 export const salonBrandingSchema = z.object({
   salon_id: salonIdSchema,
@@ -326,7 +304,6 @@ export const salonBrandingSchema = z.object({
     })
     .transform((val) => val?.trim() || null)
 })
-
 // Salon staff assignment schema
 export const salonStaffSchema = z.object({
   salon_id: salonIdSchema,
@@ -373,7 +350,6 @@ export const salonStaffSchema = z.object({
   message: 'End date must be after start date',
   path: ['end_date']
 })
-
 // Salon analytics preferences schema
 export const salonAnalyticsSchema = z.object({
   salon_id: salonIdSchema,
@@ -392,7 +368,6 @@ export const salonAnalyticsSchema = z.object({
       message: 'Cannot send reports to more than 10 email addresses'
     })
 })
-
 // Salon search/filter schema
 export const salonFilterSchema = z.object({
   owner_id: userIdSchema.optional(),
@@ -448,7 +423,6 @@ export const salonFilterSchema = z.object({
   message: 'Created after date must be before or equal to created before date',
   path: ['created_before']
 })
-
 // Location search/filter schema  
 export const locationFilterSchema = z.object({
   salon_id: salonIdSchema.optional(),
@@ -489,7 +463,6 @@ export const locationFilterSchema = z.object({
     .optional()
     .default('asc')
 })
-
 // Bulk operations schema
 export const bulkSalonUpdateSchema = z.object({
   salon_ids: z
@@ -507,12 +480,10 @@ export const bulkSalonUpdateSchema = z.object({
     message: 'At least one update field must be provided'
   })
 })
-
 // Partial schemas for updates
 export const createSalonUpdateSchema = createSalonSchema.partial()
 export const createLocationUpdateSchema = createLocationSchema.partial()
 export const salonSettingsUpdateSchema = salonSettingsSchema.partial()
-
 // Type exports
 export type CreateSalonInput = z.infer<typeof createSalonSchema>
 export type UpdateSalonInput = z.infer<typeof updateSalonSchema>
@@ -527,10 +498,8 @@ export type LocationFilterInput = z.infer<typeof locationFilterSchema>
 export type BulkSalonUpdateInput = z.infer<typeof bulkSalonUpdateSchema>
 export type BusinessHoursInput = z.infer<typeof businessHoursSchema>
 export type CoordinatesInput = z.infer<typeof coordinatesSchema>
-
 // Update type exports
 export type CreateSalonUpdateInput = z.infer<typeof createSalonUpdateSchema>
 export type CreateLocationUpdateInput = z.infer<typeof createLocationUpdateSchema>
 export type SalonSettingsUpdateInput = z.infer<typeof salonSettingsUpdateSchema>
-
 // Individual field schemas are already exported at their declaration

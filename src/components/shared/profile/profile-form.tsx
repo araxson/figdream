@@ -1,19 +1,24 @@
 "use client"
-
 import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { User, Mail, Phone, Building, Calendar, Shield, Award, Camera, Briefcase } from "lucide-react"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Button,
+  Input,
+  Label,
+  Textarea,
+  Badge,
+  Avatar,
+  AvatarFallback,
+  AvatarImage
+} from "@/components/ui"
+import { Mail, Phone, Building, Calendar, Shield, Camera } from "lucide-react"
 import { hasPermission } from "@/lib/permissions"
 import type { Database } from "@/types/database.types"
-
 type UserRole = Database["public"]["Enums"]["user_role_type"]
-
 interface ProfileData {
   id: string
   full_name?: string
@@ -32,7 +37,6 @@ interface ProfileData {
   emergency_contact_phone?: string
   emergency_contact_relation?: string
 }
-
 interface OrganizationData {
   id: string
   name: string
@@ -42,7 +46,6 @@ interface OrganizationData {
   created_at: string
   license_number?: string
 }
-
 interface ProfileFormProps {
   userRole: UserRole
   profileData: ProfileData
@@ -57,7 +60,6 @@ interface ProfileFormProps {
   onChangePassword?: (currentPassword: string, newPassword: string) => Promise<void>
   onUploadAvatar?: (file: File) => Promise<void>
 }
-
 export function ProfileForm({
   userRole,
   profileData,
@@ -77,43 +79,36 @@ export function ProfileForm({
     new: "",
     confirm: ""
   })
-
   const canEditOwnProfile = hasPermission(userRole, "settings.edit_own")
   const canEditOrganization = hasPermission(userRole, "settings.edit_all")
-
   const handleSaveProfile = async () => {
     if (onSaveProfile) {
       await onSaveProfile(profileForm)
       setIsEditingProfile(false)
     }
   }
-
   const handleSaveOrganization = async () => {
     if (onSaveOrganization && organizationForm) {
       await onSaveOrganization(organizationForm)
       setIsEditingOrganization(false)
     }
   }
-
   const handleChangePassword = async () => {
     if (onChangePassword && passwordForm.new === passwordForm.confirm) {
       await onChangePassword(passwordForm.current, passwordForm.new)
       setPasswordForm({ current: "", new: "", confirm: "" })
     }
   }
-
   const getInitials = (name?: string) => {
     if (!name) return "U"
     return name.split(" ").map(n => n[0]).join("").toUpperCase()
   }
-
   return (
     <div className="container mx-auto py-6 space-y-6">
       <div>
         <h1 className="text-3xl font-bold">My Profile</h1>
         <p className="text-muted-foreground">Manage your personal and professional information</p>
       </div>
-
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">
           {/* Personal Information */}
@@ -166,7 +161,6 @@ export function ProfileForm({
                   </div>
                 )}
               </div>
-
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
@@ -189,7 +183,6 @@ export function ProfileForm({
                   />
                 </div>
               </div>
-
               {profileForm.bio !== undefined && (
                 <div className="space-y-2">
                   <Label htmlFor="bio">Bio</Label>
@@ -203,7 +196,6 @@ export function ProfileForm({
                   />
                 </div>
               )}
-
               {isEditingProfile && (
                 <div className="flex gap-2">
                   <Button onClick={handleSaveProfile}>Save Changes</Button>
@@ -217,7 +209,6 @@ export function ProfileForm({
               )}
             </CardContent>
           </Card>
-
           {/* Professional Details (for staff) */}
           {profileForm.specialties !== undefined && (
             <Card>
@@ -241,7 +232,6 @@ export function ProfileForm({
                     </div>
                   </div>
                 )}
-
                 {profileForm.certifications && (
                   <div className="space-y-2">
                     <Label>Certifications</Label>
@@ -257,7 +247,6 @@ export function ProfileForm({
                     </div>
                   </div>
                 )}
-
                 <div className="grid gap-4 md:grid-cols-2">
                   {profileForm.years_experience !== undefined && (
                     <div className="space-y-2">
@@ -286,7 +275,6 @@ export function ProfileForm({
               </CardContent>
             </Card>
           )}
-
           {/* Organization Information (for owners/managers) */}
           {organizationData && canEditOrganization && (
             <Card>
@@ -323,7 +311,6 @@ export function ProfileForm({
                     />
                   </div>
                 </div>
-
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label>Business Phone</Label>
@@ -343,7 +330,6 @@ export function ProfileForm({
                     />
                   </div>
                 </div>
-
                 {organizationForm?.address !== undefined && (
                   <div className="space-y-2">
                     <Label>Address</Label>
@@ -354,7 +340,6 @@ export function ProfileForm({
                     />
                   </div>
                 )}
-
                 {isEditingOrganization && (
                   <div className="flex gap-2">
                     <Button onClick={handleSaveOrganization}>Save Changes</Button>
@@ -369,7 +354,6 @@ export function ProfileForm({
               </CardContent>
             </Card>
           )}
-
           {/* Security Settings */}
           <Card>
             <CardHeader>
@@ -386,7 +370,6 @@ export function ProfileForm({
                   onChange={(e) => setPasswordForm({...passwordForm, current: e.target.value})}
                 />
               </div>
-
               <div className="space-y-2">
                 <Label htmlFor="new-password">New Password</Label>
                 <Input 
@@ -396,7 +379,6 @@ export function ProfileForm({
                   onChange={(e) => setPasswordForm({...passwordForm, new: e.target.value})}
                 />
               </div>
-
               <div className="space-y-2">
                 <Label htmlFor="confirm-password">Confirm New Password</Label>
                 <Input 
@@ -406,7 +388,6 @@ export function ProfileForm({
                   onChange={(e) => setPasswordForm({...passwordForm, confirm: e.target.value})}
                 />
               </div>
-
               <Button 
                 onClick={handleChangePassword}
                 disabled={!passwordForm.current || !passwordForm.new || passwordForm.new !== passwordForm.confirm}
@@ -416,7 +397,6 @@ export function ProfileForm({
             </CardContent>
           </Card>
         </div>
-
         {/* Sidebar */}
         <div className="space-y-6">
           <Card>
@@ -434,7 +414,6 @@ export function ProfileForm({
                     </AvatarFallback>
                   </Avatar>
                 </div>
-                
                 <div className="text-center">
                   <h3 className="font-semibold">
                     {profileData.display_name || profileData.full_name || "User"}
@@ -443,7 +422,6 @@ export function ProfileForm({
                     {profileData.title || organizationData?.name || ""}
                   </p>
                 </div>
-
                 <div className="space-y-2 text-sm">
                   {organizationData && (
                     <div className="flex items-center gap-2">
@@ -464,7 +442,6 @@ export function ProfileForm({
                     <span>Joined {new Date(profileData.created_at).toLocaleDateString()}</span>
                   </div>
                 </div>
-
                 {onUploadAvatar && (
                   <Button className="w-full" variant="outline">
                     <Camera className="h-4 w-4 mr-2" />
@@ -474,7 +451,6 @@ export function ProfileForm({
               </div>
             </CardContent>
           </Card>
-
           {/* Stats */}
           {stats.length > 0 && (
             <Card>
@@ -497,7 +473,6 @@ export function ProfileForm({
               </CardContent>
             </Card>
           )}
-
           {/* Account Actions */}
           <Card>
             <CardHeader>

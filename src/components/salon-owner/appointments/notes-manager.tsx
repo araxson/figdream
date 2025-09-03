@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useEffect } from 'react'
 import { Database } from '@/types/database.types'
 import {
@@ -26,15 +25,12 @@ import {
   ScrollArea,
   Avatar,
   AvatarFallback,
-  AvatarImage,
 } from '@/components/ui'
 import { toast } from 'sonner'
-import { FileText, Plus, Edit2, Save, X, Loader2, User, Calendar } from 'lucide-react'
+import { FileText, Plus, Edit2, Save, X, Loader2, User } from 'lucide-react'
 import { format } from 'date-fns'
-
 type Appointment = Database['public']['Tables']['appointments']['Row']
 type AppointmentNote = Database['public']['Tables']['appointment_notes']['Row']
-
 interface AppointmentNotesManagerProps {
   appointment: Appointment & {
     staff_profiles?: {
@@ -49,7 +45,6 @@ interface AppointmentNotesManagerProps {
   trigger?: React.ReactNode
   canEdit?: boolean
 }
-
 export default function AppointmentNotesManager({
   appointment,
   onNoteAdded,
@@ -65,50 +60,31 @@ export default function AppointmentNotesManager({
   const [isSaving, setIsSaving] = useState(false)
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
-
   useEffect(() => {
+    const loadNotes = async () => {
+      setIsLoading(true)
+      try {
+        const response = await fetch(`/api/appointments/${appointment.id}/notes`)
+        if (!response.ok) {
+          throw new Error('Failed to load notes')
+        }
+        const data = await response.json()
+        setNotes(data.notes || [])
+      } catch (_error) {
+        setError('Failed to load notes')
+      } finally {
+        setIsLoading(false)
+      }
+    }
     if (isOpen) {
       loadNotes()
     }
-  }, [isOpen])
-
-  const loadNotes = async () => {
-    setIsLoading(true)
-    try {
-      const response = await fetch(`/api/appointments/${appointment.id}/notes`)
-      
-      if (!response.ok) {
-        throw new Error('Failed to load notes')
-      }
-      
-      const data = await response.json()
-      setNotes(data.notes || [])
-    } catch (error) {
-      console.error('Error loading notes:', error)
-      // Fallback to appointment notes if they exist
-      if (appointment.notes) {
-        setNotes([
-          {
-            id: 'main',
-            appointment_id: appointment.id,
-            note: appointment.notes,
-            created_at: appointment.created_at || new Date().toISOString(),
-            created_by: appointment.staff_id || '',
-            updated_at: appointment.updated_at || new Date().toISOString()
-          }
-        ])
-      }
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
+  }, [isOpen, appointment.id])
   const handleAddNote = async () => {
     if (!newNote.trim()) {
       toast.error('Please enter a note')
       return
     }
-
     setIsSaving(true)
     try {
       const response = await fetch(`/api/appointments/${appointment.id}/notes`, {
@@ -120,36 +96,28 @@ export default function AppointmentNotesManager({
           note: newNote.trim(),
         }),
       })
-
       if (!response.ok) {
         throw new Error('Failed to add note')
       }
-
       const data = await response.json()
       const addedNote = data.note
-      
       setNotes([addedNote, ...notes])
       setNewNote('')
-      
       if (onNoteAdded) {
         onNoteAdded(addedNote)
       }
-      
       toast.success('Note added successfully')
-    } catch (error) {
-      console.error('Error adding note:', error)
+    } catch (_error) {
       toast.error('Failed to add note. Please try again.')
     } finally {
       setIsSaving(false)
     }
   }
-
   const handleUpdateNote = async (noteId: string) => {
     if (!editingNoteContent.trim()) {
       toast.error('Note cannot be empty')
       return
     }
-
     setIsSaving(true)
     try {
       const response = await fetch(`/api/appointments/${appointment.id}/notes/${noteId}`, {
@@ -161,65 +129,51 @@ export default function AppointmentNotesManager({
           note: editingNoteContent.trim(),
         }),
       })
-
       if (!response.ok) {
         throw new Error('Failed to update note')
       }
-
       const data = await response.json()
       const updatedNote = data.note
-      
       setNotes(notes.map(n => n.id === noteId ? updatedNote : n))
       setEditingNoteId(null)
       setEditingNoteContent('')
-      
       toast.success('Note updated successfully')
-    } catch (error) {
-      console.error('Error updating note:', error)
+    } catch (_error) {
       toast.error('Failed to update note. Please try again.')
     } finally {
       setIsSaving(false)
     }
   }
-
-  const handleDeleteNote = async (noteId: string) => {
+  const _handleDeleteNote = async (noteId: string) => {
     setPendingDeleteId(noteId)
     setDeleteConfirmOpen(true)
   }
-
   const confirmDeleteNote = async () => {
     if (!pendingDeleteId) return
-
     try {
       const response = await fetch(`/api/appointments/${appointment.id}/notes/${pendingDeleteId}`, {
         method: 'DELETE',
       })
-
       if (!response.ok) {
         throw new Error('Failed to delete note')
       }
-
       setNotes(notes.filter(n => n.id !== pendingDeleteId))
       toast.success('Note deleted successfully')
-    } catch (error) {
-      console.error('Error deleting note:', error)
+    } catch (_error) {
       toast.error('Failed to delete note. Please try again.')
     } finally {
       setDeleteConfirmOpen(false)
       setPendingDeleteId(null)
     }
   }
-
   const startEditing = (note: AppointmentNote) => {
     setEditingNoteId(note.id)
     setEditingNoteContent(note.note)
   }
-
   const cancelEditing = () => {
     setEditingNoteId(null)
     setEditingNoteContent('')
   }
-
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -237,7 +191,6 @@ export default function AppointmentNotesManager({
             View and manage notes for this appointment
           </DialogDescription>
         </DialogHeader>
-
         <div className="space-y-4">
           {/* Appointment Info */}
           <Card className="bg-muted/50">
@@ -268,7 +221,6 @@ export default function AppointmentNotesManager({
               </div>
             </CardContent>
           </Card>
-
           {/* Add New Note */}
           {canEdit && (
             <div className="space-y-2">
@@ -301,7 +253,6 @@ export default function AppointmentNotesManager({
               </Button>
             </div>
           )}
-
           {/* Notes List */}
           <div className="space-y-2">
             <Label>Notes History</Label>
@@ -390,14 +341,12 @@ export default function AppointmentNotesManager({
             )}
           </div>
         </div>
-
         <DialogFooter>
           <Button variant="outline" onClick={() => setIsOpen(false)}>
             Close
           </Button>
         </DialogFooter>
       </DialogContent>
-
       {/* Delete Note Confirmation Dialog */}
       <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
         <AlertDialogContent>
@@ -417,7 +366,7 @@ export default function AppointmentNotesManager({
             </AlertDialogCancel>
             <AlertDialogAction 
               onClick={confirmDeleteNote}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="bg-destructive text-destructive-foreground"
             >
               Delete Note
             </AlertDialogAction>

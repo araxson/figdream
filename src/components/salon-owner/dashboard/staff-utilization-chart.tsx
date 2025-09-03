@@ -1,7 +1,5 @@
 'use client'
-
 import { Progress, Badge } from '@/components/ui'
-
 interface StaffUtilizationChartProps {
   staff: Array<{
     id: string
@@ -11,7 +9,6 @@ interface StaffUtilizationChartProps {
     utilizationRate: number
   }>
 }
-
 export default function StaffUtilizationChart({ staff }: StaffUtilizationChartProps) {
   const getUtilizationColor = (rate: number) => {
     if (rate >= 80) return 'text-red-600'
@@ -19,14 +16,12 @@ export default function StaffUtilizationChart({ staff }: StaffUtilizationChartPr
     if (rate >= 40) return 'text-yellow-600'
     return 'text-blue-600'
   }
-
   const getUtilizationBadge = (rate: number) => {
     if (rate >= 80) return { label: 'High', variant: 'destructive' as const }
     if (rate >= 60) return { label: 'Good', variant: 'default' as const }
     if (rate >= 40) return { label: 'Moderate', variant: 'secondary' as const }
     return { label: 'Low', variant: 'outline' as const }
   }
-
   return (
     <div className="space-y-4">
       {staff.map((member) => {
@@ -55,7 +50,6 @@ export default function StaffUtilizationChart({ staff }: StaffUtilizationChartPr
           </div>
         )
       })}
-      
       {staff.length === 0 && (
         <div className="text-center py-8 text-muted-foreground">
           No staff data available

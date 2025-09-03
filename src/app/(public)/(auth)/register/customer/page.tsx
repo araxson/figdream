@@ -10,8 +10,7 @@ import {
   Separator,
 } from '@/components/ui'
 import { RegisterForm } from '@/components/auth/register-form'
-import { User, Calendar, Heart, Gift, ChevronRight } from 'lucide-react'
-
+import { User, Calendar, Heart, Gift } from 'lucide-react'
 export default function CustomerRegistrationPage() {
   return (
     <div className="space-y-6">
@@ -27,7 +26,6 @@ export default function CustomerRegistrationPage() {
           Join thousands of customers enjoying beauty services
         </p>
       </div>
-
       {/* Registration Card */}
       <Card>
         <CardHeader>
@@ -42,7 +40,6 @@ export default function CustomerRegistrationPage() {
             redirectTo="/customer"
             includePhone={true}
           />
-          
           <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
@@ -54,7 +51,6 @@ export default function CustomerRegistrationPage() {
                 </span>
               </div>
             </div>
-
             {/* Social Login Buttons (disabled for now) */}
             <div className="grid grid-cols-2 gap-3 mt-6">
               <Button variant="outline" type="button" disabled>
@@ -90,13 +86,12 @@ export default function CustomerRegistrationPage() {
         <CardFooter className="flex flex-col space-y-4">
           <div className="text-center text-sm">
             Already have an account?{' '}
-            <Link href="/login/customer" className="text-primary hover:underline">
+            <Link href="/login/customer" className="text-primary">
               Sign in
             </Link>
           </div>
         </CardFooter>
       </Card>
-
       {/* Benefits Section */}
       <Card>
         <CardHeader>
@@ -134,16 +129,15 @@ export default function CustomerRegistrationPage() {
           </div>
         </CardContent>
       </Card>
-
       {/* Other Registration Options */}
       <div className="text-center text-sm text-muted-foreground">
         <p>Are you a business?</p>
         <div className="flex justify-center gap-4 mt-2">
-          <Link href="/register/salon" className="text-primary hover:underline">
+          <Link href="/register/salon" className="text-primary">
             Salon Owner
           </Link>
           <span>•</span>
-          <Link href="/register/staff" className="text-primary hover:underline">
+          <Link href="/register/staff" className="text-primary">
             Staff Member
           </Link>
         </div>

@@ -2,11 +2,8 @@
  * Centralized Role-Based Permissions System
  * Single source of truth for all role-based access control
  */
-
 import type { Database } from "@/types/database.types"
-
 export type UserRole = Database["public"]["Enums"]["user_role_type"]
-
 export type Permission = 
   | "appointments.view_all"
   | "appointments.view_own"
@@ -51,7 +48,6 @@ export type Permission =
   | "loyalty.view"
   | "loyalty.manage"
   | "loyalty.adjust_points"
-
 /**
  * Role-Permission Matrix
  * Defines what each role can do in the system
@@ -91,7 +87,6 @@ export const rolePermissions: Record<UserRole, Permission[]> = {
     "loyalty.manage",
     "loyalty.adjust_points",
   ],
-  
   salon_owner: [
     // Salon owner can manage their salon
     "appointments.view_all",
@@ -125,7 +120,6 @@ export const rolePermissions: Record<UserRole, Permission[]> = {
     "loyalty.manage",
     "loyalty.adjust_points",
   ],
-  
   location_manager: [
     // Location manager can manage their location
     "appointments.view_all",
@@ -145,7 +139,6 @@ export const rolePermissions: Record<UserRole, Permission[]> = {
     "marketing.view",
     "loyalty.view",
   ],
-  
   staff: [
     // Staff can manage their own work
     "appointments.view_own",
@@ -158,7 +151,6 @@ export const rolePermissions: Record<UserRole, Permission[]> = {
     "settings.view_own",
     "settings.edit_own",
   ],
-  
   customer: [
     // Customers can manage their own data
     "appointments.view_own",
@@ -172,21 +164,18 @@ export const rolePermissions: Record<UserRole, Permission[]> = {
     "settings.edit_own",
   ],
 }
-
 /**
  * Check if a role has a specific permission
  */
 export function hasPermission(role: UserRole, permission: Permission): boolean {
   return rolePermissions[role]?.includes(permission) ?? false
 }
-
 /**
  * Get all permissions for a role
  */
 export function getPermissions(role: UserRole): Permission[] {
   return rolePermissions[role] ?? []
 }
-
 /**
  * Check if a role can perform an action on a resource
  */
@@ -198,10 +187,8 @@ export function canPerformAction(
 ): boolean {
   const permission = `${resource}.${action}${isOwn ? "_own" : "_all"}` as Permission
   const alternatePermission = `${resource}.${action}_all` as Permission
-  
   return hasPermission(role, permission) || hasPermission(role, alternatePermission)
 }
-
 /**
  * Get display name for a role
  */
@@ -215,7 +202,6 @@ export function getRoleDisplayName(role: UserRole): string {
   }
   return displayNames[role] ?? role
 }
-
 /**
  * Get role badge variant for UI
  */

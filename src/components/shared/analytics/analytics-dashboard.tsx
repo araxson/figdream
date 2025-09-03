@@ -1,15 +1,21 @@
 "use client"
-
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { TrendingUp, TrendingDown, Users, Calendar, DollarSign, Clock, Star, BarChart3, Download } from "lucide-react"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Button
+} from "@/components/ui"
+import { TrendingUp, TrendingDown, Users, Calendar, BarChart3, Download } from "lucide-react"
 import { hasPermission } from "@/lib/permissions"
 import type { Database } from "@/types/database.types"
-
 type UserRole = Database["public"]["Enums"]["user_role_type"]
-
 interface MetricCard {
   title: string
   value: string | number
@@ -18,7 +24,6 @@ interface MetricCard {
   icon: React.ReactNode
   description?: string
 }
-
 interface ChartData {
   labels: string[]
   datasets: {
@@ -28,20 +33,18 @@ interface ChartData {
     backgroundColor?: string
   }[]
 }
-
 interface AnalyticsDashboardProps {
   userRole: UserRole
   metrics?: MetricCard[]
   revenueData?: ChartData
   appointmentData?: ChartData
   customerData?: ChartData
-  performanceData?: any
+  performanceData?: Record<string, unknown>
   dateRange?: "today" | "week" | "month" | "quarter" | "year"
   onDateRangeChange?: (range: string) => void
   onExport?: () => void
   customCharts?: React.ReactNode
 }
-
 export function AnalyticsDashboard({
   userRole,
   metrics = [],
@@ -56,22 +59,18 @@ export function AnalyticsDashboard({
 }: AnalyticsDashboardProps) {
   const canExport = hasPermission(userRole, "analytics.export")
   const canViewAll = hasPermission(userRole, "analytics.view_all")
-
   // Only use provided metrics, no defaults with fake data
   const defaultMetrics: MetricCard[] = metrics
-
   const getChangeColor = (change?: number) => {
     if (!change) return "text-muted-foreground"
     return change > 0 ? "text-green-600" : "text-red-600"
   }
-
   const getChangeIcon = (change?: number) => {
     if (!change) return null
     return change > 0 ? 
       <TrendingUp className="h-4 w-4" /> : 
       <TrendingDown className="h-4 w-4" />
   }
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -103,7 +102,6 @@ export function AnalyticsDashboard({
           )}
         </div>
       </div>
-
       {/* Metric Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {defaultMetrics.map((metric, index) => (
@@ -128,7 +126,6 @@ export function AnalyticsDashboard({
           </Card>
         ))}
       </div>
-
       {/* Charts Grid */}
       <div className="grid gap-6 md:grid-cols-2">
         {/* Revenue Chart */}
@@ -146,7 +143,6 @@ export function AnalyticsDashboard({
             </CardContent>
           </Card>
         )}
-
         {/* Appointments Chart */}
         {appointmentData && (
           <Card>
@@ -162,7 +158,6 @@ export function AnalyticsDashboard({
             </CardContent>
           </Card>
         )}
-
         {/* Customer Chart */}
         {customerData && (
           <Card>
@@ -178,7 +173,6 @@ export function AnalyticsDashboard({
             </CardContent>
           </Card>
         )}
-
         {/* Performance Chart */}
         {performanceData && (
           <Card>
@@ -195,16 +189,13 @@ export function AnalyticsDashboard({
           </Card>
         )}
       </div>
-
       {/* Custom Charts Section */}
       {customCharts && (
         <div className="space-y-6">
           {customCharts}
         </div>
       )}
-
       {/* Top Performers Table - only show if performance data is provided */}
-
       {/* Quick Stats Summary - only show if data is provided */}
     </div>
   )

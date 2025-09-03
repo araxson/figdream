@@ -1,5 +1,4 @@
 "use client"
-
 import {
   Calendar,
   Users,
@@ -10,7 +9,6 @@ import {
   Trophy,
   Megaphone,
   UserCircle,
-  Clock,
   BarChart3,
   Package,
   UserCheck,
@@ -22,7 +20,6 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -39,111 +36,106 @@ import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { User } from "@supabase/supabase-js"
 import type { Database } from "@/types/database.types"
-
 type Profile = Database['public']['Tables']['profiles']['Row']
-
 const menuItems = [
   {
     title: "Dashboard",
     icon: Home,
-    href: "/role-salon-owner/dashboard",
+    href: "/salon/dashboard",
   },
   {
     title: "Appointments",
     icon: Calendar,
-    href: "/role-salon-owner/appointments",
+    href: "/salon/appointments",
     subItems: [
-      { title: "All Appointments", href: "/role-salon-owner/appointments" },
-      { title: "Calendar View", href: "/role-salon-owner/appointments/calendar" },
-      { title: "Appointment Notes", href: "/role-salon-owner/appointments/notes" },
+      { title: "All Appointments", href: "/salon/appointments" },
+      { title: "Calendar View", href: "/salon/appointments/calendar" },
+      { title: "Appointment Notes", href: "/salon/appointments/notes" },
     ],
   },
   {
     title: "Customers",
     icon: Users,
-    href: "/role-salon-owner/customers",
+    href: "/salon/customers",
   },
   {
     title: "Services",
     icon: Package,
-    href: "/role-salon-owner/services",
+    href: "/salon/services",
     subItems: [
-      { title: "All Services", href: "/role-salon-owner/services" },
-      { title: "Categories", href: "/role-salon-owner/categories" },
-      { title: "Pricing", href: "/role-salon-owner/services/pricing" },
+      { title: "All Services", href: "/salon/services" },
+      { title: "Categories", href: "/salon/categories" },
+      { title: "Pricing", href: "/salon/services/pricing" },
     ],
   },
   {
     title: "Staff",
     icon: UserCheck,
-    href: "/role-salon-owner/staff",
+    href: "/salon/staff",
     subItems: [
-      { title: "Team Members", href: "/role-salon-owner/staff" },
-      { title: "Schedules", href: "/role-salon-owner/staff/schedule" },
-      { title: "Performance", href: "/role-salon-owner/staff/performance" },
-      { title: "Specialties", href: "/role-salon-owner/staff/specialties" },
+      { title: "Team Members", href: "/salon/staff" },
+      { title: "Schedules", href: "/salon/staff/schedule" },
+      { title: "Performance", href: "/salon/staff/performance" },
+      { title: "Specialties", href: "/salon/staff/specialties" },
     ],
   },
   {
     title: "Time Off",
     icon: CalendarOff,
-    href: "/role-salon-owner/timeoff",
+    href: "/salon/timeoff",
   },
   {
     title: "Locations",
     icon: MapPin,
-    href: "/role-salon-owner/locations",
+    href: "/salon/locations",
   },
   {
     title: "Loyalty Program",
     icon: Trophy,
-    href: "/role-salon-owner/loyalty",
+    href: "/salon/loyalty",
     subItems: [
-      { title: "Program Settings", href: "/role-salon-owner/loyalty" },
-      { title: "Points Ledger", href: "/role-salon-owner/loyalty/ledger" },
-      { title: "Transactions", href: "/role-salon-owner/loyalty/transactions" },
+      { title: "Program Settings", href: "/salon/loyalty" },
+      { title: "Points Ledger", href: "/salon/loyalty/ledger" },
+      { title: "Transactions", href: "/salon/loyalty/transactions" },
     ],
   },
   {
     title: "Marketing",
     icon: Megaphone,
-    href: "/role-salon-owner/marketing",
+    href: "/salon/marketing",
     subItems: [
-      { title: "Campaigns", href: "/role-salon-owner/marketing" },
-      { title: "SMS Opt-outs", href: "/role-salon-owner/marketing/sms" },
-      { title: "Analytics", href: "/role-salon-owner/marketing/analytics" },
+      { title: "Campaigns", href: "/salon/marketing" },
+      { title: "SMS Opt-outs", href: "/salon/marketing/sms" },
+      { title: "Analytics", href: "/salon/marketing/analytics" },
     ],
   },
   {
     title: "Analytics",
     icon: BarChart3,
-    href: "/role-salon-owner/analytics",
+    href: "/salon/analytics",
   },
   {
     title: "Salon Settings",
     icon: Store,
-    href: "/role-salon-owner/salon",
+    href: "/salon/salon",
   },
   {
     title: "Settings",
     icon: Settings,
-    href: "/role-salon-owner/settings",
+    href: "/salon/settings",
     subItems: [
-      { title: "General", href: "/role-salon-owner/settings" },
-      { title: "Notifications", href: "/role-salon-owner/settings/notifications" },
-      { title: "Export Data", href: "/role-salon-owner/settings/export" },
+      { title: "General", href: "/salon/settings" },
+      { title: "Notifications", href: "/salon/settings/notifications" },
+      { title: "Export Data", href: "/salon/settings/export" },
     ],
   },
 ]
-
 interface AppSidebarProps {
   user: User
   profile: Profile
 }
-
 export function AppSidebar({ user, profile }: AppSidebarProps) {
   const pathname = usePathname()
-
   return (
     <TooltipProvider>
       <Sidebar>
@@ -231,7 +223,7 @@ export function AppSidebar({ user, profile }: AppSidebarProps) {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <SidebarMenuButton asChild>
-                    <Link href="/role-salon-owner/profile">
+                    <Link href="/salon/profile">
                       <UserCircle className="h-4 w-4" />
                       <span>{profile?.full_name || user.email}</span>
                     </Link>

@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -13,13 +12,10 @@ import {
   CardTitle,
   Badge
 } from '@/components/ui'
-import { toast } from 'sonner'
 import { Building, Users, User, ChevronRight, ArrowRight, Sparkles, Clock, Shield, Star } from 'lucide-react'
-
 export default function RegisterPage() {
   const router = useRouter()
   const [selectedRole, setSelectedRole] = useState<string | null>(null)
-
   const registrationOptions = [
     {
       role: 'salon',
@@ -72,7 +68,6 @@ export default function RegisterPage() {
       note: 'Requires invitation from salon',
     },
   ]
-
   const handleRoleSelect = (role: string, href: string) => {
     setSelectedRole(role)
     // Small delay for visual feedback
@@ -80,7 +75,6 @@ export default function RegisterPage() {
       router.push(href)
     }, 100)
   }
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/30">
       <div className="container mx-auto px-4 py-8 max-w-6xl">
@@ -98,13 +92,12 @@ export default function RegisterPage() {
             Choose how you want to get started with the most comprehensive salon management platform
           </p>
         </div>
-
         {/* Registration Options */}
         <div className="grid lg:grid-cols-3 gap-6 mb-12">
           {registrationOptions.map((option) => (
             <Card
               key={option.role}
-              className={`relative cursor-pointer transition-all hover:shadow-lg ${
+              className={`relative cursor-pointer ${
                 selectedRole === option.role ? 'ring-2 ring-primary' : ''
               }`}
               onClick={() => handleRoleSelect(option.role, option.href)}
@@ -141,13 +134,12 @@ export default function RegisterPage() {
               <CardFooter>
                 <Button className="w-full group" variant={option.role === 'salon' ? 'default' : 'outline'}>
                   {option.cta}
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </CardFooter>
             </Card>
           ))}
         </div>
-
         {/* Quick Info */}
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           <Card className="bg-muted/50">
@@ -184,25 +176,24 @@ export default function RegisterPage() {
             </CardContent>
           </Card>
         </div>
-
         {/* Already Have Account */}
         <div className="text-center">
           <p className="text-muted-foreground mb-4">
             Already have an account?{' '}
-            <Link href="/auth/login" className="text-primary hover:underline font-medium">
+            <Link href="/auth/login" className="text-primary font-medium">
               Sign in here
             </Link>
           </p>
           <div className="flex items-center justify-center gap-4 text-sm">
-            <Link href="/pricing" className="text-muted-foreground hover:text-foreground flex items-center gap-1">
+            <Link href="/pricing" className="text-muted-foreground flex items-center gap-1">
               View Pricing
               <ChevronRight className="h-3 w-3" />
             </Link>
-            <Link href="/features" className="text-muted-foreground hover:text-foreground flex items-center gap-1">
+            <Link href="/features" className="text-muted-foreground flex items-center gap-1">
               Explore Features
               <ChevronRight className="h-3 w-3" />
             </Link>
-            <Link href="/contact" className="text-muted-foreground hover:text-foreground flex items-center gap-1">
+            <Link href="/contact" className="text-muted-foreground flex items-center gap-1">
               Contact Sales
               <ChevronRight className="h-3 w-3" />
             </Link>

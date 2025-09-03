@@ -1,33 +1,27 @@
 'use server'
-
 import { createClient } from '@/lib/database/supabase/server'
 import { Database } from '@/types/database.types'
-
 // Type definitions from database
 type ServiceAvailability = Database['public']['Tables']['service_availability']['Row']
 type ServiceAvailabilityInsert = Database['public']['Tables']['service_availability']['Insert']
 type ServiceAvailabilityUpdate = Database['public']['Tables']['service_availability']['Update']
 type Service = Database['public']['Tables']['services']['Row']
 type Location = Database['public']['Tables']['locations']['Row']
-
 // Extended types
 export type ServiceAvailabilityWithDetails = ServiceAvailability & {
   service: Service
   location: Location
 }
-
 export interface AvailabilityFilters {
   service_id?: string
   location_id?: string
   day_of_week?: number
   is_available?: boolean
 }
-
 export interface TimeSlot {
   start: string
   end: string
 }
-
 /**
  * Get service availability with filters
  * @param filters - Filtering options
@@ -37,9 +31,7 @@ export async function getServiceAvailability(
   filters: AvailabilityFilters = {}
 ): Promise<ServiceAvailability[]> {
   const supabase = await createClient()
-  
   let query = supabase.from('service_availability').select('*')
-  
   if (filters.service_id) {
     query = query.eq('service_id', filters.service_id)
   }
@@ -52,17 +44,12 @@ export async function getServiceAvailability(
   if (filters.is_available !== undefined) {
     query = query.eq('is_available', filters.is_available)
   }
-  
   const { data, error } = await query.order('day_of_week', { ascending: true })
-  
   if (error) {
-    console.error('Error fetching service availability:', error)
     throw new Error('Failed to fetch service availability')
   }
-  
   return data || []
 }
-
 /**
  * Get service availability for a specific location
  * @param serviceId - The service ID
@@ -74,22 +61,17 @@ export async function getServiceLocationAvailability(
   locationId: string
 ): Promise<ServiceAvailability[]> {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('service_availability')
     .select('*')
     .eq('service_id', serviceId)
     .eq('location_id', locationId)
     .order('day_of_week', { ascending: true })
-  
   if (error) {
-    console.error('Error fetching service location availability:', error)
     throw new Error('Failed to fetch service availability')
   }
-  
   return data || []
 }
-
 /**
  * Check if a service is available at a location on a specific day
  * @param serviceId - The service ID
@@ -105,7 +87,6 @@ export async function isServiceAvailable(
   time?: string
 ): Promise<boolean> {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('service_availability')
     .select('*')
@@ -114,29 +95,22 @@ export async function isServiceAvailable(
     .eq('day_of_week', dayOfWeek)
     .eq('is_available', true)
     .single()
-  
   if (error && error.code !== 'PGRST116') {
-    console.error('Error checking service availability:', error)
     throw new Error('Failed to check service availability')
   }
-  
   if (!data) {
     return false
   }
-  
   // If no specific time requested, just check if available that day
   if (!time) {
     return true
   }
-  
   // Check if time falls within available hours
   if (data.start_time && data.end_time) {
     return time >= data.start_time && time <= data.end_time
   }
-  
   return true
 }
-
 /**
  * Create or update service availability
  * @param availability - The availability data
@@ -146,7 +120,6 @@ export async function upsertServiceAvailability(
   availability: ServiceAvailabilityInsert
 ): Promise<ServiceAvailability> {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('service_availability')
     .upsert(availability, {
@@ -154,15 +127,11 @@ export async function upsertServiceAvailability(
     })
     .select()
     .single()
-  
   if (error) {
-    console.error('Error upserting service availability:', error)
     throw new Error('Failed to update service availability')
   }
-  
   return data
 }
-
 /**
  * Update service availability
  * @param id - The availability record ID
@@ -174,40 +143,31 @@ export async function updateServiceAvailability(
   updates: ServiceAvailabilityUpdate
 ): Promise<ServiceAvailability> {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('service_availability')
     .update(updates)
     .eq('id', id)
     .select()
     .single()
-  
   if (error) {
-    console.error('Error updating service availability:', error)
     throw new Error('Failed to update service availability')
   }
-  
   return data
 }
-
 /**
  * Delete service availability record
  * @param id - The availability record ID
  */
 export async function deleteServiceAvailability(id: string): Promise<void> {
   const supabase = await createClient()
-  
   const { error } = await supabase
     .from('service_availability')
     .delete()
     .eq('id', id)
-  
   if (error) {
-    console.error('Error deleting service availability:', error)
     throw new Error('Failed to delete service availability')
   }
 }
-
 /**
  * Set weekly availability for a service at a location
  * @param serviceId - The service ID
@@ -226,9 +186,7 @@ export async function setWeeklyServiceAvailability(
   }>
 ): Promise<ServiceAvailability[]> {
   const supabase = await createClient()
-  
   const availabilityRecords: ServiceAvailabilityInsert[] = []
-  
   for (const [dayOfWeek, settings] of weeklySchedule) {
     availabilityRecords.push({
       service_id: serviceId,
@@ -237,22 +195,17 @@ export async function setWeeklyServiceAvailability(
       ...settings
     })
   }
-  
   const { data, error } = await supabase
     .from('service_availability')
     .upsert(availabilityRecords, {
       onConflict: 'service_id,location_id,day_of_week'
     })
     .select()
-  
   if (error) {
-    console.error('Error setting weekly availability:', error)
     throw new Error('Failed to set weekly availability')
   }
-  
   return data || []
 }
-
 /**
  * Get available services at a location for a specific date/time
  * @param locationId - The location ID
@@ -264,11 +217,9 @@ export async function getAvailableServicesAtLocation(
   datetime: string
 ): Promise<Service[]> {
   const supabase = await createClient()
-  
   const date = new Date(datetime)
   const dayOfWeek = date.getDay()
   const time = date.toTimeString().slice(0, 5) // HH:MM format
-  
   const { data, error } = await supabase
     .from('service_availability')
     .select(`
@@ -279,15 +230,11 @@ export async function getAvailableServicesAtLocation(
     .eq('is_available', true)
     .or(`start_time.is.null,start_time.lte.${time}`)
     .or(`end_time.is.null,end_time.gte.${time}`)
-  
   if (error) {
-    console.error('Error fetching available services:', error)
     throw new Error('Failed to fetch available services')
   }
-  
   return data?.map(item => item.service).filter(Boolean) as Service[] || []
 }
-
 /**
  * Get locations where a service is available
  * @param serviceId - The service ID
@@ -299,7 +246,6 @@ export async function getServiceLocations(
   dayOfWeek?: number
 ): Promise<Location[]> {
   const supabase = await createClient()
-  
   let query = supabase
     .from('service_availability')
     .select(`
@@ -307,18 +253,13 @@ export async function getServiceLocations(
     `)
     .eq('service_id', serviceId)
     .eq('is_available', true)
-  
   if (dayOfWeek !== undefined) {
     query = query.eq('day_of_week', dayOfWeek)
   }
-  
   const { data, error } = await query
-  
   if (error) {
-    console.error('Error fetching service locations:', error)
     throw new Error('Failed to fetch service locations')
   }
-  
   // Deduplicate locations
   const locationMap = new Map<string, Location>()
   data?.forEach(item => {
@@ -326,10 +267,8 @@ export async function getServiceLocations(
       locationMap.set(item.location.id, item.location as Location)
     }
   })
-  
   return Array.from(locationMap.values())
 }
-
 /**
  * Copy service availability from one location to another
  * @param serviceId - The service ID
@@ -343,19 +282,15 @@ export async function copyServiceAvailability(
   targetLocationId: string
 ): Promise<ServiceAvailability[]> {
   const supabase = await createClient()
-  
   // Get source availability
   const { data: sourceAvailability, error: fetchError } = await supabase
     .from('service_availability')
     .select('*')
     .eq('service_id', serviceId)
     .eq('location_id', sourceLocationId)
-  
   if (fetchError || !sourceAvailability) {
-    console.error('Error fetching source availability:', fetchError)
     throw new Error('Failed to fetch source availability')
   }
-  
   // Create availability for target location
   const targetAvailability: ServiceAvailabilityInsert[] = sourceAvailability.map(avail => ({
     service_id: serviceId,
@@ -366,22 +301,17 @@ export async function copyServiceAvailability(
     end_time: avail.end_time,
     max_bookings: avail.max_bookings
   }))
-  
   const { data, error } = await supabase
     .from('service_availability')
     .upsert(targetAvailability, {
       onConflict: 'service_id,location_id,day_of_week'
     })
     .select()
-  
   if (error) {
-    console.error('Error copying availability:', error)
     throw new Error('Failed to copy availability')
   }
-  
   return data || []
 }
-
 /**
  * Check booking capacity for a service at a location
  * @param serviceId - The service ID
@@ -395,9 +325,7 @@ export async function checkServiceCapacity(
   date: string
 ): Promise<{ maxBookings: number; currentBookings: number; availableSlots: number }> {
   const supabase = await createClient()
-  
   const dayOfWeek = new Date(date).getDay()
-  
   // Get service availability settings
   const { data: availability, error: availError } = await supabase
     .from('service_availability')
@@ -406,14 +334,10 @@ export async function checkServiceCapacity(
     .eq('location_id', locationId)
     .eq('day_of_week', dayOfWeek)
     .single()
-  
   if (availError && availError.code !== 'PGRST116') {
-    console.error('Error fetching availability:', availError)
     throw new Error('Failed to check service capacity')
   }
-  
   const maxBookings = availability?.max_bookings || Number.MAX_SAFE_INTEGER
-  
   // Count current bookings
   const { count, error: countError } = await supabase
     .from('appointments')
@@ -421,22 +345,17 @@ export async function checkServiceCapacity(
     .eq('location_id', locationId)
     .eq('booking_date', date)
     .in('status', ['confirmed', 'pending'])
-  
   if (countError) {
-    console.error('Error counting bookings:', countError)
     throw new Error('Failed to count bookings')
   }
-  
   const currentBookings = count || 0
   const availableSlots = Math.max(0, maxBookings - currentBookings)
-  
   return {
     maxBookings,
     currentBookings,
     availableSlots
   }
 }
-
 /**
  * Bulk enable/disable services at a location
  * @param locationId - The location ID
@@ -450,18 +369,14 @@ export async function bulkUpdateServiceAvailability(
   isAvailable: boolean
 ): Promise<number> {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('service_availability')
     .update({ is_available: isAvailable })
     .eq('location_id', locationId)
     .in('service_id', serviceIds)
     .select()
-  
   if (error) {
-    console.error('Error bulk updating availability:', error)
     throw new Error('Failed to update service availability')
   }
-  
   return data?.length || 0
 }

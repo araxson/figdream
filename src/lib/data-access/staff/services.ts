@@ -1,24 +1,19 @@
 'use server'
-
 import { createClient } from '@/lib/database/supabase/server'
 import { Database } from '@/types/database.types'
-
 // Type definitions from database
 type StaffService = Database['public']['Tables']['staff_services']['Row']
 type StaffServiceInsert = Database['public']['Tables']['staff_services']['Insert']
 type StaffServiceUpdate = Database['public']['Tables']['staff_services']['Update']
 type Service = Database['public']['Tables']['services']['Row']
 type StaffProfile = Database['public']['Tables']['staff_profiles']['Row']
-
 // Extended types
 export type StaffServiceWithDetails = StaffService & {
   service: Service
 }
-
 export type ServiceWithStaff = Service & {
   staff: StaffProfile[]
 }
-
 /**
  * Get all services a staff member can perform
  * @param staffId - The staff member ID
@@ -26,7 +21,6 @@ export type ServiceWithStaff = Service & {
  */
 export async function getStaffServices(staffId: string): Promise<StaffServiceWithDetails[]> {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('staff_services')
     .select(`
@@ -35,15 +29,11 @@ export async function getStaffServices(staffId: string): Promise<StaffServiceWit
     `)
     .eq('staff_id', staffId)
     .eq('can_perform', true)
-  
   if (error) {
-    console.error('Error fetching staff services:', error)
     throw new Error('Failed to fetch staff services')
   }
-  
   return data || []
 }
-
 /**
  * Get all staff who can perform a specific service
  * @param serviceId - The service ID
@@ -51,7 +41,6 @@ export async function getStaffServices(staffId: string): Promise<StaffServiceWit
  */
 export async function getStaffByService(serviceId: string): Promise<StaffProfile[]> {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('staff_services')
     .select(`
@@ -59,15 +48,11 @@ export async function getStaffByService(serviceId: string): Promise<StaffProfile
     `)
     .eq('service_id', serviceId)
     .eq('can_perform', true)
-  
   if (error) {
-    console.error('Error fetching staff by service:', error)
     throw new Error('Failed to fetch staff by service')
   }
-  
   return data?.map(item => item.staff).filter(Boolean) as StaffProfile[] || []
 }
-
 /**
  * Assign services to a staff member
  * @param staffId - The staff member ID
@@ -79,29 +64,23 @@ export async function assignServicesToStaff(
   serviceIds: string[]
 ): Promise<StaffService[]> {
   const supabase = await createClient()
-  
   // Create staff service entries
   const staffServices: StaffServiceInsert[] = serviceIds.map(serviceId => ({
     staff_id: staffId,
     service_id: serviceId,
     can_perform: true
   }))
-  
   const { data, error } = await supabase
     .from('staff_services')
     .upsert(staffServices, {
       onConflict: 'staff_id,service_id'
     })
     .select()
-  
   if (error) {
-    console.error('Error assigning services to staff:', error)
     throw new Error('Failed to assign services to staff')
   }
-  
   return data || []
 }
-
 /**
  * Update staff service capabilities
  * @param staffId - The staff member ID
@@ -115,7 +94,6 @@ export async function updateStaffService(
   updates: Partial<StaffServiceUpdate>
 ): Promise<StaffService> {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('staff_services')
     .update(updates)
@@ -123,15 +101,11 @@ export async function updateStaffService(
     .eq('service_id', serviceId)
     .select()
     .single()
-  
   if (error) {
-    console.error('Error updating staff service:', error)
     throw new Error('Failed to update staff service')
   }
-  
   return data
 }
-
 /**
  * Remove a service from a staff member
  * @param staffId - The staff member ID
@@ -142,19 +116,15 @@ export async function removeServiceFromStaff(
   serviceId: string
 ): Promise<void> {
   const supabase = await createClient()
-  
   const { error } = await supabase
     .from('staff_services')
     .delete()
     .eq('staff_id', staffId)
     .eq('service_id', serviceId)
-  
   if (error) {
-    console.error('Error removing service from staff:', error)
     throw new Error('Failed to remove service from staff')
   }
 }
-
 /**
  * Update all services for a staff member (replace existing)
  * @param staffId - The staff member ID
@@ -166,43 +136,33 @@ export async function updateStaffServices(
   serviceIds: string[]
 ): Promise<StaffService[]> {
   const supabase = await createClient()
-  
   // Delete existing services
   const { error: deleteError } = await supabase
     .from('staff_services')
     .delete()
     .eq('staff_id', staffId)
-  
   if (deleteError) {
-    console.error('Error removing existing services:', deleteError)
     throw new Error('Failed to update staff services')
   }
-  
   // If no services to add, return empty array
   if (serviceIds.length === 0) {
     return []
   }
-  
   // Add new services
   const staffServices: StaffServiceInsert[] = serviceIds.map(serviceId => ({
     staff_id: staffId,
     service_id: serviceId,
     can_perform: true
   }))
-  
   const { data, error } = await supabase
     .from('staff_services')
     .insert(staffServices)
     .select()
-  
   if (error) {
-    console.error('Error adding new services:', error)
     throw new Error('Failed to update staff services')
   }
-  
   return data || []
 }
-
 /**
  * Check if a staff member can perform a service
  * @param staffId - The staff member ID
@@ -214,22 +174,17 @@ export async function canStaffPerformService(
   serviceId: string
 ): Promise<boolean> {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('staff_services')
     .select('can_perform')
     .eq('staff_id', staffId)
     .eq('service_id', serviceId)
     .single()
-  
   if (error && error.code !== 'PGRST116') {
-    console.error('Error checking staff service capability:', error)
     throw new Error('Failed to check staff service capability')
   }
-  
   return data?.can_perform || false
 }
-
 /**
  * Set custom duration for a staff service
  * @param staffId - The staff member ID
@@ -243,7 +198,6 @@ export async function setStaffServiceDuration(
   customDuration: number | null
 ): Promise<StaffService> {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('staff_services')
     .update({ custom_duration: customDuration })
@@ -251,15 +205,11 @@ export async function setStaffServiceDuration(
     .eq('service_id', serviceId)
     .select()
     .single()
-  
   if (error) {
-    console.error('Error setting custom duration:', error)
     throw new Error('Failed to set custom duration')
   }
-  
   return data
 }
-
 /**
  * Get service duration for a specific staff member
  * @param staffId - The staff member ID
@@ -271,7 +221,6 @@ export async function getStaffServiceDuration(
   serviceId: string
 ): Promise<number> {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('staff_services')
     .select(`
@@ -281,16 +230,12 @@ export async function getStaffServiceDuration(
     .eq('staff_id', staffId)
     .eq('service_id', serviceId)
     .single()
-  
   if (error && error.code !== 'PGRST116') {
-    console.error('Error fetching service duration:', error)
     throw new Error('Failed to fetch service duration')
   }
-  
   // Return custom duration if set, otherwise default service duration
   return data?.custom_duration || data?.service?.duration || 30
 }
-
 /**
  * Copy services from one staff to another
  * @param sourceStaffId - Source staff member ID
@@ -302,22 +247,17 @@ export async function copyStaffServices(
   targetStaffId: string
 ): Promise<StaffService[]> {
   const supabase = await createClient()
-  
   // Get source staff services
   const { data: sourceServices, error: fetchError } = await supabase
     .from('staff_services')
     .select('*')
     .eq('staff_id', sourceStaffId)
-  
   if (fetchError) {
-    console.error('Error fetching source services:', fetchError)
     throw new Error('Failed to fetch source services')
   }
-  
   if (!sourceServices || sourceServices.length === 0) {
     return []
   }
-  
   // Create services for target staff
   const targetServices: StaffServiceInsert[] = sourceServices.map(service => ({
     staff_id: targetStaffId,
@@ -325,30 +265,24 @@ export async function copyStaffServices(
     can_perform: service.can_perform,
     custom_duration: service.custom_duration
   }))
-  
   const { data, error } = await supabase
     .from('staff_services')
     .upsert(targetServices, {
       onConflict: 'staff_id,service_id'
     })
     .select()
-  
   if (error) {
-    console.error('Error copying services:', error)
     throw new Error('Failed to copy services')
   }
-  
   return data || []
 }
-
 /**
  * Get all staff services for a salon
  * @param salonId - The salon ID
  * @returns Array of staff services with details
  */
-export async function getSalonStaffServices(salonId: string): Promise<any[]> {
+export async function getSalonStaffServices(salonId: string): Promise<StaffService[]> {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('staff_services')
     .select(`
@@ -367,11 +301,8 @@ export async function getSalonStaffServices(salonId: string): Promise<any[]> {
     `)
     .eq('staff.salon_id', salonId)
     .eq('can_perform', true)
-  
   if (error) {
-    console.error('Error fetching salon staff services:', error)
     throw new Error('Failed to fetch staff services')
   }
-  
   return data || []
 }

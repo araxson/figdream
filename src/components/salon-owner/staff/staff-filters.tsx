@@ -1,5 +1,4 @@
 'use client'
-
 import {
   Input,
   Button,
@@ -11,7 +10,6 @@ import {
   Badge
 } from '@/components/ui'
 import { Search, Filter, X } from 'lucide-react'
-
 interface StaffFiltersProps {
   searchQuery: string
   onSearchChange: (query: string) => void
@@ -24,7 +22,6 @@ interface StaffFiltersProps {
   totalStaff: number
   filteredCount: number
 }
-
 export function StaffFilters({
   searchQuery,
   onSearchChange,
@@ -44,7 +41,7 @@ export function StaffFilters({
         {/* Search */}
         <div className="flex-1 min-w-64">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
               placeholder="Search staff members..."
               value={searchQuery}
@@ -53,7 +50,6 @@ export function StaffFilters({
             />
           </div>
         </div>
-
         {/* Status Filter */}
         <Select value={statusFilter} onValueChange={onStatusFilterChange}>
           <SelectTrigger className="w-40">
@@ -66,7 +62,6 @@ export function StaffFilters({
             <SelectItem value="inactive">Inactive</SelectItem>
           </SelectContent>
         </Select>
-
         {/* Role Filter */}
         <Select value={roleFilter} onValueChange={onRoleFilterChange}>
           <SelectTrigger className="w-40">
@@ -80,7 +75,6 @@ export function StaffFilters({
             <SelectItem value="manager">Manager</SelectItem>
           </SelectContent>
         </Select>
-
         {/* Clear Filters */}
         {hasActiveFilters && (
           <Button variant="outline" onClick={onClearFilters}>
@@ -89,7 +83,6 @@ export function StaffFilters({
           </Button>
         )}
       </div>
-
       {/* Results Summary */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">

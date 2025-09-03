@@ -1,13 +1,22 @@
 import { Metadata } from "next"
 import Link from "next/link"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Button, Input, Label } from "@/components/ui"
-import { MapPin } from "lucide-react"
+import { 
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  Button,
+  Input,
+  Label
+} from "@/components/ui"
 
+import { MapPin } from "lucide-react"
 export const metadata: Metadata = {
   title: "Location Manager Login | FigDream",
   description: "Sign in to your location manager account",
 }
-
 export default function LocationManagerLoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center">
@@ -48,13 +57,13 @@ export default function LocationManagerLoginPage() {
         <CardFooter className="flex flex-col space-y-2">
           <Link 
             href="/forgot-password" 
-            className="text-sm text-muted-foreground hover:text-primary"
+            className="text-sm text-muted-foreground"
           >
             Forgot your password?
           </Link>
           <div className="text-sm text-muted-foreground">
             Not a location manager?{" "}
-            <Link href="/login" className="text-primary hover:underline">
+            <Link href="/login" className="text-primary">
               Choose another login
             </Link>
           </div>

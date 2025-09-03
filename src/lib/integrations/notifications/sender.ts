@@ -1,39 +1,32 @@
 'use server'
-
 import { createClient } from '@/lib/database/supabase/server'
 import { createAdminClient } from '@/lib/database/supabase/admin'
 import type { Database } from '@/types/database.types'
-
 type NotificationType = Database['public']['Tables']['notifications']['Row']['type']
-
 interface NotificationPayload {
   user_id: string
   title: string
   message: string
   type: NotificationType
   action_url?: string
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }
-
 interface EmailPayload {
   to: string
   subject: string
   html: string
   text?: string
 }
-
 interface SMSPayload {
   to: string
   message: string
 }
-
 /**
  * Send in-app notification
  */
 export async function sendNotification(payload: NotificationPayload) {
   try {
     const supabase = createAdminClient()
-    
     const { data, error } = await supabase
       .from('notifications')
       .insert({
@@ -45,9 +38,7 @@ export async function sendNotification(payload: NotificationPayload) {
       })
       .select()
       .single()
-    
     if (error) throw error
-    
     // Trigger real-time update (if using Supabase Realtime)
     await supabase
       .channel('notifications')
@@ -56,14 +47,11 @@ export async function sendNotification(payload: NotificationPayload) {
         event: 'new_notification',
         payload: data
       })
-    
     return { success: true, data }
-  } catch (error) {
-    console.error('Failed to send notification:', error)
+  } catch (_error) {
     return { success: false, error }
   }
 }
-
 /**
  * Send email notification using Resend
  */
@@ -83,19 +71,15 @@ export async function sendEmailNotification(payload: EmailPayload) {
         text: payload.text
       })
     })
-    
     if (!response.ok) {
       throw new Error('Failed to send email')
     }
-    
     const data = await response.json()
     return { success: true, data }
-  } catch (error) {
-    console.error('Failed to send email:', error)
+  } catch (_error) {
     return { success: false, error }
   }
 }
-
 /**
  * Send SMS notification using Twilio
  */
@@ -104,7 +88,6 @@ export async function sendSMSNotification(payload: SMSPayload) {
     const accountSid = process.env.TWILIO_ACCOUNT_SID
     const authToken = process.env.TWILIO_AUTH_TOKEN
     const fromNumber = process.env.TWILIO_PHONE_NUMBER
-    
     const response = await fetch(
       `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
       {
@@ -120,19 +103,15 @@ export async function sendSMSNotification(payload: SMSPayload) {
         })
       }
     )
-    
     if (!response.ok) {
       throw new Error('Failed to send SMS')
     }
-    
     const data = await response.json()
     return { success: true, data }
-  } catch (error) {
-    console.error('Failed to send SMS:', error)
+  } catch (_error) {
     return { success: false, error }
   }
 }
-
 /**
  * Send appointment confirmation notification
  */
@@ -149,23 +128,19 @@ export async function sendAppointmentConfirmation(
   }
 ) {
   const supabase = await createClient()
-  
   // Get customer details
   const { data: customer } = await supabase
     .from('profiles')
     .select('email, phone, first_name, last_name')
     .eq('user_id', customerId)
     .single()
-  
   if (!customer) return
-  
   // Get notification settings
   const { data: prefs } = await supabase
     .from('notification_settings')
     .select('*')
     .eq('user_id', customerId)
     .single()
-  
   // Send in-app notification
   await sendNotification({
     user_id: customerId,
@@ -174,7 +149,6 @@ export async function sendAppointmentConfirmation(
     type: 'booking',
     action_url: `/customer/appointments/${appointmentId}`
   })
-  
   // Send email if enabled
   if (prefs?.email_notifications && prefs?.booking_confirmations) {
     const emailHtml = `
@@ -192,7 +166,6 @@ export async function sendAppointmentConfirmation(
       </ul>
       <p>We look forward to seeing you!</p>
     `
-    
     await sendEmailNotification({
       to: customer.email,
       subject: 'Appointment Confirmation - FigDream',
@@ -200,7 +173,6 @@ export async function sendAppointmentConfirmation(
       text: `Your appointment on ${appointmentDetails.date} at ${appointmentDetails.time} has been confirmed.`
     })
   }
-  
   // Send SMS if enabled
   if (prefs?.sms_notifications && prefs?.booking_confirmations && customer.phone) {
     await sendSMSNotification({
@@ -209,7 +181,6 @@ export async function sendAppointmentConfirmation(
     })
   }
 }
-
 /**
  * Send appointment reminder
  */
@@ -219,7 +190,6 @@ export async function sendAppointmentReminder(
   hoursBeforeAppointment: number = 24
 ) {
   const supabase = await createClient()
-  
   // Get appointment details
   const { data: appointment } = await supabase
     .from('appointments')
@@ -231,22 +201,17 @@ export async function sendAppointmentReminder(
     `)
     .eq('id', appointmentId)
     .single()
-  
   if (!appointment) return
-  
   // Get customer details
   const { data: customer } = await supabase
     .from('profiles')
     .select('email, phone, first_name')
     .eq('user_id', customerId)
     .single()
-  
   if (!customer) return
-  
   const reminderMessage = hoursBeforeAppointment === 24
     ? 'tomorrow'
     : `in ${hoursBeforeAppointment} hours`
-  
   // Send in-app notification
   await sendNotification({
     user_id: customerId,
@@ -255,14 +220,12 @@ export async function sendAppointmentReminder(
     type: 'booking',
     action_url: `/customer/appointments/${appointmentId}`
   })
-  
   // Check notification settings and send email/SMS
   const { data: prefs } = await supabase
     .from('notification_settings')
     .select('*')
     .eq('user_id', customerId)
     .single()
-  
   if (prefs?.email_notifications && prefs?.appointment_reminders) {
     await sendEmailNotification({
       to: customer.email,
@@ -276,7 +239,6 @@ export async function sendAppointmentReminder(
       `
     })
   }
-  
   if (prefs?.sms_notifications && prefs?.appointment_reminders && customer.phone) {
     await sendSMSNotification({
       to: customer.phone,
@@ -284,7 +246,6 @@ export async function sendAppointmentReminder(
     })
   }
 }
-
 /**
  * Send review request after appointment
  */
@@ -293,7 +254,6 @@ export async function sendReviewRequest(
   customerId: string
 ) {
   const supabase = await createClient()
-  
   // Get appointment and customer details
   const { data: appointment } = await supabase
     .from('appointments')
@@ -304,9 +264,7 @@ export async function sendReviewRequest(
     `)
     .eq('id', appointmentId)
     .single()
-  
   if (!appointment) return
-  
   await sendNotification({
     user_id: customerId,
     title: 'How was your experience?',
@@ -315,7 +273,6 @@ export async function sendReviewRequest(
     action_url: `/customer/appointments/${appointmentId}/review`
   })
 }
-
 /**
  * Send marketing notification
  */
@@ -329,7 +286,6 @@ export async function sendMarketingNotification(
   }
 ) {
   const supabase = createAdminClient()
-  
   // Get users with marketing preferences enabled
   const { data: users } = await supabase
     .from('notification_settings')
@@ -337,9 +293,7 @@ export async function sendMarketingNotification(
     .in('user_id', userIds)
     .where('marketing_emails', 'eq', true)
     .or('marketing_sms', 'eq', true)
-  
   if (!users || users.length === 0) return
-  
   // Send in-app notifications
   const notifications = users.map(user => ({
     user_id: user.user_id,
@@ -348,9 +302,7 @@ export async function sendMarketingNotification(
     type: 'marketing' as NotificationType,
     is_read: false
   }))
-  
   await supabase.from('notifications').insert(notifications)
-  
   // Send emails to users with email enabled
   const emailUsers = users.filter(u => u.email_notifications && u.marketing_emails)
   if (emailUsers.length > 0) {
@@ -362,7 +314,6 @@ export async function sendMarketingNotification(
         .select('email, first_name')
         .eq('user_id', user.user_id)
         .single()
-      
       if (profile?.email) {
         await sendEmailNotification({
           to: profile.email,

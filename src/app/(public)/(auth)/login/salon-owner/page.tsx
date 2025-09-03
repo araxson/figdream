@@ -1,8 +1,7 @@
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Button, Separator, HoverCard, HoverCardContent, HoverCardTrigger, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, Avatar, AvatarFallback, AvatarImage, Collapsible, CollapsibleContent, CollapsibleTrigger, AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, Alert, AlertDescription, ScrollArea, ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger, Progress, Badge } from '@/components/ui'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Button, Separator, HoverCard, HoverCardContent, HoverCardTrigger, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, Avatar, AvatarFallback, AvatarImage, Collapsible, CollapsibleContent, CollapsibleTrigger, AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, Alert, AlertDescription, ScrollArea, ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger, Progress } from '@/components/ui'
 import { LoginForm } from '@/components/auth/login-form'
-import { Building, Users, TrendingUp, BarChart, ChevronRight, Sparkles, Crown, Shield, Info, ChevronDown, Settings, Phone, Mail, Search } from 'lucide-react'
-
+import { Building, Users, TrendingUp, BarChart, Crown, Shield, Info, ChevronDown, Settings, Phone, Mail, Search } from 'lucide-react'
 export default function SalonOwnerLoginPage() {
   return (
     <TooltipProvider>
@@ -13,7 +12,7 @@ export default function SalonOwnerLoginPage() {
           <HoverCard>
             <HoverCardTrigger asChild>
               <Avatar className="h-16 w-16 cursor-help">
-                <AvatarImage src="/avatars/salon-owner-avatar.png" alt="Salon Owner" />
+                <AvatarImage src="/avatars/role-salon-owner-avatar.png" alt="Salon Owner" />
                 <AvatarFallback className="bg-green-100 dark:bg-green-900/20">
                   <Building className="h-8 w-8 text-green-600 dark:text-green-400" />
                 </AvatarFallback>
@@ -22,7 +21,7 @@ export default function SalonOwnerLoginPage() {
             <HoverCardContent className="w-80">
               <div className="flex justify-between space-x-4">
                 <Avatar>
-                  <AvatarImage src="/avatars/salon-owner-avatar.png" />
+                  <AvatarImage src="/avatars/role-salon-owner-avatar.png" />
                   <AvatarFallback>SO</AvatarFallback>
                 </Avatar>
                 <div className="space-y-1">
@@ -57,7 +56,6 @@ export default function SalonOwnerLoginPage() {
             Sign in to manage your salon business
           </p>
         </div>
-        
         {/* Business Progress */}
         <div className="max-w-md mx-auto">
           <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
@@ -69,7 +67,6 @@ export default function SalonOwnerLoginPage() {
           <p className="text-xs text-muted-foreground mt-1">Step 1 of 3 - Business Access</p>
         </div>
       </div>
-
       {/* Business Security Notice */}
       <Alert>
         <Shield className="h-4 w-4" />
@@ -77,7 +74,6 @@ export default function SalonOwnerLoginPage() {
           Your business data is protected with bank-level security. All management actions are logged for audit purposes.
         </AlertDescription>
       </Alert>
-      
       {/* Login Card */}
       <Card>
         <CardHeader>
@@ -123,8 +119,7 @@ export default function SalonOwnerLoginPage() {
         </CardHeader>
         <CardContent>
           <ScrollArea className="max-h-96">
-            <LoginForm role="salon_owner" redirectTo="/salon-owner" />
-          
+            <LoginForm role="salon_owner" redirectTo="/salon" />
             <div className="mt-6">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
@@ -136,7 +131,6 @@ export default function SalonOwnerLoginPage() {
                   </span>
                 </div>
               </div>
-
               {/* Social Login Buttons */}
               <div className="grid grid-cols-2 gap-3 mt-6">
                 <Tooltip>
@@ -187,14 +181,14 @@ export default function SalonOwnerLoginPage() {
         <CardFooter className="flex flex-col space-y-4">
           <div className="flex items-center justify-between w-full text-sm">
             <div>
-              Don't have a business account?{' '}
-              <Link href="/register/salon" className="text-primary hover:underline">
+              Don&apos;t have a business account?{' '}
+              <Link href="/register/salon" className="text-primary">
                 Register your salon
               </Link>
             </div>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
+                <Button variant="ghost" size="sm" className="text-muted-foreground">
                   Forgot password?
                 </Button>
               </AlertDialogTrigger>
@@ -203,7 +197,7 @@ export default function SalonOwnerLoginPage() {
                   <AlertDialogTitle>Business Account Recovery</AlertDialogTitle>
                   <AlertDialogDescription>
                     For business account security, password resets require additional verification. 
-                    We'll send recovery instructions to your business email and may require identity verification.
+                    We&apos;ll send recovery instructions to your business email and may require identity verification.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -218,11 +212,10 @@ export default function SalonOwnerLoginPage() {
           </div>
         </CardFooter>
       </Card>
-
       {/* Features Section */}
       <Collapsible>
         <CollapsibleTrigger asChild>
-          <Card className="cursor-pointer hover:bg-muted/50 transition-colors">
+          <Card className="cursor-pointer">
             <CardHeader>
               <CardTitle className="text-lg flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -240,7 +233,7 @@ export default function SalonOwnerLoginPage() {
               <div className="space-y-4">
                 <HoverCard>
                   <HoverCardTrigger asChild>
-                    <div className="flex items-start space-x-3 p-3 rounded-lg hover:bg-muted/50 cursor-help">
+                    <div className="flex items-start space-x-3 p-3 rounded-lg cursor-help">
                       <Users className="h-5 w-5 text-primary mt-0.5" />
                       <div className="space-y-1">
                         <p className="text-sm font-medium">Staff Management</p>
@@ -262,10 +255,9 @@ export default function SalonOwnerLoginPage() {
                     </div>
                   </HoverCardContent>
                 </HoverCard>
-                
                 <HoverCard>
                   <HoverCardTrigger asChild>
-                    <div className="flex items-start space-x-3 p-3 rounded-lg hover:bg-muted/50 cursor-help">
+                    <div className="flex items-start space-x-3 p-3 rounded-lg cursor-help">
                       <TrendingUp className="h-5 w-5 text-primary mt-0.5" />
                       <div className="space-y-1">
                         <p className="text-sm font-medium">Business Analytics</p>
@@ -287,10 +279,9 @@ export default function SalonOwnerLoginPage() {
                     </div>
                   </HoverCardContent>
                 </HoverCard>
-                
                 <HoverCard>
                   <HoverCardTrigger asChild>
-                    <div className="flex items-start space-x-3 p-3 rounded-lg hover:bg-muted/50 cursor-help">
+                    <div className="flex items-start space-x-3 p-3 rounded-lg cursor-help">
                       <BarChart className="h-5 w-5 text-primary mt-0.5" />
                       <div className="space-y-1">
                         <p className="text-sm font-medium">Performance Reports</p>
@@ -317,7 +308,6 @@ export default function SalonOwnerLoginPage() {
           </Card>
         </CollapsibleContent>
       </Collapsible>
-
       {/* Other Login Options */}
       <Card className="bg-muted/30">
         <CardContent className="pt-6">
@@ -326,7 +316,7 @@ export default function SalonOwnerLoginPage() {
             <div className="flex justify-center gap-4">
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Link href="/login/customer" className="text-primary hover:underline font-medium">
+                  <Link href="/login/customer" className="text-primary font-medium">
                     Customer
                   </Link>
                 </TooltipTrigger>
@@ -337,7 +327,7 @@ export default function SalonOwnerLoginPage() {
               <Separator orientation="vertical" className="h-4" />
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Link href="/login/staff" className="text-primary hover:underline font-medium">
+                  <Link href="/login/staff" className="text-primary font-medium">
                     Staff Member
                   </Link>
                 </TooltipTrigger>

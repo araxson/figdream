@@ -2,7 +2,6 @@ import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Alert, AlertDescription } from '@/components/ui'
 import { LoginForm } from '@/components/auth/login-form'
 import { Shield, AlertTriangle, Lock, Server, Database } from 'lucide-react'
-
 export default function SuperAdminLoginPage() {
   return (
     <div className="space-y-6">
@@ -15,7 +14,6 @@ export default function SuperAdminLoginPage() {
           This portal is for system administrators only. All login attempts are monitored and logged.
         </AlertDescription>
       </Alert>
-
       {/* Header */}
       <div className="text-center space-y-2">
         <div className="flex justify-center">
@@ -28,7 +26,6 @@ export default function SuperAdminLoginPage() {
           Super Admin authentication portal
         </p>
       </div>
-
       {/* Login Card */}
       <Card>
         <CardHeader>
@@ -52,7 +49,6 @@ export default function SuperAdminLoginPage() {
           </div>
         </CardFooter>
       </Card>
-
       {/* Admin Capabilities */}
       <Card>
         <CardHeader>
@@ -90,11 +86,10 @@ export default function SuperAdminLoginPage() {
           </div>
         </CardContent>
       </Card>
-
       {/* Contact Support */}
       <div className="text-center text-sm text-muted-foreground">
         <p>Need assistance?</p>
-        <Link href="/support" className="text-primary hover:underline">
+        <Link href="/support" className="text-primary">
           Contact System Support
         </Link>
       </div>

@@ -1,10 +1,10 @@
 # **Next.js 15 App Router + TypeScript + shadcn/ui + Supabase: Professional Development Rules**
 
 **Last Updated: Aug 2025**
-**Next.js Version: 15.x**
+**Next.js Version: 15.5**
 **UI: SHADCN**
 **DATABASE and Auth: SUPABASE**
-**React Version: 19 RC (App Router) / 18 (Pages Router)**
+**React Version: 19 RC (App Router)**
 
 
 
@@ -13,10 +13,9 @@
 - **CRITICAL:** ALL files MUST be moved to their appropriate, logical locations immediately when identified as misplaced.
 - **CRITICAL:** Files found in incorrect locations MUST be relocated within the same development session - no exceptions.
 - **CRITICAL:** Every file operation MUST result in improved project organization and logical structure.
-- **FOLLOW:** Move files to feature-based directories that match their functionality and purpose.
-- **FOLLOW:** Place UI components in appropriate component categories.
+- **FOLLOW:** Move files to directories that match their functionality and purpose.
+- **FOLLOW:**  Fix duplicate files in multiple locations during reorganization.
 - **FOLLOW:** Move utility functions to the correct utility directories based on their domain.
-- **FOLLOW:** Relocate business logic to appropriate business service directories.
 - **FOLLOW:** Ensure all files are in directories that reflect their actual purpose and usage.
 - **FOLLOW:** Update ALL import statements immediately after moving any file.
 - **FOLLOW:** Verify that moved files are accessible from their new location before completing the move.
@@ -26,7 +25,6 @@
 - **AVOID:** Creating new files without placing them in the correct directory structure.
 - **AVOID:** Moving files without updating all import statements that reference them.
 - **AVOID:** Placing files in generic directories when specific feature directories exist.
-- **AVOID:** Creating duplicate files in multiple locations during reorganization.
 - **AVOID:** Postponing file organization tasks - complete them immediately. 
 
 
@@ -525,8 +523,6 @@ useEffect(() => {
 
 ### **16. File Organization & Naming**
 
-- **FOLLOW:** Keep files under 500 lines for maintainability
-- **FOLLOW:** Break down large files into smaller, modular components for better organization
 - **FOLLOW:** Use consistent naming conventions across the codebase
 - **FOLLOW:** Fix all existing naming inconsistencies systematically
 - **FOLLOW:** Use kebab-case for ALL file and directory names
@@ -534,7 +530,6 @@ useEffect(() => {
 - **FOLLOW:** Use PascalCase for React components and TypeScript interfaces/types
 - **FOLLOW:** Organize by feature/domain rather than by technical concern
 - **FOLLOW:** Use proper file extensions: .tsx for React, .ts for utilities
-- **AVOID:** Using any naming convention other than kebab-case for files/directories
 - **AVOID:** Introducing new naming inconsistencies
 - **AVOID:** Mixing naming conventions within the same context
 - **AVOID:** Overly long or unnecessarily descriptive file names

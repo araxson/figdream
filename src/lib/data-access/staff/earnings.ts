@@ -1,13 +1,10 @@
 'use server'
-
 import { createClient } from '@/lib/database/supabase/server'
 import { Database } from '@/types/database.types'
-
 // Type definitions from database
 type StaffEarning = Database['public']['Tables']['staff_earnings']['Row']
 type StaffEarningInsert = Database['public']['Tables']['staff_earnings']['Insert']
 type StaffEarningUpdate = Database['public']['Tables']['staff_earnings']['Update']
-
 export interface EarningsFilters {
   staff_id?: string
   salon_id?: string
@@ -18,7 +15,6 @@ export interface EarningsFilters {
   limit?: number
   offset?: number
 }
-
 export interface EarningsSummary {
   total_earnings: number
   total_commission: number
@@ -27,7 +23,6 @@ export interface EarningsSummary {
   unpaid_amount: number
   paid_amount: number
 }
-
 /**
  * Get staff earnings with filters
  * @param filters - Filtering options
@@ -35,9 +30,7 @@ export interface EarningsSummary {
  */
 export async function getStaffEarnings(filters: EarningsFilters = {}): Promise<StaffEarning[]> {
   const supabase = await createClient()
-  
   let query = supabase.from('staff_earnings').select('*')
-  
   if (filters.staff_id) {
     query = query.eq('staff_id', filters.staff_id)
   }
@@ -62,17 +55,12 @@ export async function getStaffEarnings(filters: EarningsFilters = {}): Promise<S
   if (filters.offset) {
     query = query.range(filters.offset, filters.offset + (filters.limit || 10) - 1)
   }
-  
   const { data, error } = await query.order('service_date', { ascending: false })
-  
   if (error) {
-    console.error('Error fetching staff earnings:', error)
     throw new Error('Failed to fetch staff earnings')
   }
-  
   return data || []
 }
-
 /**
  * Create a new staff earning record
  * @param earning - The earning data to create
@@ -80,21 +68,16 @@ export async function getStaffEarnings(filters: EarningsFilters = {}): Promise<S
  */
 export async function createStaffEarning(earning: StaffEarningInsert): Promise<StaffEarning> {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('staff_earnings')
     .insert(earning)
     .select()
     .single()
-  
   if (error) {
-    console.error('Error creating staff earning:', error)
     throw new Error('Failed to create staff earning')
   }
-  
   return data
 }
-
 /**
  * Update a staff earning record
  * @param id - The earning ID
@@ -106,22 +89,17 @@ export async function updateStaffEarning(
   updates: StaffEarningUpdate
 ): Promise<StaffEarning> {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('staff_earnings')
     .update(updates)
     .eq('id', id)
     .select()
     .single()
-  
   if (error) {
-    console.error('Error updating staff earning:', error)
     throw new Error('Failed to update staff earning')
   }
-  
   return data
 }
-
 /**
  * Calculate commission for an appointment
  * @param appointmentId - The appointment ID
@@ -138,10 +116,8 @@ export async function calculateCommission(
 ): Promise<{ commissionAmount: number; totalEarnings: number }> {
   const commissionAmount = serviceAmount * commissionRate
   const totalEarnings = commissionAmount // Tips would be added separately
-  
   return { commissionAmount, totalEarnings }
 }
-
 /**
  * Mark earnings as paid out
  * @param earningIds - Array of earning IDs to mark as paid
@@ -155,7 +131,6 @@ export async function markEarningsAsPaid(
   paymentMethod: string
 ): Promise<number> {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('staff_earnings')
     .update({
@@ -166,15 +141,11 @@ export async function markEarningsAsPaid(
     })
     .in('id', earningIds)
     .select()
-  
   if (error) {
-    console.error('Error marking earnings as paid:', error)
     throw new Error('Failed to mark earnings as paid')
   }
-  
   return data?.length || 0
 }
-
 /**
  * Get earnings summary for a staff member
  * @param staffId - The staff member ID
@@ -188,26 +159,20 @@ export async function getStaffEarningsSummary(
   dateTo?: string
 ): Promise<EarningsSummary> {
   const supabase = await createClient()
-  
   let query = supabase
     .from('staff_earnings')
     .select('total_earnings, commission_amount, tip_amount, is_paid_out')
     .eq('staff_id', staffId)
-  
   if (dateFrom) {
     query = query.gte('service_date', dateFrom)
   }
   if (dateTo) {
     query = query.lte('service_date', dateTo)
   }
-  
   const { data, error } = await query
-  
   if (error) {
-    console.error('Error fetching earnings summary:', error)
     throw new Error('Failed to fetch earnings summary')
   }
-  
   const summary: EarningsSummary = {
     total_earnings: 0,
     total_commission: 0,
@@ -216,22 +181,18 @@ export async function getStaffEarningsSummary(
     unpaid_amount: 0,
     paid_amount: 0
   }
-  
   data?.forEach(earning => {
     summary.total_earnings += earning.total_earnings || 0
     summary.total_commission += earning.commission_amount || 0
     summary.total_tips += earning.tip_amount || 0
-    
     if (earning.is_paid_out) {
       summary.paid_amount += earning.total_earnings || 0
     } else {
       summary.unpaid_amount += earning.total_earnings || 0
     }
   })
-  
   return summary
 }
-
 /**
  * Get unpaid earnings for a staff member
  * @param staffId - The staff member ID
@@ -239,22 +200,17 @@ export async function getStaffEarningsSummary(
  */
 export async function getUnpaidEarnings(staffId: string): Promise<StaffEarning[]> {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('staff_earnings')
     .select('*')
     .eq('staff_id', staffId)
     .eq('is_paid_out', false)
     .order('service_date', { ascending: false })
-  
   if (error) {
-    console.error('Error fetching unpaid earnings:', error)
     throw new Error('Failed to fetch unpaid earnings')
   }
-  
   return data || []
 }
-
 /**
  * Add tip to an earning record
  * @param earningId - The earning ID
@@ -266,22 +222,17 @@ export async function addTipToEarning(
   tipAmount: number
 ): Promise<StaffEarning> {
   const supabase = await createClient()
-  
   // First get the current earning
   const { data: current, error: fetchError } = await supabase
     .from('staff_earnings')
     .select('*')
     .eq('id', earningId)
     .single()
-  
   if (fetchError || !current) {
-    console.error('Error fetching earning:', fetchError)
     throw new Error('Failed to fetch earning')
   }
-  
   // Update with new tip amount
   const newTotalEarnings = (current.commission_amount || 0) + tipAmount
-  
   const { data, error } = await supabase
     .from('staff_earnings')
     .update({
@@ -291,15 +242,11 @@ export async function addTipToEarning(
     .eq('id', earningId)
     .select()
     .single()
-  
   if (error) {
-    console.error('Error adding tip:', error)
     throw new Error('Failed to add tip')
   }
-  
   return data
 }
-
 /**
  * Generate earnings report for a salon
  * @param salonId - The salon ID
@@ -311,9 +258,8 @@ export async function generateEarningsReport(
   salonId: string,
   dateFrom: string,
   dateTo: string
-): Promise<any[]> {
+): Promise<StaffEarnings[]> {
   const supabase = await createClient()
-  
   const { data, error } = await supabase
     .from('staff_earnings')
     .select(`
@@ -327,15 +273,11 @@ export async function generateEarningsReport(
     .eq('salon_id', salonId)
     .gte('service_date', dateFrom)
     .lte('service_date', dateTo)
-  
   if (error) {
-    console.error('Error generating earnings report:', error)
     throw new Error('Failed to generate earnings report')
   }
-  
   // Group by staff and calculate totals
   const report = new Map()
-  
   data?.forEach(earning => {
     if (!report.has(earning.staff_id)) {
       report.set(earning.staff_id, {
@@ -349,19 +291,16 @@ export async function generateEarningsReport(
         service_count: 0
       })
     }
-    
     const staffReport = report.get(earning.staff_id)
     staffReport.total_earnings += earning.total_earnings || 0
     staffReport.total_commission += earning.commission_amount || 0
     staffReport.total_tips += earning.tip_amount || 0
     staffReport.service_count += 1
-    
     if (earning.is_paid_out) {
       staffReport.paid_amount += earning.total_earnings || 0
     } else {
       staffReport.unpaid_amount += earning.total_earnings || 0
     }
   })
-  
   return Array.from(report.values())
 }

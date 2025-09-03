@@ -1,5 +1,4 @@
 'use client'
-
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -19,16 +18,14 @@ import { toast } from 'sonner'
 import { 
   LogOut, CheckCircle, Home, ArrowLeft, 
   Shield, Heart, Star, TrendingUp, Calendar,
-  Loader2, RefreshCw, User
+  Loader2, User
 } from 'lucide-react'
-
 interface SessionStats {
   duration?: string
   bookingsMade?: number
   servicesViewed?: number
   lastActivity?: string
 }
-
 export default function LogoutPage() {
   const router = useRouter()
   const [isLoggingOut, setIsLoggingOut] = useState(true)
@@ -36,11 +33,9 @@ export default function LogoutPage() {
   const [sessionStats, setSessionStats] = useState<SessionStats>({})
   const [redirectCountdown, setRedirectCountdown] = useState(5)
   const [autoRedirect, setAutoRedirect] = useState(true)
-
   useEffect(() => {
     performLogout()
   }, [])
-
   useEffect(() => {
     // Auto-redirect countdown
     if (logoutComplete && autoRedirect && redirectCountdown > 0) {
@@ -51,13 +46,11 @@ export default function LogoutPage() {
     } else if (logoutComplete && autoRedirect && redirectCountdown === 0) {
       router.push('/')
     }
-  }, [logoutComplete, redirectCountdown, autoRedirect])
-
+  }, [logoutComplete, redirectCountdown, autoRedirect, router])
   const performLogout = async () => {
     try {
       // Simulate logout process
       await new Promise(resolve => setTimeout(resolve, 1500))
-      
       // Simulate fetching session stats
       setSessionStats({
         duration: '45 minutes',
@@ -65,32 +58,26 @@ export default function LogoutPage() {
         servicesViewed: 12,
         lastActivity: 'Viewed salon profile'
       })
-      
       // Clear any local storage or session data
       // localStorage.removeItem('user')
       // sessionStorage.clear()
-      
       setLogoutComplete(true)
       toast.success('You have been signed out successfully')
-    } catch (error) {
-      console.error('Logout error:', error)
+    } catch (_error) {
       toast.error('There was an issue signing out. Please try again.')
       setLogoutComplete(true) // Still show logout screen even if error
     } finally {
       setIsLoggingOut(false)
     }
   }
-
   const handleStaySignedIn = () => {
     toast.info('Returning to dashboard...')
     router.push('/dashboard')
   }
-
   const stopAutoRedirect = () => {
     setAutoRedirect(false)
     setRedirectCountdown(0)
   }
-
   // Logging out state
   if (isLoggingOut) {
     return (
@@ -114,7 +101,6 @@ export default function LogoutPage() {
       </div>
     )
   }
-
   // Logout complete
   return (
     <div className="max-w-lg mx-auto space-y-6">
@@ -131,7 +117,6 @@ export default function LogoutPage() {
             Thanks for using FigDream. See you again soon!
           </CardDescription>
         </CardHeader>
-
         <CardContent className="space-y-4">
           {/* Session Summary */}
           {(sessionStats.duration || sessionStats.bookingsMade) && (
@@ -171,7 +156,6 @@ export default function LogoutPage() {
               <Separator />
             </>
           )}
-
           {/* Security Notice */}
           <Alert>
             <Shield className="h-4 w-4" />
@@ -180,7 +164,6 @@ export default function LogoutPage() {
               we recommend clearing your browser history for added security.
             </AlertDescription>
           </Alert>
-
           {/* Auto-redirect notice */}
           {autoRedirect && redirectCountdown > 0 && (
             <div className="text-center space-y-2 p-3 bg-muted rounded-lg">
@@ -197,7 +180,6 @@ export default function LogoutPage() {
             </div>
           )}
         </CardContent>
-
         <CardFooter className="flex flex-col gap-2">
           <Button
             className="w-full"
@@ -216,7 +198,6 @@ export default function LogoutPage() {
           </Button>
         </CardFooter>
       </Card>
-
       {/* Quick Actions */}
       <Card className="bg-muted/50">
         <CardContent className="pt-6">
@@ -233,10 +214,9 @@ export default function LogoutPage() {
                     </p>
                   </div>
                 </div>
-                <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground" />
               </Link>
             </Button>
-
             <Button asChild variant="ghost" className="h-auto p-3 justify-between group">
               <Link href="/features">
                 <div className="flex items-center gap-3">
@@ -248,10 +228,9 @@ export default function LogoutPage() {
                     </p>
                   </div>
                 </div>
-                <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground" />
               </Link>
             </Button>
-
             <Button asChild variant="ghost" className="h-auto p-3 justify-between group">
               <Link href="/pricing">
                 <div className="flex items-center gap-3">
@@ -263,21 +242,19 @@ export default function LogoutPage() {
                     </p>
                   </div>
                 </div>
-                <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground" />
               </Link>
             </Button>
           </div>
         </CardContent>
       </Card>
-
       {/* Footer Message */}
       <div className="text-center text-sm text-muted-foreground">
         <p>Questions or concerns?</p>
-        <Link href="/contact" className="text-primary hover:underline">
+        <Link href="/contact" className="text-primary">
           Contact our support team
         </Link>
       </div>
-
       {/* Hidden: Changed your mind? */}
       {logoutComplete && (
         <div className="text-center">
@@ -285,7 +262,7 @@ export default function LogoutPage() {
             variant="ghost"
             size="sm"
             onClick={handleStaySignedIn}
-            className="text-xs text-muted-foreground hover:text-foreground h-auto p-1"
+            className="text-xs text-muted-foreground h-auto p-1"
           >
             Changed your mind? Click here to stay signed in
           </Button>

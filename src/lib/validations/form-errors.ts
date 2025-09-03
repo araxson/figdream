@@ -1,6 +1,5 @@
 import { z } from 'zod'
 import { logValidationError } from '@/lib/utils/errors/logger'
-
 /**
  * Form validation error type
  */
@@ -9,7 +8,6 @@ export interface FormError {
   message: string
   code?: string
 }
-
 /**
  * Form validation result
  */
@@ -18,7 +16,6 @@ export interface ValidationResult<T> {
   data?: T
   errors?: FormError[]
 }
-
 /**
  * Parse Zod errors into form errors
  */
@@ -26,10 +23,8 @@ export function parseZodErrors(error: z.ZodError<unknown>): FormError[] {
   return error.issues.map((err) => {
     const field = err.path.join('.')
     const message = err.message
-    
     // Log validation error
     logValidationError(field, message, { code: err.code })
-    
     return {
       field,
       message,
@@ -37,7 +32,6 @@ export function parseZodErrors(error: z.ZodError<unknown>): FormError[] {
     }
   })
 }
-
 /**
  * Validate form data with Zod schema
  */
@@ -51,14 +45,13 @@ export function validateFormData<T>(
       success: true,
       data: validated
     }
-  } catch (error) {
+  } catch (_error) {
     if (error instanceof z.ZodError) {
       return {
         success: false,
         errors: parseZodErrors(error)
       }
     }
-    
     // Unexpected error
     return {
       success: false,
@@ -69,7 +62,6 @@ export function validateFormData<T>(
     }
   }
 }
-
 /**
  * Safe parse with formatted errors
  */
@@ -78,11 +70,9 @@ export function safeParseWithErrors<T>(
   data: unknown
 ): { data?: T; errors?: Record<string, string> } {
   const result = schema.safeParse(data)
-  
   if (result.success) {
     return { data: result.data }
   }
-  
   const errors: Record<string, string> = {}
   result.error.issues.forEach((err) => {
     const field = err.path.join('.')
@@ -90,10 +80,8 @@ export function safeParseWithErrors<T>(
       errors[field] = err.message
     }
   })
-  
   return { errors }
 }
-
 /**
  * Common validation schemas
  */
@@ -102,74 +90,62 @@ export const commonSchemas = {
     .string()
     .min(1, 'Email is required')
     .email('Please enter a valid email address'),
-    
   password: z
     .string()
     .min(8, 'Password must be at least 8 characters')
     .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
     .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
     .regex(/[0-9]/, 'Password must contain at least one number'),
-    
   phone: z
     .string()
     .min(1, 'Phone number is required')
     .regex(/^[+]?[(]?[0-9]{1,3}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,4}[-\s.]?[0-9]{1,9}$/, 
       'Please enter a valid phone number'),
-    
   zipCode: z
     .string()
     .min(1, 'ZIP code is required')
     .regex(/^\d{5}(-\d{4})?$/, 'Please enter a valid ZIP code'),
-    
   url: z
     .string()
     .url('Please enter a valid URL')
     .optional(),
-    
   date: z
     .string()
     .min(1, 'Date is required')
     .refine((date) => !isNaN(Date.parse(date)), 'Please enter a valid date'),
-    
   time: z
     .string()
     .min(1, 'Time is required')
     .regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Please enter a valid time (HH:MM)'),
-    
   currency: z
     .number()
     .min(0, 'Amount must be positive')
     .multipleOf(0.01, 'Amount must have at most 2 decimal places'),
 }
-
 /**
  * Create a required field validator
  */
 export function required(message = 'This field is required') {
   return z.string().min(1, message)
 }
-
 /**
  * Create a min length validator
  */
 export function minLength(min: number, message?: string) {
   return z.string().min(min, message || `Must be at least ${min} characters`)
 }
-
 /**
  * Create a max length validator
  */
 export function maxLength(max: number, message?: string) {
   return z.string().max(max, message || `Must be at most ${max} characters`)
 }
-
 /**
  * Create a pattern validator
  */
 export function pattern(regex: RegExp, message: string) {
   return z.string().regex(regex, message)
 }
-
 /**
  * Form field state hook
  */
@@ -179,17 +155,14 @@ export interface FieldState {
   touched: boolean
   dirty: boolean
 }
-
 /**
  * Form state manager
  */
 export class FormState<T extends Record<string, unknown>> {
   private fields: Map<keyof T, FieldState> = new Map()
   private schema?: z.ZodSchema<T>
-  
   constructor(initialValues: T, schema?: z.ZodSchema<T>) {
     this.schema = schema
-    
     // Initialize field states
     Object.keys(initialValues).forEach((key) => {
       this.fields.set(key as keyof T, {
@@ -199,7 +172,6 @@ export class FormState<T extends Record<string, unknown>> {
       })
     })
   }
-  
   /**
    * Get field state
    */
@@ -210,7 +182,6 @@ export class FormState<T extends Record<string, unknown>> {
       dirty: false
     }
   }
-  
   /**
    * Set field value
    */
@@ -223,7 +194,6 @@ export class FormState<T extends Record<string, unknown>> {
       error: undefined // Clear error on change
     })
   }
-  
   /**
    * Set field error
    */
@@ -234,7 +204,6 @@ export class FormState<T extends Record<string, unknown>> {
       error
     })
   }
-  
   /**
    * Mark field as touched
    */
@@ -245,26 +214,22 @@ export class FormState<T extends Record<string, unknown>> {
       touched
     })
   }
-  
   /**
    * Validate single field
    */
   validateField(name: keyof T): string | undefined {
     if (!this.schema) return undefined
-    
     const field = this.getField(name)
-    
     // Build full data object for validation
     const data: Partial<T> = {}
     this.fields.forEach((f, n) => {
       data[n] = (n === name ? field.value : f.value) as T[keyof T]
     })
-    
     try {
       // Validate full object
       this.schema.parse(data)
       return undefined
-    } catch (error) {
+    } catch (_error) {
       if (error instanceof z.ZodError) {
         // Find error for this specific field
         const fieldError = error.issues.find(issue => issue.path[0] === name)
@@ -273,24 +238,19 @@ export class FormState<T extends Record<string, unknown>> {
       return 'Validation error'
     }
   }
-  
   /**
    * Validate all fields
    */
   validate(): boolean {
     if (!this.schema) return true
-    
     const data: Partial<T> = {}
     let hasErrors = false
-    
     // Collect all field values
     this.fields.forEach((field, name) => {
       data[name] = field.value as T[keyof T]
     })
-    
     // Validate with schema
     const result = this.schema.safeParse(data)
-    
     if (!result.success) {
       // Set errors on fields
       result.error.issues.forEach((err) => {
@@ -301,10 +261,8 @@ export class FormState<T extends Record<string, unknown>> {
         }
       })
     }
-    
     return !hasErrors
   }
-  
   /**
    * Get all form values
    */
@@ -315,7 +273,6 @@ export class FormState<T extends Record<string, unknown>> {
     })
     return values
   }
-  
   /**
    * Get all form errors
    */
@@ -328,7 +285,6 @@ export class FormState<T extends Record<string, unknown>> {
     })
     return errors
   }
-  
   /**
    * Reset form state
    */
@@ -351,14 +307,12 @@ export class FormState<T extends Record<string, unknown>> {
       })
     }
   }
-  
   /**
    * Check if form is valid
    */
   get isValid(): boolean {
     return this.validate()
   }
-  
   /**
    * Check if form is dirty
    */
@@ -369,7 +323,6 @@ export class FormState<T extends Record<string, unknown>> {
     })
     return dirty
   }
-  
   /**
    * Check if form is touched
    */

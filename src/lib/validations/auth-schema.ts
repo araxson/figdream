@@ -2,24 +2,19 @@
  * Authentication validation schemas for FigDream
  * Comprehensive Zod schemas for login, register, password reset, and other auth operations
  */
-
 import { z } from 'zod'
-
 // Common regex patterns
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const phoneRegex = /^\+?[\d\s\-\(\)]{10,}$/
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/
-
 // User roles enum
 export const UserRole = z.enum(['super_admin', 'salon_owner', 'location_manager', 'staff', 'customer'], {
   message: 'Invalid user role'
 })
-
 // Gender enum
 export const Gender = z.enum(['male', 'female', 'other', 'prefer_not_to_say'], {
   message: 'Please select a valid gender option'
 })
-
 // Base validation schemas
 export const emailSchema = z
   .string()
@@ -28,13 +23,11 @@ export const emailSchema = z
   .regex(emailRegex, 'Please enter a valid email address')
   .toLowerCase()
   .trim()
-
 export const passwordSchema = z
   .string()
   .min(8, 'Password must be at least 8 characters long')
   .max(128, 'Password must be less than 128 characters')
   .regex(passwordRegex, 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character')
-
 export const phoneSchema = z
   .string()
   .optional()
@@ -43,14 +36,12 @@ export const phoneSchema = z
     message: 'Please enter a valid phone number'
   })
   .transform((val) => val || null)
-
 export const nameSchema = z
   .string()
   .min(1, 'Name is required')
   .max(50, 'Name must be less than 50 characters')
   .regex(/^[a-zA-Z\s\-\'\.]+$/, 'Name can only contain letters, spaces, hyphens, apostrophes, and periods')
   .trim()
-
 // Login schema
 export const loginSchema = z.object({
   email: emailSchema,
@@ -59,7 +50,6 @@ export const loginSchema = z.object({
     .min(1, 'Password is required'),
   remember_me: z.boolean().optional().default(false)
 })
-
 // Register schema
 export const registerSchema = z.object({
   first_name: nameSchema,
@@ -93,7 +83,6 @@ export const registerSchema = z.object({
   message: 'Passwords do not match',
   path: ['confirm_password']
 })
-
 // Salon owner registration schema
 export const salonOwnerRegisterSchema = registerSchema.extend({
   salon_name: z
@@ -110,7 +99,6 @@ export const salonOwnerRegisterSchema = registerSchema.extend({
     })
     .transform((val) => val || null)
 })
-
 // Staff registration schema
 export const staffRegisterSchema = z.object({
   first_name: nameSchema,
@@ -151,12 +139,10 @@ export const staffRegisterSchema = z.object({
   message: 'Passwords do not match',
   path: ['confirm_password']
 })
-
 // Password reset request schema
 export const forgotPasswordSchema = z.object({
   email: emailSchema
 })
-
 // Password reset schema
 export const resetPasswordSchema = z.object({
   password: passwordSchema,
@@ -168,7 +154,6 @@ export const resetPasswordSchema = z.object({
   message: 'Passwords do not match',
   path: ['confirm_password']
 })
-
 // Change password schema
 export const changePasswordSchema = z.object({
   current_password: z
@@ -183,7 +168,6 @@ export const changePasswordSchema = z.object({
   message: 'New password must be different from current password',
   path: ['new_password']
 })
-
 // Email verification schema
 export const emailVerificationSchema = z.object({
   token: z
@@ -191,12 +175,10 @@ export const emailVerificationSchema = z.object({
     .min(1, 'Invalid verification token'),
   email: emailSchema.optional()
 })
-
 // Resend verification email schema
 export const resendVerificationSchema = z.object({
   email: emailSchema
 })
-
 // OAuth callback schema
 export const oauthCallbackSchema = z.object({
   code: z
@@ -210,14 +192,12 @@ export const oauthCallbackSchema = z.object({
     message: 'Invalid OAuth provider'
   })
 })
-
 // Session refresh schema
 export const refreshSessionSchema = z.object({
   refresh_token: z
     .string()
     .min(1, 'Invalid refresh token')
 })
-
 // Account deactivation schema
 export const deactivateAccountSchema = z.object({
   password: z
@@ -240,7 +220,6 @@ export const deactivateAccountSchema = z.object({
     })
     .transform((val) => val || null)
 })
-
 // Two-factor authentication setup schema
 export const twoFactorSetupSchema = z.object({
   password: z
@@ -250,7 +229,6 @@ export const twoFactorSetupSchema = z.object({
     message: 'Phone number is required for two-factor authentication'
   })
 })
-
 // Two-factor authentication verify schema
 export const twoFactorVerifySchema = z.object({
   code: z
@@ -259,13 +237,11 @@ export const twoFactorVerifySchema = z.object({
     .regex(/^\d{6}$/, 'Verification code must contain only numbers'),
   remember_device: z.boolean().optional().default(false)
 })
-
 // Partial schemas for updates
 export const loginUpdateSchema = loginSchema.partial()
 export const registerUpdateSchema = registerSchema.partial()
 export const salonOwnerRegisterUpdateSchema = salonOwnerRegisterSchema.partial()
 export const staffRegisterUpdateSchema = staffRegisterSchema.partial()
-
 // Type exports
 export type LoginInput = z.infer<typeof loginSchema>
 export type RegisterInput = z.infer<typeof registerSchema>
@@ -281,7 +257,6 @@ export type RefreshSessionInput = z.infer<typeof refreshSessionSchema>
 export type DeactivateAccountInput = z.infer<typeof deactivateAccountSchema>
 export type TwoFactorSetupInput = z.infer<typeof twoFactorSetupSchema>
 export type TwoFactorVerifyInput = z.infer<typeof twoFactorVerifySchema>
-
 // Update type exports
 export type LoginUpdateInput = z.infer<typeof loginUpdateSchema>
 export type RegisterUpdateInput = z.infer<typeof registerUpdateSchema>

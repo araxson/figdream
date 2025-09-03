@@ -2,23 +2,20 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/database/supabase/server'
 import { logError, logCriticalError, logApiError } from '@/src/lib/errors/logger'
 import crypto from 'crypto'
-
 // Types for webhook events
 interface WebhookPayload {
   type: 'INSERT' | 'UPDATE' | 'DELETE'
   table: string
   schema: string
-  record?: any
-  old_record?: any
+  record?: Record<string, unknown>
+  old_record?: Record<string, unknown>
 }
-
 interface WebhookEvent {
   type: string
   table: string
-  record: any
-  old_record?: any
+  record: Record<string, unknown>
+  old_record?: Record<string, unknown>
 }
-
 // Verify webhook signature for security
 function verifyWebhookSignature(
   payload: string,
@@ -33,19 +30,17 @@ function verifyWebhookSignature(
       Buffer.from(signature),
       Buffer.from(expectedSignature)
     )
-  } catch (error) {
+  } catch (_error) {
     logError(error as Error, 'high', 'api', { 
       context: 'webhook_signature_verification' 
     })
     return false
   }
 }
-
 // Handle user creation webhook
-async function handleUserCreated(record: any): Promise<void> {
+async function handleUserCreated(record: Record<string, unknown>): Promise<void> {
   try {
     const supabase = await createClient()
-    
     // Create profile record for new user
     // SECURITY: Do not use raw_app_meta_data (CVE-2025-29927)
     // Extract safe metadata from raw_user_meta_data instead
@@ -58,7 +53,6 @@ async function handleUserCreated(record: any): Promise<void> {
         phone: record.raw_user_meta_data?.phone || null,
         // Note: role is now stored in user_roles table, not profiles
       })
-    
     if (!error) {
       // Create user_roles entry for new user
       // Default role should be 'customer' for security
@@ -72,7 +66,6 @@ async function handleUserCreated(record: any): Promise<void> {
           permissions: {},
         })
     }
-
     if (error) {
       logCriticalError(
         `Failed to create profile for user ${record.id}: ${error.message}`,
@@ -80,9 +73,7 @@ async function handleUserCreated(record: any): Promise<void> {
         { userId: record.id, error: error.message }
       )
     } else {
-      console.log(`Profile created for user: ${record.id}`)
     }
-
     // Create notification settings with defaults
     const { error: notificationError } = await supabase
       .from('notification_settings')
@@ -100,7 +91,6 @@ async function handleUserCreated(record: any): Promise<void> {
         staff_notifications: false,
         preferences: {},
       })
-
     if (notificationError) {
       logError(
         `Failed to create notification preferences for user ${record.id}: ${notificationError.message}`,
@@ -109,8 +99,7 @@ async function handleUserCreated(record: any): Promise<void> {
         { userId: record.id, error: notificationError.message }
       )
     }
-
-  } catch (error) {
+  } catch (_error) {
     logCriticalError(
       error as Error,
       'api',
@@ -118,39 +107,30 @@ async function handleUserCreated(record: any): Promise<void> {
     )
   }
 }
-
 // Handle user updated webhook
-async function handleUserUpdated(record: any, oldRecord?: any): Promise<void> {
+async function handleUserUpdated(record: Record<string, unknown>, oldRecord?: Record<string, unknown>): Promise<void> {
   try {
     const supabase = await createClient()
-    
     // Update profile if certain fields changed
-    const updates: any = {}
-    
+    const updates: Record<string, unknown> = {}
     if (record.email !== oldRecord?.email) {
       updates.email = record.email
     }
-    
     // SECURITY: Use raw_user_meta_data instead of raw_app_meta_data (CVE-2025-29927)
     if (record.raw_user_meta_data?.full_name !== oldRecord?.raw_user_meta_data?.full_name) {
       updates.full_name = record.raw_user_meta_data?.full_name || null
     }
-    
     if (record.raw_user_meta_data?.phone !== oldRecord?.raw_user_meta_data?.phone) {
       updates.phone = record.raw_user_meta_data?.phone || null
     }
-    
     // Role changes should be handled through proper admin endpoints
     // Never allow role changes through webhooks for security
-
     if (Object.keys(updates).length > 0) {
       updates.updated_at = new Date().toISOString()
-      
       const { error } = await supabase
         .from('profiles')
         .update(updates)
         .eq('id', record.id)
-
       if (error) {
         logError(
           `Failed to update profile for user ${record.id}: ${error.message}`,
@@ -159,11 +139,9 @@ async function handleUserUpdated(record: any, oldRecord?: any): Promise<void> {
           { userId: record.id, updates, error: error.message }
         )
       } else {
-        console.log(`Profile updated for user: ${record.id}`)
       }
     }
-
-  } catch (error) {
+  } catch (_error) {
     logError(
       error as Error,
       'medium',
@@ -172,16 +150,12 @@ async function handleUserUpdated(record: any, oldRecord?: any): Promise<void> {
     )
   }
 }
-
 // Handle user deletion webhook
-async function handleUserDeleted(oldRecord: any): Promise<void> {
+async function handleUserDeleted(oldRecord: Record<string, unknown>): Promise<void> {
   try {
     const supabase = await createClient()
-    
     // The profile should be automatically deleted via CASCADE constraint
     // but we log this event for auditing purposes
-    console.log(`User deleted: ${oldRecord.id}`)
-    
     // Create audit log entry
     const { error } = await supabase
       .from('audit_logs')
@@ -194,7 +168,6 @@ async function handleUserDeleted(oldRecord: any): Promise<void> {
         ip_address: null,
         user_agent: 'system',
       })
-
     if (error) {
       logError(
         `Failed to create audit log for user deletion ${oldRecord.id}: ${error.message}`,
@@ -203,8 +176,7 @@ async function handleUserDeleted(oldRecord: any): Promise<void> {
         { userId: oldRecord.id, error: error.message }
       )
     }
-
-  } catch (error) {
+  } catch (_error) {
     logError(
       error as Error,
       'medium',
@@ -213,17 +185,14 @@ async function handleUserDeleted(oldRecord: any): Promise<void> {
     )
   }
 }
-
 // Handle booking status changes
-async function handleBookingUpdated(record: any, oldRecord?: any): Promise<void> {
+async function handleBookingUpdated(record: Record<string, unknown>, oldRecord?: Record<string, unknown>): Promise<void> {
   try {
     // Only process if status changed
     if (!oldRecord || record.status === oldRecord.status) {
       return
     }
-
     const supabase = await createClient()
-    
     // Create booking status history record
     const { error: historyError } = await supabase
       .from('booking_status_history')
@@ -233,7 +202,6 @@ async function handleBookingUpdated(record: any, oldRecord?: any): Promise<void>
         changed_by: 'system', // In a webhook context, we don't have user context
         reason: 'Status changed via webhook',
       })
-
     if (historyError) {
       logError(
         `Failed to create booking status history for booking ${record.id}: ${historyError.message}`,
@@ -242,34 +210,25 @@ async function handleBookingUpdated(record: any, oldRecord?: any): Promise<void>
         { bookingId: record.id, error: historyError.message }
       )
     }
-
     // Handle specific status changes
     switch (record.status) {
       case 'confirmed':
-        console.log(`Booking confirmed: ${record.id}`)
         // TODO: Send confirmation email/SMS
         break
-        
       case 'cancelled':
-        console.log(`Booking cancelled: ${record.id}`)
         // TODO: Send cancellation notification
         // TODO: Update staff availability
         break
-        
       case 'completed':
-        console.log(`Booking completed: ${record.id}`)
         // TODO: Trigger review request
         // TODO: Update customer analytics
         break
-        
       case 'no_show':
-        console.log(`Booking no-show: ${record.id}`)
         // TODO: Update customer analytics
         // TODO: Apply no-show policy
         break
     }
-
-  } catch (error) {
+  } catch (_error) {
     logError(
       error as Error,
       'medium',
@@ -278,18 +237,13 @@ async function handleBookingUpdated(record: any, oldRecord?: any): Promise<void>
     )
   }
 }
-
 // Handle review creation
-async function handleReviewCreated(record: any): Promise<void> {
+async function handleReviewCreated(record: Record<string, unknown>): Promise<void> {
   try {
     const supabase = await createClient()
-    
-    console.log(`New review created: ${record.id} with rating ${record.rating}`)
-    
     // TODO: Update staff/location aggregate ratings
     // TODO: Send notification to staff/salon owner
     // TODO: Check for review response automation
-    
     // For now, just log the event
     const { error } = await supabase
       .from('audit_logs')
@@ -302,7 +256,6 @@ async function handleReviewCreated(record: any): Promise<void> {
         ip_address: null,
         user_agent: 'system',
       })
-
     if (error) {
       logError(
         `Failed to create audit log for review creation ${record.id}: ${error.message}`,
@@ -311,8 +264,7 @@ async function handleReviewCreated(record: any): Promise<void> {
         { reviewId: record.id, error: error.message }
       )
     }
-
-  } catch (error) {
+  } catch (_error) {
     logError(
       error as Error,
       'low',
@@ -321,13 +273,9 @@ async function handleReviewCreated(record: any): Promise<void> {
     )
   }
 }
-
 // Main webhook processor
 async function processWebhookEvent(event: WebhookEvent): Promise<void> {
   const { type, table, record, old_record } = event
-  
-  console.log(`Processing webhook: ${type} on ${table}`)
-  
   try {
     // Handle different table events
     switch (table) {
@@ -340,25 +288,20 @@ async function processWebhookEvent(event: WebhookEvent): Promise<void> {
           await handleUserDeleted(old_record)
         }
         break
-
       case 'bookings':
         if (type === 'UPDATE') {
           await handleBookingUpdated(record, old_record)
         }
         break
-
       case 'reviews':
         if (type === 'INSERT') {
           await handleReviewCreated(record)
         }
         break
-
       default:
-        console.log(`Unhandled webhook event for table: ${table}`)
         break
     }
-    
-  } catch (error) {
+  } catch (_error) {
     logCriticalError(
       error as Error,
       'api',
@@ -366,14 +309,12 @@ async function processWebhookEvent(event: WebhookEvent): Promise<void> {
     )
   }
 }
-
 // POST handler for webhook events
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const body = await request.text()
     const signature = request.headers.get('x-supabase-signature')
     const webhookSecret = process.env.SUPABASE_WEBHOOK_SECRET
-
     // Verify webhook signature if secret is configured
     if (webhookSecret && signature) {
       const isValid = verifyWebhookSignature(body, signature, webhookSecret)
@@ -390,12 +331,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         )
       }
     }
-
     // Parse webhook payload
     let payload: WebhookPayload
     try {
       payload = JSON.parse(body)
-    } catch (parseError) {
+    } catch (_parseError) {
       logApiError(
         'Invalid JSON in webhook payload',
         '/api/webhooks',
@@ -407,7 +347,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         { status: 400 }
       )
     }
-
     // Validate required fields
     if (!payload.type || !payload.table) {
       logApiError(
@@ -421,7 +360,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         { status: 400 }
       )
     }
-
     // Process the webhook event
     const event: WebhookEvent = {
       type: payload.type,
@@ -429,9 +367,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       record: payload.record,
       old_record: payload.old_record,
     }
-
     await processWebhookEvent(event)
-
     // Return success response
     return NextResponse.json({ 
       success: true, 
@@ -439,14 +375,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       table: payload.table,
       type: payload.type
     })
-
-  } catch (error) {
+  } catch (_error) {
     logCriticalError(
       error as Error,
       'api',
       { context: 'webhook_handler', endpoint: '/api/webhooks' }
     )
-
     return NextResponse.json(
       { 
         error: 'Internal server error',
@@ -456,12 +390,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     )
   }
 }
-
 // GET handler for webhook status check
 export async function GET(): Promise<NextResponse> {
   try {
     const webhookSecret = process.env.SUPABASE_WEBHOOK_SECRET
-    
     return NextResponse.json({
       status: 'active',
       configured: !!webhookSecret,
@@ -469,15 +401,13 @@ export async function GET(): Promise<NextResponse> {
       supportedTables: ['users', 'bookings', 'reviews'],
       supportedEvents: ['INSERT', 'UPDATE', 'DELETE']
     })
-    
-  } catch (error) {
+  } catch (_error) {
     logError(
       error as Error,
       'low',
       'api',
       { context: 'webhook_status_check' }
     )
-
     return NextResponse.json(
       { error: 'Failed to get webhook status' },
       { status: 500 }

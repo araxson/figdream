@@ -24,8 +24,6 @@ const createBookingSchema = z.object({
   start_time: z.string().min(1, 'Start time is required'),
   end_time: z.string().min(1, 'End time is required'),
   services: z.array(z.string()).min(1, 'At least one service must be selected'),
-  total_price: z.number().min(0, 'Total price must be non-negative'),
-  deposit_amount: z.number().optional(),
   notes: z.string().max(500).optional(),
   special_requests: z.string().max(500).optional(),
   customer: z.object({
@@ -86,8 +84,6 @@ export async function createBookingAction(formData: FormData | Record<string, un
         }
       }
       data.services = formData.getAll('services') as string[]
-      data.total_price = parseFloat(formData.get('total_price') as string || '0')
-      data.deposit_amount = formData.get('deposit_amount') ? parseFloat(formData.get('deposit_amount') as string) : undefined
       data.is_walk_in = formData.get('is_walk_in') === 'true'
       data.send_reminders = formData.get('send_reminders') !== 'false'
       data.marketing_consent = formData.get('marketing_consent') === 'true'
@@ -130,10 +126,8 @@ export async function createBookingAction(formData: FormData | Record<string, un
       booking_date: validatedData.booking_date,
       start_time: validatedData.start_time,
       end_time: validatedData.end_time,
-      total_price: validatedData.total_price,
-      deposit_amount: validatedData.deposit_amount || null,
       notes: validatedData.notes || null,
-      status: 'pending' as BookingStatus,
+      status: 'confirmed' as BookingStatus, // Direct confirmation without payment
     }
     // Create the booking
     const { data: booking, error: createError } = await createBooking(bookingData, validatedData.services)
@@ -141,7 +135,6 @@ export async function createBookingAction(formData: FormData | Record<string, un
       return { success: false, error: createError || 'Failed to create booking' }
     }
     // TODO: Send notification emails/SMS
-    // TODO: Process payment if required
     // TODO: Create calendar events
     // Revalidate relevant paths
     revalidatePath('/customer/appointments')
@@ -507,7 +500,6 @@ export async function completeBookingAction(formData: FormData) {
     }
     // TODO: Send completion notifications
     // TODO: Request review/feedback
-    // TODO: Process final payment
     // Revalidate paths
     revalidatePath('/customer/appointments')
     revalidatePath('/location/appointments') 

@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Badge, Button, Separator, Skeleton } from "@/components/ui"
+import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Separator, Skeleton } from "@/components/ui"
 import { 
   Gift, 
   Calendar, 
@@ -14,7 +14,7 @@ import {
   Download
 } from "lucide-react"
 import { format } from "date-fns"
-import { createClient } from "@/lib/supabase/client"
+import { createClient } from "@/lib/database/supabase/client"
 import { toast } from "sonner"
 type Transaction = {
   id: string
@@ -58,53 +58,55 @@ export function GiftCardDetails({ giftCardId }: GiftCardDetailsProps) {
         setError("Please sign in to view gift card details")
         return
       }
-      // Fetch gift card details and transaction history
-      // Using mock data for now
-      const mockGiftCard: GiftCardDetails = {
-        id: giftCardId,
-        code: "GIFT-2024-001",
-        balance: 50.00,
-        original_amount: 100.00,
-        expires_at: "2025-12-31",
-        created_at: "2024-12-01",
-        status: 'active',
-        sender_name: "John Doe",
-        recipient_name: "Jane Smith",
-        message: "Happy Birthday! Enjoy a relaxing spa day on me.",
-        transactions: [
-          {
-            id: "1",
-            date: "2024-12-01T10:00:00",
-            type: 'purchase',
-            amount: 100.00,
-            description: "Gift card purchased",
-            balance_after: 100.00
-          },
-          {
-            id: "2",
-            date: "2024-12-15T14:30:00",
-            type: 'redemption',
-            amount: -30.00,
-            description: "Used for Classic Manicure",
-            location: "Downtown Salon",
-            staff: "Sarah Johnson",
-            balance_after: 70.00
-          },
-          {
-            id: "3",
-            date: "2024-12-20T11:00:00",
-            type: 'redemption',
-            amount: -20.00,
-            description: "Used for Express Facial",
-            location: "Downtown Salon",
-            staff: "Emily Chen",
-            balance_after: 50.00
-          }
-        ]
+      // Fetch gift card details from database
+      const { data: giftCardData, error: cardError } = await supabase
+        .from('gift_cards')
+        .select(`
+          id,
+          code,
+          balance,
+          original_amount,
+          expires_at,
+          created_at,
+          status,
+          sender_name,
+          recipient_name,
+          message
+        `)
+        .eq('id', giftCardId)
+        .single()
+
+      if (cardError || !giftCardData) {
+        setError("Gift card not found")
+        return
       }
-      setGiftCard(mockGiftCard)
+
+      // Fetch transaction history
+      const { data: transactions, error: transError } = await supabase
+        .from('gift_card_transactions')
+        .select(`
+          id,
+          date:created_at,
+          type,
+          amount,
+          description,
+          location:salon_id,
+          staff:staff_member_id,
+          balance_after
+        `)
+        .eq('gift_card_id', giftCardId)
+        .order('created_at', { ascending: false })
+
+      if (transError) {
+      }
+
+      const giftCardWithTransactions: GiftCardDetails = {
+        ...giftCardData,
+        transactions: transactions || []
+      }
+      
+      setGiftCard(giftCardWithTransactions)
     } catch (err) {
-      console.error("Error fetching gift card details:", err)
       setError("Failed to load gift card details")
     } finally {
       setLoading(false)

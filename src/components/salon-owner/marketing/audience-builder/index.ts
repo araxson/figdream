@@ -1,2 +1,2 @@
-export { UaudienceUbuilder } from './UaudienceUbuilder'
-export type { UaudienceUbuilderProps } from './UaudienceUbuilder.types'
+export { AudienceBuilder } from './AudienceBuilder'
+export type { AudienceBuilderProps } from './AudienceBuilder.types'

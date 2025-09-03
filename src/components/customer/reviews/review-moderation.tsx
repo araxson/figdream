@@ -1,5 +1,20 @@
 'use client'
-// This component has been split into smaller modules
-// Import the actual implementation from the split directory
-export * from './review-moderation/ReviewModeration'
-export { default } from './review-moderation/ReviewModeration'
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/data-display/card'
+
+export interface ReviewModerationProps {
+  className?: string
+}
+
+export function ReviewModeration({ className }: ReviewModerationProps) {
+  return (
+    <Card className={className}>
+      <CardHeader>
+        <CardTitle>Review Moderation</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p>Component implementation pending</p>
+      </CardContent>
+    </Card>
+  )
+}

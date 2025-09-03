@@ -1,18 +1,5 @@
 import Link from 'next/link'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  Button,
-  Separator,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui'
+import { Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Separator, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui"
 import { LoginForm } from '@/components/auth/login-form'
 import { User, Heart, Calendar, Gift } from 'lucide-react'
 export default function CustomerLoginPage() {

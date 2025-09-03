@@ -1,6 +1,8 @@
 'use client'
+
 import { useState } from 'react'
 import { Calendar as CalendarUI } from '@/components/ui/form/calendar'
+import { Button } from '@/components/ui/form/button'
 import {
   Card,
   CardContent,
@@ -9,7 +11,6 @@ import {
   CardTitle,
 } from '@/components/ui/data-display/card'
 import { Badge } from '@/components/ui/feedback/badge'
-import { Button } from '@/components/ui/form/button'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { format, addMonths, subMonths } from 'date-fns'
 interface CalendarEvent {
@@ -112,9 +113,9 @@ export function Calendar({
         </CardHeader>
         <CardContent>
           <CalendarUI
-            mode={mode as any}
+            mode={mode as "single" | "multiple" | "range"}
             selected={internalSelectedDate}
-            onSelect={handleDateSelect as any}
+            onSelect={handleDateSelect as ((date: Date | undefined) => void)}
             month={currentMonth}
             onMonthChange={setCurrentMonth}
             modifiers={modifiers}

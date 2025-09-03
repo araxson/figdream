@@ -1,6 +1,5 @@
 import {
   Calendar,
-  CreditCard,
   Gift,
   Heart,
   Home,
@@ -40,7 +39,6 @@ export const customerSidebarConfig: AppSidebarConfig = {
     { title: 'Gift Cards', href: '/customer/gift-cards', icon: Gift },
     { title: 'Favorites', href: '/customer/favorites', icon: Heart },
     { title: 'Reviews', href: '/customer/reviews', icon: MessageSquare },
-    { title: 'Payment Methods', href: '/customer/payment-methods', icon: CreditCard },
     { title: 'Profile', href: '/customer/profile', icon: User },
     { title: 'Settings', href: '/customer/settings', icon: Settings },
   ]

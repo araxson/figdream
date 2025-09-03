@@ -88,7 +88,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
-    const supabase = await createClient()
     const { data, error } = await supabase
       .from('notifications')
       .insert({

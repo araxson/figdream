@@ -1,5 +1,6 @@
 "use client"
 import { useState, useRef } from "react"
+import Image from "next/image"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Button, Avatar, AvatarFallback, AvatarImage, Slider } from "@/components/ui"
 import { useToast } from "@/hooks/use-toast"
 import { Camera, Upload, ZoomIn, RotateCw } from "lucide-react"
@@ -153,9 +154,11 @@ export function AvatarUpload({ userId, currentAvatarUrl, userName, onUploadCompl
                     transform: `scale(${zoom[0]}) rotate(${rotation}deg)`,
                   }}
                 >
-                  <img
+                  <Image
                     src={previewUrl}
                     alt="Preview"
+                    width={200}
+                    height={200}
                     className="max-h-full max-w-full object-contain"
                   />
                 </div>

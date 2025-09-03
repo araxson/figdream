@@ -1,10 +1,11 @@
 "use client"
 import { useState, useEffect } from "react"
 import {
-  LineChart, Line, AreaChart, Area, BarChart, Bar, HeatMapGrid,
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell
+  LineChart, Line, AreaChart, Area, BarChart, Bar,
+  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts'
 import { Calendar, Users, Activity, TrendingUp, Clock, Zap, Loader2 } from "lucide-react"
+import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, Progress, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui"
 interface UsageMetric {
   date: string
   dau: number // Daily Active Users
@@ -88,7 +89,6 @@ export function UsageTrends() {
         { endpoint: "/api/staff", calls: 34000, avgResponseTime: 110, errorRate: 0.1, trend: 'stable' }
       ])
     } catch (error) {
-      console.error("Error fetching usage trends:", error)
     } finally {
       setLoading(false)
     }

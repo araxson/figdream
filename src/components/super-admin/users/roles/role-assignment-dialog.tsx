@@ -1,30 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  Button,
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Alert,
-  AlertDescription,
-} from '@/components/ui'
+import { Alert, AlertDescription, Button, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui"
 import { Plus, Shield, AlertTriangle, Users } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -155,8 +132,8 @@ export function RoleAssignmentDialog({
       setOpen(false)
       form.reset()
       router.refresh()
-    } catch (_error) {
-      toast.error(error.message || 'Failed to assign role')
+    } catch (error) {
+      toast.error((error as Error).message || 'Failed to assign role')
     } finally {
       setIsSubmitting(false)
     }
@@ -348,4 +325,3 @@ export function RoleAssignmentDialog({
 }
 // Add missing imports
 import { Building, Store, UserCheck } from 'lucide-react'
-import { Input } from '@/components/ui'

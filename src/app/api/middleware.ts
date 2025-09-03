@@ -53,9 +53,7 @@ export async function apiMonitoringMiddleware(
       method,
       userId,
       responseTime,
-      statusCode,
-      request.headers.get('user-agent') || undefined,
-      request.ip || undefined
+      statusCode
     ).catch(_err => {
       // Don't let monitoring failures break the API
     })

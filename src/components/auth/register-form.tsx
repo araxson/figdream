@@ -5,7 +5,8 @@ import { Button, Input, Label, Checkbox } from '@/components/ui'
 import { toast } from 'sonner'
 import { Loader2, Mail, Lock, Eye, EyeOff, User, Phone } from 'lucide-react'
 import { signUpAction } from '@/lib/actions/auth'
-import { useCSRFToken, CSRFTokenField } from '@/lib/hooks/use-csrf-token'
+import { useCSRFToken } from '@/lib/hooks/use-csrf-token'
+import { CSRFTokenField } from '@/components/shared/forms/csrf-token-field'
 interface RegisterFormProps {
   role?: 'customer' | 'staff' | 'salon_owner' | 'location_manager' | 'super_admin'
   redirectTo?: string
@@ -88,7 +89,7 @@ export function RegisterForm({
               id="firstName"
               name="firstName"
               type="text"
-              placeholder="John"
+              placeholder="First name"
               required
               disabled={isPending || csrfLoading}
               className="pl-10"
@@ -102,7 +103,7 @@ export function RegisterForm({
             id="lastName"
             name="lastName"
             type="text"
-            placeholder="Doe"
+            placeholder="Last name"
             required
             disabled={isPending || csrfLoading}
           />
@@ -116,7 +117,7 @@ export function RegisterForm({
             id="email"
             name="email"
             type="email"
-            placeholder="john@example.com"
+            placeholder="Email address"
             required
             disabled={isPending || csrfLoading}
             className="pl-10"
@@ -133,7 +134,7 @@ export function RegisterForm({
               id="phone"
               name="phone"
               type="tel"
-              placeholder="+1 (555) 000-0000"
+              placeholder="Phone number"
               disabled={isPending || csrfLoading}
               className="pl-10"
             />

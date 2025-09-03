@@ -51,7 +51,7 @@ export async function retry<T>(
   for (let attempt = 1; attempt <= options.maxAttempts; attempt++) {
     try {
       return await fn()
-    } catch (_error) {
+    } catch (error) {
       lastError = error
       // Check if we should retry
       if (attempt === options.maxAttempts || !options.retryCondition(error, attempt)) {
@@ -209,7 +209,7 @@ export class CircuitBreaker {
         this.reset()
       }
       return result
-    } catch (_error) {
+    } catch (error) {
       this.recordFailure()
       throw error
     }
@@ -263,7 +263,7 @@ export class RateLimiter {
         try {
           const result = await fn()
           resolve(result)
-        } catch (_error) {
+        } catch (error) {
           reject(error)
         } finally {
           this.running--
@@ -302,7 +302,7 @@ export function createDebouncedRetry<T extends (...args: unknown[]) => Promise<u
           pendingPromise = retry(() => fn(...args), config) as Promise<ReturnType<T>>
           const result = await pendingPromise
           resolve(result)
-        } catch (_error) {
+        } catch (error) {
           reject(error)
         } finally {
           pendingPromise = null

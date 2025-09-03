@@ -1,5 +1,6 @@
 'use client'
-import { Bar, BarChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+
+import { Bar, BarChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts'
 interface ServicePopularityChartProps {
   services: Array<{
     id: string

@@ -146,7 +146,7 @@ export class ApiClient {
       })
       clearTimeout(timeoutId)
       return await handleApiResponse<T>(response)
-    } catch (_error) {
+    } catch (error) {
       clearTimeout(timeoutId)
       // Handle abort error
       if (error instanceof Error && error.name === 'AbortError') {

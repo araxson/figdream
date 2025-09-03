@@ -11,6 +11,7 @@ import {
   X
 } from "lucide-react"
 import { toast } from "sonner"
+import { createClient } from "@/lib/database/supabase/client"
 type GiftCard = {
   id: string
   code: string
@@ -42,32 +43,38 @@ export function GiftCardRedemption({
     setVerifying(true)
     setError(null)
     try {
-      // Verify gift card code and fetch details
-      // Using mock data for now
-      await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate API call
-      const mockGiftCard: GiftCard = {
-        id: "gc-001",
-        code: giftCardCode.toUpperCase(),
-        balance: 75.00,
-        expires_at: "2025-12-31"
+      // Verify gift card code and fetch details from database
+      const supabase = createClient()
+      
+      const { data: giftCard, error: fetchError } = await supabase
+        .from('gift_cards')
+        .select('id, code, balance, expires_at')
+        .eq('code', giftCardCode.toUpperCase())
+        .single()
+      
+      if (fetchError || !giftCard) {
+        setError("Invalid gift card code")
+        return
       }
+      
       // Check if card is expired
-      if (mockGiftCard.expires_at && new Date(mockGiftCard.expires_at) < new Date()) {
+      if (giftCard.expires_at && new Date(giftCard.expires_at) < new Date()) {
         setError("This gift card has expired")
         return
       }
+      
       // Check if card has sufficient balance
-      if (mockGiftCard.balance <= 0) {
+      if (giftCard.balance <= 0) {
         setError("This gift card has no remaining balance")
         return
       }
-      setAppliedCard(mockGiftCard)
+      
+      setAppliedCard(giftCard)
       // Calculate amount to apply
-      const amountToApply = Math.min(mockGiftCard.balance, totalAmount)
+      const amountToApply = Math.min(giftCard.balance, totalAmount)
       setAppliedAmount(amountToApply)
       setCustomAmount(amountToApply.toString())
     } catch (err) {
-      console.error("Error verifying gift card:", err)
       setError("Invalid gift card code")
     } finally {
       setVerifying(false)

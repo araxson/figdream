@@ -1,6 +1,5 @@
 import { getStaffUtilization, getStaffEarnings } from '@/lib/data-access/staff';
 import { RevenueChart } from '@/components/salon-owner/analytics/revenue-chart';
-import { PerformanceMetrics } from '@/components/salon-owner/analytics/performance-metrics';
 interface PerformanceChartProps {
   staffId: string;
 }
@@ -29,12 +28,11 @@ export async function PerformanceChart({ staffId }: PerformanceChartProps) {
   const avgUtilization = utilization?.length > 0
     ? Math.round(utilization.reduce((sum, u) => sum + (u.utilization_percentage || 0), 0) / utilization.length)
     : 0;
-  const performanceData = [
+  // Performance metrics must be calculated from actual data
+  // No hardcoded values allowed per project rules
+  const _performanceData = [
     { metric: 'Utilization', value: avgUtilization, fullMark: 100 },
-    { metric: 'Bookings', value: 85, fullMark: 100 },
-    { metric: 'Client Satisfaction', value: 95, fullMark: 100 },
-    { metric: 'Revenue', value: 78, fullMark: 100 },
-    { metric: 'Efficiency', value: 88, fullMark: 100 },
+    // Other metrics will be calculated from actual database data when available
   ];
   return (
     <div className="grid gap-4 md:grid-cols-2">
@@ -44,12 +42,13 @@ export async function PerformanceChart({ staffId }: PerformanceChartProps) {
         title="Weekly Earnings"
         description="Your earnings over the past 7 days"
       />
-      <PerformanceMetrics 
-        data={performanceData}
-        type="radar"
-        title="Performance Overview"
-        description="Your key performance metrics"
-      />
+      {/* Performance metrics temporarily disabled until real data is available */}
+      <div className="flex items-center justify-center h-[300px] border rounded-lg bg-muted/10">
+        <p className="text-muted-foreground text-center px-4">
+          Performance metrics will be calculated from actual data.<br/>
+          Currently showing utilization: {avgUtilization}%
+        </p>
+      </div>
     </div>
   );
 }

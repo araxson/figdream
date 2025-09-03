@@ -1,5 +1,5 @@
 'use client'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui"
 import { 
   LineChart, 
   Line, 
@@ -8,7 +8,7 @@ import {
   XAxis, 
   YAxis, 
   CartesianGrid, 
-  Tooltip, 
+  Tooltip,
   Legend, 
   ResponsiveContainer,
   ReferenceLine,

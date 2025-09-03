@@ -1,29 +1,7 @@
 "use client"
 import { useState } from 'react'
 import { format } from 'date-fns'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Badge,
-  Button,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-  ScrollArea,
-} from '@/components/ui'
+import { Avatar, AvatarFallback, AvatarImage, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, ScrollArea, Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui"
 import {
   Calendar,
   Clock,
@@ -50,8 +28,8 @@ interface StaffAppointmentsListProps {
   appointments: Appointment[]
   staffId: string
 }
-export function StaffAppointmentsList({ appointments, staffId }: StaffAppointmentsListProps) {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+export function StaffAppointmentsList({ appointments }: StaffAppointmentsListProps) {
+  const [_selectedDate, _setSelectedDate] = useState<Date>(new Date())
   // Group appointments by status
   const todayAppointments = appointments.filter(apt => {
     const aptDate = new Date(apt.appointment_date)
@@ -85,7 +63,7 @@ export function StaffAppointmentsList({ appointments, staffId }: StaffAppointmen
         return <AlertCircle className="h-4 w-4 text-gray-500" />
     }
   }
-  const getCustomerInitials = (customer: any) => {
+  const getCustomerInitials = (customer: Appointment['customers']) => {
     if (!customer) return 'CU'
     return `${customer.first_name?.[0] || ''}${customer.last_name?.[0] || ''}`
   }

@@ -1,6 +1,5 @@
 
 import { Calendar, Heart, User, TrendingUp, AlertCircle } from "lucide-react"
-import type { Database } from "@/types/database.types"
 import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, Progress } from "@/components/ui"
 interface TimeOffBalanceProps {
   staffId: string
@@ -32,7 +31,6 @@ interface TimeOffBalanceProps {
   nextAccrualDate?: Date
 }
 export function TimeOffBalance({
-  staffId,
   balance,
   accrualRate,
   nextAccrualDate,

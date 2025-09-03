@@ -131,10 +131,10 @@ const menuItems = [
   },
 ]
 interface AppSidebarProps {
-  user: User
-  profile: Profile
+  user?: User
+  profile?: Profile
 }
-export function AppSidebar({ user, profile }: AppSidebarProps) {
+export function AppSidebar({ user, profile }: AppSidebarProps = {}) {
   const pathname = usePathname()
   return (
     <TooltipProvider>
@@ -225,7 +225,7 @@ export function AppSidebar({ user, profile }: AppSidebarProps) {
                   <SidebarMenuButton asChild>
                     <Link href="/salon/profile">
                       <UserCircle className="h-4 w-4" />
-                      <span>{profile?.full_name || user.email}</span>
+                      <span>{profile?.full_name || user?.email || 'Salon Owner'}</span>
                     </Link>
                   </SidebarMenuButton>
                 </TooltipTrigger>

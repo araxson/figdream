@@ -1,19 +1,5 @@
 import { UseFormReturn } from 'react-hook-form'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  Input,
-  Checkbox,
-} from '@/components/ui'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, Checkbox, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, Input } from "@/components/ui"
 import { Calendar, Clock } from 'lucide-react'
 import type { ServiceFormData } from './service-form-schema'
 import { weekDays } from './service-form-schema'
@@ -125,6 +111,7 @@ export function BookingTab({ form }: BookingTabProps) {
                       min="0"
                       step="5"
                       onChange={(e) => field.onChange(parseInt(e.target.value))}
+                    />
                   </div>
                 </FormControl>
                 <FormDescription>

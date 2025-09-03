@@ -1,13 +1,20 @@
 "use client"
 import { useState, useEffect } from "react"
 import {
-  LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
+  LineChart, Line, AreaChart, Area, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts'
 import { 
   DollarSign, AlertCircle, CheckCircle, Clock, CreditCard,
   TrendingUp, FileText, RefreshCw, Download, Loader2
 } from "lucide-react"
+import { Badge } from "@/components/ui/feedback/badge"
+import { Button } from "@/components/ui/form/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/data-display/card"
+import { Progress } from "@/components/ui/feedback/progress"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/form/select"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/data-display/table"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/navigation/tabs"
 interface BillingOverview {
   totalRevenue: number
   outstandingInvoices: number
@@ -82,7 +89,6 @@ export function BillingDashboard() {
         { month: "Nov", confirmed: 260000, projected: 520000, potential: 580000 }
       ])
     } catch (error) {
-      console.error("Error fetching billing data:", error)
     } finally {
       setLoading(false)
     }

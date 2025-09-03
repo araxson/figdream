@@ -44,6 +44,11 @@ export async function getSystemConfig<T = unknown>(
   }
 }
 /**
+ * Alias for getSystemConfig for backward compatibility
+ */
+export const getSystemConfiguration = getSystemConfig
+
+/**
  * Get multiple system configurations by category
  */
 export async function getSystemConfigsByCategory(

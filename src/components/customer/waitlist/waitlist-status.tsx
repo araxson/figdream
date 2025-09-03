@@ -1,9 +1,9 @@
 "use client"
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Badge, Button, Progress } from "@/components/ui"
+import { useState, useEffect, useCallback } from "react"
+import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Progress } from "@/components/ui"
 import { Clock, Users, Calendar, Bell, X } from "lucide-react"
 import { format } from "date-fns"
-import { createClient } from "@/lib/supabase/client"
+import { createClient } from "@/lib/database/supabase/client"
 import { toast } from "sonner"
 interface WaitlistStatusProps {
   waitlistId?: string
@@ -21,10 +21,7 @@ export function WaitlistStatus({ waitlistId }: WaitlistStatusProps) {
     status: string
   } | null>(null)
   const [loading, setLoading] = useState(true)
-  useEffect(() => {
-    fetchWaitlistStatus()
-  }, [waitlistId])
-  async function fetchWaitlistStatus() {
+  const fetchWaitlistStatus = useCallback(async () => {
     try {
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
@@ -32,31 +29,93 @@ export function WaitlistStatus({ waitlistId }: WaitlistStatusProps) {
         setLoading(false)
         return
       }
-      // Mock waitlist data
-      const mockEntry = {
-        id: "wl-001",
-        position: 3,
-        totalInQueue: 8,
-        serviceName: "Premium Hair Color & Style",
-        salonName: "Glamour Studio Downtown",
-        staffName: "Sarah Johnson",
-        joinedAt: "2024-12-20T10:00:00",
-        estimatedWait: "2-3 days",
-        status: 'waiting'
+      // Fetch waitlist data from database
+      let query = supabase
+        .from('waitlist_entries')
+        .select(`
+          id,
+          position,
+          joined_at,
+          estimated_wait_minutes,
+          status,
+          service:service_id (
+            name
+          ),
+          salon:salon_id (
+            name
+          ),
+          staff:staff_member_id (
+            name
+          )
+        `)
+        .eq('customer_id', user.id)
+        .eq('status', 'waiting')
+
+      // If waitlistId provided, filter by it
+      if (waitlistId) {
+        query = query.eq('id', waitlistId)
       }
-      setWaitlistEntry(mockEntry)
+
+      const { data: waitlistData, error } = await query.single()
+
+      if (error || !waitlistData) {
+        setWaitlistEntry(null)
+        return
+      }
+
+      // Get total queue count for this service/staff
+      const { count: totalInQueue } = await supabase
+        .from('waitlist_entries')
+        .select('*', { count: 'exact', head: true })
+        .eq('service_id', waitlistData.service_id)
+        .eq('staff_member_id', waitlistData.staff_member_id)
+        .eq('status', 'waiting')
+        .lte('position', waitlistData.position)
+
+      const formattedEntry = {
+        id: waitlistData.id,
+        position: waitlistData.position,
+        totalInQueue: totalInQueue || waitlistData.position,
+        serviceName: waitlistData.service?.name || 'Service',
+        salonName: waitlistData.salon?.name || 'Salon',
+        staffName: waitlistData.staff?.name || 'Staff Member',
+        joinedAt: waitlistData.joined_at,
+        estimatedWait: waitlistData.estimated_wait_minutes 
+          ? `${Math.floor(waitlistData.estimated_wait_minutes / 60)} hours` 
+          : 'Calculating...',
+        status: waitlistData.status
+      }
+      
+      setWaitlistEntry(formattedEntry)
     } catch (error) {
-      console.error("Error fetching waitlist status:", error)
     } finally {
       setLoading(false)
     }
-  }
+  }, [waitlistId])
+
+  useEffect(() => {
+    fetchWaitlistStatus()
+  }, [fetchWaitlistStatus])
+
   const handleLeaveWaitlist = async () => {
+    if (!waitlistEntry) return
+    
     try {
-      // Leave waitlist logic
+      const supabase = createClient()
+      
+      // Update waitlist entry status to cancelled
+      const { error } = await supabase
+        .from('waitlist_entries')
+        .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
+        .eq('id', waitlistEntry.id)
+
+      if (error) {
+        throw error
+      }
+
       toast.success("You've been removed from the waitlist")
       setWaitlistEntry(null)
-    } catch (_error) {
+    } catch (error) {
       toast.error("Failed to leave waitlist")
     }
   }

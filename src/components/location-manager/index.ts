@@ -1,5 +1,6 @@
 // Main components
-export { default as LocationManagerSidebar } from './app-sidebar'
+export { LocationManagerSidebar } from './app-sidebar'
+export { LocationManagerSidebar as AppSidebar } from './app-sidebar'
 // Appointment components
 export * from "./appointments"
 // Staff components  

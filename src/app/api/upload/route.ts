@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/database/supabase/server'
 import { getUser } from '@/lib/data-access/auth'
-import { logError, logCriticalError, logApiError } from '@/src/lib/errors/logger'
+import { logError, logCriticalError, logApiError } from '@/lib/utils/errors/logger'
 import crypto from 'crypto'
 import path from 'path'
 // Upload configuration
@@ -12,6 +12,8 @@ const UPLOAD_CONFIG = {
   allowedBuckets: ['avatars', 'logos', 'documents', 'gallery'] as const,
 } as const
 type AllowedBucket = typeof UPLOAD_CONFIG.allowedBuckets[number]
+type AllowedImageType = typeof UPLOAD_CONFIG.allowedImageTypes[number]
+type AllowedDocumentType = typeof UPLOAD_CONFIG.allowedDocumentTypes[number]
 // Types for upload request
 interface _UploadRequest {
   bucket: AllowedBucket
@@ -39,9 +41,9 @@ function validateFileType(file: File, bucket: AllowedBucket): boolean {
     case 'avatars':
     case 'logos':
     case 'gallery':
-      return UPLOAD_CONFIG.allowedImageTypes.includes(type)
+      return UPLOAD_CONFIG.allowedImageTypes.includes(type as AllowedImageType)
     case 'documents':
-      return UPLOAD_CONFIG.allowedDocumentTypes.includes(type)
+      return UPLOAD_CONFIG.allowedDocumentTypes.includes(type as AllowedDocumentType)
     default:
       return false
   }
@@ -181,7 +183,7 @@ async function uploadFile(
         uploadedBy: 'current-user' // Will be updated with actual user ID
       }
     }
-  } catch (_error) {
+  } catch (error) {
     logCriticalError(
       error as Error,
       'api',
@@ -311,7 +313,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         isPublic
       }
     })
-  } catch (_error) {
+  } catch (error) {
     logCriticalError(
       error as Error,
       'api',
@@ -375,7 +377,6 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
         { status: 403 }
       )
     }
-    const supabase = await createClient()
     // Delete file from storage
     const { error } = await supabase.storage
       .from(bucket)
@@ -400,7 +401,7 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
     })
   } catch (_error) {
     logCriticalError(
-      error as Error,
+      _error as Error,
       'api',
       { context: 'upload_delete_handler', endpoint: '/api/upload' }
     )
@@ -453,7 +454,7 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
     })
   } catch (_error) {
     logError(
-      error as Error,
+      _error as Error,
       'low',
       'api',
       { context: 'upload_status_check' }

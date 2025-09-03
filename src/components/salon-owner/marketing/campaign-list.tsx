@@ -1,5 +1,20 @@
 'use client'
-// This component has been split into smaller modules
-// Import the actual implementation from the split directory
-export * from './campaign-list/CampaignList'
-export { default } from './campaign-list/CampaignList'
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/data-display/card'
+
+export interface CampaignListProps {
+  className?: string
+}
+
+export function CampaignList({ className }: CampaignListProps) {
+  return (
+    <Card className={className}>
+      <CardHeader>
+        <CardTitle>Campaign List</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p>Component implementation pending</p>
+      </CardContent>
+    </Card>
+  )
+}

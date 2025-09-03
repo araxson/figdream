@@ -1,6 +1,8 @@
 "use client"
+import { Alert, AlertDescription, AlertTitle, Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, DatePicker, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, Input, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Switch, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Tabs, TabsContent, TabsList, TabsTrigger, Textarea } from "@/components/ui"
+
 import { useState } from "react"
-import { Calendar, Clock, AlertTriangle, Info, CheckCircle, XCircle, RefreshCw, Bell } from "lucide-react"
+import { Clock, AlertTriangle, Info, CheckCircle, XCircle, RefreshCw, Bell, Calendar } from "lucide-react"
 interface MaintenanceWindow {
   id: string
   title: string
@@ -31,8 +33,8 @@ interface MaintenanceHistory {
 }
 export function MaintenanceScheduler() {
   const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState(false)
-  const [selectedMaintenance, setSelectedMaintenance] = useState<MaintenanceWindow | null>(null)
-  const [maintenanceWindows, setMaintenanceWindows] = useState<MaintenanceWindow[]>([
+  const [_selectedMaintenance, _setSelectedMaintenance] = useState<MaintenanceWindow | null>(null)
+  const [maintenanceWindows, _setMaintenanceWindows] = useState<MaintenanceWindow[]>([
     {
       id: "MW-001",
       title: "Database Upgrade",
@@ -95,12 +97,10 @@ export function MaintenanceScheduler() {
   }
   const handleScheduleMaintenance = () => {
     // Handle scheduling maintenance
-    console.log("Scheduling maintenance")
     setIsScheduleDialogOpen(false)
   }
   const handleCancelMaintenance = (id: string) => {
     // Handle cancelling maintenance
-    console.log("Cancelling maintenance:", id)
   }
   return (
     <div className="space-y-6">

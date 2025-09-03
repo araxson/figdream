@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { DateRangePicker } from '@/components/shared/ui-elements/date-range-picker'
+import { DateRangePicker } from '@/components/shared/ui-components/date-range-picker'
 import { DateRange } from 'react-day-picker'
 import { 
   Card, 

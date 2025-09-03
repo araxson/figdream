@@ -1,9 +1,6 @@
 "use client"
 import { useState } from "react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui"
-import { DatePickerWithRange } from "@/components/ui"
-import { Button } from "@/components/ui"
-import { Label } from "@/components/ui"
+import { Button, DatePickerWithRange, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui"
 import { DateRange } from "react-day-picker"
 import { Filter, RotateCcw } from "lucide-react"
 interface AppointmentFiltersProps {

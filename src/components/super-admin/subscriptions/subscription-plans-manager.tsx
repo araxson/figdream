@@ -9,12 +9,6 @@ import {
   CardTitle,
   Button,
   Badge,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -57,7 +51,7 @@ export function SubscriptionPlansManager() {
   const [loading, setLoading] = useState(true)
   const [editPlan, setEditPlan] = useState<SubscriptionPlan | null>(null)
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
-  const [deleteId, setDeleteId] = useState<string | null>(null)
+  const [_deleteId, setDeleteId] = useState<string | null>(null)
   const supabase = createClient()
   const form = useForm<PlanFormValues>({
     resolver: zodResolver(planSchema),
@@ -74,8 +68,23 @@ export function SubscriptionPlansManager() {
     },
   })
   useEffect(() => {
+    const loadPlans = async () => {
+      try {
+        setLoading(true)
+        const { data, error } = await supabase
+          .from("subscription_plans")
+          .select("*")
+          .order("price_monthly", { ascending: true })
+        if (error) throw error
+        setPlans(data || [])
+      } catch (error) {
+        toast.error("Failed to load subscription plans")
+      } finally {
+        setLoading(false)
+      }
+    }
     loadPlans()
-  }, [])
+  }, [supabase])
   useEffect(() => {
     if (editPlan) {
       form.reset({
@@ -91,7 +100,7 @@ export function SubscriptionPlansManager() {
       })
       setCreateDialogOpen(true)
     }
-  }, [editPlan])
+  }, [editPlan, form])
   const loadPlans = async () => {
     try {
       setLoading(true)
@@ -102,7 +111,6 @@ export function SubscriptionPlansManager() {
       if (error) throw error
       setPlans(data || [])
     } catch (error) {
-      console.error("Error loading plans:", error)
       toast.error("Failed to load subscription plans")
     } finally {
       setLoading(false)
@@ -136,11 +144,10 @@ export function SubscriptionPlansManager() {
       form.reset()
       await loadPlans()
     } catch (error) {
-      console.error("Error saving plan:", error)
       toast.error(editPlan ? "Failed to update plan" : "Failed to create plan")
     }
   }
-  const handleDelete = async (id: string) => {
+  const _handleDelete = async (id: string) => {
     try {
       const { error } = await supabase
         .from("subscription_plans")
@@ -151,7 +158,6 @@ export function SubscriptionPlansManager() {
       setDeleteId(null)
       await loadPlans()
     } catch (error) {
-      console.error("Error deleting plan:", error)
       toast.error("Failed to delete plan")
     }
   }

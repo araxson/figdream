@@ -1,5 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle, Progress } from "@/components/ui"
-import { TrendingUp, DollarSign, Calendar, BarChart } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/data-display/card"
+import { Progress } from "@/components/ui/feedback/progress"
+import { TrendingUp, DollarSign, BarChart, Calendar } from "lucide-react"
 import { format } from "date-fns"
 interface ReportDashboardProps {
   monthlyReport: {

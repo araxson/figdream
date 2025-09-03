@@ -1,5 +1,5 @@
 'use client'
-import { Badge, Button, Progress, Card, CardContent } from '@/components/ui'
+import { Badge, Button, Card, CardContent, Progress } from "@/components/ui"
 import { 
   AlertTriangle,
   Mail,

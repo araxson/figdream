@@ -6,7 +6,7 @@ import { toast } from "sonner"
 import { createClient } from "@/lib/database/supabase/client"
 import type { Database } from "@/types/database.types"
 type Staff = Database["public"]["Tables"]["staff"]["Row"]
-type StaffSpecialty = Database["public"]["Tables"]["staff_specialties"]["Row"]
+// type StaffSpecialty = Database["public"]["Tables"]["staff_specialties"]["Row"]
 interface SpecialtyAssignmentProps {
   staff: Staff
   onUpdate?: () => void
@@ -21,6 +21,7 @@ export function SpecialtyAssignment({ staff, onUpdate }: SpecialtyAssignmentProp
   const supabase = createClient()
   useEffect(() => {
     loadSpecialties()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [staff.id])
   const loadSpecialties = async () => {
     try {
@@ -47,7 +48,6 @@ export function SpecialtyAssignment({ staff, onUpdate }: SpecialtyAssignmentProp
       ).filter(s => !currentSpecialties.includes(s))
       setAvailableSpecialties(uniqueSpecialties.sort())
     } catch (error) {
-      console.error("Error loading specialties:", error)
       toast.error("Failed to load specialties")
     } finally {
       setLoading(false)
@@ -74,7 +74,6 @@ export function SpecialtyAssignment({ staff, onUpdate }: SpecialtyAssignmentProp
       toast.success("Specialty added successfully")
       onUpdate?.()
     } catch (error) {
-      console.error("Error adding specialty:", error)
       toast.error("Failed to add specialty")
     } finally {
       setSaving(false)
@@ -93,7 +92,6 @@ export function SpecialtyAssignment({ staff, onUpdate }: SpecialtyAssignmentProp
       toast.success("Specialty removed successfully")
       onUpdate?.()
     } catch (error) {
-      console.error("Error removing specialty:", error)
       toast.error("Failed to remove specialty")
     }
   }
@@ -220,7 +218,7 @@ export function SpecialtyAssignment({ staff, onUpdate }: SpecialtyAssignmentProp
                   onSelect={() => setSelectedSpecialty(selectedSpecialty)}
                 >
                   <Plus className="mr-2 h-4 w-4" />
-                  Create "{selectedSpecialty}"
+                  Create &quot;{selectedSpecialty}&quot;
                 </CommandItem>
               )}
             </CommandGroup>

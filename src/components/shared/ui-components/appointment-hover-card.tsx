@@ -1,16 +1,7 @@
 "use client"
-import { 
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-  Badge,
-  Separator,
-  Avatar,
-  AvatarFallback,
-  AvatarImage
-} from "@/components/ui"
+import { Avatar, AvatarFallback, AvatarImage, Badge, HoverCard, HoverCardContent, HoverCardTrigger, Separator } from "@/components/ui"
 
-import { Calendar, Clock, DollarSign, MapPin, FileText, CheckCircle, XCircle, AlertCircle, Clock3 } from "lucide-react"
+import { Clock, DollarSign, MapPin, FileText, CheckCircle, XCircle, AlertCircle, Clock3, Calendar } from "lucide-react"
 import type { Database } from "@/types/database.types"
 type Appointment = Database['public']['Tables']['appointments']['Row']
 type Profile = Database['public']['Tables']['profiles']['Row']
@@ -37,8 +28,7 @@ export function AppointmentHoverCard({ appointment, children, side = "right" }: 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD',
-    }).format(amount)
+      currency: 'USD'}).format(amount)
   }
   // Format date and time
   const formatDateTime = (dateTimeString: string) => {

@@ -89,26 +89,45 @@ export async function getAuditStats(salonId?: string, days: number = 30) {
   const supabase = await createClient()
   const startDate = new Date()
   startDate.setDate(startDate.getDate() - days)
-  let query = supabase
+  
+  // First query for full recent activity
+  let recentQuery = supabase
+    .from('audit_logs')
+    .select('*')
+    .gte('created_at', startDate.toISOString())
+    .order('created_at', { ascending: false })
+    .limit(10)
+  
+  // Stats query
+  let statsQuery = supabase
     .from('audit_logs')
     .select('action, entity_type, created_at')
     .gte('created_at', startDate.toISOString())
+  
   if (salonId) {
-    query = query.eq('salon_id', salonId)
+    recentQuery = recentQuery.eq('salon_id', salonId)
+    statsQuery = statsQuery.eq('salon_id', salonId)
   }
-  const { data, error } = await query
-  if (error) {
+  
+  const [{ data: recentData, error: recentError }, { data: statsData, error: statsError }] = await Promise.all([
+    recentQuery,
+    statsQuery
+  ])
+  
+  if (recentError || statsError) {
     throw new Error('Failed to fetch audit statistics')
   }
+  
   // Calculate statistics
   const stats = {
-    totalEvents: data.length,
+    totalEvents: statsData?.length || 0,
     byAction: {} as Record<string, number>,
     byEntity: {} as Record<string, number>,
     byDay: {} as Record<string, number>,
-    recentActivity: [] as unknown[],
+    recentActivity: recentData || [],
   }
-  data.forEach(log => {
+  
+  statsData?.forEach(log => {
     // Count by action
     stats.byAction[log.action] = (stats.byAction[log.action] || 0) + 1
     // Count by entity
@@ -117,8 +136,7 @@ export async function getAuditStats(salonId?: string, days: number = 30) {
     const day = new Date(log.created_at).toISOString().split('T')[0]
     stats.byDay[day] = (stats.byDay[day] || 0) + 1
   })
-  // Get recent activity (last 10 events)
-  stats.recentActivity = data.slice(0, 10)
+  
   return stats
 }
 // Search audit logs

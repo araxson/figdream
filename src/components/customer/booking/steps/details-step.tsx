@@ -26,7 +26,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui'
 import { User, MessageSquare, CreditCard, AlertCircle, HelpCircle } from 'lucide-react'
-import type { StepContentProps } from '../booking-form-types'
+import type { StepContentProps } from '@/components/customer/booking/booking-form-types'
 
 export function DetailsStep({
   form,

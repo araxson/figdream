@@ -1,2 +1,2 @@
-export { UsalonUbookingUlist } from './UsalonUbookingUlist'
-export type { UsalonUbookingUlistProps } from './UsalonUbookingUlist.types'
+export { SalonBookingList } from './salon-booking-list'
+export type { SalonBookingListProps, SalonWithDetails } from './salon-booking-list.types'

@@ -1,14 +1,5 @@
 import Link from 'next/link'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  Button,
-  Separator,
-} from '@/components/ui'
+import { Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Separator } from "@/components/ui"
 import { RegisterForm } from '@/components/auth/register-form'
 import { User, Calendar, Heart, Gift } from 'lucide-react'
 export default function CustomerRegistrationPage() {

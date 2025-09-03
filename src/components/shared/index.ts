@@ -9,17 +9,14 @@ export {
 } from './sidebar-configs'
 
 // Navigation components
-export { default as CommandTrigger } from './navigation-components/command-trigger'
-export { default as CommandSearch } from './navigation-components/command-search'
+export { CommandSearch } from './navigation/command-search'
 
 // Shared UI components
-export { DateRangePicker } from './ui-elements/date-range-picker'
-export { TimePicker } from './ui-elements/time-picker'
-export { PriceRangeSlider } from './ui-elements/price-range-slider'
-export { DurationSlider } from './ui-elements/duration-slider'
-export { ErrorRecovery } from './error-recovery'
+export { DateRangePicker } from './ui-components/date-range-picker'
+export { TimePicker } from './ui-components/time-picker'
+export { PriceRangeSlider } from './ui-components/price-range-slider'
+export { DurationSlider } from './ui-components/duration-slider'
+export { NetworkRecovery, ApiErrorRecovery, ProgressiveRecovery } from './error-recovery'
 
 // Data display components
-export { default as GalleryCarousel } from './data-display/gallery-carousel'
-export { default as ServiceDetailsCollapsible } from './data-display/service-details-collapsible'
-export { default as TestimonialsCarousel } from './data-display/testimonials-carousel'
+export { GalleryCarousel } from './ui-components/gallery-carousel'

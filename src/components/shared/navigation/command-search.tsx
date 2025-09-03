@@ -105,24 +105,24 @@ export function CommandSearch({ open, onOpenChange, userRole = 'customer' }: Com
           {
             group: 'Schedule',
             items: [
-              { icon: Calendar, label: 'My Schedule', shortcut: 'C', action: () => router.push('/staff/schedule') },
-              { icon: Clock, label: 'Time Off Requests', action: () => router.push('/staff/timeoff') },
-              { icon: Users, label: 'My Clients', action: () => router.push('/staff/clients') },
+              { icon: Calendar, label: 'My Schedule', shortcut: 'C', action: () => router.push('/staff-member/schedule') },
+              { icon: Clock, label: 'Time Off Requests', action: () => router.push('/staff-member/timeoff') },
+              { icon: Users, label: 'My Clients', action: () => router.push('/staff-member/clients') },
             ]
           },
           {
             group: 'Performance',
             items: [
-              { icon: BarChart, label: 'My Stats', action: () => router.push('/staff/performance') },
-              { icon: DollarSign, label: 'Commissions', action: () => router.push('/staff/commissions') },
-              { icon: Star, label: 'Reviews', action: () => router.push('/staff/reviews') },
+              { icon: BarChart, label: 'My Stats', action: () => router.push('/staff-member/performance') },
+              { icon: DollarSign, label: 'Commissions', action: () => router.push('/staff-member/commissions') },
+              { icon: Star, label: 'Reviews', action: () => router.push('/staff-member/reviews') },
             ]
           },
           {
             group: 'Services',
             items: [
-              { icon: Scissors, label: 'My Services', action: () => router.push('/staff/services') },
-              { icon: Package, label: 'Products', action: () => router.push('/staff/products') },
+              { icon: Scissors, label: 'My Services', action: () => router.push('/staff-member/services') },
+              { icon: Package, label: 'Products', action: () => router.push('/staff-member/products') },
             ]
           }
         ]
@@ -132,27 +132,27 @@ export function CommandSearch({ open, onOpenChange, userRole = 'customer' }: Com
           {
             group: 'Management',
             items: [
-              { icon: Building, label: 'Salon Settings', shortcut: 'L', action: () => router.push('/salon-admin/salons') },
-              { icon: Users, label: 'Staff Management', shortcut: 'T', action: () => router.push('/salon-admin/staff') },
-              { icon: Calendar, label: 'Appointments', shortcut: 'A', action: () => router.push('/salon-admin/appointments') },
-              { icon: Scissors, label: 'Services', action: () => router.push('/salon-admin/services') },
+              { icon: Building, label: 'Salon Settings', shortcut: 'L', action: () => router.push('/salon-owner/salons') },
+              { icon: Users, label: 'Staff Management', shortcut: 'T', action: () => router.push('/salon-owner/staff') },
+              { icon: Calendar, label: 'Appointments', shortcut: 'A', action: () => router.push('/salon-owner/appointments') },
+              { icon: Scissors, label: 'Services', action: () => router.push('/salon-owner/services') },
             ]
           },
           {
             group: 'Business',
             items: [
-              { icon: BarChart, label: 'Analytics', shortcut: 'N', action: () => router.push('/salon-admin/analytics') },
-              { icon: DollarSign, label: 'Payments', action: () => router.push('/salon-admin/payments') },
-              { icon: MessageSquare, label: 'Reviews', action: () => router.push('/salon-admin/reviews') },
-              { icon: Gift, label: 'Promotions', action: () => router.push('/salon-admin/promotions') },
+              { icon: BarChart, label: 'Analytics', shortcut: 'N', action: () => router.push('/salon-owner/analytics') },
+              { icon: DollarSign, label: 'Payments', action: () => router.push('/salon-owner/payments') },
+              { icon: MessageSquare, label: 'Reviews', action: () => router.push('/salon-owner/reviews') },
+              { icon: Gift, label: 'Promotions', action: () => router.push('/salon-owner/promotions') },
             ]
           },
           {
             group: 'Customers',
             items: [
-              { icon: Users, label: 'Customer List', action: () => router.push('/salon-admin/customers') },
-              { icon: Star, label: 'Loyalty Program', action: () => router.push('/salon-admin/loyalty') },
-              { icon: Mail, label: 'Communications', action: () => router.push('/salon-admin/communications') },
+              { icon: Users, label: 'Customer List', action: () => router.push('/salon-owner/customers') },
+              { icon: Star, label: 'Loyalty Program', action: () => router.push('/salon-owner/loyalty') },
+              { icon: Mail, label: 'Communications', action: () => router.push('/salon-owner/communications') },
             ]
           }
         ]

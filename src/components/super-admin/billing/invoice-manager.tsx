@@ -1,6 +1,7 @@
 "use client"
 import { useState } from "react"
-import { FileText, Plus, Send, Download, Copy, Edit, Trash2 } from "lucide-react"
+import { FileText, Plus, Send, Copy, Edit, Trash2 } from "lucide-react"
+import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, DatePicker, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, Input, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Tabs, TabsContent, TabsList, TabsTrigger, Textarea } from "@/components/ui"
 interface InvoiceTemplate {
   id: string
   name: string
@@ -26,7 +27,7 @@ interface ManualInvoice {
   notes: string
 }
 export function InvoiceManager() {
-  const [selectedTemplate, setSelectedTemplate] = useState<string>("")
+  const [_selectedTemplate, _setSelectedTemplate] = useState<string>("")
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isBulkDialogOpen, setIsBulkDialogOpen] = useState(false)
   const [manualInvoice, setManualInvoice] = useState<ManualInvoice>({
@@ -81,7 +82,7 @@ export function InvoiceManager() {
     const newItems = manualInvoice.items.filter((_, i) => i !== index)
     setManualInvoice({ ...manualInvoice, items: newItems })
   }
-  const updateInvoiceItem = (index: number, field: keyof InvoiceItem, value: any) => {
+  const updateInvoiceItem = (index: number, field: keyof InvoiceItem, value: string | number) => {
     const newItems = [...manualInvoice.items]
     newItems[index] = { ...newItems[index], [field]: value }
     if (field === 'quantity' || field === 'unitPrice') {
@@ -99,12 +100,10 @@ export function InvoiceManager() {
   }
   const handleCreateInvoice = () => {
     // Handle invoice creation
-    console.log("Creating invoice:", manualInvoice)
     setIsCreateDialogOpen(false)
   }
   const handleBulkGeneration = () => {
     // Handle bulk invoice generation
-    console.log("Generating bulk invoices")
     setIsBulkDialogOpen(false)
   }
   return (

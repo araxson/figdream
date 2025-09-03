@@ -1,5 +1,5 @@
 import { format, addMinutes } from 'date-fns'
-import type { SelectedService } from './service-selector'
+import type { SelectedService } from './booking-types'
 import type { BookingTotals } from './booking-form-types'
 
 export const calculateEndTime = (startTime: string, durationMinutes: number): string => {

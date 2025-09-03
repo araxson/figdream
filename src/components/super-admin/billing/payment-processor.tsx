@@ -1,9 +1,11 @@
 "use client"
+import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, Input, Label, Progress, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Tabs, TabsContent, TabsList, TabsTrigger, Textarea } from "@/components/ui"
+
 import { useState } from "react"
 import { 
   CreditCard, RefreshCw, AlertCircle, CheckCircle, 
-  DollarSign, ArrowUpRight, ArrowDownRight, Clock,
-  XCircle, Send, FileText
+  DollarSign, Clock,
+  XCircle, FileText
 } from "lucide-react"
 interface Transaction {
   id: string
@@ -37,7 +39,7 @@ export function PaymentProcessor() {
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
   const [isProcessDialogOpen, setIsProcessDialogOpen] = useState(false)
   const [isRefundDialogOpen, setIsRefundDialogOpen] = useState(false)
-  const [isRetryDialogOpen, setIsRetryDialogOpen] = useState(false)
+  const [_isRetryDialogOpen, setIsRetryDialogOpen] = useState(false)
   const [refundAmount, setRefundAmount] = useState("")
   const [refundReason, setRefundReason] = useState("")
   const transactions: Transaction[] = [
@@ -88,17 +90,14 @@ export function PaymentProcessor() {
   }
   const handleProcessPayment = () => {
     // Handle payment processing
-    console.log("Processing payment")
     setIsProcessDialogOpen(false)
   }
   const handleRefund = () => {
     // Handle refund processing
-    console.log("Processing refund:", { amount: refundAmount, reason: refundReason })
     setIsRefundDialogOpen(false)
   }
   const handleRetryPayment = (payment: FailedPayment) => {
     // Handle payment retry
-    console.log("Retrying payment:", payment)
     setIsRetryDialogOpen(false)
   }
   return (
@@ -173,7 +172,7 @@ export function PaymentProcessor() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Today's Transactions</CardTitle>
+            <CardTitle className="text-sm font-medium">Today&apos;s Transactions</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>

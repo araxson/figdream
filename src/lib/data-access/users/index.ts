@@ -124,6 +124,12 @@ export async function getAllUsers(limit = 50, offset = 0): Promise<UsersResult> 
     return { data: null, error: 'Failed to get users' }
   }
 }
+
+/**
+ * Alias for getAllUsers for backward compatibility
+ */
+export const getUsers = getAllUsers
+
 /**
  * Search users by name or email (super admin only)
  */

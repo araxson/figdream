@@ -1,16 +1,7 @@
 "use client"
-import { 
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Badge,
-  Separator
-} from "@/components/ui"
+import { Avatar, AvatarFallback, AvatarImage, Badge, HoverCard, HoverCardContent, HoverCardTrigger, Separator } from "@/components/ui"
 
-import { Star, DollarSign, Calendar, User } from "lucide-react"
+import { Star, DollarSign, User, Calendar } from "lucide-react"
 import type { Database } from "@/types/database.types"
 type StaffProfile = Database['public']['Tables']['staff_profiles']['Row']
 type Profile = Database['public']['Tables']['profiles']['Row']

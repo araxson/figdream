@@ -1,5 +1,6 @@
 "use client"
 import { Award, Star, TrendingUp } from "lucide-react"
+import { Badge, Card, CardContent, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui"
 
 interface SpecialtyDisplayProps {
   specialties: string[]

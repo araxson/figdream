@@ -1,6 +1,6 @@
 
 import { format } from "date-fns"
-import { Clock, MapPin, Users, Calendar, DollarSign } from "lucide-react"
+import { Clock, MapPin, DollarSign, Calendar } from "lucide-react"
 import type { Database } from "@/types/database.types"
 import { Badge, Button, Card, CardContent } from "@/components/ui"
 type Schedule = Database["public"]["Tables"]["staff_schedules"]["Row"]

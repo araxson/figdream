@@ -86,10 +86,9 @@ export async function getStaffByUserId(userId: string) {
         avatar_url,
         phone
       ),
-      salons (
+      salons:salon_id (
         id,
-        name,
-        address
+        name
       )
     `)
     .eq('user_id', userId)

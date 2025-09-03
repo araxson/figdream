@@ -14,8 +14,15 @@ import {
   Ban
 } from "lucide-react"
 import { format } from "date-fns"
-import { createClient } from "@/lib/supabase/client"
+import { createClient } from "@/lib/database/supabase/client"
 import { toast } from "sonner"
+
+interface GiftCardTransaction {
+  type: string
+  amount: number
+  created_at: string
+}
+
 type GiftCard = {
   id: string
   code: string
@@ -33,7 +40,7 @@ export function GiftCardsManager() {
   const [giftCards, setGiftCards] = useState<GiftCard[]>([])
   const [_loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
-  const [_filterStatus, _setFilterStatus] = useState<string>("all")
+  const [filterStatus, _setFilterStatus] = useState<string>("all")
   const [_selectedCard, _setSelectedCard] = useState<GiftCard | null>(null)
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   useEffect(() => {
@@ -41,51 +48,76 @@ export function GiftCardsManager() {
   }, [])
   async function fetchGiftCards() {
     try {
-      const _supabase = createClient()
-      // Fetch gift cards for the salon
-      // Using mock data for now
-      const mockGiftCards: GiftCard[] = [
-        {
-          id: "1",
-          code: "GIFT-2024-001",
-          balance: 50.00,
-          original_amount: 100.00,
-          status: 'active',
-          created_at: "2024-12-01T10:00:00",
-          expires_at: "2025-12-31",
-          purchaser_email: "john@example.com",
-          recipient_email: "jane@example.com",
-          last_used: "2024-12-20T11:00:00",
-          total_redemptions: 2
-        },
-        {
-          id: "2",
-          code: "GIFT-2024-002",
-          balance: 75.00,
-          original_amount: 75.00,
-          status: 'active',
-          created_at: "2024-11-15T14:30:00",
-          expires_at: "2025-06-30",
-          purchaser_email: "alice@example.com",
-          total_redemptions: 0
-        },
-        {
-          id: "3",
-          code: "GIFT-2024-003",
-          balance: 0.00,
-          original_amount: 50.00,
-          status: 'depleted',
-          created_at: "2024-10-01T09:00:00",
-          expires_at: "2025-10-01",
-          purchaser_email: "bob@example.com",
-          recipient_email: "carol@example.com",
-          last_used: "2024-11-30T16:00:00",
-          total_redemptions: 3
+      const supabase = createClient()
+      
+      // Get current user's salon
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        toast.error("Please sign in to manage gift cards")
+        return
+      }
+
+      // Fetch salon owner's salon
+      const { data: salonData } = await supabase
+        .from('salon_owners')
+        .select('salon_id')
+        .eq('user_id', user.id)
+        .single()
+
+      if (!salonData) {
+        toast.error("No salon found for this user")
+        return
+      }
+
+      // Fetch gift cards for the salon with redemption counts
+      const { data: giftCardsData, error } = await supabase
+        .from('gift_cards')
+        .select(`
+          id,
+          code,
+          balance,
+          original_amount,
+          status,
+          created_at,
+          expires_at,
+          purchaser_email,
+          recipient_email,
+          gift_card_transactions (
+            id,
+            created_at
+          )
+        `)
+        .eq('salon_id', salonData.salon_id)
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        toast.error('Failed to load gift cards')
+        return
+      }
+
+      // Format gift cards with additional computed fields
+      const formattedGiftCards: GiftCard[] = (giftCardsData || []).map(card => {
+        const transactions = card.gift_card_transactions || []
+        const redemptions = transactions.filter((t: GiftCardTransaction) => t.type === 'redemption')
+        const lastTransaction = transactions[0]
+        
+        return {
+          id: card.id,
+          code: card.code,
+          balance: card.balance,
+          original_amount: card.original_amount,
+          status: card.status,
+          created_at: card.created_at,
+          expires_at: card.expires_at,
+          purchaser_email: card.purchaser_email,
+          recipient_email: card.recipient_email,
+          last_used: lastTransaction?.created_at,
+          total_redemptions: redemptions.length
         }
-      ]
-      setGiftCards(mockGiftCards)
+      })
+
+      setGiftCards(formattedGiftCards)
     } catch (error) {
-      console.error("Error fetching gift cards:", error)
       toast.error("Failed to load gift cards")
     } finally {
       setLoading(false)

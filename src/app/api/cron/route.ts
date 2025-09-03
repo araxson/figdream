@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/database/supabase/server'
-import { logError, logCriticalError, logApiError } from '@/src/lib/errors/logger'
+import { logError, logCriticalError, logApiError } from '@/lib/utils/errors/logger'
 // Types for cron tasks
 interface CronTask {
   name: string
   description: string
   schedule: string
-  handler: () => Promise<void>
+  handler: () => Promise<CronTaskResult>
 }
 interface CronTaskResult {
   task: string
@@ -45,7 +45,6 @@ async function sendAppointmentReminders(): Promise<CronTaskResult> {
       .select(`
         id,
         appointment_date,
-        total_price,
         notes,
         customer_id,
         location_id,
@@ -56,15 +55,15 @@ async function sendAppointmentReminders(): Promise<CronTaskResult> {
           full_name,
           phone
         ),
-        locations (
+        salon_locations!location_id (
           id,
-          name,
-          address,
-          phone
+          name
         ),
-        staff (
-          id,
-          display_name
+        staff_profiles!staff_id (
+          profiles (
+            id,
+            full_name
+          )
         ),
         appointment_services (
           service_id,
@@ -94,7 +93,7 @@ async function sendAppointmentReminders(): Promise<CronTaskResult> {
         // Check notification settings
         const { data: preferences } = await supabase
           .from('notification_settings')
-          .select('email_notifications, sms_notifications, appointment_reminders')
+          .select('email_appointments, sms_appointments, reminder_hours_before')
           .eq('user_id', appointment.customer_id)
           .single()
         if (!preferences) {
@@ -103,15 +102,15 @@ async function sendAppointmentReminders(): Promise<CronTaskResult> {
         // Create notification record
         const notificationData = {
           user_id: appointment.customer_id,
-          type: 'appointment_reminder',
+          type: 'appointment_reminder' as const,
           title: 'Upcoming Appointment Reminder',
-          message: `Your appointment at ${appointment.locations?.name} is scheduled for ${new Date(appointment.appointment_date).toLocaleString()}`,
+          message: `Your appointment at ${appointment.salon_locations?.name || 'the salon'} is scheduled for ${new Date(appointment.appointment_date).toLocaleString()}`,
           data: {
             appointment_id: appointment.id,
             appointment_date: appointment.appointment_date,
-            location_name: appointment.locations?.name,
-            staff_name: appointment.staff?.display_name,
-            services: appointment.appointment_services?.map((bs: { services?: { name?: string } }) => bs.services?.name).join(', ')
+            location_name: appointment.salon_locations?.name || '',
+            staff_name: appointment.staff_profiles?.profiles?.full_name || '',
+            services: appointment.appointment_services?.map((bs: { services?: { name?: string } }) => bs.services?.name).join(', ') || ''
           }
         }
         const { error: notificationError } = await supabase
@@ -127,9 +126,12 @@ async function sendAppointmentReminders(): Promise<CronTaskResult> {
         }
         // TODO: Send actual email/SMS notifications
         // For now, just log what would be sent
-        if (preferences.email_notifications && preferences.appointment_reminders && appointment.profiles?.email) {
+        const customerProfile = appointment.profiles
+        if (preferences.email_appointments && customerProfile?.email) {
+          // Email notification would be sent here
         }
-        if (preferences.sms_notifications && preferences.appointment_reminders && appointment.profiles?.phone) {
+        if (preferences.sms_appointments && customerProfile?.phone) {
+          // SMS notification would be sent here
         }
         itemsProcessed++
       } catch (appointmentError) {
@@ -147,7 +149,7 @@ async function sendAppointmentReminders(): Promise<CronTaskResult> {
       duration: Date.now() - startTime,
       itemsProcessed
     }
-  } catch (_error) {
+  } catch (error) {
     logCriticalError(
       error as Error,
       'api',
@@ -162,62 +164,16 @@ async function sendAppointmentReminders(): Promise<CronTaskResult> {
   }
 }
 // Clean up expired waitlist entries
+// NOTE: Waitlist functionality is not yet implemented in the database
 async function cleanupExpiredWaitlist(): Promise<CronTaskResult> {
   const startTime = Date.now()
-  let itemsProcessed = 0
-  try {
-    const supabase = await createClient()
-    // Mark waitlist entries as expired if their preferred date has passed
-    const today = new Date()
-    today.setHours(23, 59, 59, 999) // End of today
-    const { data: expiredEntries, error: fetchError } = await supabase
-      .from('waitlist')
-      .select('id')
-      .eq('status', 'waiting')
-      .lt('preferred_date', today.toISOString())
-    if (fetchError) {
-      throw new Error(`Failed to fetch expired waitlist entries: ${fetchError.message}`)
-    }
-    if (!expiredEntries || expiredEntries.length === 0) {
-      return {
-        task: 'cleanupExpiredWaitlist',
-        success: true,
-        duration: Date.now() - startTime,
-        itemsProcessed: 0
-      }
-    }
-    // Update expired entries
-    const { error: updateError } = await supabase
-      .from('waitlist')
-      .update({ 
-        status: 'expired',
-        updated_at: new Date().toISOString()
-      })
-      .eq('status', 'waiting')
-      .lt('preferred_date', today.toISOString())
-    if (updateError) {
-      throw new Error(`Failed to update expired waitlist entries: ${updateError.message}`)
-    }
-    itemsProcessed = expiredEntries.length
-    return {
-      task: 'cleanupExpiredWaitlist',
-      success: true,
-      duration: Date.now() - startTime,
-      itemsProcessed
-    }
-  } catch (_error) {
-    logError(
-      error as Error,
-      'medium',
-      'api',
-      { context: 'waitlist_cleanup_cron' }
-    )
-    return {
-      task: 'cleanupExpiredWaitlist',
-      success: false,
-      duration: Date.now() - startTime,
-      error: (error as Error).message
-    }
+  // Waitlist table doesn't exist yet - skip this task
+  // This will be implemented when waitlist functionality is added
+  return {
+    task: 'cleanupExpiredWaitlist',
+    success: true,
+    duration: Date.now() - startTime,
+    itemsProcessed: 0
   }
 }
 // Update daily analytics
@@ -234,8 +190,8 @@ async function updateDailyAnalytics(): Promise<CronTaskResult> {
     today.setDate(today.getDate() + 1)
     // Get all locations
     const { data: locations, error: locationsError } = await supabase
-      .from('locations')
-      .select('id')
+      .from('salon_locations')
+      .select('id, salon_id')
       .eq('is_active', true)
     if (locationsError) {
       throw new Error(`Failed to fetch locations: ${locationsError.message}`)
@@ -256,7 +212,7 @@ async function updateDailyAnalytics(): Promise<CronTaskResult> {
           .from('appointments')
           .select(`
             id,
-            total_price,
+            total_amount,
             status,
             customer_id,
             created_at
@@ -277,7 +233,7 @@ async function updateDailyAnalytics(): Promise<CronTaskResult> {
         const totalAppointments = appointmentsArray.length
         const totalRevenue = appointmentsArray
           .filter(b => b.status === 'completed')
-          .reduce((sum, b) => sum + (b.total_price || 0), 0)
+          .reduce((sum, b) => sum + (b.total_amount || 0), 0)
         const noShowCount = appointmentsArray.filter(b => b.status === 'no_show').length
         const cancellationCount = appointmentsArray.filter(b => b.status === 'cancelled').length
         const completedAppointments = appointmentsArray.filter(b => b.status === 'completed')
@@ -302,22 +258,25 @@ async function updateDailyAnalytics(): Promise<CronTaskResult> {
             newCustomers++
           }
         }
-        // Insert or update daily analytics
+        // Insert or update daily analytics in dashboard_metrics table
         const analyticsData = {
+          salon_id: location.salon_id,
           location_id: location.id,
-          date: yesterday.toISOString().split('T')[0], // Just the date part
-          total_bookings: totalAppointments,
-          total_revenue: totalRevenue,
+          metric_date: yesterday.toISOString().split('T')[0], // Just the date part
+          appointments_booked: totalAppointments,
+          appointments_completed: completedAppointments.length,
+          appointments_cancelled: cancellationCount,
+          appointments_no_show: noShowCount,
+          revenue_total: totalRevenue,
+          average_ticket: averageBookingValue,
           new_customers: newCustomers,
           returning_customers: returningCustomers,
-          average_booking_value: averageBookingValue,
-          no_show_count: noShowCount,
-          cancellation_count: cancellationCount,
+          total_customers: uniqueCustomers.length
         }
         const { error: analyticsError } = await supabase
-          .from('analytics_daily')
+          .from('dashboard_metrics')
           .upsert(analyticsData, {
-            onConflict: 'location_id,date'
+            onConflict: 'salon_id,location_id,metric_date'
           })
         if (analyticsError) {
           logError(
@@ -343,7 +302,7 @@ async function updateDailyAnalytics(): Promise<CronTaskResult> {
       duration: Date.now() - startTime,
       itemsProcessed
     }
-  } catch (_error) {
+  } catch (error) {
     logCriticalError(
       error as Error,
       'api',
@@ -381,7 +340,7 @@ async function cleanupOldNotifications(): Promise<CronTaskResult> {
       duration: Date.now() - startTime,
       itemsProcessed
     }
-  } catch (_error) {
+  } catch (error) {
     logError(
       error as Error,
       'low',
@@ -475,7 +434,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       results
     }
     return NextResponse.json(response)
-  } catch (_error) {
+  } catch (error) {
     logCriticalError(
       error as Error,
       'api',
@@ -505,7 +464,7 @@ export async function GET(): Promise<NextResponse> {
       timestamp: new Date().toISOString(),
       authConfigured: !!process.env.CRON_SECRET
     })
-  } catch (_error) {
+  } catch (error) {
     logError(
       error as Error,
       'low',

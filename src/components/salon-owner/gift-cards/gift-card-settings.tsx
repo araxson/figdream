@@ -1,6 +1,6 @@
 "use client"
 import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button, Input, Label, Switch, Textarea, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Separator, Alert, AlertDescription, Badge } from "@/components/ui"
+import { Alert, AlertDescription, Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Separator, Switch, Textarea } from "@/components/ui"
 import { 
   Settings, 
   DollarSign, 
@@ -13,7 +13,7 @@ import {
   Plus,
   X
 } from "lucide-react"
-import { createClient } from "@/lib/supabase/client"
+import { createClient } from "@/lib/database/supabase/client"
 import { toast } from "sonner"
 type GiftCardSettings = {
   enabled: boolean
@@ -75,7 +75,6 @@ export function GiftCardSettings() {
       void settings // Temporary to avoid unused variable
       toast.success("Gift card settings updated successfully")
     } catch (error) {
-      console.error("Error saving settings:", error)
       toast.error("Failed to save settings")
     } finally {
       setSaving(false)

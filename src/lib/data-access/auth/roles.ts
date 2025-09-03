@@ -151,7 +151,7 @@ export async function updateUserRole(userId: string, newRole: UserRole): Promise
 /**
  * Get role hierarchy level (for permission checks)
  */
-export function getRoleLevel(role: UserRole): number {
+export async function getRoleLevel(role: UserRole): Promise<number> {
   const roleLevels: Record<UserRole, number> = {
     customer: 1,
     staff: 2,
@@ -170,8 +170,8 @@ export async function hasMinimumRoleLevel(minimumRole: UserRole): Promise<RoleCh
     if (error || !user) {
       return { hasRole: false, error: error || 'User not found' }
     }
-    const userLevel = getRoleLevel(user.role)
-    const requiredLevel = getRoleLevel(minimumRole)
+    const userLevel = await getRoleLevel(user.role)
+    const requiredLevel = await getRoleLevel(minimumRole)
     return { hasRole: userLevel >= requiredLevel, error: null }
   } catch (_error) {
     return { hasRole: false, error: 'Failed to check role level' }

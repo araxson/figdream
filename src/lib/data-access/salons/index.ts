@@ -120,6 +120,12 @@ export async function getAllSalons(): Promise<SalonsResult> {
     return { data: null, error: 'Failed to get salons' }
   }
 }
+
+/**
+ * Alias for getAllSalons for backward compatibility
+ */
+export const getSalons = getAllSalons
+
 /**
  * Get salons owned by current user
  */

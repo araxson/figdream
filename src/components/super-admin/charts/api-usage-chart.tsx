@@ -1,12 +1,12 @@
 'use client'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Badge } from '@/components/ui'
+import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui"
 import { 
   BarChart, 
   Bar,
   XAxis, 
   YAxis, 
   CartesianGrid, 
-  Tooltip, 
+  Tooltip,
   ResponsiveContainer,
   PieChart,
   Pie,

@@ -1,22 +1,11 @@
 "use client"
 import { useState, useEffect } from "react"
-import { 
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-  Skeleton
-} from "@/components/ui"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, Skeleton, Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui"
 
 import { toast } from "sonner"
 import { createClient } from "@/lib/database/supabase/client"
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts"
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, eachWeekOfInterval, eachMonthOfInterval } from "date-fns"
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Legend, Tooltip } from "recharts"
+import { format, eachDayOfInterval, eachWeekOfInterval, eachMonthOfInterval } from "date-fns"
 import type { Database } from "@/types/database.types"
 type StaffEarnings = Database["public"]["Tables"]["staff_earnings"]["Row"]
 interface EarningsChartProps {
@@ -38,6 +27,7 @@ export function EarningsChart({ staffId, dateRange }: EarningsChartProps) {
   const supabase = createClient()
   useEffect(() => {
     loadChartData()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [staffId, dateRange, viewType])
   const loadChartData = async () => {
     try {
@@ -53,7 +43,6 @@ export function EarningsChart({ staffId, dateRange }: EarningsChartProps) {
       const processedData = processDataByViewType(data || [], viewType)
       setChartData(processedData)
     } catch (error) {
-      console.error("Error loading chart data:", error)
       toast.error("Failed to load earnings chart")
     } finally {
       setLoading(false)
@@ -82,8 +71,7 @@ export function EarningsChart({ staffId, dateRange }: EarningsChartProps) {
         base: 0,
         commission: 0,
         tips: 0,
-        appointments: 0,
-      })
+        appointments: 0})
     })
     // Aggregate earnings data
     earnings.forEach(earning => {
@@ -114,16 +102,19 @@ export function EarningsChart({ staffId, dateRange }: EarningsChartProps) {
       style: "currency",
       currency: "USD",
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value)
+      maximumFractionDigits: 0}).format(value)
   }
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({ active, payload, label }: { 
+    active?: boolean; 
+    payload?: Array<{ color: string; name: string; value: number }>; 
+    label?: string 
+  }) => {
     if (active && payload && payload.length) {
       return (
         <div className="rounded-lg border bg-background p-3 shadow-sm">
           <p className="font-medium">{label}</p>
           <div className="mt-2 space-y-1">
-            {payload.map((entry: any, index: number) => (
+            {payload.map((entry, index: number) => (
               <div key={index} className="flex items-center justify-between gap-4 text-sm">
                 <span style={{ color: entry.color }}>{entry.name}:</span>
                 <span className="font-medium">{formatCurrency(entry.value)}</span>
@@ -163,7 +154,7 @@ export function EarningsChart({ staffId, dateRange }: EarningsChartProps) {
               Visualize your earnings over time
             </CardDescription>
           </div>
-          <Tabs value={viewType} onValueChange={(v: any) => setViewType(v)}>
+          <Tabs value={viewType} onValueChange={(v) => setViewType(v as "daily" | "weekly" | "monthly")}>
             <TabsList>
               <TabsTrigger value="daily">Daily</TabsTrigger>
               <TabsTrigger value="weekly">Weekly</TabsTrigger>

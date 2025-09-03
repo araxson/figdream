@@ -32,7 +32,6 @@ export function CategoriesList({ salonId, onEdit, onAdd }: CategoriesListProps) 
       if (categoriesError) throw categoriesError
       setCategories(categoriesData || [])
     } catch (error) {
-      console.error("Error loading categories:", error)
       toast.error("Failed to load categories")
     } finally {
       setLoading(false)
@@ -48,7 +47,6 @@ export function CategoriesList({ salonId, onEdit, onAdd }: CategoriesListProps) 
       setCategories(prev => prev.filter(cat => cat.id !== id))
       toast.success("Category deleted successfully")
     } catch (error) {
-      console.error("Error deleting category:", error)
       toast.error("Failed to delete category")
     } finally {
       setDeleteId(null)
@@ -71,7 +69,6 @@ export function CategoriesList({ salonId, onEdit, onAdd }: CategoriesListProps) 
       )
       toast.success(`Category ${newStatus ? "activated" : "deactivated"}`)
     } catch (error) {
-      console.error("Error updating category status:", error)
       toast.error("Failed to update category status")
     }
   }

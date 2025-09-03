@@ -3,9 +3,9 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button, Input, Label, Textarea, RadioGroup, RadioGroupItem, Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui"
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Form, FormControl, FormField, FormItem, FormLabel, FormMessage, Input, Label, RadioGroup, RadioGroupItem, Textarea } from "@/components/ui"
 import { Gift, Mail, User, DollarSign, Calendar, Loader2 } from "lucide-react"
-import { createClient } from "@/lib/supabase/client"
+import { createClient } from "@/lib/database/supabase/client"
 import { toast } from "sonner"
 const giftCardSchema = z.object({
   amount: z.string().refine((val) => {
@@ -46,11 +46,9 @@ export function GiftCardPurchaseForm() {
       }
       // Process gift card purchase
       // This would integrate with payment processing and create the gift card
-      console.log("Processing gift card purchase:", data)
       toast.success("Gift card purchased successfully!")
       form.reset()
     } catch (error) {
-      console.error("Error purchasing gift card:", error)
       toast.error("Failed to purchase gift card")
     } finally {
       setLoading(false)

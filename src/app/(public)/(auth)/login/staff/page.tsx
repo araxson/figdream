@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Button, Separator } from '@/components/ui'
+import { Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Separator } from "@/components/ui"
 import { LoginForm } from '@/components/auth/login-form'
 import { UserCheck, Calendar, Clock, TrendingUp } from 'lucide-react'
 export default function StaffLoginPage() {
@@ -26,7 +26,7 @@ export default function StaffLoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <LoginForm role="staff" redirectTo="/staff" />
+          <LoginForm role="staff" redirectTo="/staff-member" />
           <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">

@@ -75,6 +75,17 @@ export default function OAuthCallbackPage() {
     handleOAuthCallback()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [code, error])
+  const redirectToDashboard = useCallback(() => {
+    const role = userInfo.role || 'customer'
+    const dashboardRoutes: Record<string, string> = {
+      super_admin: '/admin',
+      salon_owner: '/salon',
+      staff: '/staff',
+      customer: '/dashboard'
+    }
+    router.push(dashboardRoutes[role] || '/dashboard')
+  }, [router, userInfo.role])
+
   useEffect(() => {
     // Countdown timer for redirect
     if (authState === 'success' && countdown > 0) {
@@ -86,16 +97,6 @@ export default function OAuthCallbackPage() {
       redirectToDashboard()
     }
   }, [authState, countdown, redirectToDashboard])
-  const redirectToDashboard = useCallback(() => {
-    const role = userInfo.role || 'customer'
-    const dashboardRoutes: Record<string, string> = {
-      super_admin: '/admin',
-      salon_owner: '/salon',
-      staff: '/staff',
-      customer: '/dashboard'
-    }
-    router.push(dashboardRoutes[role] || '/dashboard')
-  }, [router, userInfo.role])
   const handleCompleteProfile = () => {
     // Redirect to profile completion with OAuth data
     router.push(`/onboarding?provider=${userInfo.provider}&email=${userInfo.email}`)

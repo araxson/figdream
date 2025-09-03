@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui"
 import { Heart, Loader2 } from "lucide-react"
-import { createClient } from "@/lib/supabase/client"
+import { createClient } from "@/lib/database/supabase/client"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 type FavoriteType = 'salon' | 'staff' | 'service'
@@ -45,7 +45,6 @@ export function AddFavoriteButton({
       const exists = favorites.some((f: { itemId: string; type: string }) => f.itemId === itemId && f.type === itemType)
       setIsFavorite(exists)
     } catch (error) {
-      console.error("Error checking favorite status:", error)
     } finally {
       setChecking(false)
     }
@@ -83,7 +82,6 @@ export function AddFavoriteButton({
         toast.success(`${itemName} added to favorites`)
       }
     } catch (error) {
-      console.error("Error toggling favorite:", error)
       toast.error("Failed to update favorites")
     } finally {
       setLoading(false)

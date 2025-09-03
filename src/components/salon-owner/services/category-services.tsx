@@ -45,7 +45,6 @@ export function CategoryServices({ category, salonId }: CategoryServicesProps) {
       setServices(categoryServices || [])
       setAvailableServices(unassignedServices || [])
     } catch (error) {
-      console.error("Error loading services:", error)
       toast.error("Failed to load services")
     } finally {
       setLoading(false)
@@ -68,7 +67,6 @@ export function CategoryServices({ category, salonId }: CategoryServicesProps) {
       setAddDialogOpen(false)
       await loadServices()
     } catch (error) {
-      console.error("Error adding services:", error)
       toast.error("Failed to add services to category")
     } finally {
       setUpdating(false)
@@ -84,7 +82,6 @@ export function CategoryServices({ category, salonId }: CategoryServicesProps) {
       toast.success("Service removed from category")
       await loadServices()
     } catch (error) {
-      console.error("Error removing service:", error)
       toast.error("Failed to remove service from category")
     }
   }

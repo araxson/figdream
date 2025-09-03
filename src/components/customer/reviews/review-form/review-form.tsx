@@ -2,7 +2,6 @@
 import * as React from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { Database } from '@/types/database.types'
 import {
   Button,
   Card,
@@ -26,12 +25,8 @@ import {
   Star, 
   CheckCircle, 
   AlertCircle, 
-  Loader2,
-  MessageSquare,
-  Sparkles,
-  Award
+  Loader2
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
 import { createReviewSchema, type CreateReviewInput } from '@/lib/validations/review-schema'
 import { createReview } from '@/lib/data-access/reviews/reviews'
 import { ReviewFormProps, PhotoUpload } from './review-form.types'

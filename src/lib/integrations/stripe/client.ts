@@ -2,7 +2,7 @@
  * Stripe client configuration for FigDream
  * Browser-side Stripe initialization and utilities
  */
-import { loadStripe, Stripe, StripeElementsOptions, StripeError } from '@stripe/stripe-js'
+import { loadStripe, Stripe, StripeElementsOptions } from '@stripe/stripe-js'
 // Singleton pattern for Stripe instance
 let stripePromise: Promise<Stripe | null> | null = null
 /**
@@ -176,13 +176,13 @@ export const isWalletPaymentMethod = (type: string): boolean => {
 /**
  * Error handling for Stripe errors
  */
-export class StripeError extends Error {
+export class CustomStripeError extends Error {
   public code?: string
   public type?: string
   public param?: string
   constructor(message: string, code?: string, type?: string, param?: string) {
     super(message)
-    this.name = 'StripeError'
+    this.name = 'CustomStripeError'
     this.code = code
     this.type = type
     this.param = param
@@ -191,27 +191,28 @@ export class StripeError extends Error {
 /**
  * Format Stripe error for display
  */
-export const formatStripeError = (error: StripeError | unknown): string => {
+export const formatStripeError = (error: StripeJSError | CustomStripeError | unknown): string => {
   if (!error) return 'An unknown error occurred'
-  if (error.type === 'card_error' || error.type === 'validation_error') {
-    return error.message || 'Invalid card information'
+  const stripeError = error as StripeJSError | CustomStripeError
+  if (stripeError.type === 'card_error' || stripeError.type === 'validation_error') {
+    return stripeError.message || 'Invalid card information'
   }
-  if (error.type === 'rate_limit_error') {
+  if ('type' in stripeError && stripeError.type === 'rate_limit_error') {
     return 'Too many requests. Please try again later.'
   }
-  if (error.type === 'invalid_request_error') {
+  if (stripeError.type === 'invalid_request_error') {
     return 'Invalid request. Please check your information and try again.'
   }
-  if (error.type === 'api_connection_error') {
+  if (stripeError.type === 'api_connection_error') {
     return 'Network error. Please check your connection and try again.'
   }
-  if (error.type === 'api_error') {
+  if (stripeError.type === 'api_error') {
     return 'Payment service temporarily unavailable. Please try again later.'
   }
-  if (error.type === 'authentication_error') {
+  if (stripeError.type === 'authentication_error') {
     return 'Authentication error. Please refresh the page and try again.'
   }
-  return error.message || 'Payment failed. Please try again.'
+  return (error as Error).message || 'Payment failed. Please try again.'
 }
 /**
  * Check if browser supports Stripe features

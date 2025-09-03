@@ -5,7 +5,8 @@ import { Button, Input, Label, Progress } from '@/components/ui'
 import { toast } from 'sonner'
 import { Loader2, Lock, Eye, EyeOff, CheckCircle, XCircle } from 'lucide-react'
 import { updatePasswordWithOtpAction } from '@/lib/actions/auth'
-import { useCSRFToken, CSRFTokenField } from '@/lib/hooks/use-csrf-token'
+import { useCSRFToken } from '@/lib/hooks/use-csrf-token'
+import { CSRFTokenField } from '@/components/shared/forms/csrf-token-field'
 interface PasswordStrength {
   score: number
   label: string

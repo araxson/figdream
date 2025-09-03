@@ -9,9 +9,7 @@ import {
   CardTitle,
   Separator,
 } from '@/components/ui'
-import type { SelectedService } from './service-selector'
-import type { StaffMember } from './staff-selector'
-import type { TimeSlot } from './time-slot-picker'
+import type { SelectedService, StaffMember, TimeSlot } from './booking-types'
 import type { BookingTotals } from './booking-form-types'
 
 interface BookingSummarySidebarProps {

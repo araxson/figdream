@@ -1,8 +1,8 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui"
 import { LineChart, Line, BarChart, Bar, RadialBarChart, RadialBar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
-import { getStaffPerformanceMetrics, getStaffRevenueBreakdown, getStaffServiceStats } from '@/lib/data-access/staff'
+import { fetchStaffPerformanceData } from '@/app/_actions/staff'
 import { DollarSign, Clock, Users, Star, Award, Loader2 } from 'lucide-react'
 interface PerformanceChartProps {
   staffId: string
@@ -23,11 +23,7 @@ export function PerformanceChart({ staffId }: PerformanceChartProps) {
   useEffect(() => {
     async function loadPerformanceData() {
       try {
-        const [metrics, revenue, services] = await Promise.all([
-          getStaffPerformanceMetrics(staffId),
-          getStaffRevenueBreakdown(staffId),
-          getStaffServiceStats(staffId)
-        ])
+        const { metrics, revenue, services } = await fetchStaffPerformanceData(staffId)
         // Transform data for charts
         const dailyData = metrics?.daily?.map(d => ({
           date: new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),

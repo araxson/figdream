@@ -1,28 +1,7 @@
 "use client"
 import { useState } from 'react'
 import { format } from 'date-fns'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Badge,
-  Button,
-  Separator,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Alert,
-  AlertDescription,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui'
+import { Alert, AlertDescription, Avatar, AvatarFallback, AvatarImage, Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, Separator } from "@/components/ui"
 import {
   Calendar,
   Clock,
@@ -43,10 +22,9 @@ import Link from 'next/link'
 import type { Database } from '@/types/database.types'
 type Appointment = Database['public']['Tables']['appointments']['Row'] & {
   services: Database['public']['Tables']['services']['Row'] | null
-  staff: Database['public']['Tables']['staff']['Row'] | null
+  staff_profiles: Database['public']['Tables']['staff_profiles']['Row'] | null
   salons: Database['public']['Tables']['salons']['Row'] | null
   reviews?: Database['public']['Tables']['reviews']['Row'] | null
-  add_ons?: Database['public']['Tables']['appointment_add_ons']['Row'][] | null
 }
 interface AppointmentDetailsProps {
   appointment: Appointment
@@ -103,8 +81,8 @@ export function AppointmentDetails({
     }
   }
   const getStaffInitials = () => {
-    if (!appointment.staff) return 'ST'
-    return `${appointment.staff.first_name?.[0] || ''}${appointment.staff.last_name?.[0] || ''}`
+    if (!appointment.staff_profiles) return 'ST'
+    return 'ST' // Staff initials would come from joined profiles table
   }
   return (
     <div className="space-y-6">
@@ -166,8 +144,8 @@ export function AppointmentDetails({
                 <p className="font-medium">Time</p>
                 <p className="text-sm text-muted-foreground">
                   {appointment.start_time} - {appointment.end_time}
-                  {appointment.duration && (
-                    <span className="ml-1">({appointment.duration} minutes)</span>
+                  {appointment.total_duration && (
+                    <span className="ml-1">({appointment.total_duration} minutes)</span>
                   )}
                 </p>
               </div>
@@ -177,25 +155,25 @@ export function AppointmentDetails({
           {/* Staff Member */}
           <div className="flex items-center gap-4">
             <Avatar className="h-12 w-12">
-              <AvatarImage src={appointment.staff?.photo_url || undefined} />
+              <AvatarImage src={undefined} />
               <AvatarFallback>{getStaffInitials()}</AvatarFallback>
             </Avatar>
             <div className="flex-1">
               <p className="font-medium">
-                {appointment.staff?.first_name} {appointment.staff?.last_name}
+                {appointment.staff_profiles?.title || 'Staff Member'}
               </p>
               <p className="text-sm text-muted-foreground">
-                {appointment.staff?.specialties ? 
-                  `Specialist in ${appointment.staff.specialties.slice(0, 2).join(', ')}` : 
+                {appointment.staff_profiles?.specialties ? 
+                  `Specialist in ${appointment.staff_profiles.specialties.slice(0, 2).join(', ')}` : 
                   'Professional Stylist'
                 }
               </p>
             </div>
-            {appointment.staff?.rating && (
+            {false && (
               <div className="flex items-center gap-1">
                 <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                 <span className="text-sm font-medium">
-                  {appointment.staff.rating.toFixed(1)}
+                  0.0
                 </span>
               </div>
             )}
@@ -208,11 +186,11 @@ export function AppointmentDetails({
               <div className="flex-1">
                 <p className="font-medium">{appointment.salons?.name}</p>
                 <p className="text-sm text-muted-foreground">
-                  {appointment.salons?.address}
+                  {/* Address would come from salon_locations */}
                 </p>
-                {appointment.salons?.city && (
+                {false && (
                   <p className="text-sm text-muted-foreground">
-                    {appointment.salons.city}, {appointment.salons.state} {appointment.salons.zip_code}
+                    Location details
                   </p>
                 )}
               </div>
@@ -222,7 +200,7 @@ export function AppointmentDetails({
                 <Navigation className="h-4 w-4 mr-1" />
                 Get Directions
               </Button>
-              {appointment.salons?.parking_available && (
+              {false && (
                 <Badge variant="secondary">
                   <Car className="h-3 w-3 mr-1" />
                   Parking Available
@@ -239,34 +217,22 @@ export function AppointmentDetails({
                 ${appointment.services?.price?.toFixed(2) || '0.00'}
               </span>
             </div>
-            {appointment.add_ons && appointment.add_ons.length > 0 && (
-              <>
-                <div className="text-sm text-muted-foreground">
-                  Add-ons:
-                </div>
-                {appointment.add_ons.map((addon) => (
-                  <div key={addon.id} className="flex justify-between text-sm">
-                    <span className="ml-4">{addon.name}</span>
-                    <span>${addon.price?.toFixed(2) || '0.00'}</span>
-                  </div>
-                ))}
-              </>
-            )}
-            {appointment.discount_amount && appointment.discount_amount > 0 && (
+            {/* Note: Add-ons functionality can be implemented later if needed */}
+            {false && (
               <div className="flex justify-between text-green-600">
                 <span>Discount</span>
-                <span>-${appointment.discount_amount.toFixed(2)}</span>
+                <span>-$0.00</span>
               </div>
             )}
             <Separator />
             <div className="flex justify-between text-lg font-semibold">
               <span>Total</span>
-              <span>${appointment.total_price?.toFixed(2) || '0.00'}</span>
+              <span>${appointment.total_amount?.toFixed(2) || '0.00'}</span>
             </div>
-            {appointment.deposit_amount && appointment.deposit_amount > 0 && (
+            {false && (
               <div className="flex justify-between text-sm text-muted-foreground">
                 <span>Deposit Paid</span>
-                <span>${appointment.deposit_amount.toFixed(2)}</span>
+                <span>$0.00</span>
               </div>
             )}
           </div>

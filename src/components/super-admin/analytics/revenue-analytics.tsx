@@ -1,13 +1,14 @@
 "use client"
 import { useState, useEffect } from "react"
 import {
-  LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
+  AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, Line,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts'
 import { 
-  DollarSign, TrendingUp, TrendingDown, Users, CreditCard, 
+  DollarSign, Users, CreditCard, 
   Target, AlertTriangle, ArrowUpRight, ArrowDownRight, Loader2
 } from "lucide-react"
+import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, Progress, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui"
 interface RevenueMetrics {
   mrr: number // Monthly Recurring Revenue
   arr: number // Annual Recurring Revenue
@@ -106,7 +107,6 @@ export function RevenueAnalytics() {
         { month: "Dec", projected: 215000, optimistic: 235000, pessimistic: 198000 }
       ])
     } catch (error) {
-      console.error("Error fetching revenue data:", error)
     } finally {
       setLoading(false)
     }

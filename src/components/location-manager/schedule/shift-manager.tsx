@@ -1,7 +1,8 @@
 "use client"
 import { useState } from "react"
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui"
-import { Calendar, Clock, Users, Plus } from "lucide-react"
+import { Button } from "@/components/ui/form/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/data-display/card"
+import { Clock, Users, Plus, Calendar } from "lucide-react"
 interface ShiftManagerProps {
   locationId: string
   onCreateShift?: () => void

@@ -26,7 +26,6 @@ export function NotificationsList({ userId }: NotificationsListProps) {
         setNotifications(data)
       }
     } catch (error) {
-      console.error("Failed to fetch notifications:", error)
     } finally {
       setLoading(false)
     }
@@ -41,7 +40,6 @@ export function NotificationsList({ userId }: NotificationsListProps) {
       await fetchNotifications()
       setSelectedNotifications(new Set())
     } catch (error) {
-      console.error("Failed to mark notifications as read:", error)
     }
   }
   const deleteNotifications = async (notificationIds: string[]) => {
@@ -54,7 +52,6 @@ export function NotificationsList({ userId }: NotificationsListProps) {
       await fetchNotifications()
       setSelectedNotifications(new Set())
     } catch (error) {
-      console.error("Failed to delete notifications:", error)
     }
   }
   const toggleSelection = (id: string) => {

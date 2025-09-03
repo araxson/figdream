@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
-import { Package, DollarSign, TrendingUp, Award } from "lucide-react"
+import { Package, Award } from "lucide-react"
 import { 
   Card,
   CardContent,
@@ -20,7 +20,7 @@ import {
 
 import { toast } from "sonner"
 import { createClient } from "@/lib/database/supabase/client"
-import type { Database } from "@/types/database.types"
+// import type { Database } from "@/types/database.types"
 interface ServiceEarning {
   service_id: string
   service_name: string
@@ -42,6 +42,7 @@ export function EarningsBreakdown({ staffId, dateRange }: EarningsBreakdownProps
   const supabase = createClient()
   useEffect(() => {
     loadBreakdown()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [staffId, dateRange])
   const loadBreakdown = async () => {
     try {
@@ -68,7 +69,7 @@ export function EarningsBreakdown({ staffId, dateRange }: EarningsBreakdownProps
       // Process and group earnings by service
       const serviceMap = new Map<string, ServiceEarning>()
       let total = 0
-      data?.forEach((earning: any) => {
+      data?.forEach((earning: Record<string, unknown>) => {
         const serviceId = earning.appointments?.service_id
         const serviceName = earning.appointments?.services?.name
         const categoryName = earning.appointments?.services?.service_categories?.name
@@ -104,8 +105,7 @@ export function EarningsBreakdown({ staffId, dateRange }: EarningsBreakdownProps
       serviceEarningsArray.sort((a, b) => b.total_earnings - a.total_earnings)
       setServiceEarnings(serviceEarningsArray)
       setTotalEarnings(total)
-    } catch (error) {
-      console.error("Error loading earnings breakdown:", error)
+    } catch (_error) {
       toast.error("Failed to load earnings breakdown")
     } finally {
       setLoading(false)

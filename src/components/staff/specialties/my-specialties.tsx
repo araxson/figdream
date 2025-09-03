@@ -1,12 +1,12 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Award, Sparkles } from "lucide-react"
 
 import { toast } from "sonner"
 import { createClient } from "@/lib/database/supabase/client"
 import type { Database } from "@/types/database.types"
 import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, Skeleton } from "@/components/ui"
-type StaffSpecialty = Database["public"]["Tables"]["staff_specialties"]["Row"]
+type _StaffSpecialty = Database["public"]["Tables"]["staff_specialties"]["Row"]
 interface MySpecialtiesProps {
   staffId: string
 }
@@ -14,10 +14,7 @@ export function MySpecialties({ staffId }: MySpecialtiesProps) {
   const [specialties, setSpecialties] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
-  useEffect(() => {
-    loadSpecialties()
-  }, [staffId])
-  const loadSpecialties = async () => {
+  const loadSpecialties = useCallback(async () => {
     try {
       setLoading(true)
       const { data, error } = await supabase
@@ -28,12 +25,15 @@ export function MySpecialties({ staffId }: MySpecialtiesProps) {
       if (error) throw error
       setSpecialties(data?.map(s => s.specialty) || [])
     } catch (error) {
-      console.error("Error loading specialties:", error)
       toast.error("Failed to load your specialties")
     } finally {
       setLoading(false)
     }
-  }
+  }, [staffId, supabase])
+
+  useEffect(() => {
+    loadSpecialties()
+  }, [loadSpecialties])
   if (loading) {
     return (
       <Card>

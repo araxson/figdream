@@ -28,7 +28,7 @@ export default function SalonRegistrationPage() {
         <CardContent>
           <RegisterForm 
             role="salon_owner" 
-            redirectTo="/salon"
+            redirectTo="/salon-owner"
             includePhone={true}
             includeBusinessInfo={true}
           />

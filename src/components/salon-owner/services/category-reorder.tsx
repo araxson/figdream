@@ -124,7 +124,6 @@ export function CategoryReorder({ salonId }: CategoryReorderProps) {
       setCategories(categoriesWithCount)
       setOriginalOrder(categoriesWithCount.map(c => c.id))
     } catch (error) {
-      console.error("Error loading categories:", error)
       toast.error("Failed to load categories")
     } finally {
       setLoading(false)
@@ -167,7 +166,6 @@ export function CategoryReorder({ salonId }: CategoryReorderProps) {
       setHasChanges(false)
       toast.success("Category order saved successfully")
     } catch (error) {
-      console.error("Error saving order:", error)
       toast.error("Failed to save category order")
     } finally {
       setSaving(false)

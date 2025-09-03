@@ -2,18 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  Button,
-  Alert,
-  AlertDescription,
-  Separator,
-} from '@/components/ui'
+import { Alert, AlertDescription, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Separator } from "@/components/ui"
 import { toast } from 'sonner'
 import { 
   LogOut, CheckCircle, Home, ArrowLeft, 

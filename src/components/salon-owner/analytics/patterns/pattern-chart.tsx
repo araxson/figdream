@@ -1,4 +1,5 @@
 'use client'
+
 import { Bar, BarChart, Line, LineChart, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 interface PatternChartProps {
   data: { label: string; value: number }[]
@@ -7,8 +8,7 @@ interface PatternChartProps {
 export function PatternChart({ data, type }: PatternChartProps) {
   const chartData = data.map(item => ({
     name: item.label,
-    value: item.value,
-  }))
+    value: item.value}))
   return (
     <div className="h-[300px] w-full">
       <ResponsiveContainer width="100%" height="100%">

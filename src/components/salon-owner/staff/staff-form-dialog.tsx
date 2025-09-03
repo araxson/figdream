@@ -1,4 +1,20 @@
 'use client'
-// This component has been split into smaller modules
-export { StaffFormDialog } from './staff-form-dialog/StaffFormDialog'
-export type { StaffFormDialogProps } from './staff-form-dialog/StaffFormDialog.types'
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/data-display/card'
+
+export interface StaffFormDialogProps {
+  className?: string
+}
+
+export function StaffFormDialog({ className }: StaffFormDialogProps) {
+  return (
+    <Card className={className}>
+      <CardHeader>
+        <CardTitle>StaffFormDialog</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p>Component implementation pending</p>
+      </CardContent>
+    </Card>
+  )
+}

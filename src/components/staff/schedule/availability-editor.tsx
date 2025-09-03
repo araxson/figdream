@@ -2,7 +2,7 @@
 import { useState } from "react"
 
 import { useToast } from "@/hooks/use-toast"
-import { Clock, Calendar, Save } from "lucide-react"
+import { Clock, Save } from "lucide-react"
 import type { Database } from "@/types/database.types"
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Label, Switch } from "@/components/ui"
 type Schedule = Database["public"]["Tables"]["staff_schedules"]["Row"]
@@ -155,7 +155,7 @@ export function AvailabilityEditor({
       } else {
         throw new Error("Failed to save availability")
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: "Error",
         description: "Failed to save availability. Please try again.",

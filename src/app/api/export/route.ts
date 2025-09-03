@@ -28,7 +28,7 @@ interface ExportRequest {
     locationId?: string
     staffId?: string
     customerId?: string
-    status?: string
+    status?: Database['public']['Enums']['appointment_status']
   }
   fields?: string[]
 }
@@ -100,10 +100,11 @@ export async function POST(request: NextRequest) {
     // Get request body
     const body: ExportRequest = JSON.parse(formData.get('data') as string)
     // Get authenticated user
-    const user = await getUser()
-    if (!user) {
+    const authResult = await getUser()
+    if (authResult.error || !authResult.user) {
       return apiError('Unauthorized', 401)
     }
+    const user = authResult.user
     // Check rate limiting
     const { allowed, retryAfter } = await checkRateLimit(
       user.id,
@@ -113,10 +114,18 @@ export async function POST(request: NextRequest) {
     if (!allowed) {
       return apiError('Rate limit exceeded', 429, 'RATE_LIMIT', { retryAfter })
     }
+    // Get user role from user_roles table
+    const supabase = await createClient()
+    const { data: roleData } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .single()
+    const userRole = roleData?.role || 'customer'
     // Check permissions
     const hasPermission = await checkExportPermissions(
       user.id,
-      user.role,
+      userRole,
       body.type
     )
     if (!hasPermission) {
@@ -128,12 +137,8 @@ export async function POST(request: NextRequest) {
       'POST',
       user.id,
       Date.now() - startTime,
-      200,
-      request.headers.get('user-agent') || undefined,
-      request.headers.get('x-forwarded-for')?.split(',')[0]
+      200
     )
-    // Initialize Supabase client
-    const supabase = await createClient()
     // Build query based on export type
     let query
     let data: Record<string, unknown>[] = []
@@ -169,16 +174,16 @@ export async function POST(request: NextRequest) {
           query = query.eq('status', body.filters.status)
         }
         // Apply role-based filtering
-        if (user.role === 'staff') {
+        if (userRole === 'staff') {
           query = query.eq('staff_id', user.id)
-        } else if (user.role === 'customer') {
+        } else if (userRole === 'customer') {
           query = query.eq('customer_id', user.id)
         }
         const appointmentsResult = await query
         data = appointmentsResult.data || []
         break
       case 'customers':
-        if (user.role === 'customer') {
+        if (userRole === 'customer') {
           // Customers can only export their own data
           query = supabase
             .from('profiles')
@@ -284,15 +289,15 @@ export async function POST(request: NextRequest) {
       'api',
       'high',
       {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        stack: error instanceof Error ? error.stack : undefined
+        error: _error instanceof Error ? _error.message : 'Unknown error',
+        stack: _error instanceof Error ? _error.stack : undefined
       }
     )
     return apiError(
       'Failed to export data',
       500,
       'EXPORT_ERROR',
-      error instanceof Error ? error.message : 'Unknown error'
+      _error instanceof Error ? _error.message : 'Unknown error'
     )
   }
 }

@@ -3,7 +3,7 @@
  * Implements various performance optimization strategies
  */
 import dynamic from 'next/dynamic'
-import { ComponentType } from 'react'
+import React, { ComponentType } from 'react'
 /**
  * Image optimization configuration
  */
@@ -23,7 +23,7 @@ export function lazyLoadComponent<T extends ComponentType<unknown>>(
   loadingComponent?: ComponentType
 ) {
   return dynamic(importFunc, {
-    loading: loadingComponent,
+    loading: loadingComponent ? () => React.createElement(loadingComponent) : undefined,
     ssr: true,
   })
 }
@@ -48,11 +48,10 @@ export function throttle<T extends (...args: never[]) => unknown>(
   limit: number
 ): (...args: Parameters<T>) => void {
   let inThrottle: boolean
-  let _lastResult: ReturnType<T>
   return function (this: unknown, ...args: Parameters<T>): void {
     if (!inThrottle) {
       inThrottle = true
-      _lastResult = func.apply(this, args)
+      func.apply(this, args)
       setTimeout(() => (inThrottle = false), limit)
     }
   }
@@ -64,17 +63,17 @@ export function memoize<T extends (...args: never[]) => unknown>(
   func: T,
   resolver?: (...args: Parameters<T>) => string
 ): T {
-  const cache = new Map<string, ReturnType<T>>()
-  return ((...args: Parameters<T>): ReturnType<T> => {
+  const cache = new Map<string, unknown>()
+  return ((...args: Parameters<T>) => {
     const key = resolver ? resolver(...args) : JSON.stringify(args)
     if (cache.has(key)) {
-      return cache.get(key)!
+      return cache.get(key) as ReturnType<T>
     }
-    const result = func(...args)
+    const result = func(...args) as ReturnType<T>
     cache.set(key, result)
     // Limit cache size to prevent memory leaks
     if (cache.size > 100) {
-      const firstKey = cache.keys().next().value
+      const firstKey = cache.keys().next().value as string
       cache.delete(firstKey)
     }
     return result

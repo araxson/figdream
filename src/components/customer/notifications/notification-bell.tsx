@@ -2,22 +2,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Bell, Check, X, Calendar, CreditCard, Star, Gift, AlertCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import {
-  Button,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-  Badge,
-  ScrollArea,
-  Skeleton,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui'
+import { Badge, Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, ScrollArea, Skeleton, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui"
 import { formatDistanceToNow } from 'date-fns'
 interface Notification {
   id: string

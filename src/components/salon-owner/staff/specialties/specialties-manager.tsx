@@ -20,6 +20,7 @@ export function SpecialtiesManager({ salonId }: SpecialtiesManagerProps) {
   const supabase = createClient()
   useEffect(() => {
     loadSpecialties()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [salonId])
   const loadSpecialties = async () => {
     try {
@@ -43,9 +44,8 @@ export function SpecialtiesManager({ salonId }: SpecialtiesManagerProps) {
         new Set(specialtiesData?.map(s => s.specialty) || [])
       ).sort()
       setSpecialties(uniqueSpecialties)
-      setStaffSpecialties(specialtiesData as any || [])
+      setStaffSpecialties((specialtiesData as StaffSpecialty[]) || [])
     } catch (error) {
-      console.error("Error loading specialties:", error)
       toast.error("Failed to load specialties")
     } finally {
       setLoading(false)
@@ -83,7 +83,6 @@ export function SpecialtiesManager({ salonId }: SpecialtiesManagerProps) {
       setStaffSpecialties(staffSpecialties.filter(s => s.specialty !== specialty))
       toast.success("Specialty removed successfully")
     } catch (error) {
-      console.error("Error removing specialty:", error)
       toast.error("Failed to remove specialty")
     }
   }

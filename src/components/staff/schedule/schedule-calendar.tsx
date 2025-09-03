@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { format, startOfWeek, endOfWeek, eachDayOfInterval, isSameDay, addDays, addWeeks, subWeeks } from "date-fns"
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Clock, Users, MapPin, AlertCircle } from "lucide-react"
 import type { Database } from "@/types/database.types"
-import { Badge, Button, Calendar, Card, CardContent, CardHeader, CardTitle, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, ScrollArea, Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui"
+import { Badge, Button, Calendar, Card, CardContent, CardHeader, CardTitle, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, ScrollArea, Tabs, TabsList, TabsTrigger } from "@/components/ui"
 type Schedule = Database["public"]["Tables"]["staff_schedules"]["Row"]
 type Appointment = Database["public"]["Tables"]["appointments"]["Row"]
 type TimeOff = Database["public"]["Tables"]["time_off_requests"]["Row"]
@@ -25,41 +25,40 @@ interface TimeSlot {
   serviceName?: string
   status?: string
 }
-export function ScheduleCalendar({ staffId, locationId, canEdit = false }: ScheduleCalendarProps) {
+export function ScheduleCalendar({ staffId, canEdit = false }: ScheduleCalendarProps) {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [currentWeek, setCurrentWeek] = useState<Date>(new Date())
   const [view, setView] = useState<"day" | "week" | "month">("week")
-  const [schedules, setSchedules] = useState<Schedule[]>([])
+  const [_schedules, setSchedules] = useState<Schedule[]>([])
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [timeOffRequests, setTimeOffRequests] = useState<TimeOff[]>([])
-  const [loading, setLoading] = useState(true)
+  const [_loading, setLoading] = useState(true)
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null)
   const [draggedSlot, setDraggedSlot] = useState<TimeSlot | null>(null)
   useEffect(() => {
+    const fetchScheduleData = async () => {
+      setLoading(true)
+      try {
+        const weekStart = startOfWeek(currentWeek)
+        const weekEnd = endOfWeek(currentWeek)
+        // Fetch schedules, appointments, and time-off requests
+        const [schedulesRes, appointmentsRes, timeOffRes] = await Promise.all([
+          fetch(`/api/staff/schedules?staffId=${staffId}&start=${weekStart.toISOString()}&end=${weekEnd.toISOString()}`),
+          fetch(`/api/appointments?staffId=${staffId}&start=${weekStart.toISOString()}&end=${weekEnd.toISOString()}`),
+          fetch(`/api/time-off?staffId=${staffId}&start=${weekStart.toISOString()}&end=${weekEnd.toISOString()}`),
+        ])
+        if (schedulesRes.ok && appointmentsRes.ok && timeOffRes.ok) {
+          setSchedules(await schedulesRes.json())
+          setAppointments(await appointmentsRes.json())
+          setTimeOffRequests(await timeOffRes.json())
+        }
+      } catch (error) {
+      } finally {
+        setLoading(false)
+      }
+    }
     fetchScheduleData()
   }, [staffId, currentWeek, view])
-  const fetchScheduleData = async () => {
-    setLoading(true)
-    try {
-      const weekStart = startOfWeek(currentWeek)
-      const weekEnd = endOfWeek(currentWeek)
-      // Fetch schedules, appointments, and time-off requests
-      const [schedulesRes, appointmentsRes, timeOffRes] = await Promise.all([
-        fetch(`/api/staff/schedules?staffId=${staffId}&start=${weekStart.toISOString()}&end=${weekEnd.toISOString()}`),
-        fetch(`/api/appointments?staffId=${staffId}&start=${weekStart.toISOString()}&end=${weekEnd.toISOString()}`),
-        fetch(`/api/time-off?staffId=${staffId}&start=${weekStart.toISOString()}&end=${weekEnd.toISOString()}`),
-      ])
-      if (schedulesRes.ok && appointmentsRes.ok && timeOffRes.ok) {
-        setSchedules(await schedulesRes.json())
-        setAppointments(await appointmentsRes.json())
-        setTimeOffRequests(await timeOffRes.json())
-      }
-    } catch (error) {
-      console.error("Failed to fetch schedule data:", error)
-    } finally {
-      setLoading(false)
-    }
-  }
   const handlePreviousWeek = () => {
     setCurrentWeek(subWeeks(currentWeek, 1))
   }
@@ -93,7 +92,6 @@ export function ScheduleCalendar({ staffId, locationId, canEdit = false }: Sched
         await fetchScheduleData()
       }
     } catch (error) {
-      console.error("Failed to reschedule:", error)
     } finally {
       setDraggedSlot(null)
     }

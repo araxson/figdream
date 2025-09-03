@@ -146,11 +146,11 @@ export async function sendAppointmentConfirmation(
     user_id: customerId,
     title: 'Appointment Confirmed!',
     message: `Your appointment on ${appointmentDetails.date} at ${appointmentDetails.time} has been confirmed.`,
-    type: 'booking',
+    type: 'appointment_confirmation',
     action_url: `/customer/appointments/${appointmentId}`
   })
   // Send email if enabled
-  if (prefs?.email_notifications && prefs?.booking_confirmations) {
+  if (prefs?.email_appointments) {
     const emailHtml = `
       <h2>Appointment Confirmation</h2>
       <p>Hi ${customer.first_name},</p>
@@ -174,7 +174,7 @@ export async function sendAppointmentConfirmation(
     })
   }
   // Send SMS if enabled
-  if (prefs?.sms_notifications && prefs?.booking_confirmations && customer.phone) {
+  if (prefs?.sms_appointments && customer.phone) {
     await sendSMSNotification({
       to: customer.phone,
       message: `FigDream: Your appointment on ${appointmentDetails.date} at ${appointmentDetails.time} is confirmed. Reply STOP to unsubscribe.`
@@ -195,9 +195,9 @@ export async function sendAppointmentReminder(
     .from('appointments')
     .select(`
       *,
-      location:locations(name, address, phone),
-      staff:staff(profiles(first_name, last_name)),
-      appointment_services(services(name))
+      salon_locations:location_id(name, address_line_1, phone),
+      staff_profiles:staff_id(user_id),
+      services(name)
     `)
     .eq('id', appointmentId)
     .single()
@@ -217,7 +217,7 @@ export async function sendAppointmentReminder(
     user_id: customerId,
     title: 'Appointment Reminder',
     message: `Don't forget your appointment ${reminderMessage} at ${appointment.appointment_date}`,
-    type: 'booking',
+    type: 'appointment_confirmation',
     action_url: `/customer/appointments/${appointmentId}`
   })
   // Check notification settings and send email/SMS

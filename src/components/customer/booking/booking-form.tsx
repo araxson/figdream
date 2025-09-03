@@ -12,9 +12,7 @@ import {
   ChevronLeft,
   Loader2,
 } from 'lucide-react'
-import type { SelectedService } from './service-selector'
-import type { StaffMember } from './staff-selector'
-import type { TimeSlot } from './time-slot-picker'
+import type { SelectedService, StaffMember, TimeSlot } from './booking-types'
 import {
   bookingFormSchema,
   type BookingFormData,

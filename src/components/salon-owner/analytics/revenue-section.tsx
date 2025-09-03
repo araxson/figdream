@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/database/supabase/server"
-import { default as RevenueChart } from './revenue-chart'
-import { default as AppointmentOverviewChart } from './appointment-overview-chart'
+import { RevenueChart } from './revenue-chart'
+import { AppointmentOverviewChart } from './appointment-overview-chart'
 interface RevenueSectionProps {
   salonId: string
 }

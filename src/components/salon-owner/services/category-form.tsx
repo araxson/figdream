@@ -76,7 +76,6 @@ export function CategoryForm({
       onOpenChange(false)
       onSuccess?.()
     } catch (error) {
-      console.error("Error saving category:", error)
       toast.error(category ? "Failed to update category" : "Failed to create category")
     } finally {
       setLoading(false)

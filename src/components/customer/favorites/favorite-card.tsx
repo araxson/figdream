@@ -1,5 +1,5 @@
 "use client"
-import { Card, CardContent, CardHeader, Button, Badge } from "@/components/ui"
+import { Badge, Button, Card, CardContent, CardHeader, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui"
 import { 
   Heart, 
   Store, 
@@ -13,13 +13,6 @@ import {
   MoreVertical,
   Trash2
 } from "lucide-react"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from "@/components/ui"
 import { format } from "date-fns"
 import { QuickBookFromFavorite } from "./quick-book-from-favorite"
 import { toast } from "sonner"

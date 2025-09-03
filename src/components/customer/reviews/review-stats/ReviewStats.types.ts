@@ -1,4 +1,7 @@
-// Types for ReviewStats
+// Types for ReviewStats component
 export interface ReviewStatsProps {
-  // To be implemented
+  salonId: string
+  showDetails?: boolean
 }
+
+export type ComponentProps = Record<string, never>

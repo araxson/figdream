@@ -5,7 +5,8 @@ import { Button, Input, Label, Checkbox } from '@/components/ui'
 import { toast } from 'sonner'
 import { Loader2, Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import { signInAction } from '@/lib/actions/auth'
-import { useCSRFToken, CSRFTokenField } from '@/lib/hooks/use-csrf-token'
+import { useCSRFToken } from '@/lib/hooks/use-csrf-token'
+import { CSRFTokenField } from '@/components/shared/forms/csrf-token-field'
 interface LoginFormProps {
   role?: 'customer' | 'staff' | 'salon_owner' | 'location_manager' | 'super_admin'
   redirectTo?: string
@@ -49,13 +50,13 @@ export function LoginForm({ role = 'customer', redirectTo }: LoginFormProps) {
                   router.push('/super-admin')
                   break
                 case 'salon_owner':
-                  router.push('/salon')
+                  router.push('/salon-owner')
                   break
                 case 'location_manager':
                   router.push('/location-manager')
                   break
                 case 'staff':
-                  router.push('/staff')
+                  router.push('/staff-member')
                   break
                 default:
                   router.push('/customer')

@@ -13,7 +13,7 @@ import {
   List,
   SortAsc
 } from "lucide-react"
-import { createClient } from "@/lib/supabase/client"
+import { createClient } from "@/lib/database/supabase/client"
 type FavoriteType = 'salon' | 'staff' | 'service'
 type Favorite = {
   id: string
@@ -48,75 +48,94 @@ export function FavoritesList() {
         setLoading(false)
         return
       }
-      // Fetch favorites from customer_preferences or dedicated table
-      // Using mock data for now
-      const mockFavorites: Favorite[] = [
-        {
-          id: "1",
-          type: 'salon',
-          itemId: "salon-1",
-          itemName: "Glamour Studio Downtown",
-          itemImage: "/placeholder-salon.jpg",
-          itemDescription: "Full-service luxury salon",
-          addedAt: "2024-11-01",
-          lastVisited: "2024-12-15",
-          bookingCount: 8,
-          rating: 4.8,
-          location: "123 Main St, Downtown"
-        },
-        {
-          id: "2",
-          type: 'staff',
-          itemId: "staff-1",
-          itemName: "Sarah Johnson",
-          itemImage: "/placeholder-staff.jpg",
-          itemDescription: "Senior Hair Stylist - Color Specialist",
-          addedAt: "2024-10-15",
-          lastVisited: "2024-12-10",
-          bookingCount: 5,
-          rating: 5.0,
-          location: "Glamour Studio Downtown"
-        },
-        {
-          id: "3",
-          type: 'service',
-          itemId: "service-1",
-          itemName: "Premium Hair Color & Style",
-          itemDescription: "Full color treatment with cut and style",
-          addedAt: "2024-09-20",
-          bookingCount: 3,
-          rating: 4.9,
-          price: 150,
-          duration: 180
-        },
-        {
-          id: "4",
-          type: 'salon',
-          itemId: "salon-2",
-          itemName: "Zen Beauty Spa",
-          itemImage: "/placeholder-salon2.jpg",
-          itemDescription: "Relaxing spa and beauty treatments",
-          addedAt: "2024-11-15",
-          bookingCount: 2,
-          rating: 4.7,
-          location: "456 Oak Ave, Midtown"
-        },
-        {
-          id: "5",
-          type: 'service',
-          itemId: "service-2",
-          itemName: "Express Manicure",
-          itemDescription: "Quick professional manicure",
-          addedAt: "2024-12-01",
-          bookingCount: 6,
-          rating: 4.6,
-          price: 35,
-          duration: 30
+      // Fetch favorites from customer_favorites table
+      const { data: favoritesData, error } = await supabase
+        .from('customer_favorites')
+        .select(`
+          id,
+          favorite_type,
+          salon_id,
+          staff_member_id,
+          service_id,
+          created_at,
+          salons!customer_favorites_salon_id_fkey (
+            id,
+            name,
+            description,
+            address,
+            image_url,
+            average_rating
+          ),
+          staff_members!customer_favorites_staff_member_id_fkey (
+            id,
+            name,
+            bio,
+            avatar_url,
+            specialties
+          ),
+          services!customer_favorites_service_id_fkey (
+            id,
+            name,
+            description,
+            price,
+            duration_minutes,
+            average_rating
+          )
+        `)
+        .eq('customer_id', user.id)
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        setFavorites([])
+        return
+      }
+
+      // Transform data into Favorite format
+      const formattedFavorites: Favorite[] = (favoritesData || []).map((fav) => {
+        if (fav.favorite_type === 'salon' && fav.salons) {
+          return {
+            id: fav.id,
+            type: 'salon',
+            itemId: fav.salon_id,
+            itemName: fav.salons.name,
+            itemImage: fav.salons.image_url,
+            itemDescription: fav.salons.description,
+            addedAt: fav.created_at,
+            bookingCount: 0, // Would need to fetch from appointments
+            rating: fav.salons.average_rating,
+            location: fav.salons.address
+          }
+        } else if (fav.favorite_type === 'staff' && fav.staff_members) {
+          return {
+            id: fav.id,
+            type: 'staff',
+            itemId: fav.staff_member_id,
+            itemName: fav.staff_members.name,
+            itemImage: fav.staff_members.avatar_url,
+            itemDescription: fav.staff_members.bio || fav.staff_members.specialties?.join(', '),
+            addedAt: fav.created_at,
+            bookingCount: 0, // Would need to fetch from appointments
+            rating: 5.0 // Would need to calculate from reviews
+          }
+        } else if (fav.favorite_type === 'service' && fav.services) {
+          return {
+            id: fav.id,
+            type: 'service',
+            itemId: fav.service_id,
+            itemName: fav.services.name,
+            itemDescription: fav.services.description,
+            addedAt: fav.created_at,
+            bookingCount: 0, // Would need to fetch from appointments
+            rating: fav.services.average_rating,
+            price: fav.services.price,
+            duration: fav.services.duration_minutes
+          }
         }
-      ]
-      setFavorites(mockFavorites)
+        return null
+      }).filter(Boolean) as Favorite[]
+
+      setFavorites(formattedFavorites)
     } catch (error) {
-      console.error("Error fetching favorites:", error)
     } finally {
       setLoading(false)
     }

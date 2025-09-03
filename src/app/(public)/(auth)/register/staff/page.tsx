@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui"
 import { RegisterForm } from '@/components/auth/register-form'
 import { UserCheck, Clock, Calendar, TrendingUp, Award } from 'lucide-react'
 export default function StaffRegistrationPage() {
@@ -28,7 +28,7 @@ export default function StaffRegistrationPage() {
         <CardContent>
           <RegisterForm 
             role="staff" 
-            redirectTo="/staff"
+            redirectTo="/staff-member"
             includePhone={true}
           />
         </CardContent>

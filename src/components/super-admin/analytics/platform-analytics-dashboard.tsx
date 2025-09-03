@@ -5,9 +5,9 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts'
 import { 
-  Users, Building2, Calendar, DollarSign, TrendingUp, Globe, 
-  Activity, Target, ChartBar, Map, Loader2
+  Users, Building2, Calendar, DollarSign, Loader2
 } from "lucide-react"
+import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui"
 interface PlatformMetrics {
   totalUsers: number
   totalSalons: number
@@ -86,7 +86,6 @@ export function PlatformAnalyticsDashboard() {
         { feature: "Payment Processing", adoptionRate: 89, activeUsers: 40653, trend: 'stable' }
       ])
     } catch (error) {
-      console.error("Error fetching platform analytics:", error)
     } finally {
       setLoading(false)
     }

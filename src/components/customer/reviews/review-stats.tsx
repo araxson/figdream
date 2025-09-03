@@ -1,5 +1,20 @@
 'use client'
-// This component has been split into smaller modules
-// Import the actual implementation from the split directory
-export * from './review-stats/ReviewStats'
-export { default } from './review-stats/ReviewStats'
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/data-display/card'
+
+export interface ReviewStatsProps {
+  className?: string
+}
+
+export function ReviewStats({ className }: ReviewStatsProps) {
+  return (
+    <Card className={className}>
+      <CardHeader>
+        <CardTitle>Review Stats</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p>Component implementation pending</p>
+      </CardContent>
+    </Card>
+  )
+}

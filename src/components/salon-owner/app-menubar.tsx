@@ -2,32 +2,7 @@
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import {
-  Menubar,
-  MenubarCheckboxItem,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarRadioGroup,
-  MenubarRadioItem,
-  MenubarSeparator,
-  MenubarShortcut,
-  MenubarSub,
-  MenubarSubContent,
-  MenubarSubTrigger,
-  MenubarTrigger,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  Button,
-  Input,
-  Label,
-  Badge,
-} from "@/components/ui"
+import { Badge, Button, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, Input, Label, Menubar, MenubarCheckboxItem, MenubarContent, MenubarItem, MenubarMenu, MenubarRadioGroup, MenubarRadioItem, MenubarSeparator, MenubarShortcut, MenubarSub, MenubarSubContent, MenubarSubTrigger, MenubarTrigger } from "@/components/ui"
 import { toast } from "sonner"
 import {
   FileText,
@@ -109,7 +84,7 @@ export function AppMenubar({
       setServiceName('')
       setIsNewServiceOpen(false)
       // Optionally navigate to the service editing page
-      router.push('/salon/services')
+      router.push('/salon-owner/services')
     } catch (_error) {
       toast.error('Failed to create service')
     }
@@ -124,7 +99,7 @@ export function AppMenubar({
       toast.success(`Staff member "${staffName}" added successfully!`)
       setStaffName('')
       setIsNewStaffOpen(false)
-      router.push('/salon/staff')
+      router.push('/salon-owner/staff')
     } catch (_error) {
       toast.error('Failed to add staff member')
     }

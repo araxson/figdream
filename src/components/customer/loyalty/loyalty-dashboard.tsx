@@ -1,22 +1,6 @@
 'use client'
 import * as React from 'react'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Button,
-  Badge,
-  Progress,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-  Alert,
-  AlertDescription,
-  Skeleton,
-} from '@/components/ui'
+import { Alert, AlertDescription, Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Progress, Skeleton, Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui"
 import {
   Gift,
   Award,

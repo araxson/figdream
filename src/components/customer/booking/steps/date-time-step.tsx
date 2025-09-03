@@ -16,10 +16,10 @@ import {
   AlertDescription,
 } from '@/components/ui'
 import { CalendarIcon, Clock, AlertCircle } from 'lucide-react'
-import { TimeSlotPicker } from '../time-slot-picker'
+import { TimeSlotPicker } from '@/components/customer/booking/time-slot-picker'
 import { TimePicker } from '@/components/ui'
-import { calculateEndTime, formatTimeDisplay } from '../booking-form-utils'
-import type { StepContentProps } from '../booking-form-types'
+import { calculateEndTime, formatTimeDisplay } from '@/components/customer/booking/booking-form-utils'
+import type { StepContentProps } from '@/components/customer/booking/booking-form-types'
 
 export function DateTimeStep({
   selectedStaff,

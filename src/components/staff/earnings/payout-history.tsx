@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
-import { Calendar, Download, DollarSign, CheckCircle, Clock, XCircle } from "lucide-react"
+import { Download, DollarSign, CheckCircle, Clock, XCircle, Calendar } from "lucide-react"
 
 import { toast } from "sonner"
 import { createClient } from "@/lib/database/supabase/client"
@@ -18,6 +18,7 @@ export function PayoutHistory({ staffId }: PayoutHistoryProps) {
   const supabase = createClient()
   useEffect(() => {
     loadPayouts()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [staffId, filter])
   const loadPayouts = async () => {
     try {
@@ -33,8 +34,7 @@ export function PayoutHistory({ staffId }: PayoutHistoryProps) {
       const { data, error } = await query
       if (error) throw error
       setPayouts(data || [])
-    } catch (error) {
-      console.error("Error loading payouts:", error)
+    } catch (_error) {
       toast.error("Failed to load payout history")
     } finally {
       setLoading(false)
@@ -43,8 +43,7 @@ export function PayoutHistory({ staffId }: PayoutHistoryProps) {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "USD",
-    }).format(amount)
+      currency: "USD"}).format(amount)
   }
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -70,12 +69,11 @@ export function PayoutHistory({ staffId }: PayoutHistoryProps) {
         return "outline" as const
     }
   }
-  const handleDownloadStatement = async (payoutId: string) => {
+  const handleDownloadStatement = async (_payoutId: string) => {
     try {
       // In a real app, this would generate/download a PDF statement
       toast.success("Statement download started")
-    } catch (error) {
-      console.error("Error downloading statement:", error)
+    } catch (_error) {
       toast.error("Failed to download statement")
     }
   }
@@ -153,7 +151,7 @@ export function PayoutHistory({ staffId }: PayoutHistoryProps) {
                 Your earnings payout records
               </CardDescription>
             </div>
-            <Select value={filter} onValueChange={(value: any) => setFilter(value)}>
+            <Select value={filter} onValueChange={(value) => setFilter(value as "all" | "completed" | "pending" | "failed")}>
               <SelectTrigger className="w-[150px]">
                 <SelectValue placeholder="Filter" />
               </SelectTrigger>

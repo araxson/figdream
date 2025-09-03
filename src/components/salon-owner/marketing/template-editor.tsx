@@ -1,5 +1,20 @@
 'use client'
-// This component has been split into smaller modules
-// Import the actual implementation from the split directory
-export * from './template-editor/TemplateEditor'
-export { default } from './template-editor/TemplateEditor'
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/data-display/card'
+
+export interface TemplateEditorProps {
+  className?: string
+}
+
+export function TemplateEditor({ className }: TemplateEditorProps) {
+  return (
+    <Card className={className}>
+      <CardHeader>
+        <CardTitle>Template Editor</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p>Component implementation pending</p>
+      </CardContent>
+    </Card>
+  )
+}

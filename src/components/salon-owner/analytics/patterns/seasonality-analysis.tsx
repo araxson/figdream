@@ -1,6 +1,6 @@
 'use client'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Badge, Alert, AlertDescription } from '@/components/ui'
-import { TrendingUp, TrendingDown, Calendar, Sun, Snowflake, Flower, Leaf } from 'lucide-react'
+import { Alert, AlertDescription, Badge, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui"
+import { TrendingUp, TrendingDown, Sun, Snowflake, Flower, Leaf, Calendar } from 'lucide-react'
 interface SeasonalityAnalysisProps {
   salonId: string
   monthlyData: Record<number, number>
@@ -15,8 +15,7 @@ export function SeasonalityAnalysis({ salonId: _salonId, monthlyData }: Seasonal
     winter: (monthlyData[11] || 0) + (monthlyData[0] || 0) + (monthlyData[1] || 0),
     spring: (monthlyData[2] || 0) + (monthlyData[3] || 0) + (monthlyData[4] || 0),
     summer: (monthlyData[5] || 0) + (monthlyData[6] || 0) + (monthlyData[7] || 0),
-    fall: (monthlyData[8] || 0) + (monthlyData[9] || 0) + (monthlyData[10] || 0),
-  }
+    fall: (monthlyData[8] || 0) + (monthlyData[9] || 0) + (monthlyData[10] || 0)}
   const totalAppointments = Object.values(seasons).reduce((sum, val) => sum + val, 0)
   const avgPerSeason = totalAppointments / 4
   const bestSeason = Object.entries(seasons)
@@ -40,8 +39,7 @@ export function SeasonalityAnalysis({ salonId: _salonId, monthlyData }: Seasonal
         type: 'success',
         title: `${bestSeason[0].charAt(0).toUpperCase() + bestSeason[0].slice(1)} is your peak season`,
         description: `${Math.round((bestSeason[1] / totalAppointments) * 100)}% of annual bookings occur in ${bestSeason[0]}`,
-        action: 'Consider hiring seasonal staff or extending hours',
-      })
+        action: 'Consider hiring seasonal staff or extending hours'})
     }
     // Underperforming season
     if (worstSeason[1] < avgPerSeason * 0.8) {
@@ -49,8 +47,7 @@ export function SeasonalityAnalysis({ salonId: _salonId, monthlyData }: Seasonal
         type: 'warning',
         title: `${worstSeason[0].charAt(0).toUpperCase() + worstSeason[0].slice(1)} needs attention`,
         description: `Only ${Math.round((worstSeason[1] / totalAppointments) * 100)}% of bookings in ${worstSeason[0]}`,
-        action: 'Run promotional campaigns to boost off-season business',
-      })
+        action: 'Run promotional campaigns to boost off-season business'})
     }
     // Holiday patterns
     const december = monthlyData[11] || 0
@@ -61,16 +58,14 @@ export function SeasonalityAnalysis({ salonId: _salonId, monthlyData }: Seasonal
         type: 'info',
         title: 'Holiday season surge detected',
         description: 'December shows significantly higher bookings',
-        action: 'Prepare holiday packages and gift certificates',
-      })
+        action: 'Prepare holiday packages and gift certificates'})
     }
     if (january < avgMonth * 0.7) {
       insights.push({
         type: 'info',
         title: 'Post-holiday slowdown',
         description: 'January typically sees fewer bookings',
-        action: 'Offer New Year promotions to maintain momentum',
-      })
+        action: 'Offer New Year promotions to maintain momentum'})
     }
     return insights
   }

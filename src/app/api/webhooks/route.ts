@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/database/supabase/server'
-import { logError, logCriticalError, logApiError } from '@/src/lib/errors/logger'
+import { logError, logCriticalError, logApiError } from '@/lib/utils/errors/logger'
 import crypto from 'crypto'
 // Types for webhook events
 interface WebhookPayload {
@@ -31,7 +31,7 @@ function verifyWebhookSignature(
       Buffer.from(expectedSignature)
     )
   } catch (_error) {
-    logError(error as Error, 'high', 'api', { 
+    logError(_error as Error, 'high', 'api', { 
       context: 'webhook_signature_verification' 
     })
     return false
@@ -47,10 +47,10 @@ async function handleUserCreated(record: Record<string, unknown>): Promise<void>
     const { error } = await supabase
       .from('profiles')
       .insert({
-        id: record.id,
-        email: record.email,
-        full_name: record.raw_user_meta_data?.full_name || null,
-        phone: record.raw_user_meta_data?.phone || null,
+        id: record.id as string,
+        email: record.email as string,
+        full_name: (record.raw_user_meta_data as Record<string, unknown>)?.full_name as string || null,
+        phone: (record.raw_user_meta_data as Record<string, unknown>)?.phone as string || null,
         // Note: role is now stored in user_roles table, not profiles
       })
     if (!error) {
@@ -60,7 +60,7 @@ async function handleUserCreated(record: Record<string, unknown>): Promise<void>
       await supabase
         .from('user_roles')
         .insert({
-          user_id: record.id,
+          user_id: record.id as string,
           role: role,
           is_active: true,
           permissions: {},
@@ -78,18 +78,17 @@ async function handleUserCreated(record: Record<string, unknown>): Promise<void>
     const { error: notificationError } = await supabase
       .from('notification_settings')
       .insert({
-        user_id: record.id,
-        email_notifications: true,
-        sms_notifications: true,
-        push_notifications: true,
-        marketing_emails: false,
-        marketing_sms: false,
-        appointment_reminders: true,
-        booking_confirmations: true,
-        review_requests: true,
-        loyalty_updates: true,
-        staff_notifications: false,
-        preferences: {},
+        user_id: record.id as string,
+        email_appointments: true,
+        email_marketing: false,
+        email_reminders: true,
+        push_appointments: true,
+        push_marketing: false,
+        push_reminders: true,
+        sms_appointments: true,
+        sms_marketing: false,
+        sms_reminders: true,
+        reminder_hours_before: 24,
       })
     if (notificationError) {
       logError(
@@ -101,7 +100,7 @@ async function handleUserCreated(record: Record<string, unknown>): Promise<void>
     }
   } catch (_error) {
     logCriticalError(
-      error as Error,
+      _error as Error,
       'api',
       { context: 'user_created_webhook', userId: record.id }
     )
@@ -117,11 +116,14 @@ async function handleUserUpdated(record: Record<string, unknown>, oldRecord?: Re
       updates.email = record.email
     }
     // SECURITY: Use raw_user_meta_data instead of raw_app_meta_data (CVE-2025-29927)
-    if (record.raw_user_meta_data?.full_name !== oldRecord?.raw_user_meta_data?.full_name) {
-      updates.full_name = record.raw_user_meta_data?.full_name || null
+    const recordMetadata = record.raw_user_meta_data as Record<string, unknown> | undefined
+    const oldRecordMetadata = oldRecord?.raw_user_meta_data as Record<string, unknown> | undefined
+    
+    if (recordMetadata?.full_name !== oldRecordMetadata?.full_name) {
+      updates.full_name = recordMetadata?.full_name || null
     }
-    if (record.raw_user_meta_data?.phone !== oldRecord?.raw_user_meta_data?.phone) {
-      updates.phone = record.raw_user_meta_data?.phone || null
+    if (recordMetadata?.phone !== oldRecordMetadata?.phone) {
+      updates.phone = recordMetadata?.phone || null
     }
     // Role changes should be handled through proper admin endpoints
     // Never allow role changes through webhooks for security
@@ -130,7 +132,7 @@ async function handleUserUpdated(record: Record<string, unknown>, oldRecord?: Re
       const { error } = await supabase
         .from('profiles')
         .update(updates)
-        .eq('id', record.id)
+        .eq('id', record.id as string)
       if (error) {
         logError(
           `Failed to update profile for user ${record.id}: ${error.message}`,
@@ -143,7 +145,7 @@ async function handleUserUpdated(record: Record<string, unknown>, oldRecord?: Re
     }
   } catch (_error) {
     logError(
-      error as Error,
+      _error as Error,
       'medium',
       'api',
       { context: 'user_updated_webhook', userId: record.id }
@@ -160,13 +162,13 @@ async function handleUserDeleted(oldRecord: Record<string, unknown>): Promise<vo
     const { error } = await supabase
       .from('audit_logs')
       .insert({
-        user_id: oldRecord.id,
-        action: 'delete',
+        user_id: oldRecord.id as string,
+        action: 'DELETE',
         entity_type: 'user',
-        entity_id: oldRecord.id,
-        old_values: oldRecord,
+        entity_id: oldRecord.id as string,
+        old_data: oldRecord as Record<string, unknown>,
         ip_address: null,
-        user_agent: 'system',
+        user_agent: 'system-webhook',
       })
     if (error) {
       logError(
@@ -178,7 +180,7 @@ async function handleUserDeleted(oldRecord: Record<string, unknown>): Promise<vo
     }
   } catch (_error) {
     logError(
-      error as Error,
+      _error as Error,
       'medium',
       'api',
       { context: 'user_deleted_webhook', userId: oldRecord.id }
@@ -193,21 +195,30 @@ async function handleBookingUpdated(record: Record<string, unknown>, oldRecord?:
       return
     }
     const supabase = await createClient()
-    // Create booking status history record
-    const { error: historyError } = await supabase
-      .from('booking_status_history')
+    // Log appointment status change for auditing
+    const { error: auditError } = await supabase
+      .from('audit_logs')
       .insert({
-        booking_id: record.id,
-        status: record.status,
-        changed_by: 'system', // In a webhook context, we don't have user context
-        reason: 'Status changed via webhook',
+        user_id: null, // System action, no user associated
+        action: 'UPDATE',
+        entity_type: 'appointment',
+        entity_id: record.id as string,
+        new_data: {
+          status: record.status,
+          changed_by: 'webhook',
+          reason: 'Status changed via webhook',
+        } as Record<string, unknown>,
+        old_data: {
+          status: oldRecord?.status,
+        } as Record<string, unknown>,
+        user_agent: 'system-webhook',
       })
-    if (historyError) {
+    if (auditError) {
       logError(
-        `Failed to create booking status history for booking ${record.id}: ${historyError.message}`,
+        `Failed to create audit log for appointment ${record.id}: ${auditError.message}`,
         'medium',
         'api',
-        { bookingId: record.id, error: historyError.message }
+        { appointmentId: record.id, error: auditError.message }
       )
     }
     // Handle specific status changes
@@ -230,7 +241,7 @@ async function handleBookingUpdated(record: Record<string, unknown>, oldRecord?:
     }
   } catch (_error) {
     logError(
-      error as Error,
+      _error as Error,
       'medium',
       'api',
       { context: 'booking_updated_webhook', bookingId: record.id }
@@ -248,13 +259,13 @@ async function handleReviewCreated(record: Record<string, unknown>): Promise<voi
     const { error } = await supabase
       .from('audit_logs')
       .insert({
-        user_id: record.customer_id,
-        action: 'create',
+        user_id: record.customer_id as string || null,
+        action: 'CREATE',
         entity_type: 'review',
-        entity_id: record.id,
-        new_values: record,
+        entity_id: record.id as string,
+        new_data: record as Record<string, unknown>,
         ip_address: null,
-        user_agent: 'system',
+        user_agent: 'system-webhook',
       })
     if (error) {
       logError(
@@ -266,7 +277,7 @@ async function handleReviewCreated(record: Record<string, unknown>): Promise<voi
     }
   } catch (_error) {
     logError(
-      error as Error,
+      _error as Error,
       'low',
       'api',
       { context: 'review_created_webhook', reviewId: record.id }
@@ -284,7 +295,7 @@ async function processWebhookEvent(event: WebhookEvent): Promise<void> {
           await handleUserCreated(record)
         } else if (type === 'UPDATE') {
           await handleUserUpdated(record, old_record)
-        } else if (type === 'DELETE') {
+        } else if (type === 'DELETE' && old_record) {
           await handleUserDeleted(old_record)
         }
         break
@@ -303,7 +314,7 @@ async function processWebhookEvent(event: WebhookEvent): Promise<void> {
     }
   } catch (_error) {
     logCriticalError(
-      error as Error,
+      _error as Error,
       'api',
       { context: 'webhook_event_processing', table, type }
     )
@@ -364,8 +375,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const event: WebhookEvent = {
       type: payload.type,
       table: payload.table,
-      record: payload.record,
-      old_record: payload.old_record,
+      record: payload.record || {},
+      old_record: payload.old_record || {},
     }
     await processWebhookEvent(event)
     // Return success response
@@ -377,7 +388,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     })
   } catch (_error) {
     logCriticalError(
-      error as Error,
+      _error as Error,
       'api',
       { context: 'webhook_handler', endpoint: '/api/webhooks' }
     )
@@ -403,7 +414,7 @@ export async function GET(): Promise<NextResponse> {
     })
   } catch (_error) {
     logError(
-      error as Error,
+      _error as Error,
       'low',
       'api',
       { context: 'webhook_status_check' }

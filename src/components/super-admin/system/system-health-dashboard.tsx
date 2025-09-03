@@ -1,11 +1,13 @@
 "use client"
+import { Alert, AlertDescription, AlertTitle, Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Progress, Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui"
+
 import { useState, useEffect } from "react"
 import {
-  LineChart, Line, AreaChart, Area, BarChart, Bar,
+  LineChart, Line,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts'
 import { 
-  Activity, Server, Database, Zap, AlertTriangle, 
+  Activity, Server, Database, AlertTriangle, 
   CheckCircle, XCircle, Clock, Cpu, HardDrive,
   Network, Shield, RefreshCw, Loader2
 } from "lucide-react"
@@ -48,7 +50,7 @@ export function SystemHealthDashboard() {
   const [servers, setServers] = useState<ServerStatus[]>([])
   const [dbMetrics, setDbMetrics] = useState<DatabaseMetric | null>(null)
   const [apiMetrics, setApiMetrics] = useState<ApiMetric[]>([])
-  const [performanceData, setPerformanceData] = useState<any[]>([])
+  const [performanceData, setPerformanceData] = useState<Array<{ time: string; cpu: number; memory: number; requests: number; responseTime: number }>>([])
   const [loading, setLoading] = useState(true)
   const [autoRefresh, setAutoRefresh] = useState(true)
   useEffect(() => {
@@ -101,7 +103,6 @@ export function SystemHealthDashboard() {
         { time: "24:00", cpu: 48, memory: 62, requests: 900 }
       ])
     } catch (error) {
-      console.error("Error fetching system health:", error)
     } finally {
       setLoading(false)
     }
@@ -285,8 +286,8 @@ export function SystemHealthDashboard() {
                     <span className="text-sm font-medium">Avg Query Time</span>
                   </div>
                   <div className="text-2xl font-bold">{dbMetrics?.queryTime}ms</div>
-                  <Badge variant={dbMetrics?.queryTime! < 100 ? 'default' : 'secondary'} className="mt-2">
-                    {dbMetrics?.queryTime! < 100 ? 'Optimal' : 'Slow'}
+                  <Badge variant={(dbMetrics?.queryTime ?? 0) < 100 ? 'default' : 'secondary'} className="mt-2">
+                    {(dbMetrics?.queryTime ?? 0) < 100 ? 'Optimal' : 'Slow'}
                   </Badge>
                 </div>
                 <div>
@@ -303,8 +304,8 @@ export function SystemHealthDashboard() {
                     <span className="text-sm font-medium">Replication Lag</span>
                   </div>
                   <div className="text-2xl font-bold">{dbMetrics?.replicationLag}ms</div>
-                  <Badge variant={dbMetrics?.replicationLag! < 200 ? 'default' : 'destructive'} className="mt-2">
-                    {dbMetrics?.replicationLag! < 200 ? 'Healthy' : 'High Lag'}
+                  <Badge variant={(dbMetrics?.replicationLag ?? 0) < 200 ? 'default' : 'destructive'} className="mt-2">
+                    {(dbMetrics?.replicationLag ?? 0) < 200 ? 'Healthy' : 'High Lag'}
                   </Badge>
                 </div>
                 <div>

@@ -2,7 +2,7 @@
 import { useState } from "react"
 
 import { format, differenceInDays } from "date-fns"
-import { Calendar, MoreVertical, Download, Eye, X } from "lucide-react"
+import { MoreVertical, Download, Eye, X, Calendar } from "lucide-react"
 import type { Database } from "@/types/database.types"
 import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui"
 type TimeOffRequest = Database["public"]["Tables"]["time_off_requests"]["Row"]
@@ -13,11 +13,10 @@ interface TimeOffHistoryProps {
   onViewDetails?: (request: TimeOffRequest) => void
 }
 export function TimeOffHistory({
-  staffId,
+  staffId: _staffId,
   requests,
   onCancelRequest,
-  onViewDetails,
-}: TimeOffHistoryProps) {
+  onViewDetails}: TimeOffHistoryProps) {
   const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected" | "cancelled">("all")
   const filteredRequests = requests.filter((request) => {
     if (filter === "all") return true
@@ -83,8 +82,7 @@ export function TimeOffHistory({
     rejected: requests.filter((r) => r.status === "rejected").length,
     totalDaysUsed: requests
       .filter((r) => r.status === "approved")
-      .reduce((sum, r) => sum + differenceInDays(new Date(r.end_date), new Date(r.start_date)) + 1, 0),
-  }
+      .reduce((sum, r) => sum + differenceInDays(new Date(r.end_date), new Date(r.start_date)) + 1, 0)}
   return (
     <div className="space-y-6">
       <Card>

@@ -12,7 +12,7 @@ export default function SalonOwnerLoginPage() {
           <HoverCard>
             <HoverCardTrigger asChild>
               <Avatar className="h-16 w-16 cursor-help">
-                <AvatarImage src="/avatars/role-salon-owner-avatar.png" alt="Salon Owner" />
+                <AvatarImage src="/avatars/salon-owner-avatar.png" alt="Salon Owner" />
                 <AvatarFallback className="bg-green-100 dark:bg-green-900/20">
                   <Building className="h-8 w-8 text-green-600 dark:text-green-400" />
                 </AvatarFallback>
@@ -21,7 +21,7 @@ export default function SalonOwnerLoginPage() {
             <HoverCardContent className="w-80">
               <div className="flex justify-between space-x-4">
                 <Avatar>
-                  <AvatarImage src="/avatars/role-salon-owner-avatar.png" />
+                  <AvatarImage src="/avatars/salon-owner-avatar.png" />
                   <AvatarFallback>SO</AvatarFallback>
                 </Avatar>
                 <div className="space-y-1">
@@ -119,7 +119,7 @@ export default function SalonOwnerLoginPage() {
         </CardHeader>
         <CardContent>
           <ScrollArea className="max-h-96">
-            <LoginForm role="salon_owner" redirectTo="/salon" />
+            <LoginForm role="salon_owner" redirectTo="/salon-owner" />
             <div className="mt-6">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">

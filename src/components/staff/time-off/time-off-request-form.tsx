@@ -66,8 +66,7 @@ export function TimeOffRequestForm({
         const data = await response.json()
         setConflicts(data.conflicts || [])
       }
-    } catch (error) {
-      console.error("Failed to check conflicts:", error)
+    } catch (_error) {
     }
   }
   const calculateBusinessDays = (start: Date, end: Date): number => {
@@ -131,7 +130,7 @@ export function TimeOffRequestForm({
       } else {
         throw new Error("Failed to submit request")
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: "Error",
         description: "Failed to submit time off request. Please try again.",

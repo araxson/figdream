@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Tabs, TabsContent, TabsList, TabsTrigger, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Badge, Progress } from "@/components/ui"
+import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, Progress, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui"
 import { 
   BarChart, 
   Bar, 
@@ -23,7 +23,7 @@ import {
   Activity,
   ArrowUpRight
 } from "lucide-react"
-// import { createClient } from "@/lib/supabase/client"
+// import { createClient } from "@/lib/database/supabase/client"
 const COLORS = ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ef4444']
 export function GiftCardAnalytics() {
   const [timeRange, setTimeRange] = useState("30d")
@@ -77,7 +77,6 @@ export function GiftCardAnalytics() {
       // Fetch real analytics data
       setLoading(false)
     } catch (error) {
-      console.error("Error fetching analytics:", error)
       setLoading(false)
     }
   }

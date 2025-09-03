@@ -13,7 +13,8 @@ import {
 import { toast } from 'sonner'
 import { Loader2, Mail, CheckCircle, RefreshCw } from 'lucide-react'
 import { verifyOtpAction } from '@/lib/actions/auth'
-import { useCSRFToken, CSRFTokenField } from '@/lib/hooks/use-csrf-token'
+import { useCSRFToken } from '@/lib/hooks/use-csrf-token'
+import { CSRFTokenField } from '@/components/shared/forms/csrf-token-field'
 export function VerifyEmailForm() {
   const _router = useRouter()
   const searchParams = useSearchParams()

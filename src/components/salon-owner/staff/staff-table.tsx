@@ -1,4 +1,20 @@
 'use client'
-// This component has been split into smaller modules
-export { StaffTable } from './staff-table/StaffTable'
-export type { StaffTableProps } from './staff-table/StaffTable.types'
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/data-display/card'
+
+export interface StaffTableProps {
+  className?: string
+}
+
+export function StaffTable({ className }: StaffTableProps) {
+  return (
+    <Card className={className}>
+      <CardHeader>
+        <CardTitle>StaffTable</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p>Component implementation pending</p>
+      </CardContent>
+    </Card>
+  )
+}

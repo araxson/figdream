@@ -1,4 +1,17 @@
-// Types for AnalyticsDashboard
 export interface AnalyticsDashboardProps {
-  // To be implemented
+  salonId: string
+  dateRange?: {
+    from: Date
+    to: Date
+  }
+}
+
+export type MetricType = 'clicks' | 'opens' | 'conversions' | 'revenue'
+
+export interface CampaignMetric {
+  id: string
+  campaignId: string
+  type: MetricType
+  value: number
+  date: Date
 }

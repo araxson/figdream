@@ -273,7 +273,7 @@ export async function fetchWithNetworkHandling(
     clearTimeout(timeoutId)
     clearTimeout(slowNetworkTimer)
     return response
-  } catch (_error) {
+  } catch (error) {
     clearTimeout(timeoutId)
     clearTimeout(slowNetworkTimer)
     // Handle network error

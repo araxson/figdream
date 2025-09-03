@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui"
-import { Users, Calendar, DollarSign, TrendingUp, TrendingDown, Minus } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/data-display/card"
+import { Users, DollarSign, TrendingUp, TrendingDown, Minus, Calendar } from "lucide-react"
 interface DashboardMetricsProps {
   metrics: {
     todaysAppointments: number

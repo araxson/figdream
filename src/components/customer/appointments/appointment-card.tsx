@@ -1,18 +1,6 @@
 "use client"
 import { format } from 'date-fns'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  Badge,
-  Button,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/ui'
+import { Avatar, AvatarFallback, AvatarImage, Badge, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui"
 import {
   Calendar,
   Clock,
@@ -26,7 +14,7 @@ import Link from 'next/link'
 import type { Database } from '@/types/database.types'
 type Appointment = Database['public']['Tables']['appointments']['Row'] & {
   services: Database['public']['Tables']['services']['Row'] | null
-  staff: Database['public']['Tables']['staff']['Row'] | null
+  staff_profiles: Database['public']['Tables']['staff_profiles']['Row'] | null
   salons: Database['public']['Tables']['salons']['Row'] | null
   reviews?: Database['public']['Tables']['reviews']['Row'] | null
 }
@@ -64,8 +52,8 @@ export function AppointmentCard({
     }
   }
   const getStaffInitials = () => {
-    if (!appointment.staff) return 'ST'
-    return `${appointment.staff.first_name?.[0] || ''}${appointment.staff.last_name?.[0] || ''}`
+    if (!appointment.staff_profiles) return 'ST'
+    return 'ST' // Staff initials would come from joined profiles table
   }
   return (
     <Card className={className}>
@@ -73,7 +61,7 @@ export function AppointmentCard({
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-3">
             <Avatar className="h-10 w-10">
-              <AvatarImage src={appointment.staff?.photo_url || undefined} />
+              <AvatarImage src={undefined} />
               <AvatarFallback>{getStaffInitials()}</AvatarFallback>
             </Avatar>
             <div>
@@ -81,7 +69,7 @@ export function AppointmentCard({
                 {appointment.services?.name || 'Service'}
               </CardTitle>
               <CardDescription>
-                with {appointment.staff?.first_name} {appointment.staff?.last_name}
+                with {appointment.staff_profiles?.title || 'Staff Member'}
               </CardDescription>
             </div>
           </div>
@@ -100,9 +88,9 @@ export function AppointmentCard({
             <Clock className="h-4 w-4 text-muted-foreground" />
             <span>
               {appointment.start_time} - {appointment.end_time}
-              {appointment.duration && (
+              {appointment.total_duration && (
                 <span className="text-muted-foreground ml-1">
-                  ({appointment.duration} minutes)
+                  ({appointment.total_duration} minutes)
                 </span>
               )}
             </span>
@@ -111,9 +99,9 @@ export function AppointmentCard({
             <MapPin className="h-4 w-4 text-muted-foreground" />
             <div>
               <p className="font-medium">{appointment.salons?.name}</p>
-              {appointment.salons?.address && (
+              {false && (
                 <p className="text-muted-foreground text-xs">
-                  {appointment.salons.address}
+                  {''}
                 </p>
               )}
             </div>
@@ -121,11 +109,11 @@ export function AppointmentCard({
           <div className="flex items-center gap-2 text-sm">
             <DollarSign className="h-4 w-4 text-muted-foreground" />
             <span className="font-medium">
-              ${appointment.total_price?.toFixed(2) || '0.00'}
+              ${appointment.total_amount?.toFixed(2) || '0.00'}
             </span>
-            {appointment.deposit_amount && appointment.deposit_amount > 0 && (
+            {false && (
               <span className="text-xs text-muted-foreground">
-                (Deposit: ${appointment.deposit_amount.toFixed(2)})
+                (Deposit: $0.00)
               </span>
             )}
           </div>

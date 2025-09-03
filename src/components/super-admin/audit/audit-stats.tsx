@@ -1,5 +1,5 @@
 'use client'
-import { Card, CardContent, Progress, Badge, Alert, AlertDescription } from '@/components/ui'
+import { Alert, AlertDescription, Badge, Card, CardContent, Progress } from "@/components/ui"
 import { 
   XAxis, 
   YAxis, 

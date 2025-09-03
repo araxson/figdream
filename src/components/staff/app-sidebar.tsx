@@ -26,7 +26,15 @@ import {
 import type { Database } from '@/types/database.types'
 // Use proper database types
 type Profile = Database['public']['Tables']['profiles']['Row']
-type StaffProfile = Database['public']['Tables']['staff_profiles']['Row']
+type StaffProfile = Database['public']['Tables']['staff_profiles']['Row'] & {
+  salons?: {
+    name: string
+  } | null
+  profiles?: {
+    full_name: string | null
+    email: string | null
+  } | null
+}
 interface StaffSidebarProps {
   user: Profile
   staff: StaffProfile
@@ -51,7 +59,7 @@ export function StaffSidebar({ user: _user, staff }: StaffSidebarProps) {
           </div>
           <div className="flex flex-col gap-0.5 leading-none">
             <span className="font-semibold">Staff Portal</span>
-            <span className="text-xs text-muted-foreground">{staff.salons?.name}</span>
+            <span className="text-xs text-muted-foreground">{staff.salons?.name || 'Staff Portal'}</span>
           </div>
         </div>
       </SidebarHeader>
@@ -78,9 +86,9 @@ export function StaffSidebar({ user: _user, staff }: StaffSidebarProps) {
           <SidebarMenuItem>
             <div className="flex flex-col gap-1 px-4 py-2">
               <p className="text-sm font-medium">
-                {staff.display_name || staff.profiles?.full_name || 'Staff Member'}
+                {staff.profiles?.full_name || 'Staff Member'}
               </p>
-              <p className="text-xs text-muted-foreground">{staff.profiles?.email}</p>
+              <p className="text-xs text-muted-foreground">{staff.profiles?.email || _user.email}</p>
             </div>
           </SidebarMenuItem>
           <SidebarMenuItem>

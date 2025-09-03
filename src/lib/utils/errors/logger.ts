@@ -167,12 +167,10 @@ class ErrorLogger {
   private logToConsole(errorLog: ErrorLog): void {
     const style = this.getConsoleStyle(errorLog.severity)
     const prefix = `[${errorLog.severity.toUpperCase()}] [${errorLog.category}]`
-    console.group(`%c${prefix} ${errorLog.message}`, style)
     if (errorLog.context) {
     }
     if (errorLog.stack) {
     }
-    console.groupEnd()
   }
   /**
    * Get console style based on severity

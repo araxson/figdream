@@ -1,7 +1,7 @@
 'use client'
 
-import { StaffSelector } from '../staff-selector'
-import type { StepContentProps } from '../booking-form-types'
+import { StaffSelector } from '@/components/customer/booking/staff-selector'
+import type { StepContentProps } from '@/components/customer/booking/booking-form-types'
 
 export function StaffStep({
   selectedServices,

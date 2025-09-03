@@ -321,7 +321,7 @@ export const swCacheStrategies = {
         cache.put(request, response.clone())
       }
       return response
-    } catch (_error) {
+    } catch (error) {
       const cache = await caches.open(cacheName)
       const cachedResponse = await cache.match(request)
       if (cachedResponse) {

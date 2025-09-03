@@ -1,6 +1,6 @@
 "use client"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui"
-import { Activity, Calendar, UserCheck, XCircle } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/data-display/card"
+import { Activity, UserCheck, XCircle, Calendar } from "lucide-react"
 interface ActivityItem {
   id: string
   type: 'appointment' | 'staff' | 'cancellation'

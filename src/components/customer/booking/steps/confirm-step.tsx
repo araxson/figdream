@@ -13,8 +13,8 @@ import {
   AlertDescription,
 } from '@/components/ui'
 import { CheckCircle, CalendarIcon, Clock, AlertCircle } from 'lucide-react'
-import { calculateEndTime } from '../booking-form-utils'
-import type { StepContentProps } from '../booking-form-types'
+import { calculateEndTime } from '@/components/customer/booking/booking-form-utils'
+import type { StepContentProps } from '@/components/customer/booking/booking-form-types'
 
 export function ConfirmStep({
   selectedServices,

@@ -1,9 +1,9 @@
 "use client"
 import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Badge, Button, Skeleton } from "@/components/ui"
+import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Skeleton } from "@/components/ui"
 import { Gift, CreditCard, Calendar, DollarSign } from "lucide-react"
 import { format } from "date-fns"
-import { createClient } from "@/lib/supabase/client"
+import { createClient } from "@/lib/database/supabase/client"
 type GiftCard = {
   id: string
   code: string
@@ -30,33 +30,30 @@ export function GiftCardList() {
         setError("Please sign in to view your gift cards")
         return
       }
-      // Fetch gift cards from loyalty_transactions or a dedicated table
-      // For now, using mock data structure
-      const mockGiftCards: GiftCard[] = [
-        {
-          id: "1",
-          code: "GIFT-2024-001",
-          balance: 50.00,
-          original_amount: 100.00,
-          expires_at: "2025-12-31",
-          created_at: "2024-12-01",
-          status: 'active',
-          sender_name: "John Doe",
-          message: "Happy Birthday!"
-        },
-        {
-          id: "2",
-          code: "GIFT-2024-002",
-          balance: 75.00,
-          original_amount: 75.00,
-          expires_at: "2025-06-30",
-          created_at: "2024-11-15",
-          status: 'active'
-        }
-      ]
-      setGiftCards(mockGiftCards)
+      // Fetch gift cards from database
+      const { data: giftCards, error } = await supabase
+        .from('gift_cards')
+        .select(`
+          id,
+          code,
+          balance,
+          original_amount,
+          expires_at,
+          created_at,
+          status,
+          sender_name,
+          message
+        `)
+        .eq('recipient_id', user.id)
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        setError('Failed to load gift cards')
+        return
+      }
+
+      setGiftCards(giftCards || [])
     } catch (err) {
-      console.error("Error fetching gift cards:", err)
       setError("Failed to load gift cards")
     } finally {
       setLoading(false)

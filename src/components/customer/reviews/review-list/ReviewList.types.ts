@@ -1,4 +1,8 @@
-// Types for ReviewList
+// Types for ReviewList component
 export interface ReviewListProps {
-  // To be implemented
+  salonId?: string
+  customerId?: string
+  limit?: number
 }
+
+export type ComponentProps = Record<string, never>

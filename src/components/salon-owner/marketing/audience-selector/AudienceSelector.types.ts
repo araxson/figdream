@@ -1,4 +1,5 @@
-// Types for AudienceSelector
 export interface AudienceSelectorProps {
-  // To be implemented
+  salonId: string
+  selectedAudiences?: string[]
+  onSelect?: (audienceIds: string[]) => void
 }

@@ -1,19 +1,20 @@
 'use client'
+
 import { useState, useMemo } from 'react'
-import { Calendar } from '@/components/ui/form/calendar'
 import {
+  Calendar,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/data-display/card'
-import { Badge } from '@/components/ui/feedback/badge'
-import { Button } from '@/components/ui/form/button'
-import { ScrollArea } from '@/components/ui/layout/scroll-area'
-import { format, isSameDay, addDays, startOfWeek, endOfWeek } from 'date-fns'
-import { Clock, Calendar as CalendarIcon, User } from 'lucide-react'
-import type { Database } from '@/types/database.types'
+  // Badge,
+  ScrollArea,
+  Button,
+} from '@/components/ui'
+import { format, isSameDay, addDays } from 'date-fns'
+import { Clock, Calendar as CalendarIcon } from 'lucide-react'
+// import type { Database } from '@/types/database.types'
 type TimeSlot = {
   time: string
   available: boolean
@@ -41,7 +42,7 @@ export function BookingCalendar({
   minDate = new Date(),
   maxDate = addDays(new Date(), 60),
   disabledDates = [],
-  staffMembers = [],
+  // staffMembers = [],
 }: BookingCalendarProps) {
   const [internalSelectedDate, setInternalSelectedDate] = useState<Date | undefined>(selectedDate)
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null)
@@ -56,7 +57,9 @@ export function BookingCalendar({
     onTimeSlotSelect?.(internalSelectedDate, time, staffId)
   }
   const dateKey = internalSelectedDate ? format(internalSelectedDate, 'yyyy-MM-dd') : ''
-  const timeSlotsForDate = availableSlots[dateKey] || []
+  const timeSlotsForDate = useMemo(() => {
+    return (availableSlots && availableSlots[dateKey]) || []
+  }, [availableSlots, dateKey])
   const groupedTimeSlots = useMemo(() => {
     const groups: Record<string, TimeSlot[]> = {
       morning: [],

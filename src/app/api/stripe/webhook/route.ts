@@ -28,7 +28,7 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
     if (bookingId) {
       // TODO: Trigger booking confirmation notifications
     }
-  } catch (_error) {
+  } catch (error) {
     throw error
   }
 }
@@ -44,7 +44,7 @@ async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
     if (bookingId) {
       // TODO: Trigger payment failure notifications
     }
-  } catch (_error) {
+  } catch (error) {
     throw error
   }
 }
@@ -55,7 +55,7 @@ async function handlePaymentIntentCanceled(paymentIntent: Stripe.PaymentIntent) 
   try {
     // Update payment status in database
     await updatePaymentFromStripe(paymentIntent.id, 'cancelled', paymentIntent)
-  } catch (_error) {
+  } catch (error) {
     throw error
   }
 }
@@ -111,7 +111,7 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
  */
 async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
   try {
-    const subscriptionId = invoice.subscription as string
+    const subscriptionId = typeof invoice.subscription === 'string' ? invoice.subscription : invoice.subscription?.id
     if (subscriptionId) {
       // Get subscription record
       const subscriptionRecord = await getSubscriptionByStripeId(subscriptionId)
@@ -119,15 +119,21 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
         const supabase = await createClient()
         // Record successful invoice payment
         await supabase
-          .from('subscription_invoices')
+          .from('error_logs')
           .insert({
-            subscription_id: subscriptionRecord.id,
-            stripe_invoice_id: invoice.id,
-            amount_paid: invoice.amount_paid,
-            currency: invoice.currency,
-            status: 'paid',
-            payment_date: new Date(invoice.status_transitions.paid_at! * 1000).toISOString(),
-            invoice_data: invoice as unknown as Record<string, unknown>,
+            error_type: 'subscription_invoice_payment',
+            error_message: 'Invoice payment succeeded',
+            metadata: {
+              subscription_id: subscriptionRecord.id,
+              stripe_invoice_id: invoice.id,
+              amount_paid: invoice.amount_paid,
+              currency: invoice.currency,
+              status: 'paid',
+              payment_date: invoice.status_transitions?.paid_at 
+                ? new Date(invoice.status_transitions.paid_at * 1000).toISOString()
+                : new Date().toISOString(),
+            },
+            salon_id: subscriptionRecord.salon_id,
           })
       }
     }
@@ -139,7 +145,7 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
  */
 async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
   try {
-    const subscriptionId = invoice.subscription as string
+    const subscriptionId = typeof invoice.subscription === 'string' ? invoice.subscription : invoice.subscription?.id
     if (subscriptionId) {
       // Get subscription record
       const subscriptionRecord = await getSubscriptionByStripeId(subscriptionId)
@@ -147,15 +153,21 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
         const supabase = await createClient()
         // Record failed invoice payment
         await supabase
-          .from('subscription_invoices')
+          .from('error_logs')
           .insert({
-            subscription_id: subscriptionRecord.id,
-            stripe_invoice_id: invoice.id,
-            amount_due: invoice.amount_due,
-            currency: invoice.currency,
-            status: 'payment_failed',
-            due_date: new Date(invoice.due_date! * 1000).toISOString(),
-            invoice_data: invoice as unknown as Record<string, unknown>,
+            error_type: 'subscription_invoice_payment_failed',
+            error_message: 'Invoice payment failed',
+            metadata: {
+              subscription_id: subscriptionRecord.id,
+              stripe_invoice_id: invoice.id,
+              amount_due: invoice.amount_due,
+              currency: invoice.currency,
+              status: 'payment_failed',
+              due_date: invoice.due_date 
+                ? new Date(invoice.due_date * 1000).toISOString()
+                : new Date().toISOString(),
+            },
+            salon_id: subscriptionRecord.salon_id,
           })
         // TODO: Send payment failure notification
       }

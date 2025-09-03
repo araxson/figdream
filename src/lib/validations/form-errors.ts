@@ -45,7 +45,7 @@ export function validateFormData<T>(
       success: true,
       data: validated
     }
-  } catch (_error) {
+  } catch (error) {
     if (error instanceof z.ZodError) {
       return {
         success: false,
@@ -229,10 +229,10 @@ export class FormState<T extends Record<string, unknown>> {
       // Validate full object
       this.schema.parse(data)
       return undefined
-    } catch (_error) {
+    } catch (error) {
       if (error instanceof z.ZodError) {
         // Find error for this specific field
-        const fieldError = error.issues.find(issue => issue.path[0] === name)
+        const fieldError = error.issues.find((issue: z.ZodIssue) => issue.path[0] === name)
         return fieldError?.message
       }
       return 'Validation error'

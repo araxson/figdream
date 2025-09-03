@@ -1,4 +1,5 @@
 'use client'
+
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts'
 interface CustomerSegmentChartProps {
   segments: {

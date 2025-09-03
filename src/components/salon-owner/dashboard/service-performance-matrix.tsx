@@ -1,6 +1,6 @@
 'use client'
-import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
-import { Card, CardContent } from '@/components/ui'
+import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell, Tooltip } from 'recharts'
+import { Card, CardContent} from "@/components/ui"
 interface ServicePerformanceMatrixProps {
   services: Array<{
     id: string

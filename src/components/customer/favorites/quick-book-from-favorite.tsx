@@ -1,16 +1,7 @@
 "use client"
 import { useState } from "react"
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from "@/components/ui"
+import { Badge, Button, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, Label, RadioGroup, RadioGroupItem, Separator } from "@/components/ui"
 import { Calendar, Clock, DollarSign, MapPin, Loader2 } from "lucide-react"
-import { Badge, Separator, Label, RadioGroup, RadioGroupItem } from "@/components/ui"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { format, addDays } from "date-fns"
@@ -76,7 +67,6 @@ export function QuickBookFromFavorite({ favorite, size = 'default' }: QuickBookF
           break
       }
     } catch (error) {
-      console.error("Error creating booking:", error)
       toast.error("Failed to create booking")
     } finally {
       setBooking(false)

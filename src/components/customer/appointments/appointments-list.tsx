@@ -1,25 +1,7 @@
 "use client"
 import { useState } from 'react'
 import { format } from 'date-fns'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Badge,
-  Button,
-  ScrollArea,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui'
+import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, ScrollArea, Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui"
 import {
   Calendar,
   Clock,
@@ -37,7 +19,7 @@ import Link from 'next/link'
 import type { Database } from '@/types/database.types'
 type Appointment = Database['public']['Tables']['appointments']['Row'] & {
   services: Database['public']['Tables']['services']['Row'] | null
-  staff: Database['public']['Tables']['staff']['Row'] | null
+  staff_profiles: Database['public']['Tables']['staff_profiles']['Row'] | null
   salons: Database['public']['Tables']['salons']['Row'] | null
 }
 interface AppointmentsListProps {
@@ -124,7 +106,7 @@ export function AppointmentsList({ appointments }: AppointmentsListProps) {
                     </DropdownMenuItem>
                   </>
                 )}
-                {appointment.status === 'completed' && !appointment.review_id && (
+                {appointment.status === 'completed' && (
                   <DropdownMenuItem asChild>
                     <Link href={`/reviews/new?appointment=${appointment.id}`}>
                       <Star className="mr-2 h-4 w-4" />
@@ -151,24 +133,24 @@ export function AppointmentsList({ appointments }: AppointmentsListProps) {
             <Clock className="h-4 w-4" />
             <span>
               {appointment.start_time} - {appointment.end_time}
-              {appointment.duration && ` (${appointment.duration} min)`}
+              {appointment.total_duration && ` (${appointment.total_duration} min)`}
             </span>
           </div>
           <div className="flex items-center gap-2 text-muted-foreground">
             <User className="h-4 w-4" />
             <span>
-              {appointment.staff?.first_name} {appointment.staff?.last_name}
+              {appointment.staff_profiles?.title || 'Staff Member'}
             </span>
           </div>
-          {appointment.salons?.address && (
+          {false && (
             <div className="flex items-center gap-2 text-muted-foreground">
               <MapPin className="h-4 w-4" />
-              <span className="truncate">{appointment.salons.address}</span>
+              <span className="truncate">Location</span>
             </div>
           )}
           <div className="flex items-center gap-2 text-muted-foreground">
             <DollarSign className="h-4 w-4" />
-            <span>${appointment.total_price?.toFixed(2) || '0.00'}</span>
+            <span>${appointment.total_amount?.toFixed(2) || '0.00'}</span>
           </div>
         </div>
         {appointment.notes && (

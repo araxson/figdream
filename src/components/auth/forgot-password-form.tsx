@@ -13,7 +13,8 @@ import {
 import { toast } from 'sonner'
 import { Loader2, Mail, CheckCircle, RefreshCw, Lock } from 'lucide-react'
 import { resetPasswordAction, verifyResetOtpAction } from '@/lib/actions/auth'
-import { useCSRFToken, CSRFTokenField } from '@/lib/hooks/use-csrf-token'
+import { useCSRFToken } from '@/lib/hooks/use-csrf-token'
+import { CSRFTokenField } from '@/components/shared/forms/csrf-token-field'
 export function ForgotPasswordForm() {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()

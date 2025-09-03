@@ -1,5 +1,20 @@
 'use client'
-// This component has been split into smaller modules
-// Import the actual implementation from the split directory
-export * from './audience-selector/AudienceSelector'
-export { default } from './audience-selector/AudienceSelector'
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/data-display/card'
+
+export interface AudienceSelectorProps {
+  className?: string
+}
+
+export function AudienceSelector({ className }: AudienceSelectorProps) {
+  return (
+    <Card className={className}>
+      <CardHeader>
+        <CardTitle>Audience Selector</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p>Component implementation pending</p>
+      </CardContent>
+    </Card>
+  )
+}

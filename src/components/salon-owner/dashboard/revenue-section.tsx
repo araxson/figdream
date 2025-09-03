@@ -1,9 +1,8 @@
 'use client'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, Skeleton } from "@/components/ui"
 import { default as RevenueChart } from '@/components/salon-owner/analytics/revenue-chart'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/database/supabase/client'
-import { Skeleton } from '@/components/ui'
 import { TrendingUp, TrendingDown } from 'lucide-react'
 interface RevenueSectionProps {
   salonId: string

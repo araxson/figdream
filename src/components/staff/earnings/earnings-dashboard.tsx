@@ -1,24 +1,11 @@
 "use client"
 import { useState, useEffect } from "react"
-import { DollarSign, TrendingUp, TrendingDown, Calendar } from "lucide-react"
-import { 
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Skeleton,
-  Badge
-} from "@/components/ui"
+import { DollarSign, TrendingUp, TrendingDown, Calendar} from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Skeleton } from "@/components/ui"
 
 import { toast } from "sonner"
 import { createClient } from "@/lib/database/supabase/client"
-import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, subMonths, format } from "date-fns"
+import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, subMonths } from "date-fns"
 import type { Database } from "@/types/database.types"
 type StaffEarnings = Database["public"]["Tables"]["staff_earnings"]["Row"]
 interface EarningsDashboardProps {
@@ -37,11 +24,12 @@ interface EarningsSummary {
 export function EarningsDashboard({ staffId }: EarningsDashboardProps) {
   const [period, setPeriod] = useState<"week" | "month" | "quarter" | "year">("month")
   const [summary, setSummary] = useState<EarningsSummary | null>(null)
-  const [previousSummary, setPreviousSummary] = useState<EarningsSummary | null>(null)
+  const [_previousSummary, _setPreviousSummary] = useState<EarningsSummary | null>(null)
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
   useEffect(() => {
     loadEarnings()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [staffId, period])
   const getDateRange = (period: string, offset = 0) => {
     const now = new Date()
@@ -101,7 +89,6 @@ export function EarningsDashboard({ staffId }: EarningsDashboardProps) {
       setSummary({ ...currentSummary, percentageChange })
       setPreviousSummary(prevSummary)
     } catch (error) {
-      console.error("Error loading earnings:", error)
       toast.error("Failed to load earnings data")
     } finally {
       setLoading(false)
@@ -117,8 +104,7 @@ export function EarningsDashboard({ staffId }: EarningsDashboardProps) {
         bonuses: acc.bonuses + (earning.bonus_amount || 0),
         appointmentCount: acc.appointmentCount + 1,
         averagePerAppointment: 0,
-        percentageChange: 0,
-      }),
+        percentageChange: 0}),
       {
         totalEarnings: 0,
         baseEarnings: 0,
@@ -127,8 +113,7 @@ export function EarningsDashboard({ staffId }: EarningsDashboardProps) {
         bonuses: 0,
         appointmentCount: 0,
         averagePerAppointment: 0,
-        percentageChange: 0,
-      }
+        percentageChange: 0}
     )
     summary.averagePerAppointment = 
       summary.appointmentCount > 0 
@@ -139,8 +124,7 @@ export function EarningsDashboard({ staffId }: EarningsDashboardProps) {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "USD",
-    }).format(amount)
+      currency: "USD"}).format(amount)
   }
   if (loading) {
     return (
@@ -181,7 +165,7 @@ export function EarningsDashboard({ staffId }: EarningsDashboardProps) {
             Track your income and performance
           </p>
         </div>
-        <Select value={period} onValueChange={(value: any) => setPeriod(value)}>
+        <Select value={period} onValueChange={(value) => setPeriod(value as "week" | "month" | "quarter" | "year")}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select period" />
           </SelectTrigger>

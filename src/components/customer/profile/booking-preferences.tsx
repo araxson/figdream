@@ -1,14 +1,6 @@
 'use client'
 import { useState } from 'react'
-import {
-  Label,
-  Button,
-  RadioGroup,
-  RadioGroupItem,
-  Checkbox,
-  Card,
-  CardContent,
-} from '@/components/ui'
+import { Button, Card, CardContent, Checkbox, Label, RadioGroup, RadioGroupItem } from "@/components/ui"
 import { Calendar, Clock, Sun, Moon, Cloud, Bell } from 'lucide-react'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/database/supabase/client'

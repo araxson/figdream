@@ -14,7 +14,7 @@ import {
 } from "@/components/ui"
 import { Clock, Loader2 } from "lucide-react"
 import { toast } from "sonner"
-import { createClient } from "@/lib/supabase/client"
+import { createClient } from "@/lib/database/supabase/client"
 interface JoinWaitlistButtonProps {
   serviceId: string
   serviceName: string

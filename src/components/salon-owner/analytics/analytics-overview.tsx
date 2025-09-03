@@ -1,6 +1,5 @@
 "use client"
 import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Progress, Skeleton, Alert, AlertDescription } from "@/components/ui"
 import {
   TrendingUp,
   Users,
@@ -32,7 +31,12 @@ import {
   Legend,
   ResponsiveContainer
 } from "recharts"
-import { createBrowserClient } from "@/lib/supabase/client"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/data-display/card"
+import { Skeleton } from "@/components/ui/feedback/skeleton"
+import { Alert, AlertDescription } from "@/components/ui/feedback/alert"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/form/select"
+import { Progress } from "@/components/ui/feedback/progress"
+import { createBrowserClient } from "@/lib/database/supabase/client"
 import type { Database } from "@/types/database.types"
 type AnalyticsData = Database["public"]["Views"]["analytics_overview"]["Row"]
 type MetricTrend = Database["public"]["Views"]["analytics_trends"]["Row"]
@@ -87,7 +91,6 @@ export function AnalyticsOverview() {
       // Calculate KPIs
       calculateKPIs(overview)
     } catch (err) {
-      console.error("Error fetching analytics:", err)
       setError("Failed to load analytics data")
     } finally {
       setLoading(false)

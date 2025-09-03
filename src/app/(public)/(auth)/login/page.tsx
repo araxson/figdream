@@ -2,15 +2,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui'
-import { Input } from '@/components/ui'
-import { Label } from '@/components/ui'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
-import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from '@/components/ui'
-import { Progress } from '@/components/ui'
-import { Badge } from '@/components/ui'
-import { Separator } from '@/components/ui'
+import { Badge, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Input, Label, Progress, Separator, Tabs, TabsContent, TabsList, TabsTrigger, InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@/components/ui"
 import { toast } from 'sonner'
 import { Building, Shield, Users, User, Loader2, Lock, Smartphone, Mail, KeyRound } from 'lucide-react'
 export default function LoginPage() {

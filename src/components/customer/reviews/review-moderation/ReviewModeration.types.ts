@@ -1,4 +1,6 @@
-// Types for ReviewModeration
+// Types for ReviewModeration component
 export interface ReviewModerationProps {
-  // To be implemented
+  salonId: string
 }
+
+export type ComponentProps = Record<string, never>

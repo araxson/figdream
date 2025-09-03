@@ -1,6 +1,6 @@
 "use client"
 import { useState } from "react"
-import { Calculator, DollarSign, Percent, TrendingUp } from "lucide-react"
+import { Calculator, DollarSign, TrendingUp } from "lucide-react"
 import { 
   Card,
   CardContent,

@@ -5,6 +5,7 @@ export type Json =
   | null
   | { [key: string]: Json | undefined }
   | Json[]
+
 export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
@@ -768,6 +769,82 @@ export type Database = {
           },
         ]
       }
+      customer_favorites: {
+        Row: {
+          created_at: string | null
+          customer_id: string | null
+          favorite_type: string
+          id: string
+          salon_id: string | null
+          service_id: string | null
+          staff_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          customer_id?: string | null
+          favorite_type: string
+          id?: string
+          salon_id?: string | null
+          service_id?: string | null
+          staff_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          customer_id?: string | null
+          favorite_type?: string
+          id?: string
+          salon_id?: string | null
+          service_id?: string | null
+          staff_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_favorites_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_favorites_salon_id_fkey"
+            columns: ["salon_id"]
+            isOneToOne: false
+            referencedRelation: "salons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_favorites_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "service_profitability"
+            referencedColumns: ["service_id"]
+          },
+          {
+            foreignKeyName: "customer_favorites_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_favorites_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "staff_performance_dashboard"
+            referencedColumns: ["staff_id"]
+          },
+          {
+            foreignKeyName: "customer_favorites_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "staff_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customer_preferences: {
         Row: {
           created_at: string
@@ -1348,6 +1425,87 @@ export type Database = {
           },
         ]
       }
+      gift_cards: {
+        Row: {
+          cancelled_at: string | null
+          code: string
+          created_at: string | null
+          delivery_method: string | null
+          expires_at: string | null
+          id: string
+          message: string | null
+          original_amount: number
+          payment_intent_id: string | null
+          purchaser_id: string | null
+          recipient_email: string | null
+          recipient_id: string | null
+          recipient_name: string | null
+          remaining_balance: number
+          scheduled_delivery_date: string | null
+          sender_name: string | null
+          status: string
+          updated_at: string | null
+          used_at: string | null
+        }
+        Insert: {
+          cancelled_at?: string | null
+          code: string
+          created_at?: string | null
+          delivery_method?: string | null
+          expires_at?: string | null
+          id?: string
+          message?: string | null
+          original_amount: number
+          payment_intent_id?: string | null
+          purchaser_id?: string | null
+          recipient_email?: string | null
+          recipient_id?: string | null
+          recipient_name?: string | null
+          remaining_balance: number
+          scheduled_delivery_date?: string | null
+          sender_name?: string | null
+          status?: string
+          updated_at?: string | null
+          used_at?: string | null
+        }
+        Update: {
+          cancelled_at?: string | null
+          code?: string
+          created_at?: string | null
+          delivery_method?: string | null
+          expires_at?: string | null
+          id?: string
+          message?: string | null
+          original_amount?: number
+          payment_intent_id?: string | null
+          purchaser_id?: string | null
+          recipient_email?: string | null
+          recipient_id?: string | null
+          recipient_name?: string | null
+          remaining_balance?: number
+          scheduled_delivery_date?: string | null
+          sender_name?: string | null
+          status?: string
+          updated_at?: string | null
+          used_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gift_cards_purchaser_id_fkey"
+            columns: ["purchaser_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gift_cards_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       loyalty_points_ledger: {
         Row: {
           adjusted_by: string | null
@@ -1629,6 +1787,207 @@ export type Database = {
           {
             foreignKeyName: "notifications_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      password_reset_tokens: {
+        Row: {
+          created_at: string | null
+          email: string
+          expires_at: string
+          id: string
+          token: string
+          updated_at: string | null
+          verified: boolean | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          expires_at: string
+          id?: string
+          token: string
+          updated_at?: string | null
+          verified?: boolean | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          expires_at?: string
+          id?: string
+          token?: string
+          updated_at?: string | null
+          verified?: boolean | null
+        }
+        Relationships: []
+      }
+      payment_methods: {
+        Row: {
+          billing_address_line_1: string | null
+          billing_address_line_2: string | null
+          billing_city: string | null
+          billing_country: string | null
+          billing_postal_code: string | null
+          billing_state: string | null
+          card_brand: string | null
+          created_at: string | null
+          exp_month: number | null
+          exp_year: number | null
+          id: string
+          is_default: boolean | null
+          last_four: string | null
+          stripe_payment_method_id: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          billing_address_line_1?: string | null
+          billing_address_line_2?: string | null
+          billing_city?: string | null
+          billing_country?: string | null
+          billing_postal_code?: string | null
+          billing_state?: string | null
+          card_brand?: string | null
+          created_at?: string | null
+          exp_month?: number | null
+          exp_year?: number | null
+          id?: string
+          is_default?: boolean | null
+          last_four?: string | null
+          stripe_payment_method_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          billing_address_line_1?: string | null
+          billing_address_line_2?: string | null
+          billing_city?: string | null
+          billing_country?: string | null
+          billing_postal_code?: string | null
+          billing_state?: string | null
+          card_brand?: string | null
+          created_at?: string | null
+          exp_month?: number | null
+          exp_year?: number | null
+          id?: string
+          is_default?: boolean | null
+          last_four?: string | null
+          stripe_payment_method_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_methods_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_records: {
+        Row: {
+          appointment_id: string | null
+          created_at: string | null
+          customer_id: string
+          discount_amount: number | null
+          id: string
+          location_id: string | null
+          notes: string | null
+          payment_date: string | null
+          payment_method: string
+          payment_status: string | null
+          recorded_by: string
+          salon_id: string
+          service_amount: number
+          staff_id: string
+          tax_amount: number | null
+          tip_amount: number | null
+          total_amount: number
+          updated_at: string | null
+        }
+        Insert: {
+          appointment_id?: string | null
+          created_at?: string | null
+          customer_id: string
+          discount_amount?: number | null
+          id?: string
+          location_id?: string | null
+          notes?: string | null
+          payment_date?: string | null
+          payment_method: string
+          payment_status?: string | null
+          recorded_by: string
+          salon_id: string
+          service_amount: number
+          staff_id: string
+          tax_amount?: number | null
+          tip_amount?: number | null
+          total_amount?: number
+          updated_at?: string | null
+        }
+        Update: {
+          appointment_id?: string | null
+          created_at?: string | null
+          customer_id?: string
+          discount_amount?: number | null
+          id?: string
+          location_id?: string | null
+          notes?: string | null
+          payment_date?: string | null
+          payment_method?: string
+          payment_status?: string | null
+          recorded_by?: string
+          salon_id?: string
+          service_amount?: number
+          staff_id?: string
+          tax_amount?: number | null
+          tip_amount?: number | null
+          total_amount?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_records_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_records_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_records_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "salon_locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_records_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_records_salon_id_fkey"
+            columns: ["salon_id"]
+            isOneToOne: false
+            referencedRelation: "salons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_records_staff_id_fkey"
+            columns: ["staff_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -3654,6 +4013,10 @@ export type Database = {
           table_name: string
         }[]
       }
+      cleanup_expired_password_reset_tokens: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       cleanup_old_otp_attempts: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -3693,6 +4056,10 @@ export type Database = {
         }[]
       }
       generate_csrf_token: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      generate_gift_card_code: {
         Args: Record<PropertyKey, never>
         Returns: string
       }
@@ -3916,6 +4283,22 @@ export type Database = {
         | "promotion"
         | "system"
         | "loyalty_points"
+      payment_method:
+        | "cash"
+        | "card"
+        | "online"
+        | "gift_card"
+        | "bank_transfer"
+        | "mobile_payment"
+        | "other"
+      payment_status:
+        | "pending"
+        | "processing"
+        | "completed"
+        | "failed"
+        | "cancelled"
+        | "refunded"
+        | "partially_refunded"
       preference_type: "allergies" | "preferences" | "restrictions"
       user_role_type:
         | "super_admin"
@@ -3929,8 +4312,11 @@ export type Database = {
     }
   }
 }
+
 type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
 type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
@@ -3959,6 +4345,7 @@ export type Tables<
       ? R
       : never
     : never
+
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
@@ -3983,6 +4370,7 @@ export type TablesInsert<
       ? I
       : never
     : never
+
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
@@ -4007,6 +4395,7 @@ export type TablesUpdate<
       ? U
       : never
     : never
+
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
@@ -4023,6 +4412,7 @@ export type Enums<
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
     ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
+
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
@@ -4039,6 +4429,7 @@ export type CompositeTypes<
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
+
 export const Constants = {
   public: {
     Enums: {
@@ -4059,6 +4450,24 @@ export const Constants = {
         "promotion",
         "system",
         "loyalty_points",
+      ],
+      payment_method: [
+        "cash",
+        "card",
+        "online",
+        "gift_card",
+        "bank_transfer",
+        "mobile_payment",
+        "other",
+      ],
+      payment_status: [
+        "pending",
+        "processing",
+        "completed",
+        "failed",
+        "cancelled",
+        "refunded",
+        "partially_refunded",
       ],
       preference_type: ["allergies", "preferences", "restrictions"],
       user_role_type: [

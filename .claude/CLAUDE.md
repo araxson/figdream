@@ -1,14 +1,18 @@
 # Claude Code Instructions
 
-## 🚀 Project Context
+## 🔴 CRITICAL: READ PROJECT_TREE.md FIRST - BEFORE ANYTHING ELSE
 
-This project uses automated tools to help Claude Code understand the codebase structure. 
+### ⚡ Automated Project Tree Generation
 
-### Automatic Setup
+**IMPORTANT:** The `user-prompt-submit-hook` automatically generates a fresh `PROJECT_TREE.md` with EVERY message you receive. This ensures you always have the most up-to-date project statistics and structure.
 
-When you start a new conversation with Claude Code:
-1. A hook automatically generates `PROJECT_TREE.md` with current project statistics
-2. Claude should **ALWAYS** read `PROJECT_TREE.md` first to understand the project structure
+### 📋 MANDATORY FIRST STEP
+
+**ALWAYS read PROJECT_TREE.md FIRST before doing anything else because:**
+1. It's automatically regenerated with EVERY message (always fresh)
+2. Contains current file counts, line counts, and directory structure
+3. Shows the largest files and component statistics
+4. Helps you understand the project scope immediately
 
 ### Key Files to Check
 

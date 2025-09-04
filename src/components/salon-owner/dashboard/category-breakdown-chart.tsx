@@ -1,6 +1,7 @@
 'use client'
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Legend, Tooltip } from 'recharts'
+import { useCallback } from 'react'
 interface CategoryBreakdownChartProps {
   categories: Array<{
     category: string
@@ -9,22 +10,24 @@ interface CategoryBreakdownChartProps {
     percentage: number
   }>
 }
-export default function CategoryBreakdownChart({ categories }: CategoryBreakdownChartProps) {
-  const formatCurrency = (value: number) => {
+function CategoryBreakdownChart({ categories }: CategoryBreakdownChartProps) {
+  const formatCurrency = useCallback((value: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
     }).format(value)
-  }
+  }, [])
+
   const data = categories.map(cat => ({
     name: cat.category,
     bookings: cat.bookings,
     revenue: cat.revenue / 100, // Scale down for better visualization
     percentage: cat.percentage
   }))
-  const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number; dataKey: string }>; label?: string }) => {
+
+  const CustomTooltip = useCallback(({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number; dataKey: string }>; label?: string }) => {
     if (active && payload && payload.length) {
       const category = categories.find(c => c.category === label)
       return (
@@ -37,7 +40,7 @@ export default function CategoryBreakdownChart({ categories }: CategoryBreakdown
       )
     }
     return null
-  }
+  }, [categories, formatCurrency])
   return (
     <ResponsiveContainer width="100%" height={300}>
       <BarChart
@@ -88,3 +91,7 @@ export default function CategoryBreakdownChart({ categories }: CategoryBreakdown
     </ResponsiveContainer>
   )
 }
+
+CategoryBreakdownChart.displayName = 'CategoryBreakdownChart'
+
+export default CategoryBreakdownChart

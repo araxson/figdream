@@ -2,12 +2,17 @@
 import { useState, useEffect } from "react"
 import { 
   AreaChart, Area, LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
+  XAxis, YAxis, CartesianGrid, Legend
 } from 'recharts'
 import { 
   Users, Building2, Calendar, DollarSign, Loader2
 } from "lucide-react"
-import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui"
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+// ChartConfig type from chart component
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 interface PlatformMetrics {
   totalUsers: number
   totalSalons: number
@@ -38,6 +43,26 @@ interface FeatureAdoption {
   activeUsers: number
   trend: 'up' | 'down' | 'stable'
 }
+
+const chartConfig = {
+  users: {
+    label: 'Users',
+    color: 'hsl(var(--chart-1))',
+  },
+  salons: {
+    label: 'Salons',
+    color: 'hsl(var(--chart-2))',
+  },
+  appointments: {
+    label: 'Appointments',
+    color: 'hsl(var(--chart-3))',
+  },
+  revenue: {
+    label: 'Revenue',
+    color: 'hsl(var(--chart-4))',
+  },
+} satisfies ChartConfig
+
 export function PlatformAnalyticsDashboard() {
   const [timeRange, setTimeRange] = useState("30d")
   const [metrics, setMetrics] = useState<PlatformMetrics | null>(null)
@@ -85,12 +110,12 @@ export function PlatformAnalyticsDashboard() {
         { feature: "Analytics Dashboard", adoptionRate: 71, activeUsers: 32432, trend: 'up' },
         { feature: "Payment Processing", adoptionRate: 89, activeUsers: 40653, trend: 'stable' }
       ])
-    } catch (error) {
+    } catch (_error) {
     } finally {
       setLoading(false)
     }
   }
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8']
+  const regionColors = ['var(--color-users)', 'var(--color-salons)', 'var(--color-appointments)', 'var(--color-revenue)', 'hsl(var(--chart-5))']
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -182,18 +207,18 @@ export function PlatformAnalyticsDashboard() {
               <CardDescription>Platform growth metrics over time</CardDescription>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
+              <ChartContainer config={chartConfig} className="h-[400px]">
                 <LineChart data={growthTrends}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
                   <YAxis />
-                  <Tooltip />
+                  <ChartTooltip content={<ChartTooltipContent />} />
                   <Legend />
-                  <Line type="monotone" dataKey="users" stroke="#8884d8" name="Users" />
-                  <Line type="monotone" dataKey="salons" stroke="#82ca9d" name="Salons" />
-                  <Line type="monotone" dataKey="appointments" stroke="#ffc658" name="Appointments" />
+                  <Line type="monotone" dataKey="users" stroke="var(--color-users)" name="Users" />
+                  <Line type="monotone" dataKey="salons" stroke="var(--color-salons)" name="Salons" />
+                  <Line type="monotone" dataKey="appointments" stroke="var(--color-appointments)" name="Appointments" />
                 </LineChart>
-              </ResponsiveContainer>
+              </ChartContainer>
             </CardContent>
           </Card>
           <Card>
@@ -202,15 +227,17 @@ export function PlatformAnalyticsDashboard() {
               <CardDescription>Monthly revenue progression</CardDescription>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
+              <ChartContainer config={chartConfig} className="h-[300px]">
                 <AreaChart data={growthTrends}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
                   <YAxis />
-                  <Tooltip formatter={(value: number) => `$${value.toLocaleString()}`} />
-                  <Area type="monotone" dataKey="revenue" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+                  <ChartTooltip 
+                    content={<ChartTooltipContent formatter={(value: number) => `$${value.toLocaleString()}`} />}
+                  />
+                  <Area type="monotone" dataKey="revenue" stroke="var(--color-revenue)" fill="var(--color-revenue)" fillOpacity={0.6} />
                 </AreaChart>
-              </ResponsiveContainer>
+              </ChartContainer>
             </CardContent>
           </Card>
         </TabsContent>
@@ -222,7 +249,7 @@ export function PlatformAnalyticsDashboard() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <ResponsiveContainer width="100%" height={300}>
+                <ChartContainer config={chartConfig} className="h-[300px]">
                   <PieChart>
                     <Pie
                       data={geoDistribution}
@@ -231,16 +258,16 @@ export function PlatformAnalyticsDashboard() {
                       labelLine={false}
                       label={(entry) => `${entry.region}: ${entry.percentage}%`}
                       outerRadius={80}
-                      fill="#8884d8"
+                      fill="var(--color-users)"
                       dataKey="percentage"
                     >
                       {geoDistribution.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        <Cell key={`cell-${index}`} fill={regionColors[index % regionColors.length]} />
                       ))}
                     </Pie>
-                    <Tooltip />
+                    <ChartTooltip content={<ChartTooltipContent />} />
                   </PieChart>
-                </ResponsiveContainer>
+                </ChartContainer>
                 <div className="space-y-4">
                   {geoDistribution.map((region) => (
                     <div key={region.region} className="flex justify-between items-center">
@@ -268,19 +295,21 @@ export function PlatformAnalyticsDashboard() {
               <CardDescription>Platform feature usage and adoption</CardDescription>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
+              <ChartContainer config={chartConfig} className="h-[400px]">
                 <BarChart data={featureAdoption} layout="horizontal">
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis type="number" domain={[0, 100]} />
                   <YAxis dataKey="feature" type="category" width={120} />
-                  <Tooltip formatter={(value: number) => `${value}%`} />
-                  <Bar dataKey="adoptionRate" fill="#8884d8">
+                  <ChartTooltip 
+                    content={<ChartTooltipContent formatter={(value: number) => `${value}%`} />}
+                  />
+                  <Bar dataKey="adoptionRate" fill="var(--color-users)">
                     {featureAdoption.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      <Cell key={`cell-${index}`} fill={regionColors[index % regionColors.length]} />
                     ))}
                   </Bar>
                 </BarChart>
-              </ResponsiveContainer>
+              </ChartContainer>
               <div className="mt-6 space-y-3">
                 {featureAdoption.map((feature) => (
                   <div key={feature.feature} className="flex justify-between items-center p-3 border rounded-lg">
@@ -308,7 +337,7 @@ export function PlatformAnalyticsDashboard() {
               <CardDescription>Predicted platform growth for the next 6 months</CardDescription>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
+              <ChartContainer config={chartConfig} className="h-[400px]">
                 <AreaChart data={[
                   ...growthTrends,
                   { date: "Jul", users: 48000, salons: 1300, appointments: 250000, revenue: 1600000 },
@@ -321,12 +350,12 @@ export function PlatformAnalyticsDashboard() {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
                   <YAxis />
-                  <Tooltip />
+                  <ChartTooltip content={<ChartTooltipContent />} />
                   <Legend />
-                  <Area type="monotone" dataKey="users" stackId="1" stroke="#8884d8" fill="#8884d8" />
-                  <Area type="monotone" dataKey="salons" stackId="2" stroke="#82ca9d" fill="#82ca9d" />
+                  <Area type="monotone" dataKey="users" stackId="1" stroke="var(--color-users)" fill="var(--color-users)" />
+                  <Area type="monotone" dataKey="salons" stackId="2" stroke="var(--color-salons)" fill="var(--color-salons)" />
                 </AreaChart>
-              </ResponsiveContainer>
+              </ChartContainer>
             </CardContent>
           </Card>
         </TabsContent>

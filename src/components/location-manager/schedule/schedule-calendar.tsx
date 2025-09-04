@@ -1,5 +1,7 @@
 import { Database } from "@/types/database.types"
-import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui"
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import { Ban } from "lucide-react"
 type BlockedTime = Database['public']['Tables']['blocked_times']['Row'] & {
@@ -38,7 +40,10 @@ export function ScheduleCalendar({ scheduleByDay, weekStart }: ScheduleCalendarP
             return (
               <div 
                 key={day.date.toISOString()} 
-                className={`border rounded-lg p-4 ${isToday ? 'border-primary bg-primary/5' : ''}`}
+                className={cn(
+                  "border rounded-lg p-4",
+                  isToday && "border-primary bg-primary/5"
+                )}
               >
                 <div className="flex items-center justify-between mb-3">
                   <div>

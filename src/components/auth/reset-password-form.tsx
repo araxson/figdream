@@ -1,11 +1,14 @@
 'use client'
 import { useState, useTransition, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button, Input, Label, Progress } from '@/components/ui'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Progress } from '@/components/ui/progress'
 import { toast } from 'sonner'
 import { Loader2, Lock, Eye, EyeOff, CheckCircle, XCircle } from 'lucide-react'
 import { updatePasswordWithOtpAction } from '@/lib/actions/auth'
-import { useCSRFToken } from '@/lib/hooks/use-csrf-token'
+import { useCSRFToken } from '@/hooks/use-csrf-token'
 import { CSRFTokenField } from '@/components/shared/forms/csrf-token-field'
 interface PasswordStrength {
   score: number

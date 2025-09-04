@@ -1,32 +1,22 @@
 'use server'
 import { createClient } from '@/lib/database/supabase/server'
-import type { Database } from '@/types/database.types'
+import { 
+  ServiceCategory,
+  ServiceCategoryInsert,
+  ServiceCategoryUpdate,
+  Service,
+  QueryResult,
+  QueryResultMany
+} from '@/types/db-types'
 import { getUserWithRole } from '@/lib/data-access/auth/verify'
 import { hasMinimumRoleLevel } from '@/lib/data-access/auth/roles'
-// ULTRA-TYPES: Comprehensive type definitions with 3-step-ahead thinking
-type ServiceCategoryInsert = Database['public']['Tables']['service_categories']['Insert']
-type ServiceCategoryUpdate = Database['public']['Tables']['service_categories']['Update']
-type Service = Database['public']['Tables']['services']['Row']
-// ULTRA-INTERFACES: Extended types considering future needs
-export interface ServiceCategoryWithServices {
-  id: string
-  name: string
-  description?: string | null
-  icon?: string | null
-  color?: string | null
-  display_order: number
-  is_active: boolean
-  parent_id?: string | null
-  salon_id?: string | null
-  created_at?: string
-  updated_at?: string
+
+// Extended category type with services
+export interface ServiceCategoryWithServices extends ServiceCategory {
   services?: Service[]
   services_count?: number
   subcategories?: ServiceCategoryWithServices[]
-  parent_category?: {
-    id: string
-    name: string
-  }
+  parent_category?: Pick<ServiceCategory, 'id' | 'name'>
 }
 export interface CategoryTree {
   id: string
@@ -39,15 +29,9 @@ export interface CategoryTree {
   children: CategoryTree[]
   services_count: number
 }
-// ULTRA-RESULTS: Standardized result types for consistency
-export interface CategoryResult {
-  data: ServiceCategory | null
-  error: string | null
-}
-export interface CategoriesResult {
-  data: ServiceCategoryWithServices[] | null
-  error: string | null
-}
+// Result types using database types
+export type CategoryResult = QueryResult<ServiceCategory>
+export type CategoriesResult = QueryResultMany<ServiceCategoryWithServices>
 export interface CategoryTreeResult {
   data: CategoryTree[] | null
   error: string | null

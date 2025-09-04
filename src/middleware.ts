@@ -26,9 +26,16 @@ export async function middleware(request: NextRequest) {
       },
     }
   )
-  // IMPORTANT: Only refresh the session, NO auth checks per CLAUDE.md
-  // Auth checks should be done in the DAL (Data Access Layer)
-  await supabase.auth.getUser()
+  // CRITICAL: CVE-2025-29927 - Middleware ONLY for session updates
+  // NO authentication or authorization checks in middleware
+  // All auth checks MUST be in Data Access Layer (DAL) using verifySession()
+  try {
+    // Only update session cookies - DO NOT use for auth decisions
+    await supabase.auth.getUser()
+  } catch (error) {
+    // Silent failure - auth validation happens in DAL
+    console.warn('Session refresh failed:', error)
+  }
   // Apply CORS headers for API routes
   if (path.startsWith('/api/')) {
     const origin = request.headers.get('origin')

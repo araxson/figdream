@@ -1,24 +1,14 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import {
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  Calendar,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Badge,
-  RadioGroup,
-  RadioGroupItem,
-  Label,
-  Textarea,
-} from '@/components/ui'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Calendar } from '@/components/ui/calendar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
 import { ArrowLeft, Star, Award, Briefcase } from 'lucide-react'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/database/supabase/client'

@@ -2,30 +2,12 @@
 import { useState } from 'react'
 import { DateRangePicker } from '@/components/shared/ui-components/date-range-picker'
 import { DateRange } from 'react-day-picker'
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle, 
-  Button, 
-  Label, 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  ToggleGroup, 
-  ToggleGroupItem,
-  Drawer, 
-  DrawerContent, 
-  DrawerDescription, 
-  DrawerHeader, 
-  DrawerTitle, 
-  DrawerTrigger,
-  DrawerFooter,
-  DrawerClose 
-} from '@/components/ui'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger, DrawerFooter, DrawerClose } from '@/components/ui/drawer'
 import { Filter, Download, RefreshCw } from 'lucide-react'
 export function AppointmentsFilter() {
   const [_dateRange, setDateRange] = useState<DateRange | undefined>()

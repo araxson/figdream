@@ -1,6 +1,11 @@
 "use client"
 import { useState } from "react"
-import { Badge, Button, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, Label, RadioGroup, RadioGroupItem, Separator } from "@/components/ui"
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Separator } from '@/components/ui/separator'
 import { Calendar, Clock, DollarSign, MapPin, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
@@ -66,7 +71,7 @@ export function QuickBookFromFavorite({ favorite, size = 'default' }: QuickBookF
           router.push(`/book/service/${favorite.itemId}`)
           break
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to create booking")
     } finally {
       setBooking(false)

@@ -1,56 +1,70 @@
-import Link from 'next/link'
-import { Button } from '@/components/ui'
-import { ChevronLeft } from 'lucide-react'
-export default function AuthLayout({
+import type { Metadata, Viewport } from 'next'
+import { Inter } from 'next/font/google'
+import './globals.css'
+import { Providers } from './providers'
+
+const inter = Inter({ subsets: ['latin'] })
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+}
+
+export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001'),
+  title: 'FigDream - Premium Salon Booking Platform',
+  description: 'Book appointments at your favorite salons with FigDream. Discover top-rated beauty professionals and manage your appointments easily.',
+  keywords: 'salon booking, beauty appointments, hair salon, spa booking, nail salon',
+  authors: [{ name: 'FigDream' }],
+  creator: 'FigDream',
+  publisher: 'FigDream',
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://figdream.com',
+    siteName: 'FigDream',
+    title: 'FigDream - Premium Salon Booking Platform',
+    description: 'Book appointments at your favorite salons with FigDream',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'FigDream',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'FigDream - Premium Salon Booking Platform',
+    description: 'Book appointments at your favorite salons with FigDream',
+    images: ['/og-image.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+}
+
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Simple Header */}
-      <header className="border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="text-2xl font-bold">
-              FigDream
-            </Link>
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/">
-                <ChevronLeft className="h-4 w-4 mr-2" />
-                Back to Home
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </header>
-      {/* Main Content */}
-      <main className="flex-1 flex items-center justify-center px-4 py-16">
-        <div className="w-full max-w-md">
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
+        <Providers>
           {children}
-        </div>
-      </main>
-      {/* Simple Footer */}
-      <footer className="border-t py-6">
-        <div className="container mx-auto px-4">
-          <div className="text-center text-sm text-muted-foreground">
-            <p className="mb-2">
-              © 2024 FigDream. All rights reserved.
-            </p>
-            <div className="flex justify-center gap-4">
-              <Link href="/privacy" className="hover:underline">
-                Privacy Policy
-              </Link>
-              <Link href="/terms" className="hover:underline">
-                Terms of Service
-              </Link>
-              <Link href="/contact" className="hover:underline">
-                Contact Support
-              </Link>
-            </div>
-          </div>
-        </div>
-      </footer>
-    </div>
+        </Providers>
+      </body>
+    </html>
   )
 }

@@ -1,8 +1,8 @@
 'use client'
 
-import { Calendar } from '@/components/ui/form/calendar'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/data-display/card'
 
+import { Calendar } from '@/components/ui/calendar'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 export interface BookingCalendarProps {
   staffId?: string
   onDateSelect?: (date: Date) => void

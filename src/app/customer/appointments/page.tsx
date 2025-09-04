@@ -1,5 +1,8 @@
 import { Metadata } from 'next'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui'
+import { AppointmentsList } from '@/components/customer/appointments/appointments-list'
+import { Button } from '@/components/ui/button'
+import { CalendarPlus } from 'lucide-react'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Appointments',
@@ -9,20 +12,20 @@ export const metadata: Metadata = {
 export default async function Page() {
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Appointments</h1>
-        <p className="text-muted-foreground">View and manage your appointments</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Appointments</h1>
+          <p className="text-muted-foreground">View and manage your appointments</p>
+        </div>
+        <Button asChild>
+          <Link href="/book">
+            <CalendarPlus className="h-4 w-4 mr-2" />
+            Book Appointment
+          </Link>
+        </Button>
       </div>
       
-      <Card>
-        <CardHeader>
-          <CardTitle>Appointments</CardTitle>
-          <CardDescription>View and manage your appointments</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">Content coming soon</p>
-        </CardContent>
-      </Card>
+      <AppointmentsList />
     </div>
   )
 }

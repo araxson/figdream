@@ -2,7 +2,8 @@
  * Error Message Components for FigDream
  */
 import { AlertCircle, XCircle, RefreshCw } from 'lucide-react'
-import { Button, Alert, AlertDescription, AlertTitle } from '@/components/ui'
+import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 interface ErrorMessageProps {
   title?: string
   message: string

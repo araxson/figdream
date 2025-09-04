@@ -1,5 +1,7 @@
 'use client'
-import { Progress, Badge } from '@/components/ui'
+import { Progress } from '@/components/ui/progress'
+import { Badge } from '@/components/ui/badge'
+import { useCallback } from 'react'
 interface StaffUtilizationChartProps {
   staff: Array<{
     id: string
@@ -9,19 +11,20 @@ interface StaffUtilizationChartProps {
     utilizationRate: number
   }>
 }
-export default function StaffUtilizationChart({ staff }: StaffUtilizationChartProps) {
-  const getUtilizationColor = (rate: number) => {
+function StaffUtilizationChart({ staff }: StaffUtilizationChartProps) {
+  const getUtilizationColor = useCallback((rate: number) => {
     if (rate >= 80) return 'text-red-600'
     if (rate >= 60) return 'text-green-600'
     if (rate >= 40) return 'text-yellow-600'
     return 'text-blue-600'
-  }
-  const getUtilizationBadge = (rate: number) => {
+  }, [])
+
+  const getUtilizationBadge = useCallback((rate: number) => {
     if (rate >= 80) return { label: 'High', variant: 'destructive' as const }
     if (rate >= 60) return { label: 'Good', variant: 'default' as const }
     if (rate >= 40) return { label: 'Moderate', variant: 'secondary' as const }
     return { label: 'Low', variant: 'outline' as const }
-  }
+  }, [])
   return (
     <div className="space-y-4">
       {staff.map((member) => {
@@ -58,3 +61,7 @@ export default function StaffUtilizationChart({ staff }: StaffUtilizationChartPr
     </div>
   )
 }
+
+StaffUtilizationChart.displayName = 'StaffUtilizationChart'
+
+export default StaffUtilizationChart

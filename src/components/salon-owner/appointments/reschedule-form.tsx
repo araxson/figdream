@@ -1,21 +1,12 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Database } from '@/types/database.types'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  Button,
-  Calendar,
-  Label,
-  RadioGroup,
-  RadioGroupItem,
-  ScrollArea,
-} from '@/components/ui'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
+import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { toast } from 'sonner'
 import { CalendarDays, Clock, Loader2 } from 'lucide-react'
 import { format } from 'date-fns'
@@ -39,7 +30,7 @@ interface TimeSlot {
   time: string
   available: boolean
 }
-export default function RescheduleAppointmentForm({
+function RescheduleAppointmentForm({
   appointment,
   onReschedule,
   trigger
@@ -55,9 +46,8 @@ export default function RescheduleAppointmentForm({
     if (selectedDate && appointment.staff_id) {
       loadAvailableSlots()
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedDate])
-  const loadAvailableSlots = async () => {
+  }, [selectedDate, appointment.staff_id, loadAvailableSlots])
+  const loadAvailableSlots = useCallback(async () => {
     if (!selectedDate || !appointment.staff_id) return
     setIsLoadingSlots(true)
     try {
@@ -88,7 +78,7 @@ export default function RescheduleAppointmentForm({
     } finally {
       setIsLoadingSlots(false)
     }
-  }
+  }, [selectedDate, appointment.staff_id, appointment.services])
   const handleReschedule = async () => {
     if (!selectedDate || !selectedTime) {
       toast.error('Please select both date and time')
@@ -273,3 +263,7 @@ export default function RescheduleAppointmentForm({
     </Dialog>
   )
 }
+
+RescheduleAppointmentForm.displayName = 'RescheduleAppointmentForm'
+
+export default RescheduleAppointmentForm

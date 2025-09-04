@@ -2,7 +2,8 @@
 
 import { LineChart, Line, ResponsiveContainer } from "recharts"
 import { Clock, TrendingUp } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle, Progress } from "@/components/ui"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
 export function WaitlistAnalytics() {
   const stats = {
     averageWaitTime: "3.2 days",

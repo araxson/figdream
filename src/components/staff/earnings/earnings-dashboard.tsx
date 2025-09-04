@@ -1,7 +1,9 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { DollarSign, TrendingUp, TrendingDown, Calendar} from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Skeleton } from "@/components/ui"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Skeleton } from '@/components/ui/skeleton'
 
 import { toast } from "sonner"
 import { createClient } from "@/lib/database/supabase/client"
@@ -27,11 +29,8 @@ export function EarningsDashboard({ staffId }: EarningsDashboardProps) {
   const [_previousSummary, _setPreviousSummary] = useState<EarningsSummary | null>(null)
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
-  useEffect(() => {
-    loadEarnings()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [staffId, period])
-  const getDateRange = (period: string, offset = 0) => {
+
+  const getDateRange = useCallback((period: string, offset = 0) => {
     const now = new Date()
     let start: Date, end: Date
     switch (period) {
@@ -57,8 +56,37 @@ export function EarningsDashboard({ staffId }: EarningsDashboardProps) {
         end = endOfMonth(now)
     }
     return { start, end }
-  }
-  const loadEarnings = async () => {
+  }, [])
+
+  const calculateSummary = useCallback((earnings: StaffEarnings[]): EarningsSummary => {
+    const summary = earnings.reduce(
+      (acc, earning) => ({
+        totalEarnings: acc.totalEarnings + (earning.total_amount || 0),
+        baseEarnings: acc.baseEarnings + (earning.base_amount || 0),
+        commissions: acc.commissions + (earning.commission_amount || 0),
+        tips: acc.tips + (earning.tip_amount || 0),
+        bonuses: acc.bonuses + (earning.bonus_amount || 0),
+        appointmentCount: acc.appointmentCount + 1,
+        averagePerAppointment: 0,
+        percentageChange: 0}),
+      {
+        totalEarnings: 0,
+        baseEarnings: 0,
+        commissions: 0,
+        tips: 0,
+        bonuses: 0,
+        appointmentCount: 0,
+        averagePerAppointment: 0,
+        percentageChange: 0}
+    )
+    summary.averagePerAppointment = 
+      summary.appointmentCount > 0 
+        ? summary.totalEarnings / summary.appointmentCount 
+        : 0
+    return summary
+  }, [])
+
+  const loadEarnings = useCallback(async () => {
     try {
       setLoading(true)
       const { start: currentStart, end: currentEnd } = getDateRange(period, 0)
@@ -88,39 +116,16 @@ export function EarningsDashboard({ staffId }: EarningsDashboardProps) {
         : 0
       setSummary({ ...currentSummary, percentageChange })
       setPreviousSummary(prevSummary)
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to load earnings data")
     } finally {
       setLoading(false)
     }
-  }
-  const calculateSummary = (earnings: StaffEarnings[]): EarningsSummary => {
-    const summary = earnings.reduce(
-      (acc, earning) => ({
-        totalEarnings: acc.totalEarnings + (earning.total_amount || 0),
-        baseEarnings: acc.baseEarnings + (earning.base_amount || 0),
-        commissions: acc.commissions + (earning.commission_amount || 0),
-        tips: acc.tips + (earning.tip_amount || 0),
-        bonuses: acc.bonuses + (earning.bonus_amount || 0),
-        appointmentCount: acc.appointmentCount + 1,
-        averagePerAppointment: 0,
-        percentageChange: 0}),
-      {
-        totalEarnings: 0,
-        baseEarnings: 0,
-        commissions: 0,
-        tips: 0,
-        bonuses: 0,
-        appointmentCount: 0,
-        averagePerAppointment: 0,
-        percentageChange: 0}
-    )
-    summary.averagePerAppointment = 
-      summary.appointmentCount > 0 
-        ? summary.totalEarnings / summary.appointmentCount 
-        : 0
-    return summary
-  }
+  }, [staffId, period, supabase, getDateRange, calculateSummary])
+
+  useEffect(() => {
+    loadEarnings()
+  }, [loadEarnings])
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",

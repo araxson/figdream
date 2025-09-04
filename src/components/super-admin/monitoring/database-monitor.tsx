@@ -1,5 +1,7 @@
 'use client'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Progress, Badge } from '@/components/ui'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
+import { Badge } from '@/components/ui/badge'
 import { Database, HardDrive, Activity, Zap } from 'lucide-react'
 interface DatabaseMonitorProps {
   databaseStats: Array<Record<string, unknown>>

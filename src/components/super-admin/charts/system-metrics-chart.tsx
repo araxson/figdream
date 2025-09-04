@@ -1,5 +1,5 @@
 'use client'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { 
   LineChart, 
   Line, 

@@ -1,22 +1,11 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Package, Award } from "lucide-react"
-import { 
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  Badge,
-  Progress,
-  Skeleton
-} from "@/components/ui"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
+import { Skeleton } from '@/components/ui/skeleton'
 
 import { toast } from "sonner"
 import { createClient } from "@/lib/database/supabase/client"
@@ -40,11 +29,7 @@ export function EarningsBreakdown({ staffId, dateRange }: EarningsBreakdownProps
   const [totalEarnings, setTotalEarnings] = useState(0)
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
-  useEffect(() => {
-    loadBreakdown()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [staffId, dateRange])
-  const loadBreakdown = async () => {
+  const loadBreakdown = useCallback(async () => {
     try {
       setLoading(true)
       // Fetch earnings grouped by service
@@ -110,17 +95,23 @@ export function EarningsBreakdown({ staffId, dateRange }: EarningsBreakdownProps
     } finally {
       setLoading(false)
     }
-  }
-  const formatCurrency = (amount: number) => {
+  }, [staffId, dateRange, supabase])
+
+  useEffect(() => {
+    loadBreakdown()
+  }, [loadBreakdown])
+
+  const formatCurrency = useCallback((amount: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
     }).format(amount)
-  }
-  const getTopPerformer = () => {
+  }, [])
+
+  const getTopPerformer = useCallback(() => {
     if (serviceEarnings.length === 0) return null
     return serviceEarnings[0]
-  }
+  }, [serviceEarnings])
   if (loading) {
     return (
       <Card>

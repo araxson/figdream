@@ -1,6 +1,6 @@
 // Main components
-export { AppSidebar } from './app-sidebar'
-export { default as SalonOwnerMenubar } from './app-menubar'
+export { AppSidebar } from './navigation/app-sidebar'
+export { default as SalonOwnerMenubar } from './navigation/app-menubar'
 
 // Analytics components - from analytics directory
 export { ChurnRiskList } from './analytics/churn-risk-list'
@@ -26,8 +26,5 @@ export { StaffStats } from './staff/staff-stats'
 // Service components
 export { ServiceForm } from './services/service-form'
 
-// Marketing components - check if these exist
+// Marketing components (includes gift cards)
 export * from './marketing'
-
-// Gift cards components - check if these exist
-export * from './gift-cards'

@@ -8,13 +8,13 @@ import {
   DollarSign, AlertCircle, CheckCircle, Clock, CreditCard,
   TrendingUp, FileText, RefreshCw, Download, Loader2
 } from "lucide-react"
-import { Badge } from "@/components/ui/feedback/badge"
-import { Button } from "@/components/ui/form/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/data-display/card"
-import { Progress } from "@/components/ui/feedback/progress"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/form/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/data-display/table"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/navigation/tabs"
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 interface BillingOverview {
   totalRevenue: number
   outstandingInvoices: number
@@ -88,7 +88,7 @@ export function BillingDashboard() {
         { month: "Oct", confirmed: 280000, projected: 500000, potential: 550000 },
         { month: "Nov", confirmed: 260000, projected: 520000, potential: 580000 }
       ])
-    } catch (error) {
+    } catch (_error) {
     } finally {
       setLoading(false)
     }

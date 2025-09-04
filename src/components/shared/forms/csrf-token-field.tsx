@@ -1,5 +1,5 @@
 'use client';
-import { useCSRFToken } from '@/lib/hooks/use-csrf-token';
+import { useCSRFToken } from '@/hooks/use-csrf-token';
 /**
  * Component to render hidden CSRF input field
  */

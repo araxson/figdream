@@ -1,12 +1,17 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Download, DollarSign, CheckCircle, Clock, XCircle, Calendar } from "lucide-react"
 
 import { toast } from "sonner"
 import { createClient } from "@/lib/database/supabase/client"
 import { format } from "date-fns"
 import type { Database } from "@/types/database.types"
-import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Skeleton, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui"
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 type StaffPayout = Database["public"]["Tables"]["staff_payouts"]["Row"]
 interface PayoutHistoryProps {
   staffId: string
@@ -16,11 +21,7 @@ export function PayoutHistory({ staffId }: PayoutHistoryProps) {
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<"all" | "completed" | "pending" | "failed">("all")
   const supabase = createClient()
-  useEffect(() => {
-    loadPayouts()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [staffId, filter])
-  const loadPayouts = async () => {
+  const loadPayouts = useCallback(async () => {
     try {
       setLoading(true)
       let query = supabase
@@ -39,13 +40,19 @@ export function PayoutHistory({ staffId }: PayoutHistoryProps) {
     } finally {
       setLoading(false)
     }
-  }
-  const formatCurrency = (amount: number) => {
+  }, [staffId, filter, supabase])
+
+  useEffect(() => {
+    loadPayouts()
+  }, [loadPayouts])
+
+  const formatCurrency = useCallback((amount: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD"}).format(amount)
-  }
-  const getStatusIcon = (status: string) => {
+  }, [])
+
+  const getStatusIcon = useCallback((status: string) => {
     switch (status) {
       case "completed":
         return <CheckCircle className="h-4 w-4 text-green-600" />
@@ -56,8 +63,9 @@ export function PayoutHistory({ staffId }: PayoutHistoryProps) {
       default:
         return null
     }
-  }
-  const getStatusBadgeVariant = (status: string) => {
+  }, [])
+
+  const getStatusBadgeVariant = useCallback((status: string) => {
     switch (status) {
       case "completed":
         return "default" as const
@@ -68,16 +76,18 @@ export function PayoutHistory({ staffId }: PayoutHistoryProps) {
       default:
         return "outline" as const
     }
-  }
-  const handleDownloadStatement = async (_payoutId: string) => {
+  }, [])
+
+  const handleDownloadStatement = useCallback(async (_payoutId: string) => {
     try {
       // In a real app, this would generate/download a PDF statement
       toast.success("Statement download started")
     } catch (_error) {
       toast.error("Failed to download statement")
     }
-  }
-  const calculateTotals = () => {
+  }, [])
+
+  const calculateTotals = useCallback(() => {
     const totals = payouts.reduce(
       (acc, payout) => {
         if (payout.status === "completed") {
@@ -91,7 +101,7 @@ export function PayoutHistory({ staffId }: PayoutHistoryProps) {
       { total: 0, completed: 0, pending: 0 }
     )
     return totals
-  }
+  }, [payouts])
   if (loading) {
     return (
       <Card>

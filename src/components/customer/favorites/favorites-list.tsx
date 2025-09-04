@@ -1,6 +1,10 @@
 "use client"
 import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Tabs, TabsContent, TabsList, TabsTrigger, Input, Button, Skeleton } from "@/components/ui"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import { FavoriteCard } from "./favorite-card"
 import { 
   Heart, 
@@ -51,37 +55,7 @@ export function FavoritesList() {
       // Fetch favorites from customer_favorites table
       const { data: favoritesData, error } = await supabase
         .from('customer_favorites')
-        .select(`
-          id,
-          favorite_type,
-          salon_id,
-          staff_member_id,
-          service_id,
-          created_at,
-          salons!customer_favorites_salon_id_fkey (
-            id,
-            name,
-            description,
-            address,
-            image_url,
-            average_rating
-          ),
-          staff_members!customer_favorites_staff_member_id_fkey (
-            id,
-            name,
-            bio,
-            avatar_url,
-            specialties
-          ),
-          services!customer_favorites_service_id_fkey (
-            id,
-            name,
-            description,
-            price,
-            duration_minutes,
-            average_rating
-          )
-        `)
+        .select('*')
         .eq('customer_id', user.id)
         .order('created_at', { ascending: false })
 
@@ -90,52 +64,113 @@ export function FavoritesList() {
         return
       }
 
+      // Get unique IDs for each type
+      const salonIds = favoritesData?.filter(f => f.favorite_type === 'salon' && f.salon_id).map(f => f.salon_id) || []
+      const staffIds = favoritesData?.filter(f => f.favorite_type === 'staff' && f.staff_id).map(f => f.staff_id) || []
+      const serviceIds = favoritesData?.filter(f => f.favorite_type === 'service' && f.service_id).map(f => f.service_id) || []
+
+      // Fetch related data
+      let salons: Array<{
+        id: string
+        name: string
+        description: string | null
+        address_line_1: string
+        image_url: string | null
+      }> = []
+      let staff: Array<{
+        id: string
+        full_name: string
+        bio: string | null
+        avatar_url: string | null
+        specialties: string[] | null
+      }> = []
+      let services: Array<{
+        id: string
+        name: string
+        description: string | null
+        price: number
+        duration_minutes: number
+      }> = []
+
+      if (salonIds.length > 0) {
+        const { data } = await supabase
+          .from('salons')
+          .select('id, name, description, address_line_1, image_url')
+          .in('id', salonIds)
+        salons = data || []
+      }
+
+      if (staffIds.length > 0) {
+        const { data } = await supabase
+          .from('staff_profiles')
+          .select('id, full_name, bio, avatar_url, specialties')
+          .in('id', staffIds)
+        staff = data || []
+      }
+
+      if (serviceIds.length > 0) {
+        const { data } = await supabase
+          .from('services')
+          .select('id, name, description, price, duration_minutes')
+          .in('id', serviceIds)
+        services = data || []
+      }
+
       // Transform data into Favorite format
       const formattedFavorites: Favorite[] = (favoritesData || []).map((fav) => {
-        if (fav.favorite_type === 'salon' && fav.salons) {
-          return {
-            id: fav.id,
-            type: 'salon',
-            itemId: fav.salon_id,
-            itemName: fav.salons.name,
-            itemImage: fav.salons.image_url,
-            itemDescription: fav.salons.description,
-            addedAt: fav.created_at,
-            bookingCount: 0, // Would need to fetch from appointments
-            rating: fav.salons.average_rating,
-            location: fav.salons.address
+        if (fav.favorite_type === 'salon' && fav.salon_id) {
+          const salon = salons.find(s => s.id === fav.salon_id)
+          if (salon) {
+            return {
+              id: fav.id,
+              type: 'salon' as FavoriteType,
+              itemId: fav.salon_id,
+              itemName: salon.name,
+              itemImage: salon.image_url,
+              itemDescription: salon.description,
+              addedAt: fav.created_at || new Date().toISOString(),
+              bookingCount: 0,
+              rating: 5.0,
+              location: salon.address_line_1
+            }
           }
-        } else if (fav.favorite_type === 'staff' && fav.staff_members) {
-          return {
-            id: fav.id,
-            type: 'staff',
-            itemId: fav.staff_member_id,
-            itemName: fav.staff_members.name,
-            itemImage: fav.staff_members.avatar_url,
-            itemDescription: fav.staff_members.bio || fav.staff_members.specialties?.join(', '),
-            addedAt: fav.created_at,
-            bookingCount: 0, // Would need to fetch from appointments
-            rating: 5.0 // Would need to calculate from reviews
+        } else if (fav.favorite_type === 'staff' && fav.staff_id) {
+          const staffMember = staff.find(s => s.id === fav.staff_id)
+          if (staffMember) {
+            return {
+              id: fav.id,
+              type: 'staff' as FavoriteType,
+              itemId: fav.staff_id,
+              itemName: staffMember.full_name,
+              itemImage: staffMember.avatar_url,
+              itemDescription: staffMember.bio || staffMember.specialties?.join(', '),
+              addedAt: fav.created_at || new Date().toISOString(),
+              bookingCount: 0,
+              rating: 5.0
+            }
           }
-        } else if (fav.favorite_type === 'service' && fav.services) {
-          return {
-            id: fav.id,
-            type: 'service',
-            itemId: fav.service_id,
-            itemName: fav.services.name,
-            itemDescription: fav.services.description,
-            addedAt: fav.created_at,
-            bookingCount: 0, // Would need to fetch from appointments
-            rating: fav.services.average_rating,
-            price: fav.services.price,
-            duration: fav.services.duration_minutes
+        } else if (fav.favorite_type === 'service' && fav.service_id) {
+          const service = services.find(s => s.id === fav.service_id)
+          if (service) {
+            return {
+              id: fav.id,
+              type: 'service' as FavoriteType,
+              itemId: fav.service_id,
+              itemName: service.name,
+              itemDescription: service.description,
+              addedAt: fav.created_at || new Date().toISOString(),
+              bookingCount: 0,
+              rating: 5.0,
+              price: service.price,
+              duration: service.duration_minutes
+            }
           }
         }
         return null
       }).filter(Boolean) as Favorite[]
 
       setFavorites(formattedFavorites)
-    } catch (error) {
+    } catch (_error) {
     } finally {
       setLoading(false)
     }

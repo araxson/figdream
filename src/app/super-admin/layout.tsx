@@ -1,10 +1,8 @@
-import { protectRouteWithRole } from '@/lib/data-access/auth'
-import { getUserWithRole } from '@/lib/data-access/auth/verify'
-import { SidebarProvider } from '@/components/ui'
-import { SuperAdminSidebar as AppSidebar } from '@/components/super-admin/app-sidebar'
-import type { Database } from '@/types/database.types'
-
-type Profile = Database['public']['Tables']['profiles']['Row']
+import { protectRouteWithRole, getCurrentUser } from '@/lib/data-access/auth'
+import { createClient } from '@/lib/database/supabase/server'
+import { DashboardLayout } from '@/components/shared'
+import { SuperAdminSidebar } from '@/components/super-admin/app-sidebar'
+import { redirect } from 'next/navigation'
 
 export default async function AdminLayout({
   children,
@@ -14,28 +12,25 @@ export default async function AdminLayout({
   // Protect route with super_admin role requirement
   await protectRouteWithRole('super_admin')
   
-  // Get the user profile
-  const { user } = await getUserWithRole()
-  
+  // Get current user
+  const user = await getCurrentUser()
   if (!user) {
-    // This shouldn't happen as protectRouteWithRole should redirect
-    // but TypeScript doesn't know that
-    return null
+    redirect('/login/super-admin')
   }
   
-  // Remove the role property that was added by getUserWithRole
-  const { role: _role, ...profile } = user
+  // Get profile data
+  const supabase = await createClient()
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .single()
   
   return (
-    <SidebarProvider>
-      <div className="flex h-screen w-full">
-        <AppSidebar user={profile as Profile} />
-        <main className="flex-1 overflow-y-auto">
-          <div className="container mx-auto py-6">
-            {children}
-          </div>
-        </main>
-      </div>
-    </SidebarProvider>
+    <DashboardLayout
+      sidebar={<SuperAdminSidebar user={user} profile={profile} />}
+    >
+      {children}
+    </DashboardLayout>
   )
 }

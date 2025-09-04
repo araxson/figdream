@@ -1,26 +1,11 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import {
-  Badge,
-  Button,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { CheckCircle, XCircle, AlertCircle, Save, RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/database/supabase/client'
@@ -340,9 +325,12 @@ export function AvailabilityMatrix({
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <div className="flex justify-center">
-                              <button
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
                                 onClick={() => handleToggle(service.id, location.id)}
-                                className="p-2 rounded-lg"
+                                className="h-auto p-2"
                               >
                                 {hasChange ? (
                                   <AlertCircle className="h-5 w-5 text-yellow-500" />
@@ -351,7 +339,7 @@ export function AvailabilityMatrix({
                                 ) : (
                                   <XCircle className="h-5 w-5 text-gray-300" />
                                 )}
-                              </button>
+                              </Button>
                             </div>
                           </TooltipTrigger>
                           <TooltipContent>

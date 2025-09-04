@@ -1,6 +1,7 @@
 'use client'
 
 import { Bar, BarChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts'
+import { useCallback } from 'react'
 interface ServicePopularityChartProps {
   services: Array<{
     id: string
@@ -10,15 +11,16 @@ interface ServicePopularityChartProps {
     revenue: number
   }>
 }
-export default function ServicePopularityChart({ services }: ServicePopularityChartProps) {
-  const formatCurrency = (value: number) => {
+function ServicePopularityChart({ services }: ServicePopularityChartProps) {
+  const formatCurrency = useCallback((value: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
     }).format(value)
-  }
+  }, [])
+
   const data = services.map(service => ({
     name: service.name.length > 15 ? service.name.substring(0, 15) + '...' : service.name,
     fullName: service.name,
@@ -71,3 +73,7 @@ export default function ServicePopularityChart({ services }: ServicePopularityCh
     </ResponsiveContainer>
   )
 }
+
+ServicePopularityChart.displayName = 'ServicePopularityChart'
+
+export default ServicePopularityChart

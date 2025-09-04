@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 import { Star } from 'lucide-react'
-import { Button } from '@/components/ui'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { StarRatingProps } from './review-form.types'
 import { getRatingLabel, getRatingColor, getStarSizeClass } from './review-form.utils'

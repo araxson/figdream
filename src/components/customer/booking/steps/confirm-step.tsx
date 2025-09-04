@@ -2,19 +2,13 @@
 
 import * as React from 'react'
 import { format } from 'date-fns'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Separator,
-  Badge,
-  Alert,
-  AlertDescription,
-} from '@/components/ui'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
+import { Badge } from '@/components/ui/badge'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { CheckCircle, CalendarIcon, Clock, AlertCircle } from 'lucide-react'
-import { calculateEndTime } from '@/components/customer/booking/booking-form-utils'
-import type { StepContentProps } from '@/components/customer/booking/booking-form-types'
+import { calculateEndTime } from '../forms/booking-form-utils'
+import type { StepContentProps } from '../forms/booking-form-types'
 
 export function ConfirmStep({
   selectedServices,

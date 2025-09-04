@@ -1,5 +1,7 @@
 import { Metadata } from 'next'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui'
+import { GiftCardList } from '@/components/customer/gift-cards/gift-card-list'
+import { GiftCardPurchaseForm } from '@/components/customer/gift-cards/gift-card-purchase-form'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 export const metadata: Metadata = {
   title: 'Gift Cards',
@@ -11,18 +13,23 @@ export default async function Page() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Gift Cards</h1>
-        <p className="text-muted-foreground">Manage your gift cards</p>
+        <p className="text-muted-foreground">Purchase and manage your gift cards</p>
       </div>
       
-      <Card>
-        <CardHeader>
-          <CardTitle>Gift Cards</CardTitle>
-          <CardDescription>Manage your gift cards</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">Content coming soon</p>
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="my-cards" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="my-cards">My Gift Cards</TabsTrigger>
+          <TabsTrigger value="purchase">Purchase New</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="my-cards">
+          <GiftCardList />
+        </TabsContent>
+        
+        <TabsContent value="purchase">
+          <GiftCardPurchaseForm />
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

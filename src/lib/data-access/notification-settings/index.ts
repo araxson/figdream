@@ -45,8 +45,8 @@ export async function upsertNotificationSettings(
     }
     revalidatePath('/notifications/settings')
     revalidatePath('/customer/profile')
-    revalidatePath('/staff/profile')
-    revalidatePath('/salon-admin/profile')
+    revalidatePath('/staff-member/profile')
+    revalidatePath('/salon-owner/profile')
     return data
   } else {
     // Create new settings
@@ -63,8 +63,8 @@ export async function upsertNotificationSettings(
     }
     revalidatePath('/notifications/settings')
     revalidatePath('/customer/profile')
-    revalidatePath('/staff/profile')
-    revalidatePath('/salon-admin/profile')
+    revalidatePath('/staff-member/profile')
+    revalidatePath('/salon-owner/profile')
     return data
   }
 }

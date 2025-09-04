@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { LineChart, Line, BarChart, Bar, RadialBarChart, RadialBar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { fetchStaffPerformanceData } from '@/app/_actions/staff'
 import { DollarSign, Clock, Users, Star, Award, Loader2 } from 'lucide-react'

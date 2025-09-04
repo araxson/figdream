@@ -1,32 +1,18 @@
 'use client'
 
 import * as React from 'react'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormDescription,
-  FormMessage,
-  Input,
-  Textarea,
-  Checkbox,
-  RadioGroup,
-  RadioGroupItem,
-  Label,
-  Alert,
-  AlertDescription,
-  Button,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Checkbox } from '@/components/ui/checkbox'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Label } from '@/components/ui/label'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { User, MessageSquare, CreditCard, AlertCircle, HelpCircle } from 'lucide-react'
-import type { StepContentProps } from '@/components/customer/booking/booking-form-types'
+import type { StepContentProps } from '../forms/booking-form-types'
 
 export function DetailsStep({
   form,

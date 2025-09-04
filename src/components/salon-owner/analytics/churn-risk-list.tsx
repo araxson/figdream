@@ -1,5 +1,8 @@
 'use client'
-import { Badge, Button, Card, CardContent, Progress } from "@/components/ui"
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
 import { 
   AlertTriangle,
   Mail,
@@ -20,7 +23,7 @@ interface ChurnRiskListProps {
     customerSince: string
   }>
 }
-export default function ChurnRiskList({ customers }: ChurnRiskListProps) {
+function ChurnRiskList({ customers }: ChurnRiskListProps) {
   const getRiskColor = (level: string) => {
     switch (level) {
       case 'high':
@@ -146,3 +149,7 @@ export default function ChurnRiskList({ customers }: ChurnRiskListProps) {
     </div>
   )
 }
+
+ChurnRiskList.displayName = 'ChurnRiskList'
+
+export default ChurnRiskList

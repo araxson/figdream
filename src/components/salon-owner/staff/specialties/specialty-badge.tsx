@@ -1,6 +1,7 @@
 "use client"
 import { Award } from "lucide-react"
-import { Badge, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui"
+import { Badge } from '@/components/ui/badge'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 interface SpecialtyBadgeProps {
   specialty: string
   variant?: "default" | "secondary" | "outline" | "destructive"

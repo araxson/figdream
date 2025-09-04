@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/data-display/card"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Users, DollarSign, TrendingUp, TrendingDown, Minus, Calendar } from "lucide-react"
 interface DashboardMetricsProps {
   metrics: {

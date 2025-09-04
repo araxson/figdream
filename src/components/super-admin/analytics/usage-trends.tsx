@@ -5,7 +5,12 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts'
 import { Calendar, Users, Activity, TrendingUp, Clock, Zap, Loader2 } from "lucide-react"
-import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, Progress, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui"
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { cn } from "@/lib/utils"
 interface UsageMetric {
   date: string
   dau: number // Daily Active Users
@@ -46,60 +51,30 @@ export function UsageTrends() {
   const fetchUsageTrends = async () => {
     setLoading(true)
     try {
-      // Simulated data - replace with actual API calls
-      setUsageMetrics([
-        { date: "Mon", dau: 12000, wau: 28000, mau: 42000, sessions: 45000, avgSessionDuration: 12.5 },
-        { date: "Tue", dau: 13500, wau: 29000, mau: 42500, sessions: 48000, avgSessionDuration: 13.2 },
-        { date: "Wed", dau: 14200, wau: 30000, mau: 43000, sessions: 52000, avgSessionDuration: 14.1 },
-        { date: "Thu", dau: 15800, wau: 31500, mau: 43500, sessions: 58000, avgSessionDuration: 15.3 },
-        { date: "Fri", dau: 18200, wau: 33000, mau: 44000, sessions: 65000, avgSessionDuration: 16.8 },
-        { date: "Sat", dau: 22000, wau: 35000, mau: 44500, sessions: 78000, avgSessionDuration: 18.5 },
-        { date: "Sun", dau: 19500, wau: 34000, mau: 45000, sessions: 70000, avgSessionDuration: 17.2 }
-      ])
-      // Generate heatmap data for features
-      const features = ['Booking', 'Payments', 'Analytics', 'Staff Management', 'Marketing']
-      const heatmapData: FeatureUsage[] = []
-      features.forEach(feature => {
-        for (let hour = 0; hour < 24; hour++) {
-          const usage = Math.random() * 1000
-          heatmapData.push({
-            feature,
-            hour,
-            usage,
-            intensity: usage > 750 ? 'peak' : usage > 500 ? 'high' : usage > 250 ? 'medium' : 'low'
-          })
-        }
-      })
-      setFeatureHeatmap(heatmapData)
-      setPeakUsage([
-        { day: "Monday", hour: "10:00 AM", users: 8500, load: 65 },
-        { day: "Tuesday", hour: "2:00 PM", users: 9200, load: 72 },
-        { day: "Wednesday", hour: "11:00 AM", users: 9800, load: 78 },
-        { day: "Thursday", hour: "3:00 PM", users: 10500, load: 82 },
-        { day: "Friday", hour: "4:00 PM", users: 12000, load: 90 },
-        { day: "Saturday", hour: "11:00 AM", users: 15000, load: 95 },
-        { day: "Sunday", hour: "1:00 PM", users: 13500, load: 88 }
-      ])
-      setApiPatterns([
-        { endpoint: "/api/bookings", calls: 145000, avgResponseTime: 120, errorRate: 0.2, trend: 'up' },
-        { endpoint: "/api/auth", calls: 98000, avgResponseTime: 85, errorRate: 0.1, trend: 'stable' },
-        { endpoint: "/api/payments", calls: 67000, avgResponseTime: 250, errorRate: 0.5, trend: 'up' },
-        { endpoint: "/api/analytics", calls: 45000, avgResponseTime: 180, errorRate: 0.3, trend: 'down' },
-        { endpoint: "/api/notifications", calls: 89000, avgResponseTime: 95, errorRate: 0.2, trend: 'up' },
-        { endpoint: "/api/staff", calls: 34000, avgResponseTime: 110, errorRate: 0.1, trend: 'stable' }
-      ])
-    } catch (error) {
+      // TODO: Replace with actual Supabase queries to get real usage metrics
+      // For now, showing empty data instead of mock data
+      setUsageMetrics([])
+      setFeatureHeatmap([])
+      setPeakUsage([])
+      setApiPatterns([])
+      
+      // Implementation needed:
+      // - Query audit_logs table for usage patterns
+      // - Query user sessions/authentication logs  
+      // - Query API usage monitoring data
+      // - Calculate real DAU/WAU/MAU from user activities
+    } catch (_error) {
     } finally {
       setLoading(false)
     }
   }
-  const getIntensityColor = (intensity: string) => {
+  const getIntensityClass = (intensity: string) => {
     switch (intensity) {
-      case 'peak': return '#ff0000'
-      case 'high': return '#ff8800'
-      case 'medium': return '#ffdd00'
-      case 'low': return '#88ff00'
-      default: return '#f0f0f0'
+      case 'peak': return 'bg-destructive'
+      case 'high': return 'bg-orange-500'
+      case 'medium': return 'bg-yellow-500'
+      case 'low': return 'bg-green-500'
+      default: return 'bg-muted'
     }
   }
   if (loading) {
@@ -236,8 +211,10 @@ export function UsageTrends() {
                         return (
                           <div
                             key={hour}
-                            className="flex-1 h-8 rounded"
-                            style={{ backgroundColor: getIntensityColor(data?.intensity || 'low') }}
+                            className={cn(
+                              "flex-1 h-8 rounded",
+                              getIntensityClass(data?.intensity || 'low')
+                            )}
                             title={`${hour}:00 - ${data?.usage.toFixed(0)} users`}
                           />
                         )
@@ -247,19 +224,19 @@ export function UsageTrends() {
                 ))}
                 <div className="flex items-center justify-center gap-4 mt-4">
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded" style={{ backgroundColor: getIntensityColor('low') }} />
+                    <div className={cn("w-4 h-4 rounded", getIntensityClass('low'))} />
                     <span className="text-xs">Low</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded" style={{ backgroundColor: getIntensityColor('medium') }} />
+                    <div className={cn("w-4 h-4 rounded", getIntensityClass('medium'))} />
                     <span className="text-xs">Medium</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded" style={{ backgroundColor: getIntensityColor('high') }} />
+                    <div className={cn("w-4 h-4 rounded", getIntensityClass('high'))} />
                     <span className="text-xs">High</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded" style={{ backgroundColor: getIntensityColor('peak') }} />
+                    <div className={cn("w-4 h-4 rounded", getIntensityClass('peak'))} />
                     <span className="text-xs">Peak</span>
                   </div>
                 </div>

@@ -3,7 +3,13 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Form, FormControl, FormField, FormItem, FormLabel, FormMessage, Input, Label, RadioGroup, RadioGroupItem, Textarea } from "@/components/ui"
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Textarea } from '@/components/ui/textarea'
 import { Gift, Mail, User, DollarSign, Calendar, Loader2 } from "lucide-react"
 import { createClient } from "@/lib/database/supabase/client"
 import { toast } from "sonner"
@@ -35,7 +41,7 @@ export function GiftCardPurchaseForm() {
       message: "",
     },
   })
-  async function onSubmit(data: GiftCardFormData) {
+  async function onSubmit(_data: GiftCardFormData) {
     setLoading(true)
     try {
       const supabase = createClient()
@@ -48,7 +54,7 @@ export function GiftCardPurchaseForm() {
       // This would integrate with payment processing and create the gift card
       toast.success("Gift card purchased successfully!")
       form.reset()
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to purchase gift card")
     } finally {
       setLoading(false)

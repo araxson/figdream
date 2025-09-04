@@ -1,7 +1,7 @@
 'use client'
 
-import { ServiceSelector } from '@/components/customer/booking/service-selector'
-import type { StepContentProps } from '@/components/customer/booking/booking-form-types'
+import { ServiceSelector } from '../selectors/service-selector'
+import type { StepContentProps } from '../forms/booking-form-types'
 
 export function ServicesStep({
   selectedServices,

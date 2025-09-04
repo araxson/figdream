@@ -70,8 +70,8 @@ export async function createBlockedTime(blockedTime: BlockedTimeInsert) {
   if (error) {
     throw new Error('Failed to create blocked time')
   }
-  revalidatePath('/salon-admin/blocked')
-  revalidatePath('/staff/schedule')
+  revalidatePath('/salon-owner/blocked-times')
+  revalidatePath('/staff-member/schedule')
   return data
 }
 export async function updateBlockedTime(id: string, updates: BlockedTimeUpdate) {
@@ -91,8 +91,8 @@ export async function updateBlockedTime(id: string, updates: BlockedTimeUpdate) 
   if (error) {
     throw new Error('Failed to update blocked time')
   }
-  revalidatePath('/salon-admin/blocked')
-  revalidatePath('/staff/schedule')
+  revalidatePath('/salon-owner/blocked-times')
+  revalidatePath('/staff-member/schedule')
   return data
 }
 export async function deleteBlockedTime(id: string) {
@@ -104,8 +104,8 @@ export async function deleteBlockedTime(id: string) {
   if (error) {
     throw new Error('Failed to delete blocked time')
   }
-  revalidatePath('/salon-admin/blocked')
-  revalidatePath('/staff/schedule')
+  revalidatePath('/salon-owner/blocked-times')
+  revalidatePath('/staff-member/schedule')
   return { success: true }
 }
 // Create recurring blocked times (e.g., lunch breaks)
@@ -152,8 +152,8 @@ export async function createRecurringBlockedTimes(params: {
   if (error) {
     throw new Error('Failed to create recurring blocked times')
   }
-  revalidatePath('/salon-admin/blocked')
-  revalidatePath('/staff/schedule')
+  revalidatePath('/salon-owner/blocked-times')
+  revalidatePath('/staff-member/schedule')
   return data
 }
 // Check if a time slot is available (not blocked)

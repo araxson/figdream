@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui'
+import { FavoritesList } from '@/components/customer/favorites/favorites-list'
 
 export const metadata: Metadata = {
   title: 'Favorites',
@@ -14,15 +14,7 @@ export default async function Page() {
         <p className="text-muted-foreground">Your favorite salons and services</p>
       </div>
       
-      <Card>
-        <CardHeader>
-          <CardTitle>Favorites</CardTitle>
-          <CardDescription>Your favorite salons and services</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">Content coming soon</p>
-        </CardContent>
-      </Card>
+      <FavoritesList />
     </div>
   )
 }

@@ -1,5 +1,7 @@
 'use client'
-import { Alert, AlertDescription, Badge, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui"
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { TrendingUp, TrendingDown, Sun, Snowflake, Flower, Leaf, Calendar } from 'lucide-react'
 interface SeasonalityAnalysisProps {
   salonId: string
@@ -114,7 +116,7 @@ export function SeasonalityAnalysis({ salonId: _salonId, monthlyData }: Seasonal
                 const isHighest = count === maxCount
                 const isLowest = count === Math.min(...Object.values(monthlyData))
                 return (
-                  <div key={month} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div key={month} className="flex items-center justify-between p-4 border rounded-lg">
                     <span className="text-sm font-medium">{month}</span>
                     <div className="flex items-center gap-2">
                       <span className="text-sm">{count} bookings</span>

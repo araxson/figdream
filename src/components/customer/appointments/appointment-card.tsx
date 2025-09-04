@@ -1,6 +1,7 @@
-"use client"
 import { format } from 'date-fns'
-import { Avatar, AvatarFallback, AvatarImage, Badge, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui"
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Calendar,
   Clock,
@@ -8,18 +9,26 @@ import {
   DollarSign,
   Phone,
   Mail,
-  Star,
 } from 'lucide-react'
-import Link from 'next/link'
-import type { Database } from '@/types/database.types'
-type Appointment = Database['public']['Tables']['appointments']['Row'] & {
-  services: Database['public']['Tables']['services']['Row'] | null
-  staff_profiles: Database['public']['Tables']['staff_profiles']['Row'] | null
-  salons: Database['public']['Tables']['salons']['Row'] | null
-  reviews?: Database['public']['Tables']['reviews']['Row'] | null
+import { AppointmentCardActions } from './appointment-card-actions'
+import type { 
+  Appointment,
+  Service,
+  StaffProfile,
+  Salon,
+  Review
+} from '@/types/db-types'
+
+// Extended appointment type with relationships
+type AppointmentWithRelations = Appointment & {
+  services: Service | null
+  staff_profiles: StaffProfile | null
+  salons: Salon | null
+  reviews?: Review | null
 }
+
 interface AppointmentCardProps {
-  appointment: Appointment
+  appointment: AppointmentWithRelations
   showActions?: boolean
   onReschedule?: () => void
   onCancel?: () => void
@@ -145,45 +154,13 @@ export function AppointmentCard({
         )}
       </CardContent>
       {showActions && (
-        <CardFooter className="flex gap-2">
-          <Button asChild variant="outline" size="sm" className="flex-1">
-            <Link href={`/appointments/${appointment.id}`}>
-              View Details
-            </Link>
-          </Button>
-          {isUpcoming && (
-            <>
-              {onReschedule && (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={onReschedule}
-                  className="flex-1"
-                >
-                  Reschedule
-                </Button>
-              )}
-              {onCancel && (
-                <Button 
-                  variant="destructive" 
-                  size="sm" 
-                  onClick={onCancel}
-                  className="flex-1"
-                >
-                  Cancel
-                </Button>
-              )}
-            </>
-          )}
-          {canReview && (
-            <Button asChild variant="outline" size="sm" className="flex-1">
-              <Link href={`/reviews/new?appointment=${appointment.id}`}>
-                <Star className="h-4 w-4 mr-1" />
-                Review
-              </Link>
-            </Button>
-          )}
-        </CardFooter>
+        <AppointmentCardActions
+          appointment={appointment}
+          isUpcoming={isUpcoming}
+          canReview={canReview}
+          onReschedule={onReschedule}
+          onCancel={onCancel}
+        />
       )}
     </Card>
   )

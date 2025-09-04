@@ -1,5 +1,8 @@
 // Analytics components exports
-export { AnalyticsOverview } from "./analytics-overview"
-export { ChurnRiskList } from "./churn-risk-list"
-export { DemandForecastChart } from "./demand-forecast-chart"
-export { StaffingOptimizationTable } from "./staffing-optimization-table"
+export { default as AnalyticsOverview } from "./analytics-overview"
+export { default as ChurnRiskList } from "./churn-risk-list"
+export { default as StaffingOptimizationTable } from "./staffing-optimization-table"
+export { default as PerformanceMetrics } from "./performance-metrics"
+export { default as RevenueSection } from "./revenue-section"
+// Chart components
+export * from "./charts"

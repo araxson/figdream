@@ -1,16 +1,9 @@
 'use client'
 import * as React from 'react'
 import { Star, Sparkles } from 'lucide-react'
-import {
-  Alert,
-  AlertDescription,
-  Avatar,
-  AvatarFallback,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from '@/components/ui'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { StarRating } from './star-rating'
 import { Control } from 'react-hook-form'
 import { CreateReviewInput } from '@/lib/validations/review-schema'

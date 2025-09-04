@@ -1,13 +1,6 @@
 'use client'
-import {
-  Badge,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui'
+import { Badge } from '@/components/ui/badge'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { 
   Users,
   AlertCircle,
@@ -26,7 +19,7 @@ interface StaffingOptimizationTableProps {
     peakHours: number[]
   }>
 }
-export default function StaffingOptimizationTable({ recommendations }: StaffingOptimizationTableProps) {
+function StaffingOptimizationTable({ recommendations }: StaffingOptimizationTableProps) {
   const getStatusIcon = (gap: number) => {
     if (gap > 0) return <XCircle className="h-4 w-4 text-red-600" />
     if (gap < -1) return <AlertCircle className="h-4 w-4 text-yellow-600" />
@@ -115,3 +108,7 @@ export default function StaffingOptimizationTable({ recommendations }: StaffingO
     </div>
   )
 }
+
+StaffingOptimizationTable.displayName = 'StaffingOptimizationTable'
+
+export default StaffingOptimizationTable

@@ -1,5 +1,6 @@
 import { Database } from "@/types/database.types"
-import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui"
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { format } from "date-fns"
 import { Clock, Users } from "lucide-react"
 type BlockedTime = Database['public']['Tables']['blocked_times']['Row'] & {
@@ -28,7 +29,7 @@ export function ScheduleTimeline({ blockedTimes, timeOff }: ScheduleTimelineProp
           {blockedTimes.length > 0 ? (
             <div className="space-y-2">
               {blockedTimes.map((bt) => (
-                <div key={bt.id} className="flex items-center justify-between p-3 border rounded-lg">
+                <div key={bt.id} className="flex items-center justify-between p-4 border rounded-lg">
                   <div>
                     <div className="font-medium">
                       {format(new Date(bt.start_datetime), 'EEE, MMM d')}
@@ -69,7 +70,7 @@ export function ScheduleTimeline({ blockedTimes, timeOff }: ScheduleTimelineProp
           {timeOff.length > 0 ? (
             <div className="space-y-2">
               {timeOff.map((to) => (
-                <div key={to.id} className="flex items-center justify-between p-3 border rounded-lg">
+                <div key={to.id} className="flex items-center justify-between p-4 border rounded-lg">
                   <div>
                     <div className="font-medium">
                       {to.staff_profiles?.profiles?.full_name || 'Unknown Staff'}

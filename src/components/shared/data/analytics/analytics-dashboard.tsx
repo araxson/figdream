@@ -1,7 +1,7 @@
-"use client"
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui"
-import { TrendingUp, TrendingDown, Users, BarChart3, Download, Calendar } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { TrendingUp, TrendingDown, Users, BarChart3, Calendar } from "lucide-react"
 import { hasPermission } from "@/lib/permissions"
+import { AnalyticsDashboardClient } from './analytics-dashboard-client'
 import type { Database } from "@/types/database.types"
 type UserRole = Database["public"]["Enums"]["user_role_type"]
 interface MetricCard {
@@ -45,7 +45,7 @@ export function AnalyticsDashboard({
   onExport,
   customCharts
 }: AnalyticsDashboardProps) {
-  const canExport = hasPermission(userRole, "analytics.export")
+  const _canExport = hasPermission(userRole, "analytics.export")
   const canViewAll = hasPermission(userRole, "analytics.view_all")
   // Only use provided metrics, no defaults with fake data
   const defaultMetrics: MetricCard[] = metrics
@@ -69,26 +69,12 @@ export function AnalyticsDashboard({
             {canViewAll ? "Organization-wide performance metrics" : "Your performance metrics"}
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <Select value={dateRange} onValueChange={onDateRangeChange}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="today">Today</SelectItem>
-              <SelectItem value="week">This Week</SelectItem>
-              <SelectItem value="month">This Month</SelectItem>
-              <SelectItem value="quarter">This Quarter</SelectItem>
-              <SelectItem value="year">This Year</SelectItem>
-            </SelectContent>
-          </Select>
-          {canExport && onExport && (
-            <Button variant="outline" onClick={onExport}>
-              <Download className="h-4 w-4 mr-2" />
-              Export
-            </Button>
-          )}
-        </div>
+        <AnalyticsDashboardClient
+          userRole={userRole}
+          dateRange={dateRange}
+          onDateRangeChange={onDateRangeChange}
+          onExport={onExport}
+        />
       </div>
       {/* Metric Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

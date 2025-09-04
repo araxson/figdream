@@ -1,17 +1,10 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import {
-  Calendar,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  // Badge,
-  ScrollArea,
-  Button,
-} from '@/components/ui'
+import { Calendar } from '@/components/ui/calendar'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Button } from '@/components/ui/button'
 import { format, isSameDay, addDays } from 'date-fns'
 import { Clock, Calendar as CalendarIcon } from 'lucide-react'
 // import type { Database } from '@/types/database.types'

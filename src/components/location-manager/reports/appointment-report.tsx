@@ -1,4 +1,5 @@
-import { Progress, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui"
+import { Progress } from '@/components/ui/progress'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { PieChart } from "lucide-react"
 interface PopularService {
   name: string

@@ -1,6 +1,6 @@
-import { Badge } from "@/components/ui/feedback/badge"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/data-display/card"
-import { Label } from "@/components/ui/form/label"
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
 import { Clock, Building, Calendar } from "lucide-react"
 interface BookingRules {
   advance_booking_days?: number

@@ -1,6 +1,11 @@
 "use client"
-import { useState, useEffect } from "react"
-import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Separator, Skeleton } from "@/components/ui"
+import { useState, useEffect, useCallback } from "react"
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
+import { Skeleton } from '@/components/ui/skeleton'
+import { cn } from "@/lib/utils"
 import { 
   Gift, 
   Calendar, 
@@ -46,11 +51,7 @@ export function GiftCardDetails({ giftCardId }: GiftCardDetailsProps) {
   const [giftCard, setGiftCard] = useState<GiftCardDetails | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  useEffect(() => {
-    fetchGiftCardDetails()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [giftCardId])
-  async function fetchGiftCardDetails() {
+  const fetchGiftCardDetails = useCallback(async () => {
     try {
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
@@ -106,12 +107,16 @@ export function GiftCardDetails({ giftCardId }: GiftCardDetailsProps) {
       }
       
       setGiftCard(giftCardWithTransactions)
-    } catch (err) {
+    } catch (_err) {
       setError("Failed to load gift card details")
     } finally {
       setLoading(false)
     }
-  }
+  }, [giftCardId])
+
+  useEffect(() => {
+    fetchGiftCardDetails()
+  }, [fetchGiftCardDetails])
   const copyToClipboard = () => {
     if (giftCard) {
       navigator.clipboard.writeText(giftCard.code)
@@ -211,9 +216,13 @@ export function GiftCardDetails({ giftCardId }: GiftCardDetailsProps) {
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <span>of ${giftCard.original_amount.toFixed(2)} original value</span>
               </div>
-              <div className="w-full bg-secondary h-2 rounded-full overflow-hidden">
+              <div className="relative w-full bg-secondary h-2 rounded-full overflow-hidden">
                 <div 
-                  className="bg-primary h-full"
+                  className={cn(
+                    "absolute top-0 left-0 h-full bg-primary transition-all duration-300",
+                    usagePercentage > 75 && "bg-destructive",
+                    usagePercentage < 25 && "bg-green-500"
+                  )}
                   style={{ width: `${100 - usagePercentage}%` }}
                 />
               </div>

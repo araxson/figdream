@@ -324,9 +324,9 @@ export async function getSettings(context: UserContext): Promise<unknown> {
       .single()
     return preferences
   }
-  // For staff, return mock settings (table doesn't exist)
+  // Staff preferences table doesn't exist in current schema
   if (context.role === "staff") {
-    return null // staff_preferences table doesn't exist
+    return null // Return null as staff_preferences table is not yet implemented
   }
   // For salon owners and managers, get settings
   if ((context.role === "salon_owner" || context.role === "location_manager") && context.salonId) {

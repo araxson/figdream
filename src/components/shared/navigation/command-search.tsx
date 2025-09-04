@@ -1,16 +1,7 @@
 'use client'
 import * as React from 'react'
 import { useRouter } from 'next/navigation'
-import {
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-  CommandShortcut,
-} from '@/components/ui'
+import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut } from '@/components/ui/command'
 import {
   Calendar,
   CreditCard,
@@ -70,8 +61,8 @@ export function CommandSearch({ open, onOpenChange, userRole = 'customer' }: Com
       {
         group: 'Navigation',
         items: [
-          { icon: Home, label: 'Dashboard', shortcut: 'D', action: () => router.push(`/${userRole}`) },
-          { icon: Settings, label: 'Settings', shortcut: 'S', action: () => router.push(`/${userRole}/settings`) },
+          { icon: Home, label: 'Dashboard', shortcut: 'D', action: () => router.push(`/${userRole === 'salon_owner' ? 'salon-owner' : userRole === 'staff' ? 'staff-member' : userRole === 'super_admin' ? 'super-admin' : userRole === 'location_manager' ? 'location-manager' : 'customer'}`) },
+          { icon: Settings, label: 'Settings', shortcut: 'S', action: () => router.push(`/${userRole === 'salon_owner' ? 'salon-owner' : userRole === 'staff' ? 'staff-member' : userRole === 'super_admin' ? 'super-admin' : userRole === 'location_manager' ? 'location-manager' : 'customer'}/settings`) },
         ]
       }
     ]
@@ -106,23 +97,23 @@ export function CommandSearch({ open, onOpenChange, userRole = 'customer' }: Com
             group: 'Schedule',
             items: [
               { icon: Calendar, label: 'My Schedule', shortcut: 'C', action: () => router.push('/staff-member/schedule') },
-              { icon: Clock, label: 'Time Off Requests', action: () => router.push('/staff-member/timeoff') },
-              { icon: Users, label: 'My Clients', action: () => router.push('/staff-member/clients') },
+              { icon: Clock, label: 'Time Off Requests', action: () => router.push('/staff-member/time-off') },
+              { icon: Users, label: 'My Clients', action: () => router.push('/staff-member/appointments') },
             ]
           },
           {
             group: 'Performance',
             items: [
               { icon: BarChart, label: 'My Stats', action: () => router.push('/staff-member/performance') },
-              { icon: DollarSign, label: 'Commissions', action: () => router.push('/staff-member/commissions') },
-              { icon: Star, label: 'Reviews', action: () => router.push('/staff-member/reviews') },
+              { icon: DollarSign, label: 'Earnings', action: () => router.push('/staff-member/earnings') },
+              { icon: Star, label: 'Performance', action: () => router.push('/staff-member/performance') },
             ]
           },
           {
             group: 'Services',
             items: [
-              { icon: Scissors, label: 'My Services', action: () => router.push('/staff-member/services') },
-              { icon: Package, label: 'Products', action: () => router.push('/staff-member/products') },
+              { icon: Scissors, label: 'Schedule', action: () => router.push('/staff-member/schedule') },
+              { icon: Package, label: 'Profile', action: () => router.push('/staff-member/profile') },
             ]
           }
         ]
@@ -144,7 +135,7 @@ export function CommandSearch({ open, onOpenChange, userRole = 'customer' }: Com
               { icon: BarChart, label: 'Analytics', shortcut: 'N', action: () => router.push('/salon-owner/analytics') },
               { icon: DollarSign, label: 'Payments', action: () => router.push('/salon-owner/payments') },
               { icon: MessageSquare, label: 'Reviews', action: () => router.push('/salon-owner/reviews') },
-              { icon: Gift, label: 'Promotions', action: () => router.push('/salon-owner/promotions') },
+              { icon: Gift, label: 'Marketing', action: () => router.push('/salon-owner/marketing') },
             ]
           },
           {
@@ -152,7 +143,7 @@ export function CommandSearch({ open, onOpenChange, userRole = 'customer' }: Com
             items: [
               { icon: Users, label: 'Customer List', action: () => router.push('/salon-owner/customers') },
               { icon: Star, label: 'Loyalty Program', action: () => router.push('/salon-owner/loyalty') },
-              { icon: Mail, label: 'Communications', action: () => router.push('/salon-owner/communications') },
+              { icon: Mail, label: 'Marketing', action: () => router.push('/salon-owner/marketing') },
             ]
           }
         ]
@@ -162,18 +153,18 @@ export function CommandSearch({ open, onOpenChange, userRole = 'customer' }: Com
           {
             group: 'Platform',
             items: [
-              { icon: Building, label: 'All Salons', shortcut: 'L', action: () => router.push('/admin/salons') },
-              { icon: Users, label: 'All Users', shortcut: 'U', action: () => router.push('/admin/users') },
-              { icon: BarChart, label: 'Platform Analytics', shortcut: 'N', action: () => router.push('/admin/analytics') },
-              { icon: Activity, label: 'System Health', action: () => router.push('/admin/system-health') },
+              { icon: Building, label: 'All Salons', shortcut: 'L', action: () => router.push('/super-admin/salons') },
+              { icon: Users, label: 'All Users', shortcut: 'U', action: () => router.push('/super-admin/users') },
+              { icon: BarChart, label: 'Platform Analytics', shortcut: 'N', action: () => router.push('/super-admin/analytics') },
+              { icon: Activity, label: 'System Health', action: () => router.push('/super-admin/system-health') },
             ]
           },
           {
             group: 'Management',
             items: [
-              { icon: DollarSign, label: 'Billing', action: () => router.push('/admin/billing') },
-              { icon: Mail, label: 'Email Templates', action: () => router.push('/admin/email-templates') },
-              { icon: Shield, label: 'Security', action: () => router.push('/admin/security') },
+              { icon: DollarSign, label: 'Billing', action: () => router.push('/super-admin/billing') },
+              { icon: Mail, label: 'Email Templates', action: () => router.push('/super-admin/email-templates') },
+              { icon: Shield, label: 'Settings', action: () => router.push('/super-admin/settings') },
             ]
           }
         ]

@@ -4,7 +4,10 @@ import { useState } from "react"
 import { useToast } from "@/hooks/use-toast"
 import { Clock, Save } from "lucide-react"
 import type { Database } from "@/types/database.types"
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Label, Switch } from "@/components/ui"
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 type Schedule = Database["public"]["Tables"]["staff_schedules"]["Row"]
 interface AvailabilityEditorProps {
   staffId: string

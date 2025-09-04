@@ -1,17 +1,10 @@
 'use client'
 import * as React from 'react'
 import { Heart } from 'lucide-react'
-import {
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  Input,
-  Textarea,
-  Checkbox,
-} from '@/components/ui'
+import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Control } from 'react-hook-form'
 import { CreateReviewInput } from '@/lib/validations/review-schema'
 

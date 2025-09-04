@@ -1,4 +1,6 @@
-export { StaffFormDialog } from './staff-form-dialog'
-export { StaffTable } from './staff-table'  
-export { StaffFilters } from './staff-filters'
-export { StaffStats } from './staff-stats'
+// Staff management components
+export * from './management'
+// Time-off components
+export * from './time-off'
+// Specialties components
+export * from './specialties'

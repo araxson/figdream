@@ -1,6 +1,6 @@
 'use client'
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell, Tooltip } from 'recharts'
-import { Card, CardContent} from "@/components/ui"
+import { Card, CardContent } from '@/components/ui/card'
 interface ServicePerformanceMatrixProps {
   services: Array<{
     id: string
@@ -11,7 +11,7 @@ interface ServicePerformanceMatrixProps {
     avgPrice: number
   }>
 }
-export default function ServicePerformanceMatrix({ services }: ServicePerformanceMatrixProps) {
+function ServicePerformanceMatrix({ services }: ServicePerformanceMatrixProps) {
   // Prepare data for scatter plot
   const data = services.map(service => ({
     x: service.bookings,
@@ -131,3 +131,7 @@ export default function ServicePerformanceMatrix({ services }: ServicePerformanc
     </div>
   )
 }
+
+ServicePerformanceMatrix.displayName = 'ServicePerformanceMatrix'
+
+export default ServicePerformanceMatrix

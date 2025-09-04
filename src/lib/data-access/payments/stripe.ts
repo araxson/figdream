@@ -18,10 +18,10 @@ import {
   createBillingPortalSession,
   getSubscription
 } from '@/lib/integrations/stripe/server'
-import type { Database } from '@/types/database.types'
+// import type { Database } from '@/types/database.types'
 import type Stripe from 'stripe'
 
-type SalonRow = Database['public']['Tables']['salons']['Row']
+// type SalonRow = Database['public']['Tables']['salons']['Row']
 
 /**
  * Create or retrieve Stripe customer for a salon owner
@@ -271,6 +271,49 @@ export async function getSalonBillingPortalUrl(params: {
  * Webhook handler for Stripe subscription events
  * Called by the Stripe webhook endpoint
  */
+/**
+ * Get subscription by Stripe ID
+ */
+export async function getSubscriptionByStripeId(stripeSubscriptionId: string) {
+  const supabase = await createClient()
+  
+  const { data, error } = await supabase
+    .from('platform_subscriptions')
+    .select('*')
+    .eq('stripe_subscription_id', stripeSubscriptionId)
+    .single()
+  
+  if (error) {
+    return null
+  }
+  
+  return data
+}
+
+/**
+ * Update subscription from Stripe webhook or API response
+ */
+export async function updateSubscriptionFromStripe(
+  stripeSubscriptionId: string,
+  subscription: Stripe.Subscription
+): Promise<void> {
+  const supabase = await createClient()
+  
+  await supabase
+    .from('platform_subscriptions')
+    .update({
+      status: subscription.status,
+      current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
+      current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+      cancel_at_period_end: subscription.cancel_at_period_end,
+      canceled_at: subscription.canceled_at
+        ? new Date(subscription.canceled_at * 1000).toISOString()
+        : null,
+      updated_at: new Date().toISOString()
+    })
+    .eq('stripe_subscription_id', stripeSubscriptionId)
+}
+
 export async function handleSubscriptionWebhook(event: Stripe.Event) {
   const supabase = await createClient()
   

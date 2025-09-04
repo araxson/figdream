@@ -1,21 +1,34 @@
-'use server'
 /**
  * Payment Data Access Layer
  * 
- * This module handles subscription payments for salon owners ONLY.
- * Customers do NOT pay through the platform - they book for FREE.
- * Any payments between customers and salons happen OUTSIDE the platform.
+ * This module handles:
+ * 1. Subscription payments for salon owners (SaaS model)
+ * 2. Manual payment records for tracking customer spending at salons
  * 
  * Business Model:
- * - Platform is SaaS subscription-based
- * - ONLY salon owners pay subscriptions to use the platform
+ * - Platform is SaaS subscription-based for salon owners
  * - Customers book appointments for FREE (no payment to platform)
- * - Payment processing between customers and salons is handled externally
+ * - Salons can manually record payments they receive from customers
+ * - Payment processing between customers and salons happens externally
  */
 
 import { createClient } from '@/lib/database/supabase/server'
 import { getUserWithRole } from '@/lib/data-access/auth/verify'
 import { hasMinimumRoleLevel } from '@/lib/data-access/auth/roles'
+
+// Export payment recording functions
+export {
+  createPaymentRecord,
+  getPaymentRecordById,
+  getPaymentRecordsBySalon,
+  getPaymentRecordsByLocation,
+  getCustomerPaymentHistory,
+  getStaffTipsReport,
+  getRevenueAnalytics,
+  updatePaymentRecord,
+  deletePaymentRecord,
+  bulkCreatePaymentRecords
+} from './payment-records'
 
 /**
  * Check if salon has active subscription

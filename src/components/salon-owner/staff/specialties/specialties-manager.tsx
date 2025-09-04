@@ -1,7 +1,13 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Plus, X, Award, Search } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button, Badge, Input, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, Label, Skeleton } from "@/components/ui"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Label } from '@/components/ui/label'
+import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from "sonner"
 import { createClient } from "@/lib/database/supabase/client"
 import type { Database } from "@/types/database.types"
@@ -18,11 +24,8 @@ export function SpecialtiesManager({ salonId }: SpecialtiesManagerProps) {
   const [newSpecialty, setNewSpecialty] = useState("")
   const [addDialogOpen, setAddDialogOpen] = useState(false)
   const supabase = createClient()
-  useEffect(() => {
-    loadSpecialties()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [salonId])
-  const loadSpecialties = async () => {
+
+  const loadSpecialties = useCallback(async () => {
     try {
       setLoading(true)
       // Get all unique specialties for this salon
@@ -45,12 +48,16 @@ export function SpecialtiesManager({ salonId }: SpecialtiesManagerProps) {
       ).sort()
       setSpecialties(uniqueSpecialties)
       setStaffSpecialties((specialtiesData as StaffSpecialty[]) || [])
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to load specialties")
     } finally {
       setLoading(false)
     }
-  }
+  }, [salonId, supabase])
+
+  useEffect(() => {
+    loadSpecialties()
+  }, [loadSpecialties])
   const handleAddSpecialty = async () => {
     if (!newSpecialty.trim()) {
       toast.error("Please enter a specialty name")
@@ -82,7 +89,7 @@ export function SpecialtiesManager({ salonId }: SpecialtiesManagerProps) {
       setSpecialties(specialties.filter(s => s !== specialty))
       setStaffSpecialties(staffSpecialties.filter(s => s.specialty !== specialty))
       toast.success("Specialty removed successfully")
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to remove specialty")
     }
   }

@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { getApiUsageStats } from '@/lib/data-access/monitoring/api-usage'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ApiUsageChart } from '@/components/super-admin/charts'
 
 export const metadata: Metadata = {

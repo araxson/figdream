@@ -1,5 +1,8 @@
 import { Database } from "@/types/database.types"
-import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, Label, Separator } from "@/components/ui"
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import { Separator } from '@/components/ui/separator'
 import { MapPin, Phone, Mail } from "lucide-react"
 type Location = Database['public']['Tables']['locations']['Row']
 interface LocationSettingsFormProps {

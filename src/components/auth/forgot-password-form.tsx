@@ -1,19 +1,14 @@
 'use client'
 import { useState, useTransition, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import {
-  Button,
-  Input,
-  Label,
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-  InputOTPSeparator,
-} from '@/components/ui'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from '@/components/ui/input-otp'
 import { toast } from 'sonner'
 import { Loader2, Mail, CheckCircle, RefreshCw, Lock } from 'lucide-react'
 import { resetPasswordAction, verifyResetOtpAction } from '@/lib/actions/auth'
-import { useCSRFToken } from '@/lib/hooks/use-csrf-token'
+import { useCSRFToken } from '@/hooks/use-csrf-token'
 import { CSRFTokenField } from '@/components/shared/forms/csrf-token-field'
 export function ForgotPasswordForm() {
   const router = useRouter()

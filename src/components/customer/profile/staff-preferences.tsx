@@ -1,14 +1,9 @@
 'use client'
 import { useState } from 'react'
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Badge,
-  Button,
-  Card,
-  CardContent,
-} from '@/components/ui'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 import { Star, UserPlus, UserMinus } from 'lucide-react'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/database/supabase/client'

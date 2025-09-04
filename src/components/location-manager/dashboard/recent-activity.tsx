@@ -1,5 +1,5 @@
 "use client"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/data-display/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Activity, UserCheck, XCircle, Calendar } from "lucide-react"
 interface ActivityItem {
   id: string

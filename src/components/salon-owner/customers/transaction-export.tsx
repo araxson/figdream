@@ -1,23 +1,10 @@
 'use client'
 import { useState } from 'react'
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Label,
-  RadioGroup,
-  RadioGroupItem
-} from '@/components/ui'
+import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { toast } from 'sonner'
 import { Download, FileText, Loader2 } from 'lucide-react'
 interface TransactionExportProps {
@@ -29,7 +16,7 @@ interface TransactionExportProps {
     endDate?: string
   }
 }
-export default function TransactionExport({ 
+function TransactionExport({ 
   salonId, 
   filters 
 }: TransactionExportProps) {
@@ -217,3 +204,7 @@ export default function TransactionExport({
     </Dialog>
   )
 }
+
+TransactionExport.displayName = 'TransactionExport'
+
+export default TransactionExport

@@ -11,8 +11,9 @@ export interface UserWithRole extends User {
   role: UserRole
 }
 /**
- * Get the current authenticated user
+ * Get the current authenticated user (DEPRECATED)
  * Returns user from profiles table, not auth.users
+ * @deprecated Use verifySession() from session.ts for CVE-2025-29927 compliance
  */
 export async function getUser(): Promise<AuthResult> {
   try {

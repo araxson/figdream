@@ -1,17 +1,15 @@
 'use client'
 import { useState } from 'react'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Button,
-  DatePickerWithRange,
-  Label,
-  Card,
-  CardContent
-} from '@/components/ui'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Button } from '@/components/ui/button'
+// DatePickerWithRange needs to be implemented with Calendar and Popover
+import { Label } from '@/components/ui/label'
+import { Calendar } from '@/components/ui/calendar'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { CalendarIcon } from 'lucide-react'
+import { format } from 'date-fns'
+import { cn } from '@/lib/utils'
+import { Card, CardContent } from '@/components/ui/card'
 import { Filter, X } from 'lucide-react'
 import type { DateRange } from 'react-day-picker'
 interface AppointmentsFilterProps {
@@ -65,10 +63,40 @@ export function AppointmentsFilter({ onFilterChange, onReset }: AppointmentsFilt
             </Select>
           </div>
           <div className="min-w-[280px]">
-            <DatePickerWithRange
-              date={filters.dateRange}
-              onDateChange={handleDateRangeChange}
-            />
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full justify-start text-left font-normal",
+                    !filters.dateRange && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {filters.dateRange?.from ? (
+                    filters.dateRange.to ? (
+                      <>
+                        {format(filters.dateRange.from, "LLL dd, y")} -{" "}
+                        {format(filters.dateRange.to, "LLL dd, y")}
+                      </>
+                    ) : (
+                      format(filters.dateRange.from, "LLL dd, y")
+                    )
+                  ) : (
+                    <span>Pick a date range</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="range"
+                  selected={filters.dateRange}
+                  onSelect={handleDateRangeChange}
+                  numberOfMonths={2}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
         {Object.keys(filters).length > 0 && (

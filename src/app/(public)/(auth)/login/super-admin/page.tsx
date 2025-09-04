@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Alert, AlertDescription } from '@/components/ui'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { LoginForm } from '@/components/auth/login-form'
 import { Shield, AlertTriangle, Lock, Server, Database } from 'lucide-react'
 export default function SuperAdminLoginPage() {

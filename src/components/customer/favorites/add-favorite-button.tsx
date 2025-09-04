@@ -1,6 +1,6 @@
 "use client"
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui"
+import { useState, useEffect, useCallback } from "react"
+import { Button } from '@/components/ui/button'
 import { Heart, Loader2 } from "lucide-react"
 import { createClient } from "@/lib/database/supabase/client"
 import { toast } from "sonner"
@@ -27,11 +27,7 @@ export function AddFavoriteButton({
   const [isFavorite, setIsFavorite] = useState(false)
   const [loading, setLoading] = useState(false)
   const [checking, setChecking] = useState(true)
-  useEffect(() => {
-    checkFavoriteStatus()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [itemId, itemType])
-  async function checkFavoriteStatus() {
+  const checkFavoriteStatus = useCallback(async () => {
     try {
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
@@ -44,11 +40,15 @@ export function AddFavoriteButton({
       const favorites = JSON.parse(localStorage.getItem('favorites') || '[]')
       const exists = favorites.some((f: { itemId: string; type: string }) => f.itemId === itemId && f.type === itemType)
       setIsFavorite(exists)
-    } catch (error) {
+    } catch (_error) {
     } finally {
       setChecking(false)
     }
-  }
+  }, [itemId, itemType])
+
+  useEffect(() => {
+    checkFavoriteStatus()
+  }, [checkFavoriteStatus])
   async function toggleFavorite() {
     setLoading(true)
     try {
@@ -81,7 +81,7 @@ export function AddFavoriteButton({
         setIsFavorite(true)
         toast.success(`${itemName} added to favorites`)
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to update favorites")
     } finally {
       setLoading(false)

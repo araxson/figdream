@@ -1,17 +1,20 @@
 "use client"
 import { useState, useEffect } from "react"
-import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Skeleton } from "@/components/ui"
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Gift, CreditCard, Calendar, DollarSign } from "lucide-react"
 import { format } from "date-fns"
 import { createClient } from "@/lib/database/supabase/client"
 type GiftCard = {
   id: string
   code: string
-  balance: number
+  remaining_balance: number
   original_amount: number
   expires_at: string | null
   created_at: string
-  status: 'active' | 'expired' | 'depleted'
+  status: 'active' | 'expired' | 'used' | 'cancelled'
   sender_name?: string
   message?: string
 }
@@ -36,7 +39,7 @@ export function GiftCardList() {
         .select(`
           id,
           code,
-          balance,
+          remaining_balance,
           original_amount,
           expires_at,
           created_at,
@@ -53,7 +56,7 @@ export function GiftCardList() {
       }
 
       setGiftCards(giftCards || [])
-    } catch (err) {
+    } catch (_err) {
       setError("Failed to load gift cards")
     } finally {
       setLoading(false)
@@ -65,8 +68,10 @@ export function GiftCardList() {
         return 'bg-green-500'
       case 'expired':
         return 'bg-red-500'
-      case 'depleted':
+      case 'used':
         return 'bg-gray-500'
+      case 'cancelled':
+        return 'bg-red-400'
       default:
         return 'bg-gray-400'
     }
@@ -135,7 +140,7 @@ export function GiftCardList() {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-2xl font-bold">${card.balance.toFixed(2)}</p>
+                <p className="text-2xl font-bold">${card.remaining_balance.toFixed(2)}</p>
                 <p className="text-sm text-muted-foreground">
                   of ${card.original_amount.toFixed(2)}
                 </p>

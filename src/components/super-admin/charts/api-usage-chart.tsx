@@ -1,5 +1,6 @@
 'use client'
-import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui"
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { 
   BarChart, 
   Bar,

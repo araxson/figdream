@@ -4,14 +4,24 @@
 
 ### 🤖 Automatic Hook Integration
 **The hook runs with EVERY message and provides:**
-1. **Fresh PROJECT_TREE.md** - Updated statistics every message
+1. **Fresh PROJECT_TREE.md** - Auto-generated with EVERY message you send
 2. **Diagnostic Report** - ESLint, TypeScript, and code quality status
 3. **Subagent Recommendations** - Automatic agent suggestions based on issues
 4. **Quick Commands** - Ready-to-use commands for immediate fixes
 
 ### 📋 MANDATORY READING ORDER (Every Message)
-1. **Check Hook Output** - Review diagnostic report and recommendations
-2. **Read PROJECT_TREE.md** - Get latest project statistics
+
+#### 🔴 CRITICAL FIRST STEP - DO NOT SKIP
+**1. ALWAYS READ PROJECT_TREE.md FIRST** - This file is automatically regenerated with EVERY message and contains:
+   - Current total file and line counts
+   - File distribution by extension
+   - Largest files in the project
+   - Complete directory tree with statistics
+   - Component and TypeScript/JavaScript statistics
+   - Key directory summaries
+
+#### Then Continue With:
+2. **Check Hook Output** - Review diagnostic report and recommendations
 3. **Read .claude/agents/README.md** - If agents are recommended
 4. **Apply Suggested Commands** - Use recommended subagents immediately
 

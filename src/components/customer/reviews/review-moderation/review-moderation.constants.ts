@@ -1,2 +1,4 @@
-// Constants will be extracted from the main component
-export const CONSTANTS = {}
+// Constants for ReviewModeration
+export const CONSTANTS = {
+  // To be implemented  
+}

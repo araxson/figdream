@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { getErrorLogs } from '@/lib/data-access/monitoring/error-logs'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 export const metadata: Metadata = {
   title: 'Error Logs',

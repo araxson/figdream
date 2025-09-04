@@ -2,23 +2,14 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Database } from '@/types/database.types'
-import {
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  Calendar,
-  Avatar,
-  AvatarFallback,
-  Badge,
-  RadioGroup,
-  RadioGroupItem,
-  Label,
-  Textarea,
-} from '@/components/ui'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Calendar } from '@/components/ui/calendar'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
 import { ArrowLeft, Clock, DollarSign, User } from 'lucide-react'
 import { toast } from 'sonner'
 import { createAppointment } from '@/lib/data-access/bookings'
@@ -34,7 +25,7 @@ interface ServiceBookingClientProps {
   initialTimeSlots: string[]
   salonId: string
 }
-export default function ServiceBookingClient({
+function ServiceBookingClient({
   service,
   // salon, // unused parameter
   availableStaff,
@@ -305,3 +296,7 @@ export default function ServiceBookingClient({
     </div>
   )
 }
+
+ServiceBookingClient.displayName = 'ServiceBookingClient'
+
+export default ServiceBookingClient

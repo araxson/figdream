@@ -1,5 +1,10 @@
 "use client"
-import { Alert, AlertDescription, AlertTitle, Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Progress, Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui"
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { useState, useEffect } from "react"
 import {
@@ -63,46 +68,19 @@ export function SystemHealthDashboard() {
   const fetchSystemHealth = async () => {
     setLoading(true)
     try {
-      // Simulated data - replace with actual API calls
-      setMetrics([
-        { name: "CPU Usage", value: 65, unit: "%", status: 'healthy', threshold: 80 },
-        { name: "Memory Usage", value: 72, unit: "%", status: 'warning', threshold: 70 },
-        { name: "Disk Usage", value: 45, unit: "%", status: 'healthy', threshold: 85 },
-        { name: "Network Latency", value: 12, unit: "ms", status: 'healthy', threshold: 50 },
-        { name: "Error Rate", value: 0.5, unit: "%", status: 'healthy', threshold: 1 },
-        { name: "Request Queue", value: 23, unit: "req", status: 'healthy', threshold: 100 }
-      ])
-      setServers([
-        { id: "srv-001", name: "API Server 1", region: "US-East", status: 'online', cpu: 65, memory: 72, disk: 45, uptime: "45d 12h", lastCheck: "2 min ago" },
-        { id: "srv-002", name: "API Server 2", region: "US-West", status: 'online', cpu: 58, memory: 68, disk: 42, uptime: "45d 12h", lastCheck: "2 min ago" },
-        { id: "srv-003", name: "Database Primary", region: "US-East", status: 'online', cpu: 45, memory: 85, disk: 62, uptime: "120d 5h", lastCheck: "2 min ago" },
-        { id: "srv-004", name: "Database Replica", region: "US-West", status: 'degraded', cpu: 42, memory: 78, disk: 62, uptime: "120d 5h", lastCheck: "2 min ago" },
-        { id: "srv-005", name: "Cache Server", region: "Global", status: 'online', cpu: 35, memory: 45, disk: 20, uptime: "30d 8h", lastCheck: "2 min ago" }
-      ])
-      setDbMetrics({
-        connections: 234,
-        maxConnections: 500,
-        queryTime: 45,
-        slowQueries: 12,
-        replicationLag: 120,
-        size: "45.6 GB"
-      })
-      setApiMetrics([
-        { endpoint: "/api/bookings", avgResponseTime: 120, p95ResponseTime: 250, p99ResponseTime: 500, errorRate: 0.2, rpm: 1250 },
-        { endpoint: "/api/auth", avgResponseTime: 85, p95ResponseTime: 150, p99ResponseTime: 300, errorRate: 0.1, rpm: 890 },
-        { endpoint: "/api/payments", avgResponseTime: 250, p95ResponseTime: 450, p99ResponseTime: 800, errorRate: 0.5, rpm: 450 },
-        { endpoint: "/api/analytics", avgResponseTime: 180, p95ResponseTime: 350, p99ResponseTime: 600, errorRate: 0.3, rpm: 320 }
-      ])
-      setPerformanceData([
-        { time: "00:00", cpu: 45, memory: 60, requests: 800 },
-        { time: "04:00", cpu: 35, memory: 55, requests: 400 },
-        { time: "08:00", cpu: 55, memory: 65, requests: 1200 },
-        { time: "12:00", cpu: 75, memory: 78, requests: 1800 },
-        { time: "16:00", cpu: 65, memory: 72, requests: 1500 },
-        { time: "20:00", cpu: 58, memory: 68, requests: 1100 },
-        { time: "24:00", cpu: 48, memory: 62, requests: 900 }
-      ])
-    } catch (error) {
+      // TODO: Replace with actual system monitoring API calls
+      // For now, showing empty data instead of mock data
+      setMetrics([])
+      setServers([])
+      setDbMetrics(null)
+      setApiMetrics([])
+      setPerformanceData([])
+      
+      // Implementation needed:
+      // - Query system monitoring APIs or database for real metrics
+      // - Connect to monitoring service (e.g., DataDog, New Relic, Prometheus)
+      // - Get actual server health status from infrastructure provider
+    } catch (_error) {
     } finally {
       setLoading(false)
     }

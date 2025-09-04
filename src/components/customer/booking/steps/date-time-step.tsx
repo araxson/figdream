@@ -2,24 +2,16 @@
 
 import * as React from 'react'
 import { format } from 'date-fns'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  RadioGroup,
-  RadioGroupItem,
-  Label,
-  Badge,
-  Alert,
-  AlertDescription,
-} from '@/components/ui'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Label } from '@/components/ui/label'
+import { Badge } from '@/components/ui/badge'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { CalendarIcon, Clock, AlertCircle } from 'lucide-react'
-import { TimeSlotPicker } from '@/components/customer/booking/time-slot-picker'
-import { TimePicker } from '@/components/ui'
-import { calculateEndTime, formatTimeDisplay } from '@/components/customer/booking/booking-form-utils'
-import type { StepContentProps } from '@/components/customer/booking/booking-form-types'
+import { TimeSlotPicker } from '../selectors/time-slot-picker'
+import { Input } from '@/components/ui/input'
+import { calculateEndTime, formatTimeDisplay } from '../forms/booking-form-utils'
+import type { StepContentProps } from '../forms/booking-form-types'
 
 export function DateTimeStep({
   selectedStaff,
@@ -138,16 +130,20 @@ export function DateTimeStep({
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid md:grid-cols-2 gap-4">
-              <TimePicker
-                label="Start Time"
-                placeholder="Select start time"
-                value={customStartTime}
-                onChange={setCustomStartTime}
-                minTime="08:00"
-                maxTime="20:00"
-                interval={15}
-                disabled={disabled}
-              />
+              <div className="space-y-2">
+                <Label htmlFor="start-time">Start Time</Label>
+                <Input
+                  id="start-time"
+                  type="time"
+                  placeholder="Select start time"
+                  value={customStartTime}
+                  onChange={(e) => setCustomStartTime(e.target.value)}
+                  disabled={disabled}
+                  min="08:00"
+                  max="20:00"
+                  step={900}
+                />
+              </div>
               <div className="space-y-2">
                 <Label>End Time (Calculated)</Label>
                 <Alert>

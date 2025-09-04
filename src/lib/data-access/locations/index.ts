@@ -56,9 +56,10 @@ export const getLocationById = cache(async (locationId: string) => {
  */
 export async function createSalonLocation(location: SalonLocationInsert) {
   const supabase = await createClient()
-  // Check user permissions
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
+  // CRITICAL: Use secure DAL auth pattern for CVE-2025-29927
+  const { verifySession } = await import('../auth/session')
+  const { user, error } = await verifySession()
+  if (error || !user) throw new Error('Authentication required')
   // Validate required fields
   if (!location.salon_id || !location.name || !location.address) {
     throw new Error('Missing required fields')
@@ -88,9 +89,10 @@ export async function updateSalonLocation(
   updates: SalonLocationUpdate
 ) {
   const supabase = await createClient()
-  // Check user permissions
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
+  // CRITICAL: Use secure DAL auth pattern for CVE-2025-29927
+  const { verifySession } = await import('../auth/session')
+  const { user, error } = await verifySession()
+  if (error || !user) throw new Error('Authentication required')
   // If setting as primary, unset other primary locations
   if (updates.is_primary && updates.salon_id) {
     await supabase
@@ -115,9 +117,10 @@ export async function updateSalonLocation(
  */
 export async function deleteSalonLocation(locationId: string) {
   const supabase = await createClient()
-  // Check user permissions
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
+  // CRITICAL: Use secure DAL auth pattern for CVE-2025-29927
+  const { verifySession } = await import('../auth/session')
+  const { user, error } = await verifySession()
+  if (error || !user) throw new Error('Authentication required')
   // Check if this is the last location
   const { data: location } = await supabase
     .from('salon_locations')

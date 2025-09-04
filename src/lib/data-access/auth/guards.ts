@@ -16,8 +16,8 @@ export async function protectRoute(redirectTo?: string): Promise<void> {
   const user = await getCurrentUser()
   if (!user) {
     const loginUrl = redirectTo 
-      ? `/auth/login?redirectTo=${encodeURIComponent(redirectTo)}`
-      : '/auth/login'
+      ? `/login?redirectTo=${encodeURIComponent(redirectTo)}`
+      : '/login'
     redirect(loginUrl)
   }
 }
@@ -43,7 +43,7 @@ export async function protectRouteWithRole(
     return
   }
   if (userRole !== requiredRole) {
-    redirect('/403')
+    redirect('/error-403')
   }
 }
 /**
@@ -57,8 +57,8 @@ export async function protectRouteWithRoles(
   const user = await getCurrentUser()
   if (!user) {
     const loginUrl = redirectTo 
-      ? `/auth/login?redirectTo=${encodeURIComponent(redirectTo)}`
-      : '/auth/login'
+      ? `/login?redirectTo=${encodeURIComponent(redirectTo)}`
+      : '/login'
     redirect(loginUrl)
   }
   const userRole = await getUserRole(user.id)
@@ -67,7 +67,7 @@ export async function protectRouteWithRoles(
     return
   }
   if (!userRole || !requiredRoles.includes(userRole)) {
-    redirect('/403')
+    redirect('/error-403')
   }
 }
 /**
@@ -129,9 +129,9 @@ export async function checkPathAccess(pathname: string): Promise<void> {
   const canAccess = await canAccessPath(user?.id || null, pathname)
   if (!canAccess) {
     if (!user) {
-      redirect(`/auth/login?redirectTo=${encodeURIComponent(pathname)}`)
+      redirect(`/login?redirectTo=${encodeURIComponent(pathname)}`)
     } else {
-      redirect('/403')
+      redirect('/error-403')
     }
   }
 }
@@ -229,7 +229,7 @@ export async function ensureResourceAccess(
 ): Promise<void> {
   const user = await getCurrentUser()
   if (!user) {
-    redirect('/auth/login')
+    redirect('/login')
   }
   const role = await getUserRole(user.id)
   // Super admin has access to everything
@@ -251,7 +251,7 @@ export async function ensureResourceAccess(
           .eq('role', 'salon_owner')
           .single()
         if (userRole?.salon_id !== resourceId) {
-          redirect('/403')
+          redirect('/error-403')
         }
       }
       break
@@ -265,7 +265,7 @@ export async function ensureResourceAccess(
           .eq('role', 'location_manager')
           .single()
         if (userRole?.location_id !== resourceId) {
-          redirect('/403')
+          redirect('/error-403')
         }
       }
       break
@@ -278,7 +278,7 @@ export async function ensureResourceAccess(
           .eq('user_id', user.id)
           .single()
         if (staffProfile?.id !== resourceId) {
-          redirect('/403')
+          redirect('/error-403')
         }
       }
       break

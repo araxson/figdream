@@ -1,213 +1,301 @@
-# 🚀 Claude Code Subagents - Performance Optimized for FigDream
+# 🚀 Enterprise SaaS Development Agents (0-100% Coverage)
 
-## ⚡ QUICK START - Most Common Commands
+## Complete Development Pipeline: 6 Sequential Agents
 
+```
+00 → 01 → 02 → 03 → 04 → 05
+SETUP → ORGANIZE → IMPLEMENT → QUALITY → ROLES → FINAL
+```
+
+---
+
+## 📋 Agent Execution Order
+
+### Agent 00: Initial Setup & Foundation
+**Purpose**: Establish project foundation and environment
+**Coverage**: 0-15% of project
+
+**Key Actions**:
+- Environment setup and verification
+- Directory structure creation
+- Configuration files (TypeScript, ESLint, Next.js)
+- Database connection and types generation
+- Git hooks and version control
+
+**Command**: 
 ```bash
-# FIX EVERYTHING (Most Used)
-"Fix all TypeScript and ESLint errors using typescript-eslint-enforcer"
-
-# ORGANIZE CODEBASE
-"Use file-organization-cleanup to fix all file locations and naming"
-
-# SECURE APPLICATION
-"Use security-authentication to implement DAL pattern"
-
-# REMOVE MOCK DATA
-"Use data-authenticity-enforcer to remove all mock data"
+"Use Agent 00 to initialize the project foundation"
 ```
 
 ---
 
-## 📋 Agent Priority Matrix (Use in This Order)
+### Agent 01: File Organization & Cleanup
+**Purpose**: Organize codebase structure and enforce standards
+**Coverage**: 15-30% of project
 
-### 🔴 **LEVEL 1: CRITICAL** (Must Fix First - Zero Tolerance)
+**Key Actions**:
+- Move files to correct locations
+- Fix naming conventions
+- Remove duplicates and dead code
+- Optimize imports with @ aliases
+- Enforce Clean Architecture
 
-#### 1. **typescript-eslint-enforcer** 🛡️ [Details](./typescript-eslint-enforcer.md)
-- **WHEN**: TypeScript/ESLint errors exist
-- **COMMAND**: `"Fix all TypeScript and ESLint errors"`
-- **VALIDATION**: `npm run typecheck && npm run lint`
-- **IMPACT**: Blocks all deployments
-
-#### 2. **data-authenticity-enforcer** 🔐 [Details](./data-authenticity-enforcer.md)
-- **WHEN**: Any mock/fake/hardcoded data found
-- **COMMAND**: `"Remove all mock data and use Supabase"`
-- **VALIDATION**: `grep -r "mock\|fake\|sample" src/`
-- **IMPACT**: Critical for production
-
-#### 3. **security-authentication** 🔒 [Details](./security-authentication.md)
-- **WHEN**: Auth implementation or security fixes
-- **COMMAND**: `"Implement DAL authentication pattern"`
-- **VALIDATION**: Check for middleware auth usage
-- **IMPACT**: CVE-2025-29927 compliance
-
----
-
-### 🟡 **LEVEL 2: HIGH PRIORITY** (Fix During Development)
-
-#### 4. **file-organization-cleanup** 📁 [Details](./file-organization-cleanup.md)
-- **WHEN**: Files in wrong locations
-- **COMMAND**: `"Move all files to correct locations"`
-- **VALIDATION**: Check project structure
-- **IMPACT**: Maintainability
-
-#### 5. **import-path-optimization** 🔗 [Details](./import-path-optimization.md)
-- **WHEN**: Relative imports exist
-- **COMMAND**: `"Convert all imports to @ aliases"`
-- **VALIDATION**: `grep -r "\.\./\.\." src/`
-- **IMPACT**: Code consistency
-
-#### 6. **type-alignment-specialist** 🎯 [Details](./type-alignment-specialist.md)
-- **WHEN**: Database type mismatches
-- **COMMAND**: `"Align all types with database.types.ts"`
-- **VALIDATION**: TypeScript compilation
-- **IMPACT**: Type safety
-
----
-
-### 🟢 **LEVEL 3: STANDARD** (Regular Development)
-
-#### 7. **supabase-integration** 🗄️ [Details](./supabase-integration.md)
-- **WHEN**: Database work
-- **COMMAND**: `"Optimize Supabase queries and RLS"`
-
-#### 8. **server-first-architecture** ⚡ [Details](./server-first-architecture.md)
-- **WHEN**: Building features
-- **COMMAND**: `"Convert to Server Components"`
-
-#### 9. **ui-component-compliance** 🎨 [Details](./ui-component-compliance.md)
-- **WHEN**: UI development
-- **COMMAND**: `"Use only shadcn/ui components"`
-
----
-
-### 🔵 **LEVEL 4: SPECIALIZED** (As Needed)
-
-#### 10. **code-debugger** 🐛 [Details](./code-debugger.md)
-- **WHEN**: Runtime/build errors
-- **COMMAND**: `"Debug this error"`
-
-#### 11. **codebase-organizer** 🏗️ [Details](./codebase-organizer.md)
-- **WHEN**: Major cleanup needed
-- **COMMAND**: `"Perform comprehensive cleanup"`
-
----
-
-## 🎮 Power User Commands (Chain Multiple Agents)
-
-### 🔥 **ULTRA-CLEANUP** (Full Codebase Fix)
-```
-Use typescript-eslint-enforcer to fix all errors, 
-then file-organization-cleanup to organize files, 
-then import-path-optimization to fix imports,
-then data-authenticity-enforcer to remove mock data
-```
-
-### 🚀 **NEW FEATURE** (Optimal Development)
-```
-Use server-first-architecture for Server Components,
-then supabase-integration for database,
-then ui-component-compliance for UI,
-then typescript-eslint-enforcer to validate
-```
-
-### 🔒 **SECURITY HARDENING** (Production Ready)
-```
-Use security-authentication for DAL pattern,
-then data-authenticity-enforcer for real data,
-then type-alignment-specialist for type safety
-```
-
-## 🛠️ Pre-Commit Workflow (MANDATORY)
-
+**Command**:
 ```bash
-# 1. TypeScript Check (MUST PASS)
-npm run typecheck
-
-# 2. ESLint Check (MUST PASS)
-npm run lint
-
-# 3. If errors exist:
-"Use typescript-eslint-enforcer to fix all errors"
-
-# 4. Validate again
-npm run typecheck && npm run lint
+"Use Agent 01 to organize all files and clean up the codebase"
 ```
 
 ---
 
-## 📈 Optimization Strategies
+### Agent 02: Implementation & Architecture
+**Purpose**: Create all missing implementations from database
+**Coverage**: 30-60% of project
 
-### **Strategy 1: Speed Focus** (< 5 minutes)
-1. typescript-eslint-enforcer (instant fixes)
-2. import-path-optimization (quick cleanup)
-3. ui-component-compliance (fast validation)
+**Key Actions**:
+- Scan database tables for missing implementations
+- Generate all missing pages
+- Create required components
+- Implement server actions
+- Build data access layers
 
-### **Strategy 2: Quality Focus** (10-15 minutes)
-1. typescript-eslint-enforcer (deep analysis)
-2. type-alignment-specialist (database alignment)
-3. file-organization-cleanup (structure fix)
-4. security-authentication (DAL implementation)
-
-### **Strategy 3: Production Ready** (20+ minutes)
-1. Full ULTRA-CLEANUP chain
-2. security-authentication (complete audit)
-3. server-first-architecture (performance)
-4. Final validation with all checks
-
----
-
-## 🚨 CRITICAL RULES (From docs/architecture/rules.md)
-
-### **ZERO TOLERANCE**
-- ❌ **NO** TypeScript errors
-- ❌ **NO** ESLint errors  
-- ❌ **NO** `any` types
-- ❌ **NO** mock/fake data
-- ❌ **NO** custom UI components
-
-### **MANDATORY PATTERNS**
-- ✅ **DAL** for authentication (not middleware)
-- ✅ **@** path aliases only
-- ✅ **shadcn/ui** components only
-- ✅ **Server Components** by default
-- ✅ **Supabase** for all data
-
----
-
-## 💡 Pro Tips for Maximum Performance
-
-1. **Chain agents** for complex tasks - faster than sequential
-2. **Be specific** with file paths - "Fix ESLint in src/components"
-3. **Batch operations** - "Fix all customer role pages"
-4. **Validate often** - Run checks after each agent
-5. **Start with critical** - Always fix TypeScript/ESLint first
-
----
-
-## 📞 Emergency Commands
-
+**Command**:
 ```bash
-# PANIC MODE - Fix Everything Now
-"EMERGENCY: Use all agents to fix entire codebase immediately"
-
-# Production Blocker
-"CRITICAL: Fix all TypeScript errors blocking deployment"
-
-# Security Issue
-"URGENT: Implement DAL authentication throughout application"
-
-# Performance Crisis
-"Convert all pages to Server Components for performance"
+"Use Agent 02 to implement all missing features based on database"
 ```
 
 ---
 
-## 📚 References
+### Agent 03: Quality & Compliance
+**Purpose**: Ensure code quality and security compliance
+**Coverage**: 60-75% of project
 
-- **Architecture Rules**: `docs/architecture/rules.md`
-- **Database Types**: `src/types/database.types.ts`
-- **Auth Types**: `src/types/auth.types.ts`
+**Key Actions**:
+- Fix all TypeScript errors
+- Resolve ESLint violations
+- Implement security measures
+- Ensure GDPR/PCI compliance
+- Add authentication guards
+
+**Command**:
+```bash
+"Use Agent 03 to ensure quality and compliance standards"
+```
 
 ---
 
-*Optimized for Claude Code performance with FigDream's Next.js 15 + Supabase + TypeScript + shadcn/ui stack*
+### Agent 04: Role-Based Architecture
+**Purpose**: Implement all 5 user roles completely
+**Coverage**: 75-90% of project
+
+**Key Actions**:
+- Super Admin implementation (platform owner)
+- Salon Owner features (B2B customer)
+- Location Manager tools
+- Staff Member workspace
+- Customer experience
+
+**Command**:
+```bash
+"Use Agent 04 to implement all role-based features"
+```
+
+---
+
+### Agent 05: Final Verification & Error Resolution
+**Purpose**: Fix all remaining errors and ensure production readiness
+**Coverage**: 90-100% of project
+
+**Key Actions**:
+- Scan for ALL error types
+- Auto-fix every fixable issue
+- Complete missing implementations
+- Verify database alignment
+- Validate deployment readiness
+
+**Command**:
+```bash
+"Use Agent 05 to fix all errors and finalize for production"
+```
+
+---
+
+## 🎯 Master Execution Prompt
+
+### Complete Project Development (0-100%)
+Copy and use this master prompt to execute all agents sequentially:
+
+```
+Execute the complete development pipeline:
+
+1. First, use Agent 00 to initialize the project foundation and setup environment
+2. Then, use Agent 01 to organize all files and enforce clean architecture
+3. Next, use Agent 02 to implement all missing features based on database tables
+4. Then, use Agent 03 to fix all quality issues and ensure compliance
+5. Next, use Agent 04 to implement all 5 user roles completely
+6. Finally, use Agent 05 to fix ALL remaining errors and verify production readiness
+
+Provide a summary after each agent completes.
+```
+
+---
+
+## 📊 Coverage Matrix
+
+| Agent | Start | End | Focus Area | Critical Output |
+|-------|-------|-----|------------|-----------------|
+| **00** | 0% | 15% | Foundation | Environment ready |
+| **01** | 15% | 30% | Organization | Clean structure |
+| **02** | 30% | 60% | Implementation | Features built |
+| **03** | 60% | 75% | Quality | Zero errors |
+| **04** | 75% | 90% | Roles | All roles working |
+| **05** | 90% | 100% | Final | Production ready |
+
+---
+
+## ⚡ Quick Commands
+
+### Individual Agent Execution
+```bash
+# Setup from scratch
+"Run Agent 00"
+
+# Fix messy codebase
+"Run Agent 01"
+
+# Build missing features
+"Run Agent 02"
+
+# Fix all errors
+"Run Agent 03"
+
+# Implement user roles
+"Run Agent 04"
+
+# Final production check
+"Run Agent 05"
+```
+
+### Partial Pipelines
+```bash
+# Quick setup and organize (0-30%)
+"Run Agents 00 and 01"
+
+# Implementation pipeline (30-75%)
+"Run Agents 02 and 03"
+
+# Complete development (0-100%)
+"Run all agents 00 through 05"
+```
+
+---
+
+## 🎯 Success Criteria
+
+### After Agent 00
+- ✅ Environment configured
+- ✅ Project structure created
+- ✅ Database connected
+
+### After Agent 01
+- ✅ All files organized
+- ✅ Clean architecture enforced
+- ✅ No duplicate code
+
+### After Agent 02
+- ✅ All database tables implemented
+- ✅ Pages, components, actions created
+- ✅ Data access layers ready
+
+### After Agent 03
+- ✅ Zero TypeScript errors
+- ✅ Zero ESLint violations
+- ✅ Security implemented
+
+### After Agent 04
+- ✅ All 5 roles functional
+- ✅ Complete user journeys
+- ✅ Role-based access control
+
+### After Agent 05
+- ✅ Zero errors of any kind
+- ✅ Build successful
+- ✅ Production ready
+
+---
+
+## 🚀 Deployment Readiness Checklist
+
+After running all agents, you should have:
+
+- [ ] **Code Quality**
+  - Zero TypeScript errors
+  - Zero ESLint violations
+  - No console.logs
+  - No commented code
+
+- [ ] **Security**
+  - Authentication implemented
+  - Authorization working
+  - RLS policies active
+  - No sensitive data exposed
+
+- [ ] **Features**
+  - All database tables implemented
+  - All 5 roles functional
+  - Subscription system working
+  - All pages accessible
+
+- [ ] **Performance**
+  - Bundle size <300KB
+  - API responses <100ms
+  - Images optimized
+  - Caching implemented
+
+- [ ] **Documentation**
+  - README updated
+  - Environment variables documented
+  - API endpoints documented
+  - Deployment guide ready
+
+---
+
+## 💡 Pro Tips
+
+1. **Always run agents in order** - Each builds on the previous
+2. **Don't skip Agent 00** - Foundation is critical
+3. **Run Agent 05 multiple times** - Until zero errors remain
+4. **Check between agents** - Verify progress at each step
+5. **Use master prompt** - For hands-off complete development
+
+---
+
+## 📝 Notes
+
+### Business Model
+- **B2B SaaS**: Salon owners pay platform
+- **No customer payments**: Customers pay salons directly
+- **Subscription tiers**: Basic ($299), Professional ($599), Enterprise ($999)
+
+### Technology Stack
+- **Frontend**: Next.js 14+ with Turbopack
+- **Backend**: Supabase (PostgreSQL + Auth)
+- **Styling**: Tailwind CSS + shadcn/ui
+- **Types**: TypeScript with strict mode
+- **Payment**: Stripe for subscriptions
+
+### Key Principles
+- **Database-first development**
+- **Zero tolerance for errors**
+- **Type safety everywhere**
+- **Server Components by default**
+- **Clean Architecture patterns**
+
+---
+
+## Remember
+
+> **"These 6 agents take you from 0 to 100% completion"**
+
+Start with Agent 00, end with Agent 05. Every step is critical. No shortcuts.
+
+**Ship complete. Ship quality. Ship revenue.**

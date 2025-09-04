@@ -194,15 +194,15 @@ export async function canAccessLocation(userId: string | null, locationId: strin
 export function getRoleRedirectPath(role: UserRole | null): string {
   switch (role) {
     case 'super_admin':
-      return '/admin'
+      return '/super-admin'
     case 'salon_owner':
-      return '/salon'
+      return '/salon-owner'
     case 'location_manager':
-      return '/location'
+      return '/location-manager'
     case 'staff':
-      return '/staff'
+      return '/staff-member'
     case 'customer':
-      return '/dashboard'
+      return '/customer'
     default:
       return '/'
   }
@@ -213,17 +213,17 @@ export function getRoleRedirectPath(role: UserRole | null): string {
 export function getRoleLoginPath(role: UserRole): string {
   switch (role) {
     case 'super_admin':
-      return '/auth/login/super-admin'
+      return '/login/super-admin'
     case 'salon_owner':
-      return '/auth/login/salon-owner'
+      return '/login/salon-owner'
     case 'location_manager':
-      return '/auth/login/salon-owner'
+      return '/login/location-manager'
     case 'staff':
-      return '/auth/login/staff'
+      return '/login/staff'
     case 'customer':
-      return '/auth/login/customer'
+      return '/login/customer'
     default:
-      return '/auth/login'
+      return '/login'
   }
 }
 /**
@@ -237,7 +237,14 @@ export function isProtectedPath(pathname: string): boolean {
     '/features',
     '/contact',
     '/book',
-    '/auth',
+    '/login',
+    '/register',
+    '/forgot-password',
+    '/reset-password',
+    '/verify-email',
+    '/oauth-callback',
+    '/error-401',
+    '/error-403',
   ]
   // Check if path starts with any public path
   return !publicPaths.some(path => 
@@ -248,11 +255,11 @@ export function isProtectedPath(pathname: string): boolean {
  * Check if a path is role-restricted
  */
 export function getRoleForPath(pathname: string): UserRole | null {
-  if (pathname.startsWith('/admin')) return 'super_admin'
-  if (pathname.startsWith('/salon')) return 'salon_owner'
-  if (pathname.startsWith('/location')) return 'location_manager'
-  if (pathname.startsWith('/staff')) return 'staff'
-  if (pathname.startsWith('/dashboard')) return 'customer'
+  if (pathname.startsWith('/super-admin')) return 'super_admin'
+  if (pathname.startsWith('/salon-owner')) return 'salon_owner'
+  if (pathname.startsWith('/location-manager')) return 'location_manager'
+  if (pathname.startsWith('/staff-member')) return 'staff'
+  if (pathname.startsWith('/customer')) return 'customer'
   return null
 }
 /**

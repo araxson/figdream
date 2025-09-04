@@ -1,20 +1,12 @@
 "use client"
 import { useState } from "react"
-import { 
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Button,
-  Label,
-  Textarea,
-  Calendar,
-  RadioGroup,
-  RadioGroupItem,
-  Alert,
-  AlertDescription
-} from "@/components/ui"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { Calendar } from '@/components/ui/calendar'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 
 import { useToast } from "@/hooks/use-toast"
 import { format, differenceInDays, isWeekend, eachDayOfInterval } from "date-fns"

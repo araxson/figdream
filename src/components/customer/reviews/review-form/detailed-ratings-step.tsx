@@ -1,13 +1,7 @@
 'use client'
 import * as React from 'react'
-import {
-  Card,
-  CardContent,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from '@/components/ui'
+import { Card, CardContent } from '@/components/ui/card'
+import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { StarRating } from './star-rating'
 import { RATING_CATEGORIES } from './review-form.constants'
 import { Control } from 'react-hook-form'

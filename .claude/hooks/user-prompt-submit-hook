@@ -19,10 +19,27 @@ echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━�
 echo ""
 
 # 1. Generate fresh project tree
-echo -e "${BLUE}📊 PHASE 1: Generating fresh project tree...${NC}"
-python3 scripts/utilities/generate_project_tree.py 2>/dev/null || {
-    echo -e "${YELLOW}⚠️  Could not generate project tree. Python script may be missing.${NC}"
-}
+echo -e "${BLUE}📊 PHASE 1: Generating fresh PROJECT_TREE.md...${NC}"
+cd "$(dirname "$0")/../.." || exit 1
+
+# Try multiple locations for the script
+if [ -f "generate_project_tree.py" ]; then
+    python3 generate_project_tree.py > /dev/null 2>&1
+    echo -e "${GREEN}✅ PROJECT_TREE.md generated successfully${NC}"
+elif [ -f "scripts/utilities/generate_project_tree.py" ]; then
+    python3 scripts/utilities/generate_project_tree.py 2>/dev/null
+    echo -e "${GREEN}✅ PROJECT_TREE.md generated successfully${NC}"
+else
+    echo -e "${YELLOW}⚠️  Could not find generate_project_tree.py${NC}"
+fi
+
+# Display summary from PROJECT_TREE.md
+if [ -f "PROJECT_TREE.md" ]; then
+    echo ""
+    echo -e "${CYAN}📊 Project Statistics:${NC}"
+    grep -E "^\- \*\*Total Files\*\*:|^\- \*\*Total Lines\*\*:|^\- \*\*File Types\*\*:" PROJECT_TREE.md | head -3
+    echo ""
+fi
 
 # 2. Run quick error checks
 echo -e "${BLUE}🔍 PHASE 2: Running diagnostics...${NC}"
@@ -115,9 +132,13 @@ echo ""
 # 5. Provide context instructions to Claude
 echo -e "${GREEN}📋 MANDATORY ACTIONS FOR CLAUDE:${NC}"
 echo ""
-echo "   1. Read PROJECT_TREE.md for latest statistics"
+echo -e "${RED}   🔴 CRITICAL: READ PROJECT_TREE.md FIRST - BEFORE ANYTHING ELSE${NC}"
+echo "   1. Read PROJECT_TREE.md for latest statistics (MANDATORY FIRST STEP)"
 echo "   2. Read .claude/agents/README.md for subagent guide"
 echo "   3. Check CLAUDE.md for project rules"
+echo ""
+echo -e "${YELLOW}⚠️  PROJECT_TREE.md is automatically regenerated with EVERY message${NC}"
+echo -e "${YELLOW}   It contains the most up-to-date project statistics and structure${NC}"
 echo ""
 
 if [ "$ESLINT_COUNT" -gt 0 ] || [ "$ANY_COUNT" -gt 20 ]; then

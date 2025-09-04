@@ -1,25 +1,13 @@
 'use client'
 import { useState } from 'react'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  Button,
-  Label,
-  RadioGroup,
-  RadioGroupItem,
-  Checkbox,
-  Calendar,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Alert,
-  AlertDescription
-} from '@/components/ui'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Calendar } from '@/components/ui/calendar'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { CalendarIcon, Download, Loader2, Info, Shield } from 'lucide-react'
@@ -31,7 +19,7 @@ interface ExportDialogProps {
   isBulkExport?: boolean
   children?: React.ReactNode
 }
-export default function ExportDialog({
+function ExportDialog({
   salonId,
   exportType,
   title,
@@ -306,3 +294,7 @@ export default function ExportDialog({
     </Dialog>
   )
 }
+
+ExportDialog.displayName = 'ExportDialog'
+
+export default ExportDialog

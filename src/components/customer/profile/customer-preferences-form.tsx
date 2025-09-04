@@ -1,6 +1,11 @@
 'use client';
 import { useState } from 'react';
-import { Button, Label, Switch, Toggle, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Separator } from '@/components/ui';
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
+import { Toggle } from '@/components/ui/toggle'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Separator } from '@/components/ui/separator';
 import { Loader2, Save } from 'lucide-react';
 import { toast } from 'sonner';
 import { upsertCustomerPreferences } from '@/lib/data-access/customers/preferences';
@@ -26,7 +31,7 @@ const DAYS_OF_WEEK = [
   'Saturday',
   'Sunday',
 ];
-export default function PreferencesForm({ customerId, currentPreferences }: PreferencesFormProps) {
+function PreferencesForm({ customerId, currentPreferences }: PreferencesFormProps) {
   const [loading, setLoading] = useState(false);
   // Parse the preference value if it exists
   const parsedPreferences = currentPreferences?.preference_value 
@@ -217,3 +222,7 @@ export default function PreferencesForm({ customerId, currentPreferences }: Pref
     </form>
   );
 }
+
+PreferencesForm.displayName = 'PreferencesForm'
+
+export default PreferencesForm

@@ -1,15 +1,8 @@
 'use client'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from '@/components/ui'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+// ChartConfig type definition
+type ChartConfig = Record<string, { label: string; color?: string }>
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart, PieChart, Pie, Cell } from 'recharts'
 interface PerformanceMetricsProps {
   data: Array<{

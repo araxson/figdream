@@ -1,16 +1,7 @@
 import { Database } from "@/types/database.types"
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Badge,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui"
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Award } from "lucide-react"
 type StaffMember = Database['public']['Tables']['staff_profiles']['Row'] & {
   profiles?: Database['public']['Tables']['profiles']['Row'] | null

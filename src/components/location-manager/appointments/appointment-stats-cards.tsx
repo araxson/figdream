@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Calendar, Clock, CheckCircle, DollarSign } from "lucide-react"
 interface AppointmentStatsCardsProps {
   todaysAppointments: number

@@ -1,5 +1,6 @@
 'use server'
 import { cookies } from 'next/headers'
+import { cache } from 'react'
 import { createClient } from '@/lib/database/supabase/server'
 import { User } from '@supabase/supabase-js'
 import { getUserRole, type UserRole } from './utils'
@@ -14,24 +15,51 @@ export interface SessionUser {
   }
 }
 /**
- * Get current user from session
+ * CRITICAL: Secure session verification using React cache() for CVE-2025-29927
+ * Uses supabase.auth.getUser() instead of getSession() for security
+ * Memoized per request to avoid repeated database calls
+ */
+export const verifySession = cache(async (): Promise<{
+  user: User | null
+  error: string | null
+}> => {
+  try {
+    const supabase = await createClient()
+    const { data: { user }, error } = await supabase.auth.getUser()
+    
+    if (error) {
+      return { user: null, error: error.message }
+    }
+    
+    if (!user) {
+      return { user: null, error: 'Not authenticated' }
+    }
+    
+    return { user, error: null }
+  } catch (err) {
+    return { 
+      user: null, 
+      error: err instanceof Error ? err.message : 'Authentication failed' 
+    }
+  }
+})
+
+/**
+ * Get current user from session (DEPRECATED - use verifySession)
  * This follows the DAL pattern - server-side only
+ * @deprecated Use verifySession() for security compliance with CVE-2025-29927
  */
 export async function getCurrentUser(): Promise<User | null> {
-  const supabase = await createClient()
-  const { data: { user }, error } = await supabase.auth.getUser()
-  if (error || !user) {
-    return null
-  }
+  const { user } = await verifySession()
   return user
 }
 /**
- * Get current session
- * Note: We use getUser() instead of getSession() per best practices
+ * Get current session with role and metadata
+ * Uses secure verifySession() pattern for CVE-2025-29927 compliance
  */
-export async function getCurrentSession(): Promise<SessionUser | null> {
-  const user = await getCurrentUser()
-  if (!user) {
+export const getCurrentSession = cache(async (): Promise<SessionUser | null> => {
+  const { user, error } = await verifySession()
+  if (error || !user) {
     return null
   }
   // Get user metadata from database instead of raw_app_meta_data
@@ -52,7 +80,7 @@ export async function getCurrentSession(): Promise<SessionUser | null> {
     role: await getUserRole(user.id),
     metadata
   }
-}
+})
 /**
  * Refresh session if needed
  */
@@ -80,20 +108,20 @@ export async function signOut(): Promise<void> {
   cookieStore.delete('location-id')
 }
 /**
- * Check if user is authenticated
+ * Check if user is authenticated using secure session verification
  */
-export async function isAuthenticated(): Promise<boolean> {
-  const user = await getCurrentUser()
+export const isAuthenticated = cache(async (): Promise<boolean> => {
+  const { user } = await verifySession()
   return user !== null
-}
+})
 /**
- * Get user role from session
+ * Get user role from session using secure verification
  */
-export async function getSessionRole(): Promise<UserRole | null> {
-  const user = await getCurrentUser()
+export const getSessionRole = cache(async (): Promise<UserRole | null> => {
+  const { user } = await verifySession()
   if (!user) return null
   return getUserRole(user.id)
-}
+})
 /**
  * Check if current user has specific role
  */
@@ -115,10 +143,10 @@ export async function currentUserIsAdmin(): Promise<boolean> {
   return currentUserHasAnyRole(['super_admin', 'salon_owner', 'location_manager'])
 }
 /**
- * Get user's salon ID from session
+ * Get user's salon ID from session using secure verification
  */
-export async function getSessionSalonId(): Promise<string | null> {
-  const user = await getCurrentUser()
+export const getSessionSalonId = cache(async (): Promise<string | null> => {
+  const { user } = await verifySession()
   if (!user) return null
   // Get salon_id from user_roles table instead of raw_app_meta_data
   const supabase = await createClient()
@@ -128,12 +156,12 @@ export async function getSessionSalonId(): Promise<string | null> {
     .eq('user_id', user.id)
     .maybeSingle()
   return userRole?.salon_id || null
-}
+})
 /**
- * Get user's location ID from session
+ * Get user's location ID from session using secure verification
  */
-export async function getSessionLocationId(): Promise<string | null> {
-  const user = await getCurrentUser()
+export const getSessionLocationId = cache(async (): Promise<string | null> => {
+  const { user } = await verifySession()
   if (!user) return null
   // Get location_id from user_roles table instead of raw_app_meta_data
   const supabase = await createClient()
@@ -143,12 +171,12 @@ export async function getSessionLocationId(): Promise<string | null> {
     .eq('user_id', user.id)
     .maybeSingle()
   return userRole?.location_id || null
-}
+})
 /**
- * Get user's staff ID from session
+ * Get user's staff ID from session using secure verification
  */
-export async function getSessionStaffId(): Promise<string | null> {
-  const user = await getCurrentUser()
+export const getSessionStaffId = cache(async (): Promise<string | null> => {
+  const { user } = await verifySession()
   if (!user) return null
   // Get staff_id from staff_profiles table instead of raw_app_meta_data
   const supabase = await createClient()
@@ -158,14 +186,14 @@ export async function getSessionStaffId(): Promise<string | null> {
     .eq('user_id', user.id)
     .maybeSingle()
   return staffProfile?.id || null
-}
+})
 /**
- * Validate session and get user
- * Throws error if not authenticated
+ * Validate session and get user using secure verification
+ * Throws error if not authenticated - implements Proximity Principle
  */
 export async function requireAuth(): Promise<User> {
-  const user = await getCurrentUser()
-  if (!user) {
+  const { user, error } = await verifySession()
+  if (error || !user) {
     throw new Error('Authentication required')
   }
   return user

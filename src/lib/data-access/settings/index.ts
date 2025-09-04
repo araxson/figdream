@@ -61,7 +61,7 @@ export async function updateSetting(key: string, value: unknown, salonId?: strin
     if (error) {
       throw new Error('Failed to update setting')
     }
-    revalidatePath('/salon-admin/settings')
+    revalidatePath('/salon-owner/settings')
     revalidatePath('/super-admin/settings')
     return data
   } else {
@@ -79,7 +79,7 @@ export async function updateSetting(key: string, value: unknown, salonId?: strin
     if (error) {
       throw new Error('Failed to create setting')
     }
-    revalidatePath('/salon-admin/settings')
+    revalidatePath('/salon-owner/settings')
     revalidatePath('/super-admin/settings')
     return data
   }

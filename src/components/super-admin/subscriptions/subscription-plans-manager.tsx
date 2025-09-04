@@ -1,32 +1,15 @@
 "use client"
 import { useState, useEffect } from "react"
 import { Plus, Edit, Trash2, CreditCard, Check, Zap } from "lucide-react"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Button,
-  Badge,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  Input,
-  Textarea,
-  Switch,
-  Skeleton,
-} from "@/components/ui"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Switch } from '@/components/ui/switch'
+import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from "sonner"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -77,7 +60,7 @@ export function SubscriptionPlansManager() {
           .order("price_monthly", { ascending: true })
         if (error) throw error
         setPlans(data || [])
-      } catch (error) {
+      } catch (_error) {
         toast.error("Failed to load subscription plans")
       } finally {
         setLoading(false)
@@ -110,7 +93,7 @@ export function SubscriptionPlansManager() {
         .order("price_monthly", { ascending: true })
       if (error) throw error
       setPlans(data || [])
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to load subscription plans")
     } finally {
       setLoading(false)
@@ -143,7 +126,7 @@ export function SubscriptionPlansManager() {
       setEditPlan(null)
       form.reset()
       await loadPlans()
-    } catch (error) {
+    } catch (_error) {
       toast.error(editPlan ? "Failed to update plan" : "Failed to create plan")
     }
   }
@@ -157,7 +140,7 @@ export function SubscriptionPlansManager() {
       toast.success("Plan deleted successfully")
       setDeleteId(null)
       await loadPlans()
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to delete plan")
     }
   }

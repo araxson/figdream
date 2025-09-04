@@ -1,15 +1,11 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import {
-  Button,
-  Card,
-  CardContent,
-  Badge,
-  RadioGroup,
-  RadioGroupItem,
-  Checkbox,
-} from '@/components/ui'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Clock, Save } from 'lucide-react'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/database/supabase/client'

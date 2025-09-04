@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { Badge } from '@/components/ui/feedback/badge'
-import { Button } from '@/components/ui/form/button'
-import { ScrollArea } from '@/components/ui/layout/scroll-area'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { Clock, User, AlertCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 interface TimeSlot {

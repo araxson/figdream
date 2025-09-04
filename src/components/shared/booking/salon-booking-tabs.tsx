@@ -1,22 +1,11 @@
 'use client'
 import { useRouter } from 'next/navigation'
 import { Database } from '@/types/database.types'
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Badge,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Button,
-} from '@/components/ui'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
 import { Clock, MapPin, Phone, Star, ChevronRight } from 'lucide-react'
 type Salon = Database['public']['Tables']['salons']['Row'] & {
   salon_locations?: Array<{
@@ -56,7 +45,7 @@ interface SalonBookingTabsProps {
   reviewCount: number
   avgRating: number
 }
-export default function SalonBookingTabs({ 
+function SalonBookingTabs({ 
   salon, 
   services, 
   staff, 
@@ -312,3 +301,7 @@ export default function SalonBookingTabs({
     </Tabs>
   )
 }
+
+SalonBookingTabs.displayName = 'SalonBookingTabs'
+
+export default SalonBookingTabs

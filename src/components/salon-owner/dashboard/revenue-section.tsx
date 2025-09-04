@@ -1,5 +1,6 @@
 'use client'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Skeleton } from "@/components/ui"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import { default as RevenueChart } from '@/components/salon-owner/analytics/revenue-chart'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/database/supabase/client'

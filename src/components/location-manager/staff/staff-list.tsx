@@ -1,12 +1,7 @@
 import { Database } from "@/types/database.types"
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Badge,
-  Card,
-  CardContent,
-} from "@/components/ui"
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent } from '@/components/ui/card'
 import { Mail, Phone } from "lucide-react"
 import { format } from "date-fns"
 type StaffMember = Database['public']['Tables']['staff_profiles']['Row'] & {

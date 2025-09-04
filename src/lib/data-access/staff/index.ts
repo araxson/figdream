@@ -1,14 +1,34 @@
 import { createClient } from '@/lib/database/supabase/server';
-import { Database } from '@/types/database.types';
-// type StaffProfile = Database['public']['Tables']['staff_profiles']['Row'];
-type StaffProfileInsert = Database['public']['Tables']['staff_profiles']['Insert'];
-type StaffProfileUpdate = Database['public']['Tables']['staff_profiles']['Update'];
-type StaffSchedule = Database['public']['Tables']['staff_schedules']['Row'];
-// type StaffService = Database['public']['Tables']['staff_services']['Row'];
-type StaffBreak = Database['public']['Tables']['staff_breaks']['Row'];
-type StaffTimeOff = Database['public']['Tables']['staff_time_off']['Row'];
-// type StaffEarnings = Database['public']['Tables']['staff_earnings']['Row'];
-// type StaffUtilization = Database['public']['Tables']['staff_utilization']['Row'];
+import {
+  StaffProfile,
+  StaffProfileInsert,
+  StaffProfileUpdate,
+  StaffSchedule,
+  StaffService,
+  Profile,
+  Service
+} from '@/types/db-types';
+
+// Extended types for staff with related data
+export interface StaffWithProfile extends StaffProfile {
+  profiles?: Profile | null
+}
+
+export interface StaffWithServices extends StaffProfile {
+  staff_services?: (StaffService & {
+    services: Service
+  })[]
+}
+
+export interface StaffWithFullDetails extends StaffProfile {
+  profiles?: Profile | null
+  staff_services?: (StaffService & {
+    services: Service
+  })[]
+  staff_schedules?: StaffSchedule[]
+  staff_specialties?: Record<string, unknown>[] // Table may not exist in current schema
+  staff_utilization?: Record<string, unknown>[] // Table may not exist in current schema
+}
 export async function getStaffBySalon(salonId: string) {
   const supabase = await createClient();
   const { data, error } = await supabase

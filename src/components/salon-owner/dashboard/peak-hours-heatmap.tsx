@@ -1,9 +1,9 @@
 'use client'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 interface PeakHoursHeatmapProps {
   hourlyData: number[]
 }
-export default function PeakHoursHeatmap({ hourlyData }: PeakHoursHeatmapProps) {
+function PeakHoursHeatmap({ hourlyData }: PeakHoursHeatmapProps) {
   const maxBookings = Math.max(...hourlyData)
   const getIntensity = (value: number) => {
     if (maxBookings === 0) return 0
@@ -66,3 +66,7 @@ export default function PeakHoursHeatmap({ hourlyData }: PeakHoursHeatmapProps) 
     </TooltipProvider>
   )
 }
+
+PeakHoursHeatmap.displayName = 'PeakHoursHeatmap'
+
+export default PeakHoursHeatmap

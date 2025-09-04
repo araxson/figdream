@@ -1,6 +1,6 @@
 'use client'
-import { Badge } from "@/components/ui/feedback/badge"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/data-display/card"
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Calendar } from "lucide-react"
 import { 
   Line, 

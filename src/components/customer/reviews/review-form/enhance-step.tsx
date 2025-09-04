@@ -2,22 +2,13 @@
 import * as React from 'react'
 import Image from 'next/image'
 import { Camera, Upload, X, Award } from 'lucide-react'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Button,
-  Badge,
-  Input,
-  AspectRatio,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  Checkbox,
-} from '@/components/ui'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+import { AspectRatio } from '@/components/ui/aspect-ratio'
+import { FormControl, FormDescription, FormField, FormItem, FormLabel } from '@/components/ui/form'
+import { Checkbox } from '@/components/ui/checkbox'
 import { REVIEW_TAGS } from './review-form.constants'
 import { PhotoUpload } from './review-form.types'
 import { Control } from 'react-hook-form'

@@ -1,12 +1,17 @@
 'use client'
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button, Input, Label, Checkbox } from '@/components/ui'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Checkbox } from '@/components/ui/checkbox'
 import { toast } from 'sonner'
-import { Loader2, Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { Loader2, Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { signInAction } from '@/lib/actions/auth'
-import { useCSRFToken } from '@/lib/hooks/use-csrf-token'
+import { useCSRFToken } from '@/hooks/use-csrf-token'
 import { CSRFTokenField } from '@/components/shared/forms/csrf-token-field'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { cn } from '@/lib/utils'
 interface LoginFormProps {
   role?: 'customer' | 'staff' | 'salon_owner' | 'location_manager' | 'super_admin'
   redirectTo?: string
@@ -16,28 +21,38 @@ export function LoginForm({ role = 'customer', redirectTo }: LoginFormProps) {
   const [isPending, startTransition] = useTransition()
   const [showPassword, setShowPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
+  const [successMessage, setSuccessMessage] = useState('')
   const { token: csrfToken, loading: csrfLoading, error: csrfError } = useCSRFToken()
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setFieldErrors({})
+    setSuccessMessage('')
+    
     if (!csrfToken) {
-      toast.error('Security token not loaded. Please refresh the page.')
+      setFieldErrors({ general: 'Security token not loaded. Please refresh the page.' })
       return
     }
+    
     const formData = new FormData(e.currentTarget)
     startTransition(async () => {
       try {
         const result = await signInAction(formData)
         if (result?.error) {
+          setFieldErrors({ general: result.error })
           toast.error(result.error)
         } else if (result?.errors) {
           // Show field-specific errors
+          const newErrors: Record<string, string> = {}
           Object.entries(result.errors).forEach(([field, errors]) => {
-            if (Array.isArray(errors)) {
-              errors.forEach(error => toast.error(`${field}: ${error}`))
+            if (Array.isArray(errors) && errors.length > 0) {
+              newErrors[field] = errors[0]
             }
           })
+          setFieldErrors(newErrors)
         } else {
           // Success - redirect will happen automatically
+          setSuccessMessage('Login successful! Redirecting...')
           toast.success('Login successful! Redirecting...')
           // Fallback redirect if server action doesn't redirect
           setTimeout(() => {
@@ -71,60 +86,111 @@ export function LoginForm({ role = 'customer', redirectTo }: LoginFormProps) {
   }
   if (csrfError) {
     return (
-      <div className="text-center py-8">
-        <p className="text-red-500 mb-4">Security initialization failed</p>
-        <Button onClick={() => window.location.reload()}>
+      <Alert variant="destructive" className="max-w-md mx-auto">
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          Security initialization failed. Please reload the page to continue.
+        </AlertDescription>
+        <Button 
+          onClick={() => window.location.reload()}
+          variant="outline"
+          size="sm"
+          className="mt-3"
+        >
           Reload Page
         </Button>
-      </div>
+      </Alert>
     )
   }
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <CSRFTokenField />
+      
+      {/* Success Message */}
+      {successMessage && (
+        <Alert className="bg-green-50 border-green-200">
+          <CheckCircle2 className="h-4 w-4 text-green-600" />
+          <AlertDescription className="text-green-800">
+            {successMessage}
+          </AlertDescription>
+        </Alert>
+      )}
+      
+      {/* General Error Message */}
+      {fieldErrors.general && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{fieldErrors.general}</AlertDescription>
+        </Alert>
+      )}
       <div className="space-y-2">
-        <Label htmlFor="email">Email Address</Label>
+        <Label htmlFor="email" className="text-sm font-medium">
+          Email Address
+        </Label>
         <div className="relative">
           <Input
             id="email"
             name="email"
             type="email"
-            placeholder="Enter your email"
+            placeholder="name@example.com"
             required
             disabled={isPending || csrfLoading}
-            className="pl-10"
+            className={cn(
+              "pl-10 transition-all duration-200",
+              fieldErrors.email && "border-red-500 focus:border-red-500 focus:ring-red-500"
+            )}
+            autoComplete="email"
+            autoFocus
           />
-          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
         </div>
+        {fieldErrors.email && (
+          <p className="text-xs text-red-500 mt-1">{fieldErrors.email}</p>
+        )}
       </div>
       <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="password" className="text-sm font-medium">
+            Password
+          </Label>
+        </div>
         <div className="relative">
           <Input
             id="password"
             name="password"
             type={showPassword ? 'text' : 'password'}
-            placeholder="Enter your password"
+            placeholder="••••••••"
             required
             disabled={isPending || csrfLoading}
-            className="pl-10 pr-10"
+            className={cn(
+              "pl-10 pr-10 transition-all duration-200",
+              fieldErrors.password && "border-red-500 focus:border-red-500 focus:ring-red-500"
+            )}
+            autoComplete="current-password"
           />
-          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
           <Button
             type="button"
             variant="ghost"
-            size="sm"
+            size="icon"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 h-auto p-1"
+            className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 hover:bg-transparent"
             tabIndex={-1}
+            disabled={isPending || csrfLoading}
           >
             {showPassword ? (
-              <EyeOff className="h-4 w-4" />
+              <EyeOff className="h-4 w-4 text-muted-foreground" />
             ) : (
-              <Eye className="h-4 w-4" />
+              <Eye className="h-4 w-4 text-muted-foreground" />
             )}
+            <span className="sr-only">
+              {showPassword ? 'Hide password' : 'Show password'}
+            </span>
           </Button>
         </div>
+        {fieldErrors.password && (
+          <p className="text-xs text-red-500 mt-1">{fieldErrors.password}</p>
+        )}
       </div>
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
@@ -133,38 +199,40 @@ export function LoginForm({ role = 'customer', redirectTo }: LoginFormProps) {
             checked={rememberMe}
             onCheckedChange={(checked) => setRememberMe(checked as boolean)}
             disabled={isPending || csrfLoading}
+            className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
           />
           <Label 
             htmlFor="remember" 
-            className="text-sm font-normal cursor-pointer"
+            className="text-sm font-normal cursor-pointer select-none"
           >
             Remember me
           </Label>
         </div>
         <a
           href="/forgot-password"
-          className="text-sm text-primary"
+          className="text-sm text-primary hover:text-primary/80 transition-colors duration-200 underline-offset-4 hover:underline"
         >
           Forgot password?
         </a>
       </div>
       <Button
         type="submit"
-        className="w-full"
+        className="w-full h-11 font-medium transition-all duration-200"
         disabled={isPending || csrfLoading}
+        size="lg"
       >
         {isPending ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Signing in...
+            <span>Signing in...</span>
           </>
         ) : csrfLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Loading security...
+            <span>Loading security...</span>
           </>
         ) : (
-          'Sign In'
+          <span>Sign in to your account</span>
         )}
       </Button>
     </form>

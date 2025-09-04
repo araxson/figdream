@@ -1,7 +1,10 @@
 "use client"
 import { useState, useRef } from "react"
 import Image from "next/image"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Button, Avatar, AvatarFallback, AvatarImage, Slider } from "@/components/ui"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Slider } from '@/components/ui/slider'
 import { useToast } from "@/hooks/use-toast"
 import { Camera, Upload, ZoomIn, RotateCw } from "lucide-react"
 interface AvatarUploadProps {

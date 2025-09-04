@@ -1,7 +1,13 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Plus, X, Award, Check } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button, Badge, Avatar, AvatarFallback, AvatarImage, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Skeleton } from "@/components/ui"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command'
+import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from "sonner"
 import { createClient } from "@/lib/database/supabase/client"
 import type { Database } from "@/types/database.types"
@@ -19,11 +25,8 @@ export function SpecialtyAssignment({ staff, onUpdate }: SpecialtyAssignmentProp
   const [selectedSpecialty, setSelectedSpecialty] = useState("")
   const [saving, setSaving] = useState(false)
   const supabase = createClient()
-  useEffect(() => {
-    loadSpecialties()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [staff.id])
-  const loadSpecialties = async () => {
+
+  const loadSpecialties = useCallback(async () => {
     try {
       setLoading(true)
       // Get staff's current specialties
@@ -47,12 +50,16 @@ export function SpecialtyAssignment({ staff, onUpdate }: SpecialtyAssignmentProp
         new Set(allSpecialties?.map(s => s.specialty) || [])
       ).filter(s => !currentSpecialties.includes(s))
       setAvailableSpecialties(uniqueSpecialties.sort())
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to load specialties")
     } finally {
       setLoading(false)
     }
-  }
+  }, [staff.id, staff.salon_id, supabase])
+
+  useEffect(() => {
+    loadSpecialties()
+  }, [loadSpecialties])
   const handleAddSpecialty = async () => {
     if (!selectedSpecialty) {
       toast.error("Please select a specialty")
@@ -73,7 +80,7 @@ export function SpecialtyAssignment({ staff, onUpdate }: SpecialtyAssignmentProp
       setAddDialogOpen(false)
       toast.success("Specialty added successfully")
       onUpdate?.()
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to add specialty")
     } finally {
       setSaving(false)
@@ -91,7 +98,7 @@ export function SpecialtyAssignment({ staff, onUpdate }: SpecialtyAssignmentProp
       setAvailableSpecialties([...availableSpecialties, specialty].sort())
       toast.success("Specialty removed successfully")
       onUpdate?.()
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to remove specialty")
     }
   }

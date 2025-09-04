@@ -1,10 +1,10 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/data-display/card'
-import { Button } from '@/components/ui/form/button'
-import { Switch } from '@/components/ui/form/switch'
-import { Label } from '@/components/ui/form/label'
 
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
 export interface AlertConfiguratorProps {
   systemId?: string
 }

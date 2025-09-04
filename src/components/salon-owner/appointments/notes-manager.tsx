@@ -1,31 +1,14 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { Database } from '@/types/database.types'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  Button,
-  Textarea,
-  Label,
-  Card,
-  CardContent,
-  ScrollArea,
-  Avatar,
-  AvatarFallback,
-} from '@/components/ui'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
+import { Card, CardContent } from '@/components/ui/card'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { toast } from 'sonner'
 import { FileText, Plus, Edit2, Save, X, Loader2, User } from 'lucide-react'
 import { format } from 'date-fns'
@@ -45,7 +28,7 @@ interface AppointmentNotesManagerProps {
   trigger?: React.ReactNode
   canEdit?: boolean
 }
-export default function AppointmentNotesManager({
+function AppointmentNotesManager({
   appointment,
   onNoteAdded,
   trigger,
@@ -376,3 +359,7 @@ export default function AppointmentNotesManager({
     </Dialog>
   )
 }
+
+AppointmentNotesManager.displayName = 'AppointmentNotesManager'
+
+export default AppointmentNotesManager

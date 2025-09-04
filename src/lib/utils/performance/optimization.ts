@@ -184,9 +184,10 @@ export const codeSplitBoundaries = {
   // Route-based splitting
   routes: [
     '/customer/*',
-    '/owner/*',
-    '/admin/*',
-    '/staff/*',
+    '/salon-owner/*',
+    '/super-admin/*',
+    '/staff-member/*',
+    '/location-manager/*',
   ],
   // Component-based splitting
   components: [

@@ -1,28 +1,12 @@
 'use client'
 import { useState } from 'react'
-import {
-  Button,
-  Badge,
-  Input,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  ScrollArea,
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuTrigger,
-  ContextMenuSeparator,
-  badgeVariants,
-} from '@/components/ui'
+import { Button } from '@/components/ui/button'
+import { Badge, badgeVariants } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger, ContextMenuSeparator } from '@/components/ui/context-menu'
 import { format } from 'date-fns'
 import { Search, Download, Eye, User, Activity, Shield, FileText, Copy, ExternalLink, LucideIcon } from 'lucide-react'
 import { Database } from '@/types/database.types'

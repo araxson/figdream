@@ -41,8 +41,8 @@ export async function createStaffTimeOff(timeOff: StaffTimeOffInsert) {
   if (error) {
     throw new Error('Failed to create staff time off')
   }
-  revalidatePath('/salon-admin/staff/timeoff')
-  revalidatePath('/staff/timeoff')
+  revalidatePath('/salon-owner/staff/time-off')
+  revalidatePath('/staff-member/time-off')
   return data
 }
 export async function updateStaffTimeOff(id: string, updates: StaffTimeOffUpdate) {
@@ -56,8 +56,8 @@ export async function updateStaffTimeOff(id: string, updates: StaffTimeOffUpdate
   if (error) {
     throw new Error('Failed to update staff time off')
   }
-  revalidatePath('/salon-admin/staff/timeoff')
-  revalidatePath('/staff/timeoff')
+  revalidatePath('/salon-owner/staff/time-off')
+  revalidatePath('/staff-member/time-off')
   return data
 }
 export async function deleteStaffTimeOff(id: string) {
@@ -69,8 +69,8 @@ export async function deleteStaffTimeOff(id: string) {
   if (error) {
     throw new Error('Failed to delete staff time off')
   }
-  revalidatePath('/salon-admin/staff/timeoff')
-  revalidatePath('/staff/timeoff')
+  revalidatePath('/salon-owner/staff/time-off')
+  revalidatePath('/staff-member/time-off')
   return { success: true }
 }
 // Time Off Requests Management
@@ -109,8 +109,8 @@ export async function createTimeOffRequest(request: TimeOffRequestInsert) {
   if (error) {
     throw new Error('Failed to create time off request')
   }
-  revalidatePath('/salon-admin/staff/timeoff/requests')
-  revalidatePath('/staff/timeoff')
+  revalidatePath('/salon-owner/time-off')
+  revalidatePath('/staff-member/time-off')
   return data
 }
 export async function updateTimeOffRequest(id: string, updates: TimeOffRequestUpdate) {
@@ -124,8 +124,8 @@ export async function updateTimeOffRequest(id: string, updates: TimeOffRequestUp
   if (error) {
     throw new Error('Failed to update time off request')
   }
-  revalidatePath('/salon-admin/staff/timeoff/requests')
-  revalidatePath('/staff/timeoff')
+  revalidatePath('/salon-owner/time-off')
+  revalidatePath('/staff-member/time-off')
   return data
 }
 export async function approveTimeOffRequest(id: string, approvedBy: string) {
@@ -165,8 +165,8 @@ export async function approveTimeOffRequest(id: string, approvedBy: string) {
   if (createError) {
     throw new Error('Failed to create staff time off entry')
   }
-  revalidatePath('/salon-admin/staff/timeoff')
-  revalidatePath('/staff/timeoff')
+  revalidatePath('/salon-owner/staff/time-off')
+  revalidatePath('/staff-member/time-off')
   return { success: true }
 }
 export async function rejectTimeOffRequest(id: string, rejectedBy: string, rejectionReason?: string) {
@@ -183,8 +183,8 @@ export async function rejectTimeOffRequest(id: string, rejectedBy: string, rejec
   if (error) {
     throw new Error('Failed to reject time off request')
   }
-  revalidatePath('/salon-admin/staff/timeoff/requests')
-  revalidatePath('/staff/timeoff')
+  revalidatePath('/salon-owner/time-off')
+  revalidatePath('/staff-member/time-off')
   return { success: true }
 }
 // Get time off for a specific date range

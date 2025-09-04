@@ -1,27 +1,20 @@
 'use server'
 import { createClient } from '@/lib/database/supabase/server'
-import type { Database } from '@/types/database.types'
+import {
+  Profile,
+  ProfileInsert,
+  ProfileUpdate,
+  QueryResult,
+  QueryResultMany
+} from '@/types/db-types'
 import { getUserWithRole } from '@/lib/data-access/auth/verify'
 import { isSuperAdmin } from '@/lib/data-access/auth/roles'
-type Profile = Database['public']['Tables']['profiles']['Row']
-type ProfileInsert = Database['public']['Tables']['profiles']['Insert']
-type ProfileUpdate = Database['public']['Tables']['profiles']['Update']
-export interface UserResult {
-  data: Profile | null
-  error: string | null
-}
-export interface UsersResult {
-  data: Profile[] | null
-  error: string | null
-}
-export interface UserCreateResult {
-  data: Profile | null
-  error: string | null
-}
-export interface UserUpdateResult {
-  data: Profile | null
-  error: string | null
-}
+
+// Result types using database types
+export type UserResult = QueryResult<Profile>
+export type UsersResult = QueryResultMany<Profile>
+export type UserCreateResult = QueryResult<Profile>
+export type UserUpdateResult = QueryResult<Profile>
 export interface UserDeleteResult {
   success: boolean
   error: string | null

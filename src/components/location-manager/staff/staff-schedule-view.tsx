@@ -1,5 +1,7 @@
 import { Database } from "@/types/database.types"
-import { Avatar, AvatarFallback, AvatarImage, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Badge } from "@/components/ui"
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Badge } from '@/components/ui/badge'
 type StaffMember = Database['public']['Tables']['staff_profiles']['Row'] & {
   profiles?: Database['public']['Tables']['profiles']['Row'] | null
 }

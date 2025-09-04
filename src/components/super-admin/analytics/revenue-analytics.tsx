@@ -8,7 +8,11 @@ import {
   DollarSign, Users, CreditCard, 
   Target, AlertTriangle, ArrowUpRight, ArrowDownRight, Loader2
 } from "lucide-react"
-import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, Progress, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui"
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 interface RevenueMetrics {
   mrr: number // Monthly Recurring Revenue
   arr: number // Annual Recurring Revenue
@@ -73,10 +77,10 @@ export function RevenueAnalytics() {
         paybackPeriod: 2.4
       })
       setRevenueByTier([
-        { tier: "Enterprise", revenue: 62715, customers: 45, percentage: 40, color: "#8884d8" },
-        { tier: "Professional", revenue: 47037, customers: 234, percentage: 30, color: "#82ca9d" },
-        { tier: "Standard", revenue: 31358, customers: 567, percentage: 20, color: "#ffc658" },
-        { tier: "Basic", revenue: 15679, customers: 388, percentage: 10, color: "#ff8042" }
+        { tier: "Enterprise", revenue: 62715, customers: 45, percentage: 40, color: "hsl(var(--chart-1))" },
+        { tier: "Professional", revenue: 47037, customers: 234, percentage: 30, color: "hsl(var(--chart-2))" },
+        { tier: "Standard", revenue: 31358, customers: 567, percentage: 20, color: "hsl(var(--chart-3))" },
+        { tier: "Basic", revenue: 15679, customers: 388, percentage: 10, color: "hsl(var(--chart-4))" }
       ])
       setChurnAnalysis([
         { month: "Jan", newCustomers: 120, churnedCustomers: 45, netGrowth: 75, churnRate: 4.8 },
@@ -106,7 +110,7 @@ export function RevenueAnalytics() {
         { month: "Nov", projected: 204000, optimistic: 220000, pessimistic: 190000 },
         { month: "Dec", projected: 215000, optimistic: 235000, pessimistic: 198000 }
       ])
-    } catch (error) {
+    } catch (_error) {
     } finally {
       setLoading(false)
     }
@@ -151,8 +155,8 @@ export function RevenueAnalytics() {
           <CardContent>
             <div className="text-2xl font-bold">${metrics?.mrr.toLocaleString()}</div>
             <div className="flex items-center mt-2">
-              <ArrowUpRight className="h-4 w-4 text-green-600 mr-1" />
-              <span className="text-sm text-green-600">+{metrics?.growthRate}%</span>
+              <ArrowUpRight className="h-4 w-4 text-primary mr-1" />
+              <span className="text-sm text-primary">+{metrics?.growthRate}%</span>
             </div>
           </CardContent>
         </Card>
@@ -187,8 +191,8 @@ export function RevenueAnalytics() {
           <CardContent>
             <div className="text-2xl font-bold">{metrics?.churnRate}%</div>
             <div className="flex items-center mt-2">
-              <ArrowDownRight className="h-4 w-4 text-red-600 mr-1" />
-              <span className="text-sm text-red-600">+0.3% from last month</span>
+              <ArrowDownRight className="h-4 w-4 text-destructive mr-1" />
+              <span className="text-sm text-destructive">+0.3% from last month</span>
             </div>
           </CardContent>
         </Card>
@@ -245,7 +249,7 @@ export function RevenueAnalytics() {
                       cx="50%"
                       cy="50%"
                       outerRadius={100}
-                      fill="#8884d8"
+                      fill="hsl(var(--primary))"
                       dataKey="revenue"
                       label={(entry) => `${entry.tier}: $${(entry.revenue / 1000).toFixed(0)}k`}
                     >
@@ -260,7 +264,7 @@ export function RevenueAnalytics() {
                   {revenueByTier.map((tier) => (
                     <div key={tier.tier} className="flex justify-between items-center p-3 border rounded-lg">
                       <div className="flex items-center gap-3">
-                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: tier.color }} />
+                        <div className="w-3 h-3 rounded-full bg-primary" />
                         <div>
                           <p className="font-medium">{tier.tier}</p>
                           <p className="text-sm text-muted-foreground">{tier.customers} customers</p>
@@ -291,9 +295,9 @@ export function RevenueAnalytics() {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="newCustomers" fill="#82ca9d" name="New Customers" />
-                  <Bar dataKey="churnedCustomers" fill="#ff8042" name="Churned Customers" />
-                  <Line type="monotone" dataKey="netGrowth" stroke="#8884d8" name="Net Growth" />
+                  <Bar dataKey="newCustomers" fill="hsl(var(--chart-2))" name="New Customers" />
+                  <Bar dataKey="churnedCustomers" fill="hsl(var(--destructive))" name="Churned Customers" />
+                  <Line type="monotone" dataKey="netGrowth" stroke="hsl(var(--chart-1))" name="Net Growth" />
                 </BarChart>
               </ResponsiveContainer>
               <div className="mt-6 grid grid-cols-2 gap-4">
@@ -332,7 +336,7 @@ export function RevenueAnalytics() {
                   <XAxis type="number" />
                   <YAxis dataKey="method" type="category" width={100} />
                   <Tooltip formatter={(value: number) => `$${value.toLocaleString()}`} />
-                  <Bar dataKey="revenue" fill="#8884d8" />
+                  <Bar dataKey="revenue" fill="hsl(var(--chart-1))" />
                 </BarChart>
               </ResponsiveContainer>
               <div className="mt-6 space-y-3">
@@ -373,10 +377,10 @@ export function RevenueAnalytics() {
                   <YAxis />
                   <Tooltip formatter={(value: number) => `$${value.toLocaleString()}`} />
                   <Legend />
-                  <Area type="monotone" dataKey="actual" stroke="#8884d8" fill="#8884d8" fillOpacity={0.8} name="Actual" />
-                  <Area type="monotone" dataKey="projected" stroke="#82ca9d" fill="#82ca9d" fillOpacity={0.6} name="Projected" />
-                  <Area type="monotone" dataKey="optimistic" stroke="#ffc658" fill="#ffc658" fillOpacity={0.3} name="Optimistic" />
-                  <Area type="monotone" dataKey="pessimistic" stroke="#ff8042" fill="#ff8042" fillOpacity={0.3} name="Pessimistic" />
+                  <Area type="monotone" dataKey="actual" stroke="hsl(var(--chart-1))" fill="hsl(var(--chart-1))" fillOpacity={0.8} name="Actual" />
+                  <Area type="monotone" dataKey="projected" stroke="hsl(var(--chart-2))" fill="hsl(var(--chart-2))" fillOpacity={0.6} name="Projected" />
+                  <Area type="monotone" dataKey="optimistic" stroke="hsl(var(--chart-3))" fill="hsl(var(--chart-3))" fillOpacity={0.3} name="Optimistic" />
+                  <Area type="monotone" dataKey="pessimistic" stroke="hsl(var(--chart-4))" fill="hsl(var(--chart-4))" fillOpacity={0.3} name="Pessimistic" />
                 </AreaChart>
               </ResponsiveContainer>
               <div className="mt-6 grid grid-cols-3 gap-4">

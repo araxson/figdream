@@ -5,8 +5,12 @@ import { TrendingUp, TrendingDown, Users, DollarSign, Activity, CreditCard } fro
 import { toast } from "sonner"
 import { createClient } from "@/lib/database/supabase/client"
 import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from "recharts"
-import { startOfMonth, subMonths, format } from "date-fns"
-import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, Progress, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Skeleton} from "@/components/ui"
+import { startOfMonth, subMonths } from "date-fns"
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Skeleton } from '@/components/ui/skeleton'
 interface SubscriptionMetrics {
   totalRevenue: number
   monthlyRecurringRevenue: number
@@ -50,8 +54,7 @@ export function SubscriptionAnalytics() {
           .gte("event_date", startDate.toISOString())
           .order("event_date", { ascending: true })
         
-        setSubscriptions(subscriptions || [])
-        setSubscriptionEvents(events || [])
+        // Data loaded - process metrics directly
         calculateMetrics(subscriptions || [], events || [])
       } catch (_error) {
         toast.error("Failed to load subscription analytics")
@@ -92,19 +95,11 @@ export function SubscriptionAnalytics() {
       : 0
     
     // Calculate growth rate (simplified without async)
-    const growthRate = 10 // Placeholder - should be calculated from historical data
+    const growthRate = 0 // TODO: Calculate from historical subscription data
     
-    // Generate revenue history (mock data for demo)
-    const now = new Date()
-    const revenueHistory = []
-    for (let i = 5; i >= 0; i--) {
-      const monthDate = subMonths(now, i)
-      revenueHistory.push({
-        month: format(monthDate, "MMM"),
-        revenue: Math.floor(Math.random() * 50000) + 30000,
-        subscribers: Math.floor(Math.random() * 200) + 100
-      })
-    }
+    // TODO: Generate revenue history from actual data instead of mock data
+    const revenueHistory: Array<{ month: string; revenue: number; subscribers: number }> = []
+    // Implementation needed: Query subscription_events table for historical revenue data
     
     setMetrics({
       totalRevenue,
@@ -114,7 +109,7 @@ export function SubscriptionAnalytics() {
       activeSubscribers: activeSubscriptions.length,
       churnRate,
       growthRate,
-      trialConversions: Math.floor(Math.random() * 30) + 10, // Mock data
+      trialConversions: 0, // TODO: Calculate from actual trial conversion data
       planDistribution,
       revenueHistory
     })

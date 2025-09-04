@@ -1,5 +1,7 @@
 'use client'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Badge, Alert, AlertDescription } from '@/components/ui'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle, Shield, Lock, UserX, Key, AlertTriangle } from 'lucide-react'
 interface SecurityMonitorProps {
   securityEventsData: Array<Record<string, unknown>>

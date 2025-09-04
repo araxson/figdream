@@ -1,11 +1,9 @@
 'use client'
 import { useState } from 'react'
-import {
-  Calendar,
-  Badge,
-  ScrollArea,
-  Button,
-} from '@/components/ui'
+import { Calendar } from '@/components/ui/calendar'
+import { Badge } from '@/components/ui/badge'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Button } from '@/components/ui/button'
 import { format } from 'date-fns'
 import { Database } from '@/types/database.types'
 import { deleteBlockedTime } from '@/lib/data-access/blocked-times'

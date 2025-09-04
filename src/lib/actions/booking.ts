@@ -14,7 +14,8 @@ import {
   getBookingConflicts
 } from '@/lib/data-access/bookings'
 import { getLocationServices } from '@/lib/data-access/services'
-import { getUserWithRole } from '@/lib/data-access/auth/verify'
+// Note: Auth imports removed as they're not currently used in this file
+// import { requireAuth, requireRole, getAuthContext } from '@/lib/data-access/auth/dal-security'
 type BookingStatus = Database['public']['Enums']['booking_status']
 // Validation schemas
 const createBookingSchema = z.object({
@@ -138,8 +139,8 @@ export async function createBookingAction(formData: FormData | Record<string, un
     // TODO: Create calendar events
     // Revalidate relevant paths
     revalidatePath('/customer/appointments')
-    revalidatePath('/location/appointments')
-    revalidatePath('/staff/appointments')
+    revalidatePath('/location-manager/appointments')
+    revalidatePath('/staff-member/appointments')
     return { 
       success: true, 
       booking: booking,
@@ -212,8 +213,8 @@ export async function updateBookingAction(formData: FormData | Record<string, un
     }
     // Revalidate paths
     revalidatePath('/customer/appointments')
-    revalidatePath('/location/appointments')
-    revalidatePath('/staff/appointments')
+    revalidatePath('/location-manager/appointments')
+    revalidatePath('/staff-member/appointments')
     return { 
       success: true, 
       booking: updatedBooking,
@@ -255,8 +256,8 @@ export async function cancelBookingAction(formData: FormData | Record<string, un
     // TODO: Update calendar events
     // Revalidate paths
     revalidatePath('/customer/appointments')
-    revalidatePath('/location/appointments')
-    revalidatePath('/staff/appointments')
+    revalidatePath('/location-manager/appointments')
+    revalidatePath('/staff-member/appointments')
     return { 
       success: true, 
       booking: cancelledBooking,
@@ -324,8 +325,8 @@ export async function rescheduleBookingAction(formData: FormData | Record<string
     // TODO: Update calendar events
     // Revalidate paths
     revalidatePath('/customer/appointments')
-    revalidatePath('/location/appointments')
-    revalidatePath('/staff/appointments')
+    revalidatePath('/location-manager/appointments')
+    revalidatePath('/staff-member/appointments')
     return { 
       success: true, 
       booking: rescheduledBooking,
@@ -367,8 +368,8 @@ export async function updateBookingStatusAction(formData: FormData) {
     // TODO: Send status change notifications
     // Revalidate paths
     revalidatePath('/customer/appointments')
-    revalidatePath('/location/appointments')
-    revalidatePath('/staff/appointments')
+    revalidatePath('/location-manager/appointments')
+    revalidatePath('/staff-member/appointments')
     return { 
       success: true, 
       booking: updatedBooking,
@@ -502,8 +503,8 @@ export async function completeBookingAction(formData: FormData) {
     // TODO: Request review/feedback
     // Revalidate paths
     revalidatePath('/customer/appointments')
-    revalidatePath('/location/appointments') 
-    revalidatePath('/staff/appointments')
+    revalidatePath('/location-manager/appointments') 
+    revalidatePath('/staff-member/appointments')
     return { 
       success: true, 
       booking: completedBooking,
@@ -538,8 +539,8 @@ export async function markNoShowAction(formData: FormData) {
     // TODO: Process no-show fees if applicable
     // Revalidate paths
     revalidatePath('/customer/appointments')
-    revalidatePath('/location/appointments')
-    revalidatePath('/staff/appointments')
+    revalidatePath('/location-manager/appointments')
+    revalidatePath('/staff-member/appointments')
     return { 
       success: true, 
       booking: updatedBooking,

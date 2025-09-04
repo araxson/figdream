@@ -1,30 +1,15 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  Button,
-  Input,
-  Label,
-  Textarea,
-  RadioGroup,
-  RadioGroupItem,
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Badge
-} from '@/components/ui'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
 import { Loader2, Plus, Minus, Check, ChevronsUpDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -37,7 +22,7 @@ interface PointsAdjustmentDialogProps {
   children?: React.ReactNode
   onSuccess?: () => void
 }
-export default function PointsAdjustmentDialog({ 
+function PointsAdjustmentDialog({ 
   salonId,
   customerId: initialCustomerId,
   children,
@@ -355,3 +340,7 @@ export default function PointsAdjustmentDialog({
     </Dialog>
   )
 }
+
+PointsAdjustmentDialog.displayName = 'PointsAdjustmentDialog'
+
+export default PointsAdjustmentDialog

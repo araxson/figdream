@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { RoleAssignmentDialog } from '@/components/super-admin/users/roles/role-assignment-dialog'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/database/supabase/server'
 
 export const metadata: Metadata = {

@@ -81,7 +81,7 @@ export async function optOutPhone(optOut: SmsOptOutInsert) {
     if (updateError) {
     }
   }
-  revalidatePath('/salon-admin/marketing/sms')
+  revalidatePath('/salon-owner/marketing/sms-opt-outs')
   return data
 }
 // Remove opt-out (re-subscribe)
@@ -115,7 +115,7 @@ export async function removeOptOut(id: string) {
     if (updateError) {
     }
   }
-  revalidatePath('/salon-admin/marketing/sms')
+  revalidatePath('/salon-owner/marketing/sms-opt-outs')
   return { success: true }
 }
 // Bulk opt-out from CSV or list
@@ -148,7 +148,7 @@ export async function bulkOptOut(
   if (error) {
     throw new Error('Failed to bulk opt-out phone numbers')
   }
-  revalidatePath('/salon-admin/marketing/sms')
+  revalidatePath('/salon-owner/marketing/sms-opt-outs')
   return { 
     success: true, 
     count: data.length,

@@ -2,7 +2,9 @@
 import { format } from "date-fns"
 import { Clock, MapPin, DollarSign, Calendar } from "lucide-react"
 import type { Database } from "@/types/database.types"
-import { Badge, Button, Card, CardContent } from "@/components/ui"
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 type Schedule = Database["public"]["Tables"]["staff_schedules"]["Row"]
 interface ShiftCardProps {
   schedule: Schedule & {

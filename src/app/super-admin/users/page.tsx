@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { getUsers } from '@/lib/data-access/users'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 
 export const metadata: Metadata = {
   title: 'User Management',

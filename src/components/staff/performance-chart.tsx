@@ -1,5 +1,5 @@
 import { getStaffUtilization, getStaffEarnings } from '@/lib/data-access/staff';
-import { RevenueChart } from '@/components/salon-owner/analytics/revenue-chart';
+import { RevenueChart } from '@/components/salon-owner/analytics/charts/revenue-chart';
 interface PerformanceChartProps {
   staffId: string;
 }

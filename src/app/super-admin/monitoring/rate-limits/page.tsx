@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { getRateLimitStats } from '@/lib/data-access/security/rate-limits'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 export const metadata: Metadata = {
   title: 'Rate Limiting',

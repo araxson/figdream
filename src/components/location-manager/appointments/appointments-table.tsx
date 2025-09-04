@@ -1,13 +1,6 @@
 import { Database } from "@/types/database.types"
-import {
-  Badge,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui"
+import { Badge } from '@/components/ui/badge'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { format } from "date-fns"
 import { AlertCircle, CheckCircle, Clock, XCircle } from "lucide-react"
 type Appointment = Database['public']['Views']['location_appointments_view']['Row']

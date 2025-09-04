@@ -1,22 +1,11 @@
 'use client'
 import { useState } from 'react'
 import { Database } from '@/types/database.types'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-  Button,
-  Textarea,
-  Label,
-  Alert,
-  AlertDescription,
-} from '@/components/ui'
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { toast } from 'sonner'
 import { X, AlertTriangle } from 'lucide-react'
 type Appointment = Database['public']['Tables']['appointments']['Row']
@@ -37,7 +26,7 @@ interface CancelAppointmentDialogProps {
   onCancel?: (appointmentId: string, reason: string) => Promise<void>
   trigger?: React.ReactNode
 }
-export default function CancelAppointmentDialog({
+function CancelAppointmentDialog({
   appointment,
   onCancel,
   trigger
@@ -183,3 +172,7 @@ export default function CancelAppointmentDialog({
     </AlertDialog>
   )
 }
+
+CancelAppointmentDialog.displayName = 'CancelAppointmentDialog'
+
+export default CancelAppointmentDialog

@@ -3,7 +3,13 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Form, FormControl, FormField, FormItem, FormLabel, FormMessage, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Switch, Textarea } from "@/components/ui"
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Switch } from '@/components/ui/switch'
+import { Textarea } from '@/components/ui/textarea'
 import { UserPlus, Clock, User, Phone, Mail, Loader2, Calendar } from "lucide-react"
 import { createClient } from "@/lib/database/supabase/client"
 import { toast } from "sonner"
@@ -36,7 +42,7 @@ export function WaitlistEntryForm({ onSuccess, onCancel }: WaitlistEntryFormProp
       preferredTime: "",
       flexibleSchedule: false,
       notes: ""}})
-  async function onSubmit(data: WaitlistFormData) {
+  async function onSubmit(_data: WaitlistFormData) {
     setLoading(true)
     try {
       const _supabase = createClient()
@@ -44,7 +50,7 @@ export function WaitlistEntryForm({ onSuccess, onCancel }: WaitlistEntryFormProp
       toast.success("Customer added to waitlist successfully")
       form.reset()
       onSuccess?.()
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to add to waitlist")
     } finally {
       setLoading(false)

@@ -1,18 +1,10 @@
 'use client'
 import { useState } from 'react'
-import {
-  Button,
-  Calendar,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Badge,
-} from '@/components/ui'
+import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Badge } from '@/components/ui/badge'
 import { CalendarIcon, Filter, X } from 'lucide-react'
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
@@ -48,13 +40,13 @@ export function AuditFilters({ initialFilters }: AuditFiltersProps) {
     if (filters.entity) params.set('entity', filters.entity)
     if (startDate) params.set('startDate', format(startDate, 'yyyy-MM-dd'))
     if (endDate) params.set('endDate', format(endDate, 'yyyy-MM-dd'))
-    router.push(`/admin/audit?${params.toString()}`)
+    router.push(`/super-admin/audit?${params.toString()}`)
   }
   const clearFilters = () => {
     setFilters({})
     setStartDate(undefined)
     setEndDate(undefined)
-    router.push('/admin/audit')
+    router.push('/super-admin/audit')
   }
   const hasFilters = filters.action || filters.entity || startDate || endDate
   return (

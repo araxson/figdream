@@ -1,6 +1,9 @@
 'use client';
 import { useState } from 'react';
-import { Button, Label, Switch, Input } from '@/components/ui';
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
+import { Input } from '@/components/ui/input';
 import { Loader2, Save, Bell, Calendar, Gift } from 'lucide-react';
 import { toast } from 'sonner';
 import { upsertNotificationSettings } from '@/lib/data-access/notification-settings';
@@ -12,7 +15,7 @@ interface NotificationSettingsFormProps {
   currentSettings: NotificationSettings | null;
   customerPreferences: CustomerPreferences | null;
 }
-export default function NotificationSettingsForm({ 
+function NotificationSettingsForm({ 
   userId, 
   currentSettings,
   _customerPreferences 
@@ -124,3 +127,7 @@ export default function NotificationSettingsForm({
     </form>
   );
 }
+
+NotificationSettingsForm.displayName = 'NotificationSettingsForm'
+
+export default NotificationSettingsForm

@@ -4,7 +4,13 @@ import { useState, useEffect } from "react"
 import { format, startOfWeek, endOfWeek, eachDayOfInterval, isSameDay, addDays, addWeeks, subWeeks } from "date-fns"
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Clock, Users, MapPin, AlertCircle } from "lucide-react"
 import type { Database } from "@/types/database.types"
-import { Badge, Button, Calendar, Card, CardContent, CardHeader, CardTitle, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, ScrollArea, Tabs, TabsList, TabsTrigger } from "@/components/ui"
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 type Schedule = Database["public"]["Tables"]["staff_schedules"]["Row"]
 type Appointment = Database["public"]["Tables"]["appointments"]["Row"]
 type TimeOff = Database["public"]["Tables"]["time_off_requests"]["Row"]
@@ -52,7 +58,7 @@ export function ScheduleCalendar({ staffId, canEdit = false }: ScheduleCalendarP
           setAppointments(await appointmentsRes.json())
           setTimeOffRequests(await timeOffRes.json())
         }
-      } catch (error) {
+      } catch (_error) {
       } finally {
         setLoading(false)
       }
@@ -91,7 +97,7 @@ export function ScheduleCalendar({ staffId, canEdit = false }: ScheduleCalendarP
       if (response.ok) {
         await fetchScheduleData()
       }
-    } catch (error) {
+    } catch (_error) {
     } finally {
       setDraggedSlot(null)
     }

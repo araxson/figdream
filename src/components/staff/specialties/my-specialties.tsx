@@ -5,7 +5,9 @@ import { Award, Sparkles } from "lucide-react"
 import { toast } from "sonner"
 import { createClient } from "@/lib/database/supabase/client"
 import type { Database } from "@/types/database.types"
-import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, Skeleton } from "@/components/ui"
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 type _StaffSpecialty = Database["public"]["Tables"]["staff_specialties"]["Row"]
 interface MySpecialtiesProps {
   staffId: string
@@ -24,7 +26,7 @@ export function MySpecialties({ staffId }: MySpecialtiesProps) {
         .order("created_at", { ascending: true })
       if (error) throw error
       setSpecialties(data?.map(s => s.specialty) || [])
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to load your specialties")
     } finally {
       setLoading(false)

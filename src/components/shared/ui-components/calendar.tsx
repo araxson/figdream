@@ -1,16 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { Calendar as CalendarUI } from '@/components/ui/form/calendar'
-import { Button } from '@/components/ui/form/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/data-display/card'
-import { Badge } from '@/components/ui/feedback/badge'
+import { Calendar as CalendarUI } from '@/components/ui/calendar'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { format, addMonths, subMonths } from 'date-fns'
 interface CalendarEvent {

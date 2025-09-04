@@ -1,29 +1,13 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { Database } from '@/types/database.types'
-import {
-  Input,
-  Button,
-  Badge,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuTrigger,
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationNext,
-  PaginationPrevious
-} from '@/components/ui'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu'
+import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from '@/components/ui/pagination'
 import { Search, Trophy, Star, Award, Coins } from 'lucide-react'
 import PointsAdjustmentDialog from './points-adjustment-dialog'
 type Customer = Database['public']['Tables']['customers']['Row'] & {
@@ -34,7 +18,7 @@ type Customer = Database['public']['Tables']['customers']['Row'] & {
 interface CustomerPointsTableProps {
   salonId: string
 }
-export default function CustomerPointsTable({ salonId }: CustomerPointsTableProps) {
+function CustomerPointsTable({ salonId }: CustomerPointsTableProps) {
   const [customers, setCustomers] = useState<Customer[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
@@ -272,3 +256,7 @@ export default function CustomerPointsTable({ salonId }: CustomerPointsTableProp
     </div>
   )
 }
+
+CustomerPointsTable.displayName = 'CustomerPointsTable'
+
+export default CustomerPointsTable

@@ -1,6 +1,12 @@
 "use client"
 import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button, Input, Label, Checkbox, Alert, AlertDescription, Badge } from "@/components/ui"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
 import { 
   Gift, 
   CreditCard, 
@@ -74,7 +80,7 @@ export function GiftCardRedemption({
       const amountToApply = Math.min(giftCard.balance, totalAmount)
       setAppliedAmount(amountToApply)
       setCustomAmount(amountToApply.toString())
-    } catch (err) {
+    } catch (_err) {
       setError("Invalid gift card code")
     } finally {
       setVerifying(false)

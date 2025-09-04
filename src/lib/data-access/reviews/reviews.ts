@@ -4,7 +4,7 @@
  */
 'use server'
 import { createClient } from '@/lib/database/supabase/server'
-import { getUser } from '@/lib/data-access/auth'
+import { verifySession } from '@/lib/data-access/auth/session'
 import type { Database } from '@/types/database.types'
 import {
   createReviewSchema,
@@ -32,8 +32,9 @@ type ReviewRequest = Database['public']['Tables']['review_requests']['Row']
  */
 export async function createReview(input: CreateReviewInput): Promise<Review | null> {
   const supabase = await createClient()
-  const { user } = await getUser()
-  if (!user) {
+  // CRITICAL: Use secure DAL auth pattern for CVE-2025-29927
+  const { user, error } = await verifySession()
+  if (error || !user) {
     throw new Error('Authentication required')
   }
   try {
@@ -93,8 +94,9 @@ export async function createReview(input: CreateReviewInput): Promise<Review | n
  */
 export async function updateReview(input: UpdateReviewInput): Promise<Review | null> {
   const supabase = await createClient()
-  const { user } = await getUser()
-  if (!user) {
+  // CRITICAL: Use secure DAL auth pattern for CVE-2025-29927
+  const { user, error } = await verifySession()
+  if (error || !user) {
     throw new Error('Authentication required')
   }
   try {
@@ -266,8 +268,9 @@ export async function getReviews(filters: ReviewFilterInput): Promise<{
  */
 export async function moderateReview(input: ModerateReviewInput): Promise<boolean> {
   const supabase = await createClient()
-  const { user } = await getUser()
-  if (!user) {
+  // CRITICAL: Use secure DAL auth pattern for CVE-2025-29927
+  const { user, error } = await verifySession()
+  if (error || !user) {
     throw new Error('Authentication required')
   }
   try {
@@ -340,8 +343,9 @@ export async function moderateReview(input: ModerateReviewInput): Promise<boolea
  */
 export async function createReviewResponse(input: CreateReviewResponseInput): Promise<ReviewResponse | null> {
   const supabase = await createClient()
-  const { user } = await getUser()
-  if (!user) {
+  // CRITICAL: Use secure DAL auth pattern for CVE-2025-29927
+  const { user, error } = await verifySession()
+  if (error || !user) {
     throw new Error('Authentication required')
   }
   try {
@@ -419,8 +423,9 @@ export async function createReviewResponse(input: CreateReviewResponseInput): Pr
  */
 export async function createReviewRequest(input: CreateReviewRequestInput): Promise<ReviewRequest | null> {
   const supabase = await createClient()
-  const { user } = await getUser()
-  if (!user) {
+  // CRITICAL: Use secure DAL auth pattern for CVE-2025-29927
+  const { user, error } = await verifySession()
+  if (error || !user) {
     throw new Error('Authentication required')
   }
   try {

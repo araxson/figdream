@@ -1,6 +1,8 @@
 "use client"
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Skeleton, Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui"
+import { useState, useEffect, useCallback } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { toast } from "sonner"
 import { createClient } from "@/lib/database/supabase/client"
@@ -25,11 +27,7 @@ export function EarningsChart({ staffId, dateRange }: EarningsChartProps) {
   const [viewType, setViewType] = useState<"daily" | "weekly" | "monthly">("daily")
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
-  useEffect(() => {
-    loadChartData()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [staffId, dateRange, viewType])
-  const loadChartData = async () => {
+  const loadChartData = useCallback(async () => {
     try {
       setLoading(true)
       const { data, error } = await supabase
@@ -42,13 +40,18 @@ export function EarningsChart({ staffId, dateRange }: EarningsChartProps) {
       if (error) throw error
       const processedData = processDataByViewType(data || [], viewType)
       setChartData(processedData)
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to load earnings chart")
     } finally {
       setLoading(false)
     }
-  }
-  const processDataByViewType = (
+  }, [staffId, dateRange, viewType, supabase, processDataByViewType])
+
+  useEffect(() => {
+    loadChartData()
+  }, [loadChartData])
+
+  const processDataByViewType = useCallback((
     earnings: StaffEarnings[],
     type: "daily" | "weekly" | "monthly"
   ): ChartData[] => {
@@ -87,8 +90,9 @@ export function EarningsChart({ staffId, dateRange }: EarningsChartProps) {
       }
     })
     return Array.from(dataMap.values())
-  }
-  const formatDateKey = (date: Date, type: "daily" | "weekly" | "monthly"): string => {
+  }, [dateRange, formatDateKey])
+
+  const formatDateKey = useCallback((date: Date, type: "daily" | "weekly" | "monthly"): string => {
     if (type === "daily") {
       return format(date, "MMM dd")
     } else if (type === "weekly") {
@@ -96,15 +100,17 @@ export function EarningsChart({ staffId, dateRange }: EarningsChartProps) {
     } else {
       return format(date, "MMM yyyy")
     }
-  }
-  const formatCurrency = (value: number) => {
+  }, [])
+
+  const formatCurrency = useCallback((value: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0}).format(value)
-  }
-  const CustomTooltip = ({ active, payload, label }: { 
+  }, [])
+
+  const CustomTooltip = useCallback(({ active, payload, label }: { 
     active?: boolean; 
     payload?: Array<{ color: string; name: string; value: number }>; 
     label?: string 
@@ -130,7 +136,7 @@ export function EarningsChart({ staffId, dateRange }: EarningsChartProps) {
       )
     }
     return null
-  }
+  }, [formatCurrency])
   if (loading) {
     return (
       <Card>

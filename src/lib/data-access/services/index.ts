@@ -1,42 +1,23 @@
 'use server'
 import { createClient } from '@/lib/database/supabase/server'
-import type { Database } from '@/types/database.types'
+import { 
+  Service, 
+  ServiceInsert, 
+  ServiceUpdate,
+  ServiceCategory,
+  ServiceWithCategory
+} from '@/types/db-types'
 import { getUserWithRole } from '@/lib/data-access/auth/verify'
 import { canAccessSalon, canAccessLocation } from '@/lib/data-access/auth/permissions'
 import { hasMinimumRoleLevel } from '@/lib/data-access/auth/roles'
-type Service = Database['public']['Tables']['services']['Row']
-type ServiceInsert = Database['public']['Tables']['services']['Insert']
-type ServiceUpdate = Database['public']['Tables']['services']['Update']
-type Category = Database['public']['Tables']['service_categories']['Row']
-// SalonService type removed - table doesn't exist in database
-export interface ServiceResult {
-  data: Service | null
-  error: string | null
-}
-export interface ServicesResult {
-  data: Service[] | null
-  error: string | null
-}
-export interface ServiceWithCategory extends Service {
-  category: Category | null
-}
-export interface ServiceWithCategoryResult {
-  data: ServiceWithCategory | null
-  error: string | null
-}
-export interface ServicesWithCategoryResult {
-  data: ServiceWithCategory[] | null
-  error: string | null
-}
-// SalonServiceResult interface removed - table doesn't exist
-export interface ServiceCreateResult {
-  data: Service | null
-  error: string | null
-}
-export interface ServiceUpdateResult {
-  data: Service | null
-  error: string | null
-}
+
+// Service result types using database types
+export type ServiceResult = { data: Service | null; error: string | null }
+export type ServicesResult = { data: Service[] | null; error: string | null }
+export type ServiceWithCategoryResult = { data: ServiceWithCategory | null; error: string | null }
+export type ServicesWithCategoryResult = { data: ServiceWithCategory[] | null; error: string | null }
+export type ServiceCreateResult = QueryResult<Service>
+export type ServiceUpdateResult = QueryResult<Service>
 export interface ServiceDeleteResult {
   success: boolean
   error: string | null
@@ -87,7 +68,7 @@ export async function getServiceWithCategory(serviceId: string): Promise<Service
     }
     const serviceWithCategory: ServiceWithCategory = {
       ...service,
-      category: service.service_categories as Category || null
+      category: service.service_categories as ServiceCategory || null
     }
     return { data: serviceWithCategory, error: null }
   } catch (_error) {

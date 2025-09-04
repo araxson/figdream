@@ -1,6 +1,8 @@
 
 import { Calendar, Heart, User, TrendingUp, AlertCircle } from "lucide-react"
-import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle, Progress } from "@/components/ui"
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
 interface TimeOffBalanceProps {
   staffId: string
   balance: {

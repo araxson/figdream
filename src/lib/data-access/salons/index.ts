@@ -1,40 +1,22 @@
 'use server'
 import { createClient } from '@/lib/database/supabase/server'
-import type { Database } from '@/types/database.types'
+import {
+  Salon,
+  SalonInsert,
+  SalonUpdate,
+  SalonWithLocations
+} from '@/types/db-types'
 import { getUserWithRole } from '@/lib/data-access/auth/verify'
 import { canAccessSalon } from '@/lib/data-access/auth/permissions'
 import { canManageSalons } from '@/lib/data-access/auth/roles'
-type Salon = Database['public']['Tables']['salons']['Row']
-type SalonInsert = Database['public']['Tables']['salons']['Insert']
-type SalonUpdate = Database['public']['Tables']['salons']['Update']
-type Location = Database['public']['Tables']['locations']['Row']
-export interface SalonResult {
-  data: Salon | null
-  error: string | null
-}
-export interface SalonsResult {
-  data: Salon[] | null
-  error: string | null
-}
-export interface SalonWithLocations extends Salon {
-  locations: Location[]
-}
-export interface SalonWithLocationsResult {
-  data: SalonWithLocations | null
-  error: string | null
-}
-export interface SalonsWithLocationsResult {
-  data: SalonWithLocations[] | null
-  error: string | null
-}
-export interface SalonCreateResult {
-  data: Salon | null
-  error: string | null
-}
-export interface SalonUpdateResult {
-  data: Salon | null
-  error: string | null
-}
+
+// Result types using database types  
+export type SalonResult = { data: Salon | null; error: string | null }
+export type SalonsResult = { data: Salon[] | null; error: string | null }
+export type SalonWithLocationsResult = { data: SalonWithLocations | null; error: string | null }
+export type SalonsWithLocationsResult = { data: SalonWithLocations[] | null; error: string | null }
+export type SalonCreateResult = QueryResult<Salon>
+export type SalonUpdateResult = QueryResult<Salon>
 export interface SalonDeleteResult {
   success: boolean
   error: string | null

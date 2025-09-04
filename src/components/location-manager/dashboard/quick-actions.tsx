@@ -1,5 +1,5 @@
 import { Database } from "@/types/database.types"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 type Location = Database['public']['Tables']['locations']['Row']
 interface QuickActionsProps {
   metrics: {

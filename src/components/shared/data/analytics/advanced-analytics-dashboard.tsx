@@ -1,5 +1,6 @@
 'use client'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Progress } from "@/components/ui"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
 import { 
   AreaChart, 
   Area, 
@@ -88,8 +89,8 @@ export function AdvancedAnalyticsDashboard({
       return {
         name: staff.display_name as string || 'Unknown',
         utilization: Math.round(avgUtilization),
-        appointments: Math.floor(Math.random() * 50), // This should be from actual data
-        revenue: Math.floor(Math.random() * 5000) // This should be from actual data
+        appointments: 0, // TODO: Calculate from actual appointment data
+        revenue: 0 // TODO: Calculate from actual payment/earnings data
       }
     })
   }

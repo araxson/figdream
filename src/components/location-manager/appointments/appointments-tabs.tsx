@@ -1,5 +1,6 @@
 import { Database } from "@/types/database.types"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Calendar } from "lucide-react"
 import { AppointmentsTable } from "./appointments-table"
 type Appointment = Database['public']['Views']['location_appointments_view']['Row']

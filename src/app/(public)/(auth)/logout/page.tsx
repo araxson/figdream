@@ -2,7 +2,10 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Alert, AlertDescription, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Separator } from "@/components/ui"
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
 import { toast } from 'sonner'
 import { 
   LogOut, CheckCircle, Home, ArrowLeft, 
@@ -61,7 +64,7 @@ export default function LogoutPage() {
   }
   const handleStaySignedIn = () => {
     toast.info('Returning to dashboard...')
-    router.push('/dashboard')
+    router.push('/')
   }
   const stopAutoRedirect = () => {
     setAutoRedirect(false)
@@ -172,7 +175,7 @@ export default function LogoutPage() {
         <CardFooter className="flex flex-col gap-2">
           <Button
             className="w-full"
-            onClick={() => router.push('/auth/login')}
+            onClick={() => router.push('/login')}
           >
             <User className="mr-2 h-4 w-4" />
             Sign In Again

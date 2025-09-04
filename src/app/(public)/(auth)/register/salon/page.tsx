@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { RegisterForm } from '@/components/auth/register-form'
 import { Building, TrendingUp, Users, BarChart, Zap } from 'lucide-react'
 export default function SalonRegistrationPage() {

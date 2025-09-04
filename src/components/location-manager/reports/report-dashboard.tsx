@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/data-display/card"
-import { Progress } from "@/components/ui/feedback/progress"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
 import { TrendingUp, DollarSign, BarChart, Calendar } from "lucide-react"
 import { format } from "date-fns"
 interface ReportDashboardProps {

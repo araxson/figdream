@@ -1,33 +1,24 @@
 'use server'
 import { createClient } from '@/lib/database/supabase/server'
-import { Database } from '@/types/database.types'
-// Type definitions for appointment operations
-type _Appointment = Database['public']['Tables']['appointments']['Row']
-type _AppointmentInsert = Database['public']['Tables']['appointments']['Insert']
-type _AppointmentUpdate = Database['public']['Tables']['appointments']['Update']
-export type AppointmentStatus = Database['public']['Tables']['appointments']['Row']['status']
-export interface CreateAppointmentInput {
-  customer_id: string
-  salon_id: string
-  location_id: string
-  staff_id: string
-  appointment_date: string
-  start_time: string
-  end_time: string
-  total_amount?: number
-  notes?: string
-  is_walk_in?: boolean
-  services?: Database['public']['Tables']['appointments']['Row']['services']
-  total_duration?: number
+import {
+  AppointmentInsert,
+  AppointmentUpdate,
+  AppointmentStatus
+} from '@/types/db-types'
+
+// Input types for appointment operations - based on database Insert types
+export interface CreateAppointmentInput extends Omit<AppointmentInsert, 'id' | 'created_at' | 'updated_at'> {
+  end_time: string // Added field not in database but needed for business logic
+  is_walk_in?: boolean // Added field for business logic
 }
-export interface UpdateAppointmentInput {
-  status?: AppointmentStatus
-  staff_id?: string
-  start_time?: string
-  end_time?: string
-  notes?: string
-  total_amount?: number
+
+// Update input based on database Update types
+export interface UpdateAppointmentInput extends Partial<AppointmentUpdate> {
+  // Non-empty interface to avoid ESLint error
+  id?: string
 }
+
+// Filter interface for querying appointments
 export interface AppointmentFilters {
   salon_id?: string
   location_id?: string

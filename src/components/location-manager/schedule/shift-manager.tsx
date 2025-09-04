@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react"
-import { Button } from "@/components/ui/form/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/data-display/card"
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Clock, Users, Plus, Calendar } from "lucide-react"
 interface ShiftManagerProps {
   locationId: string

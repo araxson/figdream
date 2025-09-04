@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { AlertTriangle, BarChart3, Shield } from 'lucide-react'
 
 export const metadata: Metadata = {
@@ -19,7 +19,7 @@ export default async function MonitoringPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Link href="/admin/monitoring/api-usage">
+        <Link href="/super-admin/monitoring/api-usage">
           <Card className="hover:shadow-lg transition-shadow cursor-pointer">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -37,7 +37,7 @@ export default async function MonitoringPage() {
           </Card>
         </Link>
 
-        <Link href="/admin/monitoring/error-logs">
+        <Link href="/super-admin/monitoring/error-logs">
           <Card className="hover:shadow-lg transition-shadow cursor-pointer">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -55,7 +55,7 @@ export default async function MonitoringPage() {
           </Card>
         </Link>
 
-        <Link href="/admin/monitoring/rate-limits">
+        <Link href="/super-admin/monitoring/rate-limits">
           <Card className="hover:shadow-lg transition-shadow cursor-pointer">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">

@@ -1,13 +1,13 @@
 "use client"
 import { useState } from "react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/data-display/avatar"
-import { Badge } from "@/components/ui/feedback/badge"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/data-display/card"
-import { Button } from "@/components/ui/form/button"
-import { Input } from "@/components/ui/form/input"
-import { Label } from "@/components/ui/form/label"
-import { Textarea } from "@/components/ui/form/textarea"
-import { Mail, Phone, Building, Shield, Camera, Calendar } from "lucide-react"
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { Mail, Phone, Building, Shield, Camera, Calendar, Eye, EyeOff } from "lucide-react"
 import { hasPermission } from "@/lib/permissions"
 import type { Database } from "@/types/database.types"
 type UserRole = Database["public"]["Enums"]["user_role_type"]
@@ -71,6 +71,9 @@ export function ProfileForm({
     new: "",
     confirm: ""
   })
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false)
+  const [showNewPassword, setShowNewPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const canEditOwnProfile = hasPermission(userRole, "settings.edit_own")
   const canEditOrganization = hasPermission(userRole, "settings.edit_all")
   const handleSaveProfile = async () => {
@@ -355,30 +358,81 @@ export function ProfileForm({
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="current-password">Current Password</Label>
-                <Input 
-                  id="current-password" 
-                  type="password"
-                  value={passwordForm.current}
-                  onChange={(e) => setPasswordForm({...passwordForm, current: e.target.value})}
-                />
+                <div className="relative">
+                  <Input 
+                    id="current-password" 
+                    type={showCurrentPassword ? "text" : "password"}
+                    value={passwordForm.current}
+                    onChange={(e) => setPasswordForm({...passwordForm, current: e.target.value})}
+                    className="pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                    className="absolute right-0 top-0 h-full px-3"
+                    tabIndex={-1}
+                  >
+                    {showCurrentPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="new-password">New Password</Label>
-                <Input 
-                  id="new-password" 
-                  type="password"
-                  value={passwordForm.new}
-                  onChange={(e) => setPasswordForm({...passwordForm, new: e.target.value})}
-                />
+                <div className="relative">
+                  <Input 
+                    id="new-password" 
+                    type={showNewPassword ? "text" : "password"}
+                    value={passwordForm.new}
+                    onChange={(e) => setPasswordForm({...passwordForm, new: e.target.value})}
+                    className="pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    className="absolute right-0 top-0 h-full px-3"
+                    tabIndex={-1}
+                  >
+                    {showNewPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="confirm-password">Confirm New Password</Label>
-                <Input 
-                  id="confirm-password" 
-                  type="password"
-                  value={passwordForm.confirm}
-                  onChange={(e) => setPasswordForm({...passwordForm, confirm: e.target.value})}
-                />
+                <div className="relative">
+                  <Input 
+                    id="confirm-password" 
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={passwordForm.confirm}
+                    onChange={(e) => setPasswordForm({...passwordForm, confirm: e.target.value})}
+                    className="pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-0 top-0 h-full px-3"
+                    tabIndex={-1}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
               </div>
               <Button 
                 onClick={handleChangePassword}

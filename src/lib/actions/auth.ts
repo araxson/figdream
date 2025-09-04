@@ -1,5 +1,14 @@
 'use server'
-import { signInWithEmail, signUpWithEmail, signOut, sendPasswordResetOtp, verifyPasswordResetOtp, updatePasswordWithOtp, verifyOtp } from '@/lib/data-access/auth'
+import { signInWithEmail, signUpWithEmail, signOut } from '@/lib/data-access/auth'
+import { 
+  sendSignupOTP, 
+  verifySignupOTP, 
+  sendPasswordResetOTP as sendResetOTP,
+  verifyPasswordResetOTP as verifyResetOTP,
+  resetPasswordWithOTP,
+  sendLoginOTP,
+  verifyLoginOTP
+} from '@/lib/data-access/auth/otp-auth'
 import { requireCSRFToken } from '@/lib/data-access/security/csrf'
 import { createClient } from '@/lib/database/supabase/server'
 import { redirect } from 'next/navigation'
@@ -82,15 +91,20 @@ export async function signInAction(formData: FormData) {
   const role = roleData?.role || 'customer'
   switch (role) {
     case 'super_admin':
-      redirect('/admin')
+      redirect('/super-admin')
+      break
     case 'salon_owner':
-      redirect('/salon')
+      redirect('/salon-owner')  
+      break
     case 'location_manager':
-      redirect('/location')
+      redirect('/location-manager')
+      break
     case 'staff':
-      redirect('/staff')
+      redirect('/staff-member')
+      break
     default:
       redirect('/customer')
+      break
   }
 }
 /**
@@ -147,7 +161,7 @@ export async function signUpAction(formData: FormData) {
     }
   }
   // Redirect to email verification or dashboard
-  redirect('/auth/verify-email')
+  redirect('/verify-email')
 }
 /**
  * Sign out server action
@@ -176,16 +190,17 @@ export async function resetPasswordAction(formData: FormData) {
       errors: validatedData.error.flatten().fieldErrors
     }
   }
-  const { error } = await sendPasswordResetOtp(validatedData.data.email)
-  if (error) {
+  const result = await sendResetOTP(validatedData.data.email)
+  if (result.error) {
     return {
       success: false,
-      error: error.message
+      error: result.error.message
     }
   }
   return {
     success: true,
-    message: 'Verification code sent. Please check your email.'
+    message: result.message || 'Verification code sent. Please check your email.',
+    otp: result.otp // For development only
   }
 }
 /**
@@ -202,23 +217,23 @@ export async function verifyResetOtpAction(formData: FormData) {
     }
   }
   const email = formData.get('email') as string
-  const token = formData.get('token') as string
-  if (!email || !token) {
+  const otp = formData.get('otp') as string
+  if (!email || !otp) {
     return {
       success: false,
       error: 'Email and verification code are required'
     }
   }
-  const { success, error } = await verifyPasswordResetOtp(email, token)
-  if (error) {
+  const result = await verifyResetOTP(email, otp)
+  if (result.error) {
     return {
       success: false,
-      error: error.message
+      error: result.error.message
     }
   }
   return {
-    success: success,
-    message: 'Verification successful. You can now reset your password.'
+    success: true,
+    message: result.message || 'Verification successful. You can now reset your password.'
   }
 }
 /**
@@ -246,20 +261,23 @@ export async function updatePasswordWithOtpAction(formData: FormData) {
     }
   }
   const email = formData.get('email') as string
-  const token = formData.get('token') as string
-  if (!email || !token) {
+  
+  if (!email) {
     return {
       success: false,
-      error: 'Verification session expired. Please start over.'
+      error: 'Email is required. Please start over.'
     }
   }
-  const { error } = await updatePasswordWithOtp(email, token, validatedData.data.password)
-  if (error) {
+  
+  const result = await resetPasswordWithOTP(email, validatedData.data.password)
+  
+  if (result.error) {
     return {
       success: false,
-      error: error.message
+      error: result.error.message
     }
   }
+  
   return {
     success: true,
     message: 'Password updated successfully'
@@ -276,49 +294,158 @@ export async function updatePasswordAction(_formData: FormData) {
   }
 }
 /**
- * Verify OTP server action
+ * Send signup OTP server action
  */
-export async function verifyOtpAction(formData: FormData) {
+export async function sendSignupOtpAction(formData: FormData) {
   const email = formData.get('email') as string
-  const token = formData.get('token') as string
-  if (!email || !token) {
+  const firstName = formData.get('firstName') as string
+  const lastName = formData.get('lastName') as string
+  const role = formData.get('role') as string || 'customer'
+  const phone = formData.get('phone') as string
+  
+  if (!email) {
     return {
       success: false,
-      error: 'Email and verification code are required'
+      error: 'Email is required'
     }
   }
-  const { user, session, error } = await verifyOtp(email, token)
-  if (error) {
+  
+  const metadata = {
+    first_name: firstName,
+    last_name: lastName,
+    full_name: `${firstName} ${lastName}`,
+    role,
+    phone
+  }
+  
+  const result = await sendSignupOTP(email, metadata)
+  
+  if (result.error) {
     return {
       success: false,
-      error: error.message
+      error: result.error.message
     }
   }
-  if (!user || !session) {
+  
+  return {
+    success: true,
+    message: result.message,
+    otp: result.otp // For development only
+  }
+}
+
+/**
+ * Verify signup OTP and complete registration
+ */
+export async function verifySignupOtpAction(formData: FormData) {
+  const email = formData.get('email') as string
+  const otp = formData.get('otp') as string
+  const password = formData.get('password') as string
+  
+  if (!email || !otp || !password) {
     return {
       success: false,
-      error: 'Verification failed'
+      error: 'Email, OTP code, and password are required'
     }
   }
-  // Get role from user_roles table instead of metadata
+  
+  const result = await verifySignupOTP(email, otp, password)
+  
+  if (result.error) {
+    return {
+      success: false,
+      error: result.error.message
+    }
+  }
+  
+  // Redirect to appropriate dashboard
+  redirect('/verify-email-success')
+}
+
+/**
+ * Send login OTP server action
+ */
+export async function sendLoginOtpAction(formData: FormData) {
+  const email = formData.get('email') as string
+  
+  if (!email) {
+    return {
+      success: false,
+      error: 'Email is required'
+    }
+  }
+  
+  const result = await sendLoginOTP(email)
+  
+  if (result.error) {
+    return {
+      success: false,
+      error: result.error.message
+    }
+  }
+  
+  return {
+    success: true,
+    message: result.message,
+    otp: result.otp // For development only
+  }
+}
+
+/**
+ * Verify login OTP server action
+ */
+export async function verifyLoginOtpAction(formData: FormData) {
+  const email = formData.get('email') as string
+  const otp = formData.get('otp') as string
+  
+  if (!email || !otp) {
+    return {
+      success: false,
+      error: 'Email and OTP code are required'
+    }
+  }
+  
+  const result = await verifyLoginOTP(email, otp)
+  
+  if (result.error) {
+    return {
+      success: false,
+      error: result.error.message
+    }
+  }
+  
+  // Get role and redirect
   const supabase = await createClient()
-  const { data: roleData } = await supabase
-    .from('user_roles')
-    .select('role')
-    .eq('user_id', user.id)
-    .eq('is_active', true)
-    .maybeSingle()
-  const role = roleData?.role || 'customer'
-  switch (role) {
-    case 'super_admin':
-      redirect('/admin')
-    case 'salon_owner':
-      redirect('/salon')
-    case 'location_manager':
-      redirect('/location')
-    case 'staff':
-      redirect('/staff')
-    default:
-      redirect('/customer')
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  if (user) {
+    const { data: roleData } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .eq('is_active', true)
+      .maybeSingle()
+    
+    const role = roleData?.role || 'customer'
+    
+    switch (role) {
+      case 'super_admin':
+        redirect('/super-admin')
+        break
+      case 'salon_owner':
+        redirect('/salon-owner')  
+        break
+      case 'location_manager':
+        redirect('/location-manager')
+        break
+      case 'staff':
+        redirect('/staff-member')
+        break
+      default:
+        redirect('/customer')
+        break
+    }
   }
+  
+  redirect('/customer')
 }

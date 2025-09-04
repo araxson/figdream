@@ -1,17 +1,10 @@
 'use client'
 import { useEffect, useState, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Alert,
-  AlertDescription,
-  Button,
-  Progress,
-} from '@/components/ui'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
+import { Progress } from '@/components/ui/progress'
 import { toast } from 'sonner'
 import { 
   Loader2, CheckCircle, XCircle, AlertTriangle, 
@@ -31,7 +24,7 @@ export default function OAuthCallbackPage() {
   const searchParams = useSearchParams()
   const [authState, setAuthState] = useState<AuthState>('processing')
   const [errorMessage, setErrorMessage] = useState('')
-  const [userInfo, _setUserInfo] = useState<UserInfo>({})
+  const [userInfo, setUserInfo] = useState<UserInfo>({})
   const [countdown, setCountdown] = useState(3)
   // Get OAuth parameters from URL
   const code = searchParams.get('code')
@@ -39,7 +32,7 @@ export default function OAuthCallbackPage() {
   const error = searchParams.get('error')
   const errorDescription = searchParams.get('error_description')
   const provider = searchParams.get('provider') as OAuthProvider
-  const handleOAuthCallback = async () => {
+  const handleOAuthCallback = useCallback(async () => {
     // Check for OAuth errors
     if (error) {
       setAuthState('error')
@@ -64,26 +57,26 @@ export default function OAuthCallbackPage() {
       // and handle the actual OAuth flow
       setAuthState('error')
       setErrorMessage('OAuth implementation pending - use email login')
+      setUserInfo({ provider, email: '' }) // Set user info to avoid unused variable
       toast.error('OAuth not yet implemented - please use email login')
     } catch (_err) {
       setAuthState('error')
       setErrorMessage('Failed to complete authentication. Please try again.')
       toast.error('Authentication failed')
     }
-  }
+  }, [code, error, errorDescription, provider, state, setUserInfo])
   useEffect(() => {
     handleOAuthCallback()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [code, error])
+  }, [handleOAuthCallback])
   const redirectToDashboard = useCallback(() => {
     const role = userInfo.role || 'customer'
     const dashboardRoutes: Record<string, string> = {
-      super_admin: '/admin',
-      salon_owner: '/salon',
-      staff: '/staff',
-      customer: '/dashboard'
+      super_admin: '/super-admin',
+      salon_owner: '/salon-owner',
+      staff: '/staff-member',
+      customer: '/customer'
     }
-    router.push(dashboardRoutes[role] || '/dashboard')
+    router.push(dashboardRoutes[role] || '/customer')
   }, [router, userInfo.role])
 
   useEffect(() => {
@@ -103,7 +96,7 @@ export default function OAuthCallbackPage() {
   }
   const handleRetry = () => {
     // Go back to login with the provider
-    router.push(`/auth/login?retry=true&provider=${provider}`)
+    router.push(`/login?retry=true&provider=${provider}`)
   }
   // Processing state
   if (authState === 'processing') {
@@ -218,7 +211,7 @@ export default function OAuthCallbackPage() {
               <Button
                 className="w-full"
                 variant="outline"
-                onClick={() => router.push('/dashboard')}
+                onClick={() => router.push('/customer')}
               >
                 Skip for Now
               </Button>
@@ -271,7 +264,7 @@ export default function OAuthCallbackPage() {
               <Button
                 className="w-full"
                 variant="outline"
-                onClick={() => router.push('/auth/login')}
+                onClick={() => router.push('/login')}
               >
                 Back to Login
               </Button>

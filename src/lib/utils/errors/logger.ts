@@ -164,13 +164,8 @@ class ErrorLogger {
   /**
    * Log to console with appropriate styling
    */
-  private logToConsole(errorLog: ErrorLog): void {
-    const style = this.getConsoleStyle(errorLog.severity)
-    const prefix = `[${errorLog.severity.toUpperCase()}] [${errorLog.category}]`
-    if (errorLog.context) {
-    }
-    if (errorLog.stack) {
-    }
+  private logToConsole(_errorLog: ErrorLog): void {
+    // Console logging disabled in production
   }
   /**
    * Get console style based on severity

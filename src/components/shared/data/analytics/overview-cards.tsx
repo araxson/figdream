@@ -1,5 +1,5 @@
 'use client'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { TrendingUp, TrendingDown, DollarSign, Users, Calendar, Clock } from 'lucide-react'
 interface OverviewCardsProps {
   data?: {

@@ -17,29 +17,15 @@ interface RewardData {
   service_id?: string | null
   points_multiplier?: number | null
 }
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  Button,
-  Input,
-  Label,
-  Textarea,
-  Switch,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Calendar,
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from '@/components/ui'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { Switch } from '@/components/ui/switch'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Calendar } from '@/components/ui/calendar'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
@@ -50,7 +36,7 @@ interface RewardDialogProps {
   reward?: LoyaltyReward
   children?: React.ReactNode
 }
-export default function RewardDialog({
+function RewardDialog({
   salonId,
   reward,
   children
@@ -419,3 +405,7 @@ export default function RewardDialog({
     </Dialog>
   )
 }
+
+RewardDialog.displayName = 'RewardDialog'
+
+export default RewardDialog

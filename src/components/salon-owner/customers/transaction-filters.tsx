@@ -1,26 +1,14 @@
 'use client'
 import { useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
-import {
-  Card,
-  CardContent,
-  Button,
-  Input,
-  Label,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Calendar,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger
-} from '@/components/ui'
+import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Calendar } from '@/components/ui/calendar'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { CalendarIcon, Search, X } from 'lucide-react'
@@ -33,7 +21,7 @@ interface TransactionFiltersProps {
     end?: string
   }
 }
-export default function TransactionFilters({ 
+function TransactionFilters({ 
   salonId: _salonId, 
   currentFilters 
 }: TransactionFiltersProps) {
@@ -186,3 +174,7 @@ export default function TransactionFilters({
     </TooltipProvider>
   )
 }
+
+TransactionFilters.displayName = 'TransactionFilters'
+
+export default TransactionFilters

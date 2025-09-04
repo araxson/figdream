@@ -1,7 +1,13 @@
-"use client"
-import { useState } from 'react'
+'use client'
+
+import { useState, useEffect } from 'react'
 import { format } from 'date-fns'
-import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, ScrollArea, Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui"
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Skeleton } from '@/components/ui/skeleton'
+import { AppointmentsTabs } from './appointments-tabs'
 import {
   Calendar,
   Clock,
@@ -14,20 +20,139 @@ import {
   X,
   MessageSquare,
   Star,
+  RefreshCw,
+  CalendarX,
+  CheckCircle2,
+  AlertCircle,
 } from 'lucide-react'
 import Link from 'next/link'
+import { createClient } from '@/lib/database/supabase/client'
 import type { Database } from '@/types/database.types'
+
 type Appointment = Database['public']['Tables']['appointments']['Row'] & {
   services: Database['public']['Tables']['services']['Row'] | null
   staff_profiles: Database['public']['Tables']['staff_profiles']['Row'] | null
   salons: Database['public']['Tables']['salons']['Row'] | null
 }
-interface AppointmentsListProps {
-  appointments: Appointment[]
-  customerId: string
-}
-export function AppointmentsList({ appointments }: AppointmentsListProps) {
-  const [activeTab, setActiveTab] = useState<'upcoming' | 'past' | 'cancelled'>('upcoming')
+
+export function AppointmentsList() {
+  const [appointments, setAppointments] = useState<Appointment[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetchAppointments()
+  }, [])
+
+  async function fetchAppointments() {
+    try {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      
+      if (!user) {
+        setError('Please sign in to view your appointments')
+        return
+      }
+
+      const { data, error } = await supabase
+        .from('appointments')
+        .select(`
+          *,
+          services (
+            id,
+            name,
+            description,
+            price,
+            duration_minutes
+          ),
+          staff_profiles (
+            id,
+            full_name,
+            title,
+            avatar_url
+          ),
+          salons (
+            id,
+            name,
+            address_line_1,
+            phone
+          )
+        `)
+        .eq('customer_id', user.id)
+        .order('appointment_date', { ascending: false })
+
+      if (error) {
+        setError('Failed to load appointments')
+        return
+      }
+
+      setAppointments(data || [])
+    } catch (_err) {
+      setError('Failed to load appointments')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        {/* Animated skeleton loader */}
+        {[1, 2, 3].map((i) => (
+          <Card key={i} className="overflow-hidden">
+            <CardHeader className="pb-3">
+              <div className="flex items-start justify-between">
+                <div className="space-y-2">
+                  <Skeleton className="h-5 w-48" />
+                  <Skeleton className="h-4 w-32" />
+                </div>
+                <Skeleton className="h-6 w-20 rounded-full" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-4 w-4 rounded" />
+                  <Skeleton className="h-4 w-36" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-4 w-4 rounded" />
+                  <Skeleton className="h-4 w-28" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-4 w-4 rounded" />
+                  <Skeleton className="h-4 w-32" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <Card className="border-destructive/50 bg-destructive/5">
+        <CardContent className="flex flex-col items-center justify-center py-12">
+          <div className="rounded-full bg-destructive/10 p-3 mb-4">
+            <X className="h-6 w-6 text-destructive" />
+          </div>
+          <h3 className="font-semibold text-lg mb-2">Unable to load appointments</h3>
+          <p className="text-sm text-muted-foreground text-center mb-4">{error}</p>
+          <Button 
+            variant="outline" 
+            onClick={fetchAppointments}
+            className="mt-2"
+            size="sm"
+          >
+            <RefreshCw className="mr-2 h-4 w-4" />
+            Try Again
+          </Button>
+        </CardContent>
+      </Card>
+    )
+  }
   const now = new Date()
   const categorizedAppointments = {
     upcoming: appointments.filter(apt => 
@@ -64,22 +189,44 @@ export function AppointmentsList({ appointments }: AppointmentsListProps) {
         return 'bg-gray-100 text-gray-800'
     }
   }
-  const renderAppointmentCard = (appointment: Appointment) => (
-    <Card key={appointment.id} className="mb-4">
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
-          <div className="space-y-1">
-            <CardTitle className="text-lg">
-              {appointment.services?.name || 'Service'}
-            </CardTitle>
-            <CardDescription>
-              {appointment.salons?.name || 'Salon'}
-            </CardDescription>
-          </div>
-          <div className="flex items-center gap-2">
-            <Badge className={getStatusColor(appointment.status)}>
-              {appointment.status.replace('_', ' ')}
-            </Badge>
+  const renderAppointmentCard = (appointment: Appointment) => {
+    const isPast = new Date(appointment.appointment_date) < now
+    const statusIcon = {
+      confirmed: <CheckCircle2 className="h-3 w-3" />,
+      pending: <AlertCircle className="h-3 w-3" />,
+      completed: <CheckCircle2 className="h-3 w-3" />,
+      cancelled: <X className="h-3 w-3" />,
+      no_show: <CalendarX className="h-3 w-3" />,
+    }[appointment.status]
+
+    return (
+      <Card 
+        key={appointment.id} 
+        className={`mb-4 transition-all duration-200 hover:shadow-md ${
+          isPast ? 'opacity-75' : ''
+        }`}
+      >
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between">
+            <div className="space-y-1 flex-1">
+              <CardTitle className="text-lg font-semibold">
+                {appointment.services?.name || 'Service'}
+              </CardTitle>
+              <CardDescription className="flex items-center gap-1">
+                <MapPin className="h-3 w-3" />
+                {appointment.salons?.name || 'Salon'}
+              </CardDescription>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge 
+                className={`${getStatusColor(appointment.status)} flex items-center gap-1`}
+                variant="secondary"
+              >
+                {statusIcon}
+                <span className="capitalize">
+                  {appointment.status.replace('_', ' ')}
+                </span>
+              </Badge>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -137,9 +284,12 @@ export function AppointmentsList({ appointments }: AppointmentsListProps) {
             </span>
           </div>
           <div className="flex items-center gap-2 text-muted-foreground">
-            <User className="h-4 w-4" />
+            <User className="h-4 w-4 flex-shrink-0" />
             <span>
-              {appointment.staff_profiles?.title || 'Staff Member'}
+              {appointment.staff_profiles?.full_name || appointment.staff_profiles?.title || 'Staff Member'}
+              {appointment.staff_profiles?.title && (
+                <span className="text-xs ml-1">• {appointment.staff_profiles.title}</span>
+              )}
             </span>
           </div>
           {false && (
@@ -161,69 +311,11 @@ export function AppointmentsList({ appointments }: AppointmentsListProps) {
       </CardContent>
     </Card>
   )
+  }
   return (
-    <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'upcoming' | 'past' | 'cancelled')}>
-      <TabsList className="grid w-full grid-cols-3">
-        <TabsTrigger value="upcoming">
-          Upcoming ({categorizedAppointments.upcoming.length})
-        </TabsTrigger>
-        <TabsTrigger value="past">
-          Past ({categorizedAppointments.past.length})
-        </TabsTrigger>
-        <TabsTrigger value="cancelled">
-          Cancelled ({categorizedAppointments.cancelled.length})
-        </TabsTrigger>
-      </TabsList>
-      <TabsContent value="upcoming" className="mt-4">
-        <ScrollArea className="h-[600px] pr-4">
-          {categorizedAppointments.upcoming.length === 0 ? (
-            <Card>
-              <CardContent className="pt-6">
-                <p className="text-center text-muted-foreground">
-                  No upcoming appointments
-                </p>
-                <div className="mt-4 text-center">
-                  <Button asChild>
-                    <Link href="/book">Book an Appointment</Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ) : (
-            categorizedAppointments.upcoming.map(renderAppointmentCard)
-          )}
-        </ScrollArea>
-      </TabsContent>
-      <TabsContent value="past" className="mt-4">
-        <ScrollArea className="h-[600px] pr-4">
-          {categorizedAppointments.past.length === 0 ? (
-            <Card>
-              <CardContent className="pt-6">
-                <p className="text-center text-muted-foreground">
-                  No past appointments
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            categorizedAppointments.past.map(renderAppointmentCard)
-          )}
-        </ScrollArea>
-      </TabsContent>
-      <TabsContent value="cancelled" className="mt-4">
-        <ScrollArea className="h-[600px] pr-4">
-          {categorizedAppointments.cancelled.length === 0 ? (
-            <Card>
-              <CardContent className="pt-6">
-                <p className="text-center text-muted-foreground">
-                  No cancelled appointments
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            categorizedAppointments.cancelled.map(renderAppointmentCard)
-          )}
-        </ScrollArea>
-      </TabsContent>
-    </Tabs>
+    <AppointmentsTabs
+      categorizedAppointments={categorizedAppointments}
+      renderAppointmentCard={renderAppointmentCard}
+    />
   )
 }

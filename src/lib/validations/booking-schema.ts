@@ -1,13 +1,16 @@
 /**
  * Booking validation schemas for FigDream
- * Comprehensive Zod schemas for booking creation, updates, cancellation, and management
+ * Aligned with database.types.ts for type safety
  */
 import { z } from 'zod'
 import { locationIdSchema } from './salon-schema'
 import { serviceIdSchema } from './service-schema'
 import { userIdSchema } from './user-schema'
-// Booking status enum
-const BookingStatus = z.enum(['pending', 'confirmed', 'cancelled', 'completed', 'no_show'], {
+// Note: AppointmentStatus type import removed as it's not used
+// import type { AppointmentStatus } from '@/types/db-types'
+
+// Booking status enum - matches database appointment_status enum
+const BookingStatus = z.enum(['scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show'] as const, {
   message: 'Invalid booking status'
 })
 // Time format regex (HH:MM or HH:MM:SS)

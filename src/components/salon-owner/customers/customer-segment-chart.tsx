@@ -9,7 +9,7 @@ interface CustomerSegmentChartProps {
     new: { count: number; percentage: number }
   }
 }
-export default function CustomerSegmentChart({ segments }: CustomerSegmentChartProps) {
+function CustomerSegmentChart({ segments }: CustomerSegmentChartProps) {
   const data = [
     { name: 'VIP', value: segments.vip.count, percentage: segments.vip.percentage },
     { name: 'Regular', value: segments.regular.count, percentage: segments.regular.percentage },
@@ -61,3 +61,7 @@ export default function CustomerSegmentChart({ segments }: CustomerSegmentChartP
     </ResponsiveContainer>
   )
 }
+
+CustomerSegmentChart.displayName = 'CustomerSegmentChart'
+
+export default CustomerSegmentChart

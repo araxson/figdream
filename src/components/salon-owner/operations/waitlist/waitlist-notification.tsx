@@ -2,7 +2,8 @@
 import { useState } from "react"
 
 import { Bell, Mail, MessageSquare, Phone, Send } from "lucide-react"
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui"
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from "sonner"
 interface WaitlistNotificationProps {
   customerId: string

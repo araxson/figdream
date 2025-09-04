@@ -1,5 +1,6 @@
 'use client'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, ChartContainer} from "@/components/ui"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { ChartContainer } from '@/components/ui/chart'
 import { Pie, PieChart, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import { Users, UserPlus, UserCheck, TrendingUp } from 'lucide-react'
 interface CustomerInsightsProps {

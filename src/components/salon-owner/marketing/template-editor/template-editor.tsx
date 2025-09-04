@@ -1,8 +1,20 @@
 'use client'
-// Main component implementation
-// This is a placeholder - actual implementation needs to be migrated
-import { TemplateEditorProps } from './TemplateEditor.types'
 
-export function TemplateEditor(_props: TemplateEditorProps) {
-  return <div>Component implementation to be migrated</div>
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+export interface TemplateEditorProps {
+  className?: string
+}
+
+export function TemplateEditor({ className }: TemplateEditorProps) {
+  return (
+    <Card className={className}>
+      <CardHeader>
+        <CardTitle>Template Editor</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p>Component implementation pending</p>
+      </CardContent>
+    </Card>
+  )
 }

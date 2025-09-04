@@ -4,7 +4,12 @@ import { useState } from "react"
 import { format, differenceInDays } from "date-fns"
 import { MoreVertical, Download, Eye, X, Calendar } from "lucide-react"
 import type { Database } from "@/types/database.types"
-import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui"
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 type TimeOffRequest = Database["public"]["Tables"]["time_off_requests"]["Row"]
 interface TimeOffHistoryProps {
   staffId: string

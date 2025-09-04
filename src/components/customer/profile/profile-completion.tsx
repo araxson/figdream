@@ -1,6 +1,9 @@
 "use client"
 import { useEffect, useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Progress, Button, Badge } from "@/components/ui"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { CheckCircle2, Circle, Gift, User, Mail, Phone, Calendar, MapPin, Bell, CreditCard, Star } from "lucide-react"
 import Link from "next/link"
 import type { Database } from "@/types/database.types"
@@ -139,18 +142,18 @@ export function ProfileCompletion({ profile }: ProfileCompletionProps) {
             <Progress value={completionPercentage} className="h-3" />
           </div>
           {completionPercentage === 100 ? (
-            <div className="rounded-lg bg-green-50 dark:bg-green-900/20 p-4 text-center">
-              <Gift className="mx-auto h-8 w-8 text-green-600 dark:text-green-400 mb-2" />
-              <p className="font-medium text-green-900 dark:text-green-100">
+            <div className="rounded-lg border bg-card p-4 text-center">
+              <Gift className="mx-auto h-8 w-8 text-primary mb-2" />
+              <p className="font-medium">
                 Congratulations! Your profile is complete!
               </p>
-              <p className="text-sm text-green-700 dark:text-green-300 mt-1">
+              <p className="text-sm text-muted-foreground mt-1">
                 You&apos;ve earned all {totalPoints} points
               </p>
             </div>
           ) : (
-            <div className="rounded-lg bg-blue-50 dark:bg-blue-900/20 p-4">
-              <p className="text-sm text-blue-900 dark:text-blue-100">
+            <div className="rounded-lg border bg-muted/30 p-4">
+              <p className="text-sm">
                 Complete your profile to earn <strong>{totalPoints - earnedPoints} more points</strong> and unlock exclusive benefits!
               </p>
             </div>
@@ -219,7 +222,7 @@ export function ProfileCompletion({ profile }: ProfileCompletionProps) {
                     className="flex items-start gap-3 p-3 rounded-lg border bg-muted/50"
                   >
                     <div className="mt-0.5">
-                      <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />
+                      <CheckCircle2 className="h-5 w-5 text-primary" />
                     </div>
                     <div className="flex-1">
                       <div className="flex items-start justify-between">
@@ -232,7 +235,7 @@ export function ProfileCompletion({ profile }: ProfileCompletionProps) {
                             {item.description}
                           </p>
                         </div>
-                        <Badge variant="outline" className="text-green-600 dark:text-green-400">
+                        <Badge variant="outline">
                           +{item.points} pts
                         </Badge>
                       </div>

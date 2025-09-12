@@ -4,27 +4,25 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Search, MapPin, Star, Clock, AlertCircle } from 'lucide-react'
-import { useState, useEffect, useCallback } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { Database } from '@/types/database.types'
-import { useDebounce } from '@/hooks/utils/use-debounce'
-import { useToast } from '@/hooks/ui/use-toast'
-import { cn } from '@/lib/utils'
+import { Search, MapPin, Star } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { EmptyState } from '@/components/shared/ui-helpers/empty-states'
+import { LoadingCard } from '@/components/shared/ui-helpers/loading-states'
 
-type Salon = Database['public']['Tables']['salons']['Row'] & {
-  reviews: Array<{
-    rating: number
-  }>
-  services: Array<{
+interface SalonData {
+  id: string
+  name: string
+  description?: string | null
+  reviews?: Array<{ rating: number }>
+  services?: Array<{
     id: string
     name: string
     price: number
   }>
-  salon_locations: Array<{
+  salon_locations?: Array<{
     city: string
-    operating_hours: Database['public']['Tables']['salon_locations']['Row']['operating_hours']
+    operating_hours: unknown
   }>
 }
 
@@ -33,232 +31,161 @@ interface SalonSearchProps {
 }
 
 export function SalonSearch({ onSalonSelect }: SalonSearchProps) {
-  const [salons, setSalons] = useState<Salon[]>([])
+  const [salons, setSalons] = useState<SalonData[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [location, setLocation] = useState('')
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const supabase = createClient()
-  const toast = useToast()
-  
-  // Debounce search terms
-  const debouncedSearchTerm = useDebounce(searchTerm, 500)
-  const debouncedLocation = useDebounce(location, 500)
+  const router = useRouter()
 
-  const searchSalons = useCallback(async () => {
-    if (!isAuthenticated) {
-      setError('Please sign in to search for salons')
-      return
-    }
-    
-    setLoading(true)
-    setError(null)
-    
+  useEffect(() => {
+    fetchSalons()
+  }, [])
+
+  const fetchSalons = async () => {
     try {
-      // Verify authentication before query
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        throw new Error('Authentication required')
-      }
-      
-      let query = supabase
-        .from('salons')
-        .select(`
-          *,
-          reviews(rating),
-          services(id, name, price),
-          salon_locations(city, operating_hours)
-        `)
-        .eq('is_active', true)
-
-      if (debouncedSearchTerm) {
-        query = query.ilike('name', `%${debouncedSearchTerm}%`)
-      }
-
-      if (debouncedLocation) {
-        query = query.or(`address.ilike.%${debouncedLocation}%,salon_locations.city.ilike.%${debouncedLocation}%`)
-      }
-
-      const { data, error } = await query.limit(20)
-
-      if (error) throw error
-      setSalons(data || [])
-      
-      // Show success feedback for search
-      if (data && data.length === 0) {
-        toast.info('No salons found', 'Try adjusting your search criteria')
+      setLoading(true)
+      const response = await fetch('/api/salons/active')
+      if (response.ok) {
+        const data = await response.json()
+        setSalons(data)
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to search salons'
-      setError(errorMessage)
-      setSalons([])
-      
-      // Show error toast
-      toast.error('Search failed', errorMessage)
-      
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Error searching salons:', error)
-      }
+      console.error('Failed to fetch salons:', error)
     } finally {
       setLoading(false)
     }
-  }, [isAuthenticated, debouncedSearchTerm, debouncedLocation, supabase, toast])
+  }
 
-  // Check authentication on mount
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      setIsAuthenticated(!!user)
-      if (user) {
-        searchSalons()
-      } else {
-        setLoading(false)
-        setError('Please sign in to search for salons')
-      }
-    }
-    checkAuth()
-  }, [searchSalons, supabase.auth])
-  
-  // Auto-search when debounced values change
-  useEffect(() => {
-    if (isAuthenticated && (debouncedSearchTerm || debouncedLocation)) {
-      searchSalons()
-    }
-  }, [debouncedSearchTerm, debouncedLocation, isAuthenticated, searchSalons])
+  const handleSearch = () => {
+    const params = new URLSearchParams()
+    if (searchTerm) params.set('search', searchTerm)
+    if (location) params.set('location', location)
+    router.push(`/customer/book?${params.toString()}`)
+  }
 
-  const calculateAverageRating = (reviews: { rating: number }[]) => {
+  const calculateAverageRating = (reviews?: { rating: number }[]) => {
     if (!reviews || reviews.length === 0) return 0
-    const sum = reviews.reduce((acc, r) => acc + r.rating, 0)
+    const sum = reviews.reduce((acc, review) => acc + review.rating, 0)
     return (sum / reviews.length).toFixed(1)
   }
 
-  const getPriceRange = (services: { price: number }[]) => {
-    if (!services || services.length === 0) return '$'
-    const avg = services.reduce((acc, s) => acc + s.price, 0) / services.length
-    if (avg < 30) return '$'
-    if (avg < 60) return '$$'
-    if (avg < 100) return '$$$'
-    return '$$$$'
+  const filteredSalons = salons.filter(salon => {
+    const matchesSearch = !searchTerm || 
+      salon.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      salon.description?.toLowerCase().includes(searchTerm.toLowerCase())
+    
+    const matchesLocation = !location ||
+      salon.salon_locations?.some(loc => 
+        loc.city.toLowerCase().includes(location.toLowerCase())
+      )
+    
+    return matchesSearch && matchesLocation
+  })
+
+  if (loading) {
+    return <LoadingCard title="Finding Salons" message="Loading available salons..." />
   }
 
   return (
-    <div className={cn("space-y-6")}>
+    <div className="space-y-6">
+      {/* Search Bar */}
       <Card>
         <CardHeader>
-          <CardTitle>Find a Salon</CardTitle>
+          <CardTitle>Find Your Perfect Salon</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className={cn("space-y-4")}>
-            {error && (
-              <Alert variant="destructive">
-                <AlertCircle className={cn("h-4 w-4")} />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-            <div className={cn("flex gap-2")}>
+          <div className="flex gap-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
-                placeholder="Search by salon name..."
+                placeholder="Search salons or services..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={cn("flex-1")}
-                disabled={!isAuthenticated}
+                className="pl-10"
               />
+            </div>
+            <div className="flex-1 relative">
+              <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
-                placeholder="City or ZIP..."
+                placeholder="Enter city or area..."
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                className={cn("w-48")}
-                disabled={!isAuthenticated}
+                className="pl-10"
               />
-              <Button 
-                onClick={() => searchSalons()}
-                disabled={!isAuthenticated || loading}
-              >
-                <Search className={cn("h-4 w-4 mr-2")} />
-                {loading ? 'Searching...' : 'Search'}
-              </Button>
             </div>
+            <Button onClick={handleSearch}>
+              <Search className="h-4 w-4 mr-2" />
+              Search
+            </Button>
           </div>
         </CardContent>
       </Card>
 
-      {loading ? (
-        <div className={cn("flex items-center justify-center py-12")}>
-          Searching salons...
-        </div>
-      ) : salons.length === 0 ? (
-        <Card>
-          <CardContent className={cn("text-center py-12")}>
-            <p className={cn("text-muted-foreground")}>
-              No salons found. Try adjusting your search criteria.
-            </p>
-          </CardContent>
-        </Card>
+      {/* Results */}
+      {filteredSalons.length === 0 ? (
+        <EmptyState
+          title="No salons found"
+          description="Try adjusting your search criteria"
+          icon={Search}
+        />
       ) : (
-        <div className={cn("grid gap-4 md:grid-cols-2")}>
-          {salons.map((salon) => {
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {filteredSalons.map((salon) => {
             const avgRating = calculateAverageRating(salon.reviews)
-            const priceRange = getPriceRange(salon.services)
+            const location = salon.salon_locations?.[0]
             
             return (
-              <Card key={salon.id} className={cn("cursor-pointer hover:shadow-lg transition-shadow")}>
-                <CardContent className={cn("p-6")}>
-                  <div className={cn("space-y-3")}>
+              <Card 
+                key={salon.id} 
+                className="cursor-pointer hover:shadow-lg transition-shadow"
+                onClick={() => onSalonSelect?.(salon.id)}
+              >
+                <CardContent className="p-6">
+                  <div className="space-y-4">
                     <div>
-                      <h3 className={cn("font-semibold text-lg")}>{salon.name}</h3>
+                      <h3 className="font-semibold text-lg">{salon.name}</h3>
                       {salon.description && (
-                        <p className={cn("text-sm text-muted-foreground mt-1")}>
+                        <p className="text-sm text-muted-foreground mt-1">
                           {salon.description}
                         </p>
                       )}
                     </div>
-
-                    <div className={cn("flex items-center gap-4 text-sm")}>
-                      <div className={cn("flex items-center gap-1")}>
-                        <MapPin className={cn("h-3 w-3")} />
-                        <span>{salon.salon_locations?.[0]?.city || 'Location'}</span>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        {Number(avgRating) > 0 && (
+                          <>
+                            <Star className="h-4 w-4 fill-current text-yellow-500" />
+                            <span className="font-medium">{avgRating}</span>
+                            <span className="text-sm text-muted-foreground">
+                              ({salon.reviews?.length || 0} reviews)
+                            </span>
+                          </>
+                        )}
                       </div>
-                      {Number(avgRating) > 0 && (
-                        <div className={cn("flex items-center gap-1")}>
-                          <Star className={cn("h-3 w-3 fill-yellow-500 text-yellow-500")} />
-                          <span>{avgRating} ({salon.reviews.length})</span>
-                        </div>
-                      )}
-                      <Badge variant="secondary">{priceRange}</Badge>
                     </div>
-
-                    <div className={cn("flex items-center gap-2 text-sm text-muted-foreground")}>
-                      <Clock className={cn("h-3 w-3")} />
-                      <span>
-                        {JSON.stringify(salon.salon_locations?.[0]?.operating_hours) || 'Mon-Sat 9AM-7PM'}
-                      </span>
-                    </div>
-
-                    {salon.services && salon.services.length > 0 && (
-                      <div>
-                        <p className={cn("text-xs text-muted-foreground mb-2")}>Popular services:</p>
-                        <div className={cn("flex flex-wrap gap-1")}>
-                          {salon.services.slice(0, 3).map((service) => (
-                            <Badge key={service.id} variant="outline" className={cn("text-xs")}>
-                              {service.name}
-                            </Badge>
-                          ))}
-                          {salon.services.length > 3 && (
-                            <Badge variant="outline" className={cn("text-xs")}>
-                              +{salon.services.length - 3} more
-                            </Badge>
-                          )}
-                        </div>
+                    
+                    {location && (
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <MapPin className="h-4 w-4" />
+                        <span>{location.city}</span>
                       </div>
                     )}
-
-                    <Button 
-                      className={cn("w-full")}
-                      onClick={() => onSalonSelect?.(salon.id)}
-                    >
-                      View Details & Book
-                    </Button>
+                    
+                    {salon.services && salon.services.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {salon.services.slice(0, 3).map((service) => (
+                          <Badge key={service.id} variant="secondary">
+                            {service.name}
+                          </Badge>
+                        ))}
+                        {salon.services.length > 3 && (
+                          <Badge variant="outline">
+                            +{salon.services.length - 3} more
+                          </Badge>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>

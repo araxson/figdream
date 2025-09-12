@@ -5,13 +5,13 @@ import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import { Clock, Coffee } from 'lucide-react'
 import { useState, useEffect, useCallback } from 'react'
-import { useToast } from '@/hooks/ui/use-toast'
+import { useToast } from '@/hooks/use-toast'
 import { format } from 'date-fns'
-import { ScheduleData, ScheduleFormData, BreakFormData } from './schedule-types'
+import { ScheduleData, ScheduleFormData, BreakFormData } from '@/types/features/schedule-types'
 import { ScheduleForm } from './schedule-form'
 import { BreakForm } from './break-form'
 import { ScheduleDisplay } from './schedule-display'
-import { fetchScheduleData, saveSchedule, saveBreak } from './schedule-api'
+import { fetchScheduleData, saveSchedule, saveBreak } from '@/lib/api/services/schedule-api'
 
 export function StaffScheduleCalendar() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
@@ -33,7 +33,7 @@ export function StaffScheduleCalendar() {
     startTime: '12:00',
     endTime: '13:00'
   })
-  const toast = useToast()
+  const { toast } = useToast()
 
   const loadScheduleData = useCallback(async () => {
     const data = await fetchScheduleData(selectedDate)

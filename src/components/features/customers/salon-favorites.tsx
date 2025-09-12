@@ -1,9 +1,11 @@
+'use client'
+
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Heart, MapPin, Phone, Calendar } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { CustomerFavorite } from './favorites-types'
+import { CustomerFavorite } from '@/types/features/favorites-types'
 
 interface SalonFavoritesProps {
   favorites: CustomerFavorite[]
@@ -48,7 +50,7 @@ export function SalonFavorites({ favorites, onRemove }: SalonFavoritesProps) {
             <div className="flex gap-2">
               <Button
                 size="sm"
-                onClick={() => router.push(`/book/${favorite.salons?.id}`)}
+                onClick={() => router.push(`/customer/book/${favorite.salons?.id}`)}
               >
                 <Calendar className="h-4 w-4 mr-1" />
                 Book

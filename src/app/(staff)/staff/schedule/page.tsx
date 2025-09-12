@@ -1,5 +1,5 @@
 import { Suspense } from 'react'
-import { CalendarSkeleton, TableSkeleton } from '@/components/ui/skeleton-variants'
+import { CalendarSkeleton, TableSkeleton } from '@/components/shared/ui-helpers/skeleton-patterns'
 import { Skeleton } from '@/components/ui/skeleton'
 // import { ScheduleHeader } from '@/components/sections/staff/schedule/header'
 // import { WeeklySchedule } from '@/components/sections/staff/schedule/weekly'

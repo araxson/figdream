@@ -1,15 +1,19 @@
 import { Suspense } from 'react'
-// import { SalonsHeader } from '@/components/sections/admin/salons/header'
-// import { SalonsTable } from '@/components/sections/admin/salons/table'
-import { Skeleton } from '@/components/ui/skeleton'
+import { SalonsServer } from '@/components/features/salons/salons-server'
+import { CardGridSkeleton } from '@/components/shared/ui-helpers/skeleton-patterns'
 
 export default function AdminSalonsPage() {
   return (
     <div className="space-y-6">
-      {/* <SalonsHeader /> */}
+      <div>
+        <h1 className="text-3xl font-bold">Salons Management</h1>
+        <p className="text-muted-foreground">
+          Manage all registered salons on the platform
+        </p>
+      </div>
       
-      <Suspense fallback={<Skeleton className="h-[500px]" />}>
-        {/* <SalonsTable /> */}
+      <Suspense fallback={<CardGridSkeleton count={5} />}>
+        <SalonsServer />
       </Suspense>
     </div>
   )

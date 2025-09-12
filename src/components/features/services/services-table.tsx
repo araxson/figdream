@@ -176,8 +176,8 @@ export function ServicesTable() {
     
     // Apply sorting
     filtered.sort((a, b) => {
-      let aValue: any
-      let bValue: any
+      let aValue: string | number | boolean | undefined
+      let bValue: string | number | boolean | undefined
       
       if (sortField === 'category') {
         aValue = a.service_categories?.name || ''
@@ -187,9 +187,13 @@ export function ServicesTable() {
         bValue = b[sortField] || ''
       }
       
-      if (typeof aValue === 'string') {
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
         aValue = aValue.toLowerCase()
         bValue = bValue.toLowerCase()
+      }
+      
+      if (aValue === undefined || bValue === undefined) {
+        return 0
       }
       
       if (sortOrder === 'asc') {
@@ -234,7 +238,7 @@ export function ServicesTable() {
 
   const handleDuplicate = async (service: ServiceWithCategory) => {
     try {
-      const { id, created_at, updated_at, ...serviceData } = service
+      const { id: _id, created_at: _created_at, updated_at: _updated_at, ...serviceData } = service
       const { error } = await supabase
         .from('services')
         .insert({

@@ -1,7 +1,7 @@
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Heart, Clock, Calendar } from 'lucide-react'
-import { CustomerFavorite } from './favorites-types'
+import { CustomerFavorite } from '@/types/features/favorites-types'
 
 interface ServiceFavoritesProps {
   favorites: CustomerFavorite[]

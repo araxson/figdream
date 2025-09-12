@@ -4,9 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Heart } from 'lucide-react'
 import { useState, useEffect, useCallback } from 'react'
-import { useToast } from '@/hooks/ui/use-toast'
-import { CustomerFavorite, FavoriteTab } from './favorites-types'
-import { fetchCustomerFavorites, removeFavorite as removeFavoriteService } from './favorites-service'
+import { useToast } from '@/hooks/use-toast'
+import { CustomerFavorite, FavoriteTab } from '@/types/features/favorites-types'
+import { fetchCustomerFavorites, removeFavorite as removeFavoriteService } from '@/lib/api/services/favorites-service'
 import { SalonFavorites } from './salon-favorites'
 import { ServiceFavorites } from './service-favorites'
 import { StaffFavorites } from './staff-favorites'
@@ -15,7 +15,7 @@ export function CustomerFavoritesManager() {
   const [favorites, setFavorites] = useState<CustomerFavorite[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<FavoriteTab>('salons')
-  const toast = useToast()
+  const { toast } = useToast()
 
   const loadFavorites = useCallback(async () => {
     try {

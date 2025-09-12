@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
-import { TimeOffFormData } from './time-off-types'
+import { TimeOffFormData } from '@/types/features/time-off-types'
 
 interface TimeOffFormProps {
   open: boolean

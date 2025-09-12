@@ -21,7 +21,7 @@ export type Database = {
           created_at: string
           critical_threshold: number | null
           id: string
-          is_enabled: boolean | null
+          is_enabled: boolean
           metric_name: string
           notification_channels: string[] | null
           updated_at: string
@@ -33,7 +33,7 @@ export type Database = {
           created_at?: string
           critical_threshold?: number | null
           id?: string
-          is_enabled?: boolean | null
+          is_enabled?: boolean
           metric_name: string
           notification_channels?: string[] | null
           updated_at?: string
@@ -45,7 +45,7 @@ export type Database = {
           created_at?: string
           critical_threshold?: number | null
           id?: string
-          is_enabled?: boolean | null
+          is_enabled?: boolean
           metric_name?: string
           notification_channels?: string[] | null
           updated_at?: string
@@ -57,6 +57,7 @@ export type Database = {
         Row: {
           alert_name: string
           context: Json | null
+          created_at: string
           id: string
           message: string | null
           metric_value: number | null
@@ -64,10 +65,12 @@ export type Database = {
           severity: string | null
           threshold_exceeded: number | null
           triggered_at: string | null
+          updated_at: string
         }
         Insert: {
           alert_name: string
           context?: Json | null
+          created_at?: string
           id?: string
           message?: string | null
           metric_value?: number | null
@@ -75,10 +78,12 @@ export type Database = {
           severity?: string | null
           threshold_exceeded?: number | null
           triggered_at?: string | null
+          updated_at?: string
         }
         Update: {
           alert_name?: string
           context?: Json | null
+          created_at?: string
           id?: string
           message?: string | null
           metric_value?: number | null
@@ -86,6 +91,7 @@ export type Database = {
           severity?: string | null
           threshold_exceeded?: number | null
           triggered_at?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -157,6 +163,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "api_usage_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       appointment_notes: {
@@ -164,7 +177,7 @@ export type Database = {
           appointment_id: string
           created_at: string
           id: string
-          is_private: boolean | null
+          is_private: boolean
           note: string
           staff_id: string
           updated_at: string
@@ -173,7 +186,7 @@ export type Database = {
           appointment_id: string
           created_at?: string
           id?: string
-          is_private?: boolean | null
+          is_private?: boolean
           note: string
           staff_id: string
           updated_at?: string
@@ -182,7 +195,7 @@ export type Database = {
           appointment_id?: string
           created_at?: string
           id?: string
-          is_private?: boolean | null
+          is_private?: boolean
           note?: string
           staff_id?: string
           updated_at?: string
@@ -287,7 +300,7 @@ export type Database = {
           manual_tip_amount: number | null
           manual_total_amount: number | null
           notes: string | null
-          payment_collected: boolean | null
+          payment_collected: boolean
           payment_collected_at: string | null
           payment_collected_by: string | null
           payment_method: string | null
@@ -319,7 +332,7 @@ export type Database = {
           manual_tip_amount?: number | null
           manual_total_amount?: number | null
           notes?: string | null
-          payment_collected?: boolean | null
+          payment_collected?: boolean
           payment_collected_at?: string | null
           payment_collected_by?: string | null
           payment_method?: string | null
@@ -351,7 +364,7 @@ export type Database = {
           manual_tip_amount?: number | null
           manual_total_amount?: number | null
           notes?: string | null
-          payment_collected?: boolean | null
+          payment_collected?: boolean
           payment_collected_at?: string | null
           payment_collected_by?: string | null
           payment_method?: string | null
@@ -372,10 +385,17 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "appointments_cancelled_by_fkey"
+            columns: ["cancelled_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
             foreignKeyName: "appointments_customer_id_fkey"
             columns: ["customer_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "customers"
             referencedColumns: ["id"]
           },
           {
@@ -383,13 +403,6 @@ export type Database = {
             columns: ["location_id"]
             isOneToOne: false
             referencedRelation: "salon_locations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "appointments_payment_collected_by_fkey"
-            columns: ["payment_collected_by"]
-            isOneToOne: false
-            referencedRelation: "users"
             referencedColumns: ["id"]
           },
           {
@@ -429,7 +442,7 @@ export type Database = {
           salon_id: string | null
           updated_at: string
           user_agent: string | null
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           action: string
@@ -444,7 +457,7 @@ export type Database = {
           salon_id?: string | null
           updated_at?: string
           user_agent?: string | null
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           action?: string
@@ -459,7 +472,7 @@ export type Database = {
           salon_id?: string | null
           updated_at?: string
           user_agent?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {
@@ -482,6 +495,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audit_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -551,7 +571,7 @@ export type Database = {
           cooldown_seconds: number | null
           created_at: string
           id: string
-          is_enabled: boolean | null
+          is_enabled: boolean
           max_attempts: number | null
           otp_expiry_seconds: number | null
           otp_length: number | null
@@ -562,7 +582,7 @@ export type Database = {
           cooldown_seconds?: number | null
           created_at?: string
           id?: string
-          is_enabled?: boolean | null
+          is_enabled?: boolean
           max_attempts?: number | null
           otp_expiry_seconds?: number | null
           otp_length?: number | null
@@ -573,7 +593,7 @@ export type Database = {
           cooldown_seconds?: number | null
           created_at?: string
           id?: string
-          is_enabled?: boolean | null
+          is_enabled?: boolean
           max_attempts?: number | null
           otp_expiry_seconds?: number | null
           otp_length?: number | null
@@ -627,6 +647,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "blocked_times_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
             foreignKeyName: "blocked_times_location_id_fkey"
             columns: ["location_id"]
             isOneToOne: false
@@ -661,48 +688,41 @@ export type Database = {
           created_at: string
           expires_at: string
           id: string
-          is_used: boolean | null
+          is_used: boolean
           session_id: string | null
           session_uuid: string | null
           token: string
           updated_at: string
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           created_at?: string
           expires_at: string
           id?: string
-          is_used?: boolean | null
+          is_used?: boolean
           session_id?: string | null
           session_uuid?: string | null
           token: string
           updated_at?: string
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           created_at?: string
           expires_at?: string
           id?: string
-          is_used?: boolean | null
+          is_used?: boolean
           session_id?: string | null
           session_uuid?: string | null
           token?: string
           updated_at?: string
-          user_id?: string | null
+          user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "csrf_tokens_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       customer_engagement_analytics: {
         Row: {
           avg_visit_value: number | null
+          created_at: string
           customer_id: string | null
           customer_name: string | null
           customer_segment: string | null
@@ -713,9 +733,11 @@ export type Database = {
           salon_id: string
           total_spent: number | null
           total_visits: number | null
+          updated_at: string
         }
         Insert: {
           avg_visit_value?: number | null
+          created_at?: string
           customer_id?: string | null
           customer_name?: string | null
           customer_segment?: string | null
@@ -726,9 +748,11 @@ export type Database = {
           salon_id: string
           total_spent?: number | null
           total_visits?: number | null
+          updated_at?: string
         }
         Update: {
           avg_visit_value?: number | null
+          created_at?: string
           customer_id?: string | null
           customer_name?: string | null
           customer_segment?: string | null
@@ -739,8 +763,31 @@ export type Database = {
           salon_id?: string
           total_spent?: number | null
           total_visits?: number | null
+          updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "customer_engagement_analytics_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_engagement_analytics_salon_id_fkey"
+            columns: ["salon_id"]
+            isOneToOne: false
+            referencedRelation: "mv_salon_dashboard"
+            referencedColumns: ["salon_id"]
+          },
+          {
+            foreignKeyName: "customer_engagement_analytics_salon_id_fkey"
+            columns: ["salon_id"]
+            isOneToOne: false
+            referencedRelation: "salons"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       customer_favorites: {
         Row: {
@@ -780,6 +827,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_favorites_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "customer_favorites_salon_id_fkey"
@@ -948,6 +1002,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "customers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       dashboard_metrics: {
@@ -1056,36 +1117,63 @@ export type Database = {
           },
         ]
       }
+      database_fixes_log: {
+        Row: {
+          description: string | null
+          fix_date: string | null
+          fix_type: string | null
+          id: string
+          status: string
+        }
+        Insert: {
+          description?: string | null
+          fix_date?: string | null
+          fix_type?: string | null
+          id?: string
+          status?: string
+        }
+        Update: {
+          description?: string | null
+          fix_date?: string | null
+          fix_type?: string | null
+          id?: string
+          status?: string
+        }
+        Relationships: []
+      }
       developer_guide: {
         Row: {
           category: string
           code_example: string | null
           content: string
-          created_at: string | null
+          created_at: string
           display_order: number | null
           id: string
           important_notes: string | null
           title: string
+          updated_at: string
         }
         Insert: {
           category: string
           code_example?: string | null
           content: string
-          created_at?: string | null
+          created_at?: string
           display_order?: number | null
           id?: string
           important_notes?: string | null
           title: string
+          updated_at?: string
         }
         Update: {
           category?: string
           code_example?: string | null
           content?: string
-          created_at?: string | null
+          created_at?: string
           display_order?: number | null
           id?: string
           important_notes?: string | null
           title?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1094,6 +1182,7 @@ export type Database = {
           bounced_at: string | null
           campaign_id: string
           clicked_at: string | null
+          created_at: string
           customer_id: string
           id: string
           opened_at: string | null
@@ -1105,6 +1194,7 @@ export type Database = {
           bounced_at?: string | null
           campaign_id: string
           clicked_at?: string | null
+          created_at?: string
           customer_id: string
           id?: string
           opened_at?: string | null
@@ -1116,6 +1206,7 @@ export type Database = {
           bounced_at?: string | null
           campaign_id?: string
           clicked_at?: string | null
+          created_at?: string
           customer_id?: string
           id?: string
           opened_at?: string | null
@@ -1137,6 +1228,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_campaign_recipients_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -1283,6 +1381,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "error_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       export_configurations: {
@@ -1300,8 +1405,8 @@ export type Database = {
           filters: Json | null
           id: string
           include_columns: Json | null
-          is_active: boolean | null
-          is_scheduled: boolean | null
+          is_active: boolean
+          is_scheduled: boolean
           last_run_at: string | null
           next_run_at: string | null
           salon_id: string
@@ -1324,8 +1429,8 @@ export type Database = {
           filters?: Json | null
           id?: string
           include_columns?: Json | null
-          is_active?: boolean | null
-          is_scheduled?: boolean | null
+          is_active?: boolean
+          is_scheduled?: boolean
           last_run_at?: string | null
           next_run_at?: string | null
           salon_id: string
@@ -1348,8 +1453,8 @@ export type Database = {
           filters?: Json | null
           id?: string
           include_columns?: Json | null
-          is_active?: boolean | null
-          is_scheduled?: boolean | null
+          is_active?: boolean
+          is_scheduled?: boolean
           last_run_at?: string | null
           next_run_at?: string | null
           salon_id?: string
@@ -1359,13 +1464,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "export_configurations_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "export_configurations_salon_id_fkey"
             columns: ["salon_id"]
@@ -1449,13 +1547,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "export_history_exported_by_fkey"
-            columns: ["exported_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "export_history_salon_id_fkey"
             columns: ["salon_id"]
             isOneToOne: false
@@ -1473,31 +1564,31 @@ export type Database = {
       }
       faq_categories: {
         Row: {
-          created_at: string | null
+          created_at: string
           description: string | null
           id: string
           name: string
           slug: string
           sort_order: number
-          updated_at: string | null
+          updated_at: string
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           description?: string | null
           id?: string
           name: string
           slug: string
           sort_order?: number
-          updated_at?: string | null
+          updated_at?: string
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           description?: string | null
           id?: string
           name?: string
           slug?: string
           sort_order?: number
-          updated_at?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1505,32 +1596,32 @@ export type Database = {
         Row: {
           answer: string
           category_id: string | null
-          created_at: string | null
+          created_at: string
           id: string
-          is_active: boolean | null
+          is_active: boolean
           question: string
           sort_order: number
-          updated_at: string | null
+          updated_at: string
         }
         Insert: {
           answer: string
           category_id?: string | null
-          created_at?: string | null
+          created_at?: string
           id?: string
-          is_active?: boolean | null
+          is_active?: boolean
           question: string
           sort_order?: number
-          updated_at?: string | null
+          updated_at?: string
         }
         Update: {
           answer?: string
           category_id?: string | null
-          created_at?: string | null
+          created_at?: string
           id?: string
-          is_active?: boolean | null
+          is_active?: boolean
           question?: string
           sort_order?: number
-          updated_at?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -1546,15 +1637,15 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          is_email_appointments_enabled: boolean | null
-          is_email_marketing_enabled: boolean | null
-          is_email_reminders_enabled: boolean | null
-          is_push_appointments_enabled: boolean | null
-          is_push_marketing_enabled: boolean | null
-          is_push_reminders_enabled: boolean | null
-          is_sms_appointments_enabled: boolean | null
-          is_sms_marketing_enabled: boolean | null
-          is_sms_reminders_enabled: boolean | null
+          is_email_appointments_enabled: boolean
+          is_email_marketing_enabled: boolean
+          is_email_reminders_enabled: boolean
+          is_push_appointments_enabled: boolean
+          is_push_marketing_enabled: boolean
+          is_push_reminders_enabled: boolean
+          is_sms_appointments_enabled: boolean
+          is_sms_marketing_enabled: boolean
+          is_sms_reminders_enabled: boolean
           reminder_hours_before: number | null
           updated_at: string
           user_id: string
@@ -1562,15 +1653,15 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
-          is_email_appointments_enabled?: boolean | null
-          is_email_marketing_enabled?: boolean | null
-          is_email_reminders_enabled?: boolean | null
-          is_push_appointments_enabled?: boolean | null
-          is_push_marketing_enabled?: boolean | null
-          is_push_reminders_enabled?: boolean | null
-          is_sms_appointments_enabled?: boolean | null
-          is_sms_marketing_enabled?: boolean | null
-          is_sms_reminders_enabled?: boolean | null
+          is_email_appointments_enabled?: boolean
+          is_email_marketing_enabled?: boolean
+          is_email_reminders_enabled?: boolean
+          is_push_appointments_enabled?: boolean
+          is_push_marketing_enabled?: boolean
+          is_push_reminders_enabled?: boolean
+          is_sms_appointments_enabled?: boolean
+          is_sms_marketing_enabled?: boolean
+          is_sms_reminders_enabled?: boolean
           reminder_hours_before?: number | null
           updated_at?: string
           user_id: string
@@ -1578,15 +1669,15 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
-          is_email_appointments_enabled?: boolean | null
-          is_email_marketing_enabled?: boolean | null
-          is_email_reminders_enabled?: boolean | null
-          is_push_appointments_enabled?: boolean | null
-          is_push_marketing_enabled?: boolean | null
-          is_push_reminders_enabled?: boolean | null
-          is_sms_appointments_enabled?: boolean | null
-          is_sms_marketing_enabled?: boolean | null
-          is_sms_reminders_enabled?: boolean | null
+          is_email_appointments_enabled?: boolean
+          is_email_marketing_enabled?: boolean
+          is_email_reminders_enabled?: boolean
+          is_push_appointments_enabled?: boolean
+          is_push_marketing_enabled?: boolean
+          is_push_reminders_enabled?: boolean
+          is_sms_appointments_enabled?: boolean
+          is_sms_marketing_enabled?: boolean
+          is_sms_reminders_enabled?: boolean
           reminder_hours_before?: number | null
           updated_at?: string
           user_id?: string
@@ -1598,6 +1689,13 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_settings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "user_profiles"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -1646,6 +1744,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       otp_verifications: {
@@ -1655,13 +1760,13 @@ export type Database = {
           email: string
           expires_at: string
           id: string
-          is_verified: boolean | null
+          is_verified: boolean
           max_attempts: number | null
           metadata: Json | null
           otp_code: string
           otp_type: string
           updated_at: string
-          user_id: string | null
+          user_id: string
           verified_at: string | null
         }
         Insert: {
@@ -1670,13 +1775,13 @@ export type Database = {
           email: string
           expires_at: string
           id?: string
-          is_verified?: boolean | null
+          is_verified?: boolean
           max_attempts?: number | null
           metadata?: Json | null
           otp_code: string
           otp_type: string
           updated_at?: string
-          user_id?: string | null
+          user_id: string
           verified_at?: string | null
         }
         Update: {
@@ -1685,42 +1790,37 @@ export type Database = {
           email?: string
           expires_at?: string
           id?: string
-          is_verified?: boolean | null
+          is_verified?: boolean
           max_attempts?: number | null
           metadata?: Json | null
           otp_code?: string
           otp_type?: string
           updated_at?: string
-          user_id?: string | null
+          user_id?: string
           verified_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "otp_verifications_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       password_history: {
         Row: {
           created_at: string
           id: string
           password_hash: string
+          updated_at: string
           user_id: string
         }
         Insert: {
           created_at?: string
           id?: string
           password_hash: string
+          updated_at?: string
           user_id: string
         }
         Update: {
           created_at?: string
           id?: string
           password_hash?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
@@ -1731,7 +1831,7 @@ export type Database = {
           email: string
           expires_at: string
           id: string
-          is_verified: boolean | null
+          is_verified: boolean
           token: string
           updated_at: string
         }
@@ -1740,7 +1840,7 @@ export type Database = {
           email: string
           expires_at: string
           id?: string
-          is_verified?: boolean | null
+          is_verified?: boolean
           token: string
           updated_at?: string
         }
@@ -1749,7 +1849,7 @@ export type Database = {
           email?: string
           expires_at?: string
           id?: string
-          is_verified?: boolean | null
+          is_verified?: boolean
           token?: string
           updated_at?: string
         }
@@ -1762,8 +1862,9 @@ export type Database = {
           event_type: string
           id: string
           ip_address: unknown | null
+          updated_at: string
           user_agent: string | null
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           created_at?: string
@@ -1771,8 +1872,9 @@ export type Database = {
           event_type: string
           id?: string
           ip_address?: unknown | null
+          updated_at?: string
           user_agent?: string | null
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           created_at?: string
@@ -1780,13 +1882,15 @@ export type Database = {
           event_type?: string
           id?: string
           ip_address?: unknown | null
+          updated_at?: string
           user_agent?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: []
       }
       performance_trends: {
         Row: {
+          created_at: string
           current_value: number | null
           id: string
           metric_category: string
@@ -1795,8 +1899,10 @@ export type Database = {
           previous_value: number | null
           recorded_at: string | null
           trend_direction: string | null
+          updated_at: string
         }
         Insert: {
+          created_at?: string
           current_value?: number | null
           id?: string
           metric_category: string
@@ -1805,8 +1911,10 @@ export type Database = {
           previous_value?: number | null
           recorded_at?: string | null
           trend_direction?: string | null
+          updated_at?: string
         }
         Update: {
+          created_at?: string
           current_value?: number | null
           id?: string
           metric_category?: string
@@ -1815,6 +1923,7 @@ export type Database = {
           previous_value?: number | null
           recorded_at?: string | null
           trend_direction?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1826,7 +1935,7 @@ export type Database = {
           description: string | null
           features: Json | null
           id: string
-          is_active: boolean | null
+          is_active: boolean
           max_locations: number | null
           max_services: number | null
           max_staff: number | null
@@ -1843,7 +1952,7 @@ export type Database = {
           description?: string | null
           features?: Json | null
           id?: string
-          is_active?: boolean | null
+          is_active?: boolean
           max_locations?: number | null
           max_services?: number | null
           max_staff?: number | null
@@ -1860,7 +1969,7 @@ export type Database = {
           description?: string | null
           features?: Json | null
           id?: string
-          is_active?: boolean | null
+          is_active?: boolean
           max_locations?: number | null
           max_services?: number | null
           max_staff?: number | null
@@ -1875,7 +1984,7 @@ export type Database = {
       platform_subscriptions: {
         Row: {
           amount: number
-          cancel_at_period_end: boolean | null
+          cancel_at_period_end: boolean
           created_at: string
           current_period_end: string
           current_period_start: string
@@ -1890,7 +1999,7 @@ export type Database = {
         }
         Insert: {
           amount: number
-          cancel_at_period_end?: boolean | null
+          cancel_at_period_end?: boolean
           created_at?: string
           current_period_end: string
           current_period_start: string
@@ -1905,7 +2014,7 @@ export type Database = {
         }
         Update: {
           amount?: number
-          cancel_at_period_end?: boolean | null
+          cancel_at_period_end?: boolean
           created_at?: string
           current_period_end?: string
           current_period_start?: string
@@ -1944,31 +2053,34 @@ export type Database = {
       }
       pricing_features: {
         Row: {
-          created_at: string | null
+          created_at: string
           feature_text: string
           id: string
-          is_additional: boolean | null
-          is_included: boolean | null
+          is_additional: boolean
+          is_included: boolean
           plan_id: string | null
           sort_order: number
+          updated_at: string
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           feature_text: string
           id?: string
-          is_additional?: boolean | null
-          is_included?: boolean | null
+          is_additional?: boolean
+          is_included?: boolean
           plan_id?: string | null
           sort_order?: number
+          updated_at?: string
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           feature_text?: string
           id?: string
-          is_additional?: boolean | null
-          is_included?: boolean | null
+          is_additional?: boolean
+          is_included?: boolean
           plan_id?: string | null
           sort_order?: number
+          updated_at?: string
         }
         Relationships: [
           {
@@ -1982,42 +2094,42 @@ export type Database = {
       }
       pricing_plans: {
         Row: {
-          created_at: string | null
+          created_at: string
           description: string
           id: string
-          is_popular: boolean | null
+          is_popular: boolean
           monthly_price: number
           name: string
           savings_text: string | null
           slug: string
           sort_order: number
-          updated_at: string | null
+          updated_at: string
           yearly_price: number
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           description: string
           id?: string
-          is_popular?: boolean | null
+          is_popular?: boolean
           monthly_price: number
           name: string
           savings_text?: string | null
           slug: string
           sort_order?: number
-          updated_at?: string | null
+          updated_at?: string
           yearly_price: number
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           description?: string
           id?: string
-          is_popular?: boolean | null
+          is_popular?: boolean
           monthly_price?: number
           name?: string
           savings_text?: string | null
           slug?: string
           sort_order?: number
-          updated_at?: string | null
+          updated_at?: string
           yearly_price?: number
         }
         Relationships: []
@@ -2074,22 +2186,7 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "profiles_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "profiles_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       rate_limits: {
         Row: {
@@ -2122,15 +2219,7 @@ export type Database = {
           user_id?: string
           window_start_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "rate_limits_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       review_requests: {
         Row: {
@@ -2223,6 +2312,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "review_requests_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "review_requests_review_id_fkey"
@@ -2318,6 +2414,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "reviews_salon_id_fkey"
@@ -2468,6 +2571,7 @@ export type Database = {
       salon_performance_analytics: {
         Row: {
           avg_appointment_value: number | null
+          created_at: string
           customer_count: number | null
           id: string
           last_updated_at: string | null
@@ -2478,9 +2582,11 @@ export type Database = {
           staff_count: number | null
           total_appointments: number | null
           total_revenue: number | null
+          updated_at: string
         }
         Insert: {
           avg_appointment_value?: number | null
+          created_at?: string
           customer_count?: number | null
           id?: string
           last_updated_at?: string | null
@@ -2491,9 +2597,11 @@ export type Database = {
           staff_count?: number | null
           total_appointments?: number | null
           total_revenue?: number | null
+          updated_at?: string
         }
         Update: {
           avg_appointment_value?: number | null
+          created_at?: string
           customer_count?: number | null
           id?: string
           last_updated_at?: string | null
@@ -2504,8 +2612,24 @@ export type Database = {
           staff_count?: number | null
           total_appointments?: number | null
           total_revenue?: number | null
+          updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "salon_performance_analytics_salon_id_fkey"
+            columns: ["salon_id"]
+            isOneToOne: false
+            referencedRelation: "mv_salon_dashboard"
+            referencedColumns: ["salon_id"]
+          },
+          {
+            foreignKeyName: "salon_performance_analytics_salon_id_fkey"
+            columns: ["salon_id"]
+            isOneToOne: false
+            referencedRelation: "salons"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       salons: {
         Row: {
@@ -2569,6 +2693,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salons_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -2963,6 +3094,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "sms_campaign_recipients_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       sms_campaigns: {
@@ -3043,13 +3181,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "sms_campaigns_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "sms_campaigns_salon_id_fkey"
             columns: ["salon_id"]
             isOneToOne: false
@@ -3067,6 +3198,7 @@ export type Database = {
       }
       sms_opt_outs: {
         Row: {
+          created_at: string
           id: string
           opted_out_at: string | null
           phone_number: string
@@ -3075,6 +3207,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          created_at?: string
           id?: string
           opted_out_at?: string | null
           phone_number: string
@@ -3083,6 +3216,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          created_at?: string
           id?: string
           opted_out_at?: string | null
           phone_number?: string
@@ -3247,20 +3381,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "staff_earnings_paid_out_by_fkey"
-            columns: ["paid_out_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "staff_earnings_recorded_by_fkey"
-            columns: ["recorded_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "staff_earnings_salon_id_fkey"
             columns: ["salon_id"]
             isOneToOne: false
@@ -3331,17 +3451,10 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "staff_invitations_accepted_by_fkey"
-            columns: ["accepted_by"]
+            foreignKeyName: "staff_invitations_location_id_fkey"
+            columns: ["location_id"]
             isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "staff_invitations_invited_by_fkey"
-            columns: ["invited_by"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "salon_locations"
             referencedColumns: ["id"]
           },
           {
@@ -3452,6 +3565,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -3619,6 +3739,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "staff_time_off_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
             foreignKeyName: "staff_time_off_staff_id_fkey"
             columns: ["staff_id"]
             isOneToOne: false
@@ -3721,6 +3848,7 @@ export type Database = {
       staff_utilization_analytics: {
         Row: {
           avg_service_time: number | null
+          created_at: string
           efficiency_score: number | null
           id: string
           last_updated: string | null
@@ -3732,10 +3860,12 @@ export type Database = {
           staff_name: string | null
           total_appointments: number | null
           total_hours_worked: number | null
+          updated_at: string
           utilization_rate: number | null
         }
         Insert: {
           avg_service_time?: number | null
+          created_at?: string
           efficiency_score?: number | null
           id?: string
           last_updated?: string | null
@@ -3747,10 +3877,12 @@ export type Database = {
           staff_name?: string | null
           total_appointments?: number | null
           total_hours_worked?: number | null
+          updated_at?: string
           utilization_rate?: number | null
         }
         Update: {
           avg_service_time?: number | null
+          created_at?: string
           efficiency_score?: number | null
           id?: string
           last_updated?: string | null
@@ -3762,9 +3894,32 @@ export type Database = {
           staff_name?: string | null
           total_appointments?: number | null
           total_hours_worked?: number | null
+          updated_at?: string
           utilization_rate?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "staff_utilization_analytics_salon_id_fkey"
+            columns: ["salon_id"]
+            isOneToOne: false
+            referencedRelation: "mv_salon_dashboard"
+            referencedColumns: ["salon_id"]
+          },
+          {
+            foreignKeyName: "staff_utilization_analytics_salon_id_fkey"
+            columns: ["salon_id"]
+            isOneToOne: false
+            referencedRelation: "salons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_utilization_analytics_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "staff_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       system_configuration: {
         Row: {
@@ -3800,71 +3955,77 @@ export type Database = {
         Row: {
           collected_at: string | null
           context: Json | null
+          created_at: string
           id: string
           metric_name: string
           metric_unit: string | null
           metric_value: number | null
-          status: string | null
+          status: string
           threshold_critical: number | null
           threshold_warning: number | null
+          updated_at: string
         }
         Insert: {
           collected_at?: string | null
           context?: Json | null
+          created_at?: string
           id?: string
           metric_name: string
           metric_unit?: string | null
           metric_value?: number | null
-          status?: string | null
+          status?: string
           threshold_critical?: number | null
           threshold_warning?: number | null
+          updated_at?: string
         }
         Update: {
           collected_at?: string | null
           context?: Json | null
+          created_at?: string
           id?: string
           metric_name?: string
           metric_unit?: string | null
           metric_value?: number | null
-          status?: string | null
+          status?: string
           threshold_critical?: number | null
           threshold_warning?: number | null
+          updated_at?: string
         }
         Relationships: []
       }
       team_members: {
         Row: {
           bio: string | null
-          created_at: string | null
+          created_at: string
           id: string
           image_url: string | null
           is_active: boolean | null
           name: string
           role: string
           sort_order: number
-          updated_at: string | null
+          updated_at: string
         }
         Insert: {
           bio?: string | null
-          created_at?: string | null
+          created_at?: string
           id?: string
           image_url?: string | null
           is_active?: boolean | null
           name: string
           role: string
           sort_order?: number
-          updated_at?: string | null
+          updated_at?: string
         }
         Update: {
           bio?: string | null
-          created_at?: string | null
+          created_at?: string
           id?: string
           image_url?: string | null
           is_active?: boolean | null
           name?: string
           role?: string
           sort_order?: number
-          updated_at?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -3909,13 +4070,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "time_off_requests_approved_by_fkey"
-            columns: ["approved_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "time_off_requests_staff_id_fkey"
             columns: ["staff_id"]
@@ -3967,13 +4121,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "user_roles_assigned_by_fkey"
-            columns: ["assigned_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "user_roles_location_id_fkey"
             columns: ["location_id"]
             isOneToOne: false
@@ -3992,13 +4139,6 @@ export type Database = {
             columns: ["salon_id"]
             isOneToOne: false
             referencedRelation: "salons"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_roles_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -4171,7 +4311,7 @@ export type Database = {
             foreignKeyName: "appointments_customer_id_fkey"
             columns: ["customer_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "customers"
             referencedColumns: ["id"]
           },
           {
@@ -4197,104 +4337,44 @@ export type Database = {
           },
         ]
       }
-      users: {
+      user_profiles: {
         Row: {
-          banned_until: string | null
-          confirmation_sent_at: string | null
-          confirmation_token: string | null
+          avatar_url: string | null
           created_at: string | null
-          deleted_at: string | null
           email: string | null
-          email_change: string | null
-          email_change_confirm_status: number | null
-          email_change_sent_at: string | null
-          email_change_token_current: string | null
-          email_change_token_new: string | null
-          email_confirmed_at: string | null
-          encrypted_password: string | null
-          id: string | null
-          invited_at: string | null
-          is_sso_user: boolean | null
-          is_super_admin: boolean | null
-          last_sign_in_at: string | null
+          first_name: string | null
+          is_active_role: boolean | null
+          last_name: string | null
+          location_id: string | null
           phone: string | null
-          phone_change: string | null
-          phone_change_sent_at: string | null
-          phone_change_token: string | null
-          phone_confirmed_at: string | null
-          raw_app_meta_data: Json | null
-          raw_user_meta_data: Json | null
-          reauthentication_sent_at: string | null
-          reauthentication_token: string | null
-          recovery_sent_at: string | null
-          recovery_token: string | null
+          role: Database["public"]["Enums"]["user_role_type"] | null
+          salon_id: string | null
           updated_at: string | null
+          user_id: string | null
         }
-        Insert: {
-          banned_until?: string | null
-          confirmation_sent_at?: string | null
-          confirmation_token?: never
-          created_at?: string | null
-          deleted_at?: string | null
-          email?: string | null
-          email_change?: string | null
-          email_change_confirm_status?: number | null
-          email_change_sent_at?: string | null
-          email_change_token_current?: never
-          email_change_token_new?: never
-          email_confirmed_at?: string | null
-          encrypted_password?: string | null
-          id?: string | null
-          invited_at?: string | null
-          is_sso_user?: boolean | null
-          is_super_admin?: boolean | null
-          last_sign_in_at?: string | null
-          phone?: string | null
-          phone_change?: string | null
-          phone_change_sent_at?: string | null
-          phone_change_token?: never
-          phone_confirmed_at?: string | null
-          raw_app_meta_data?: Json | null
-          raw_user_meta_data?: Json | null
-          reauthentication_sent_at?: string | null
-          reauthentication_token?: never
-          recovery_sent_at?: string | null
-          recovery_token?: never
-          updated_at?: string | null
-        }
-        Update: {
-          banned_until?: string | null
-          confirmation_sent_at?: string | null
-          confirmation_token?: never
-          created_at?: string | null
-          deleted_at?: string | null
-          email?: string | null
-          email_change?: string | null
-          email_change_confirm_status?: number | null
-          email_change_sent_at?: string | null
-          email_change_token_current?: never
-          email_change_token_new?: never
-          email_confirmed_at?: string | null
-          encrypted_password?: string | null
-          id?: string | null
-          invited_at?: string | null
-          is_sso_user?: boolean | null
-          is_super_admin?: boolean | null
-          last_sign_in_at?: string | null
-          phone?: string | null
-          phone_change?: string | null
-          phone_change_sent_at?: string | null
-          phone_change_token?: never
-          phone_confirmed_at?: string | null
-          raw_app_meta_data?: Json | null
-          raw_user_meta_data?: Json | null
-          reauthentication_sent_at?: string | null
-          reauthentication_token?: never
-          recovery_sent_at?: string | null
-          recovery_token?: never
-          updated_at?: string | null
-        }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "salon_locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_roles_salon_id_fkey"
+            columns: ["salon_id"]
+            isOneToOne: false
+            referencedRelation: "mv_salon_dashboard"
+            referencedColumns: ["salon_id"]
+          },
+          {
+            foreignKeyName: "user_roles_salon_id_fkey"
+            columns: ["salon_id"]
+            isOneToOne: false
+            referencedRelation: "salons"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       v_index_usage: {
         Row: {
@@ -4955,6 +5035,14 @@ export type Database = {
           total_spent: number
         }[]
       }
+      get_database_health: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          metric: string
+          status: string
+          value: string
+        }[]
+      }
       get_database_stats: {
         Args: Record<PropertyKey, never>
         Returns: Json
@@ -5169,6 +5257,21 @@ export type Database = {
           staff_name: string
           total_revenue: number
           utilization_score: number
+        }[]
+      }
+      get_revenue_summary: {
+        Args: {
+          p_end_date?: string
+          p_salon_id?: string
+          p_start_date?: string
+        }
+        Returns: {
+          appointment_date: string
+          appointment_id: string
+          customer_id: string
+          salon_id: string
+          staff_id: string
+          total_revenue: number
         }[]
       }
       get_role_hierarchy_level: {

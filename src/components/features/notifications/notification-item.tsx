@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Database } from '@/types/database.types'
+import { NotificationDTO } from '@/lib/api/dal/notifications'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -20,10 +20,8 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-type Notification = Database['public']['Tables']['notifications']['Row']
-
 interface NotificationItemProps {
-  notification: Notification
+  notification: NotificationDTO
 }
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {

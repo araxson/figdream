@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
-import { WalkInFormData, StaffMember, Service } from './walk-in-types'
+import { WalkInFormData, StaffMember, Service } from '@/types/features/walk-in-types'
 
 interface WalkInFormFieldsProps {
   formData: WalkInFormData

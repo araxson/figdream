@@ -1,0 +1,64 @@
+{
+  "hooks": {
+    "user-prompt-submit-hook": {
+      "description": "Generate and read project tree before any action",
+      "commands": [
+        {
+          "command": "python3 scripts/generate_project_tree.py",
+          "description": "Generate fresh project tree"
+        },
+        {
+          "command": "cat project_tree.md > /dev/null",
+          "description": "Read project tree structure"
+        }
+      ]
+    },
+    "post-edit-hook": {
+      "description": "Update README and regenerate tree after editing files",
+      "commands": [
+        {
+          "command": "python3 scripts/generate_project_tree.py",
+          "description": "Regenerate project tree after edit"
+        },
+        {
+          "command": "echo '\\n---\\n**Last Updated:** '$(date +'%Y-%m-%d %H:%M:%S')' | File edited: '$FILE_PATH >> README.md",
+          "description": "Log edit to README"
+        }
+      ]
+    },
+    "post-create-hook": {
+      "description": "Update README and tree after creating new files",
+      "commands": [
+        {
+          "command": "python3 scripts/generate_project_tree.py",
+          "description": "Regenerate project tree after file creation"
+        },
+        {
+          "command": "echo '\\n## New File Created\\n- **File:** '$FILE_PATH'\\n- **Date:** '$(date +'%Y-%m-%d %H:%M:%S') >> README.md",
+          "description": "Log new file to README"
+        }
+      ]
+    },
+    "pre-commit-hook": {
+      "description": "Update project tree before committing",
+      "commands": [
+        {
+          "command": "python3 scripts/generate_project_tree.py",
+          "description": "Update project tree before commit"
+        },
+        {
+          "command": "npm run type-check",
+          "description": "TypeScript must pass with 0 errors"
+        },
+        {
+          "command": "npm run lint",
+          "description": "ESLint must pass with 0 errors"
+        },
+        {
+          "command": "npm run build",
+          "description": "Build must succeed"
+        }
+      ]
+    }
+  }
+}

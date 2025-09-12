@@ -1,5 +1,5 @@
 import { Suspense } from 'react'
-import { ProfileSkeleton } from '@/components/ui/skeleton-variants'
+import { ProfileSkeleton } from '@/components/shared/ui-helpers/skeleton-patterns'
 import { Skeleton } from '@/components/ui/skeleton'
 // import { ProfileHeader } from '@/components/sections/profile/header'
 // import { ProfileForm } from '@/components/sections/profile/form'

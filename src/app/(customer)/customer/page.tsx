@@ -1,16 +1,16 @@
 import { Suspense } from 'react'
-import { CustomerDashboard } from '@/components/features/analytics/dashboard/customer-dashboard'
-import { CardGridSkeleton, AppointmentCardSkeleton } from '@/components/ui/skeleton-variants'
+import { Dashboard } from '@/components/features/analytics/dashboard/dashboard'
+import { DashboardHeader } from '@/components/features/analytics/dashboard/dashboard-header'
+import { CardGridSkeleton, AppointmentCardSkeleton } from '@/components/shared/ui-helpers/skeleton-patterns'
+import { requireAuth } from '@/lib/api/dal/auth'
 
-export default function CustomerDashboardPage() {
+export default async function CustomerDashboardPage() {
+  const session = await requireAuth()
+  const userRole = session.user.role
+  
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Welcome Back!</h1>
-        <p className="text-muted-foreground">
-          Manage your appointments and explore our services
-        </p>
-      </div>
+      <DashboardHeader userRole={userRole} />
       
       <Suspense fallback={
         <div className="space-y-6">
@@ -22,7 +22,7 @@ export default function CustomerDashboardPage() {
           </div>
         </div>
       }>
-        <CustomerDashboard />
+        <Dashboard userRole={userRole} />
       </Suspense>
     </div>
   )

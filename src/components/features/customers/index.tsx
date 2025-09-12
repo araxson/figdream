@@ -14,7 +14,6 @@ import {
   Scissors, 
   Clock, 
   CheckCircle,
-  ChevronRight
 } from 'lucide-react'
 
 export type BookingStep = 'salon' | 'service' | 'time' | 'confirm'
@@ -71,7 +70,7 @@ export function CustomerBooking() {
       case 'salon':
         return (
           <SalonSearch 
-            onSalonSelect={(salonId) => {
+            onSalonSelect={(salonId: string) => {
               setBookingData({ ...bookingData, salonId })
               setCurrentStep('service')
             }}
@@ -81,7 +80,7 @@ export function CustomerBooking() {
         return (
           <ServiceSelection
             salonId={bookingData.salonId}
-            onSelect={(serviceIds) => {
+            onSelect={(serviceIds: string[]) => {
               setBookingData({ ...bookingData, serviceIds })
               setCurrentStep('time')
             }}

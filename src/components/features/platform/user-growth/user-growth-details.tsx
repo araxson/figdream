@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
-import { GrowthData, TimeRange } from './user-growth-types'
+import { GrowthData, TimeRange } from '@/types/features/user-growth-types'
 
 interface UserGrowthDetailsProps {
   data: GrowthData

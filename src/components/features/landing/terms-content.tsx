@@ -4,8 +4,8 @@ import { Card, CardContent } from '@/components/ui/card'
 export function TermsContent() {
   return (
     <>
-      <section className="w-full py-20 md:py-24 bg-gradient-to-br from-primary/10 to-background">
-        <div className="container mx-auto max-w-7xl px-4">
+      <section className="w-full py-20 md:py-24 bg-muted/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <Badge className="mb-4">Legal</Badge>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
@@ -18,7 +18,7 @@ export function TermsContent() {
         </div>
       </section>
       <section className="w-full py-16 md:py-20">
-        <div className="container mx-auto max-w-4xl px-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Card>
             <CardContent className="prose prose-gray dark:prose-invert max-w-none p-8">
               <h2>1. Acceptance of Terms</h2>

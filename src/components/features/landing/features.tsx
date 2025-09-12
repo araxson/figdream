@@ -1,5 +1,5 @@
-'use client'
-
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { 
   Sparkles, 
   Clock, 
@@ -13,65 +13,75 @@ const features = [
   {
     icon: Sparkles,
     title: 'Premium Salons',
-    description: 'Access to verified, high-quality salons and experienced professionals.'
+    description: 'Access to verified, high-quality salons and experienced professionals.',
+    badge: 'Popular'
   },
   {
     icon: Clock,
     title: 'Real-Time Availability',
-    description: 'See live availability and book appointments that fit your schedule.'
+    description: 'See live availability and book appointments that fit your schedule.',
+    badge: null
   },
   {
     icon: Shield,
     title: 'Secure & Safe',
-    description: 'Your data is protected with enterprise-grade security measures.'
+    description: 'Your data is protected with enterprise-grade security measures.',
+    badge: null
   },
   {
     icon: CreditCard,
     title: 'Easy Payments',
-    description: 'Multiple payment options with secure transaction processing.'
+    description: 'Multiple payment options with secure transaction processing.',
+    badge: null
   },
   {
     icon: MessageSquare,
     title: 'Instant Notifications',
-    description: 'Get SMS and email reminders for your upcoming appointments.'
+    description: 'Get SMS and email reminders for your upcoming appointments.',
+    badge: 'New'
   },
   {
     icon: Users,
     title: 'Loyalty Rewards',
-    description: 'Earn points with every booking and unlock exclusive discounts.'
+    description: 'Earn points with every booking and unlock exclusive discounts.',
+    badge: null
   }
 ]
 
 export function FeaturesSection() {
   return (
-    <section className="py-24 sm:py-32">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            Everything You Need for Perfect Beauty Care
+    <section className="w-full py-8 md:py-12 lg:py-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col items-center space-y-4 text-center mb-12">
+          <h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">
+            Why Choose FigDream
           </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Our platform makes it easy to discover, book, and manage your beauty appointments
+          <p className="leading-normal text-muted-foreground sm:text-lg sm:leading-7">
+            Everything you need for the perfect beauty experience
           </p>
         </div>
-        
-        <div className="mx-auto mt-16 max-w-7xl">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((feature, index) => (
-              <div
-                key={feature.title}
-                className={`relative rounded-2xl border bg-card p-8 shadow-sm transition-shadow hover:shadow-md animate-in fade-in slide-in-from-bottom-4 duration-500 [animation-delay:${index * 100}ms]`}
-              >
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {features.map((feature) => {
+          const Icon = feature.icon
+          return (
+            <Card key={feature.title} className="relative">
+              {feature.badge && (
+                <Badge className="absolute right-2 top-2" variant="secondary">
+                  {feature.badge}
+                </Badge>
+              )}
+              <CardHeader>
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                  <feature.icon className="h-6 w-6 text-primary" />
+                  <Icon className="h-6 w-6" />
                 </div>
-                <h3 className="mt-6 text-lg font-semibold">{feature.title}</h3>
-                <p className="mt-2 text-muted-foreground">
-                  {feature.description}
-                </p>
-              </div>
-            ))}
-          </div>
+                <CardTitle className="text-lg">{feature.title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>{feature.description}</CardDescription>
+              </CardContent>
+            </Card>
+          )
+        })}
         </div>
       </div>
     </section>

@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { createClient } from '@/lib/supabase/client'
 import { useState } from 'react'
-import { Mail } from 'lucide-react'
+import { Mail, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
@@ -86,12 +86,15 @@ export function ForgotPasswordForm() {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <div className="relative flex">
+                    <div className="absolute left-0 top-0 h-full w-10 flex items-center justify-center">
+                      <Mail className="h-4 w-4 text-muted-foreground" />
+                      <div className="absolute right-0 top-1/4 h-1/2 w-px bg-border" />
+                    </div>
                     <Input 
                       placeholder="email@example.com" 
                       type="email" 
-                      className="pl-10"
+                      className="pl-12 bg-muted/30 hover:bg-muted/40 transition-colors"
                       {...field} 
                     />
                   </div>
@@ -101,7 +104,14 @@ export function ForgotPasswordForm() {
             )}
           />
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Sending code...' : 'Send verification code'}
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Sending code...
+              </>
+            ) : (
+              'Send verification code'
+            )}
           </Button>
           
           <p className="text-sm text-center text-muted-foreground">

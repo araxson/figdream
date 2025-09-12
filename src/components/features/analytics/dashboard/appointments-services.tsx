@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Clock } from 'lucide-react'
 import Link from 'next/link'
-import { TodayAppointment, TopService } from './dashboard-types'
+import { TodayAppointment, TopService } from '@/types/features/dashboard-types'
 
 interface AppointmentsAndServicesProps {
   appointments: TodayAppointment[]

@@ -2,7 +2,14 @@
 
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { ChartDataItem, chartConfig } from './revenue-types'
+import { ChartDataItem } from '@/types/features/revenue-types'
+
+const chartConfig = {
+  revenue: {
+    label: "Revenue",
+    color: "hsl(var(--chart-1))",
+  },
+}
 
 interface RevenueBarChartProps {
   data: ChartDataItem[]

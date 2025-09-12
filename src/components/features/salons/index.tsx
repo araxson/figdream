@@ -1,8 +1,7 @@
 'use client'
 
-import { SalonsList } from './list'
-import { SalonMetrics } from './metrics'
-import { SalonVerification } from './verification'
+import { SalonsList } from './salon-list'
+import { SalonMetrics } from './salon-metrics'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
@@ -28,7 +27,6 @@ export function AdminSalons() {
         <TabsList>
           <TabsTrigger value="salons">All Salons</TabsTrigger>
           <TabsTrigger value="metrics">Metrics</TabsTrigger>
-          <TabsTrigger value="verification">Verification</TabsTrigger>
         </TabsList>
         
         <TabsContent value="salons" className="mt-6">
@@ -37,10 +35,6 @@ export function AdminSalons() {
         
         <TabsContent value="metrics" className="mt-6">
           <SalonMetrics />
-        </TabsContent>
-        
-        <TabsContent value="verification" className="mt-6">
-          <SalonVerification />
         </TabsContent>
       </Tabs>
     </div>

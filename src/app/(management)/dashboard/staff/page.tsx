@@ -1,16 +1,22 @@
 import { Suspense } from 'react'
-import { StaffManagementClient } from './client'
+import { StaffManagementWrapper } from '@/components/features/staff/staff-management-wrapper'
 import { Skeleton } from '@/components/ui/skeleton'
+import { requireRole } from '@/lib/api/dal/auth'
+import { USER_ROLES } from '@/lib/auth/constants'
 
 export const metadata = {
   title: 'Staff Management',
   description: 'Manage salon staff, schedules, and assignments'
 }
 
-export default function StaffManagementPage() {
+export default async function StaffManagementPage() {
+  // Only salon owner and manager can access
+  await requireRole([USER_ROLES.SALON_OWNER, USER_ROLES.SALON_MANAGER])
+  
   return (
     <Suspense fallback={<StaffManagementSkeleton />}>
-      <StaffManagementClient />
+      {/* No salonId needed - will get from user context */}
+      <StaffManagementWrapper />
     </Suspense>
   )
 }

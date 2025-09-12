@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { useToast } from '@/hooks/ui/use-toast'
+import { useToast } from '@/hooks/use-toast'
 
 interface UseDataFetchOptions<T> {
   fetchFn: () => Promise<T>
@@ -41,7 +41,7 @@ export function useDataFetch<T>({
   const [error, setError] = useState<Error | null>(null)
   const [retryCount, setRetryCount] = useState(0)
   const supabase = createClient()
-  const toast = useToast()
+  const { toast } = useToast()
 
   const fetchData = useCallback(async (isRetry = false) => {
     if (!enabled) return

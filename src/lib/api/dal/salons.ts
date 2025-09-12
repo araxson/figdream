@@ -182,6 +182,37 @@ export const createSalon = async (salon: Omit<SalonInsert, 'owner_id'>): Promise
 };
 
 /**
+ * Get salon by owner ID
+ */
+export const getSalonByOwner = cache(async (ownerId: string): Promise<SalonDTO | null> => {
+  const supabase = await createClient();
+  
+  const { data, error } = await supabase
+    .from('salons')
+    .select('*')
+    .eq('created_by', ownerId)
+    .eq('is_active', true)
+    .single();
+  
+  if (error || !data) return null;
+  
+  return {
+    id: data.id,
+    name: data.name,
+    slug: data.slug,
+    description: data.description,
+    owner_id: data.created_by,
+    phone: data.phone,
+    email: data.email,
+    website: data.website,
+    logo_url: data.logo_url,
+    is_active: data.is_active ?? true,
+    created_at: data.created_at,
+    updated_at: data.updated_at,
+  };
+});
+
+/**
  * Update salon (owner only)
  */
 export const updateSalon = async (salonId: string, updates: Partial<SalonUpdate>): Promise<SalonDTO | null> => {

@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Activity, TrendingUp, Clock, AlertTriangle } from 'lucide-react'
-import { UsageStats } from './api-usage-types'
+import { UsageStats } from '@/types/features/api-usage-types'
 
 interface APIUsageStatsProps {
   stats: UsageStats

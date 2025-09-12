@@ -13,6 +13,7 @@ import {
 import { REGEXP_ONLY_DIGITS } from 'input-otp'
 import Link from 'next/link'
 import { ArrowLeft, CheckCircle } from 'lucide-react'
+import { ROLE_ROUTES } from '@/lib/auth/constants'
 
 export function VerifyOTPForm() {
   const router = useRouter()
@@ -99,8 +100,18 @@ export function VerifyOTPForm() {
           // Clear session storage
           sessionStorage.removeItem('login-email')
           setSuccess(true)
+          
+          // Get user role and redirect appropriately
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', data.session.user.id)
+            .single()
+          
+          const redirectPath = profile?.role ? ROLE_ROUTES[profile.role as keyof typeof ROLE_ROUTES] : '/customer'
+          
           setTimeout(() => {
-            router.push('/admin')
+            router.push(redirectPath)
             router.refresh()
           }, 1500)
         }

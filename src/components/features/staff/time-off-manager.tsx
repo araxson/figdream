@@ -4,17 +4,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 import { useState, useEffect, useCallback } from 'react'
-import { useToast } from '@/hooks/ui/use-toast'
-import { TimeOffRequest, TimeOffFormData } from './time-off-types'
+import { useToast } from '@/hooks/use-toast'
+import { TimeOffRequest, TimeOffFormData } from '@/types/features/time-off-types'
 import { TimeOffForm } from './time-off-form'
-import { TimeOffList } from './time-off-list'
+import { TimeOffList } from './time-off/time-off-list'
 import { TimeOffStatsCard } from './time-off-stats'
 import { 
   fetchTimeOffRequests, 
   submitTimeOffRequest, 
   cancelTimeOffRequest,
   calculateDays 
-} from './time-off-api'
+} from '@/lib/api/services/time-off-api'
 
 export function TimeOffRequests() {
   const [requests, setRequests] = useState<TimeOffRequest[]>([])
@@ -26,7 +26,7 @@ export function TimeOffRequests() {
     endDate: '',
     reason: ''
   })
-  const toast = useToast()
+  const { toast } = useToast()
 
   const loadRequests = useCallback(async () => {
     const data = await fetchTimeOffRequests()

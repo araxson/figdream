@@ -9,19 +9,9 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Skeleton } from '@/components/ui/skeleton'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import {
   Select,
   SelectContent,
@@ -29,65 +19,53 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { 
-  MoreHorizontal, 
-  Edit, 
-  Shield, 
-  Ban, 
-  Mail, 
-  Search,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
-  Filter,
-  UserCheck,
   UserX,
-  Users
+  Users,
+  Search,
+  Filter
 } from 'lucide-react'
-import { useEffect, useState, useCallback, useMemo } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { Database } from '@/types/database.types'
+import { useState, useMemo } from 'react'
 import { cn } from '@/lib/utils'
+import { toast } from 'sonner'
+import { UsersPagination } from './users-table-pagination'
+import { UsersTableRow } from './users-table-row'
+import type { SortField, SortOrder, UsersTableProps } from '@/types/features/users-table-types'
 
-type Profile = Database['public']['Tables']['profiles']['Row']
-
-type SortField = 'email' | 'role' | 'created_at' | 'full_name'
-type SortOrder = 'asc' | 'desc'
-
-export function UsersTable() {
-  const [users, setUsers] = useState<Profile[]>([])
-  const [loading, setLoading] = useState(true)
+export function UsersTableClient({ initialUsers }: UsersTableProps) {
+  const [users, setUsers] = useState(initialUsers)
   const [searchQuery, setSearchQuery] = useState('')
   const [roleFilter, setRoleFilter] = useState<string>('all')
   const [sortField, setSortField] = useState<SortField>('created_at')
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc')
   const [currentPage, setCurrentPage] = useState(1)
+  const [_isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [selectedUser, setSelectedUser] = useState<typeof initialUsers[0] | null>(null)
+  const [_isLoading, setIsLoading] = useState(false)
   const itemsPerPage = 10
-  const supabase = createClient()
-
-  const fetchUsers = useCallback(async () => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
-      setUsers(data || [])
-    } catch (error) {
-      console.error('Error fetching users:', error)
-    } finally {
-      setLoading(false)
-    }
-  }, [supabase])
-   
-  useEffect(() => {
-    fetchUsers()
-  }, [fetchUsers])
 
   // Filter and sort users
   const filteredAndSortedUsers = useMemo(() => {
@@ -108,8 +86,8 @@ export function UsersTable() {
     
     // Apply sorting
     filtered.sort((a, b) => {
-      let aValue: any = a[sortField] || ''
-      let bValue: any = b[sortField] || ''
+      let aValue: string | number = a[sortField] || ''
+      let bValue: string | number = b[sortField] || ''
       
       if (sortField === 'created_at') {
         aValue = new Date(aValue as string).getTime()
@@ -142,25 +120,6 @@ export function UsersTable() {
     }
   }
 
-  const getRoleBadgeVariant = (role: string) => {
-    switch (role) {
-      case 'super_admin':
-        return 'destructive'
-      case 'salon_owner':
-        return 'default'
-      case 'staff':
-        return 'secondary'
-      default:
-        return 'outline'
-    }
-  }
-
-  const getRoleLabel = (role: string) => {
-    return role.split('_').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ')
-  }
-
   const SortIcon = ({ field }: { field: SortField }) => {
     if (sortField !== field) {
       return <ArrowUpDown className={cn("ml-2 h-4 w-4 text-muted-foreground")} />
@@ -170,31 +129,56 @@ export function UsersTable() {
       : <ArrowDown className={cn("ml-2 h-4 w-4")} />
   }
 
-  if (loading) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>All Users</CardTitle>
-          <CardDescription>Manage platform users and their permissions</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className={cn("space-y-4")}>
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className={cn("flex items-center space-x-4")}>
-                <Skeleton className={cn("h-12 w-12 rounded-full")} />
-                <div className={cn("space-y-2 flex-1")}>
-                  <Skeleton className={cn("h-4 w-[250px]")} />
-                  <Skeleton className={cn("h-4 w-[200px]")} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    )
+  const handleEditUser = (user: typeof initialUsers[0]) => {
+    // Navigate to edit page
+    window.location.href = `/admin/users/${user.id}/edit`
+  }
+
+  const handleChangeRole = async (user: typeof initialUsers[0], newRole: string) => {
+    setIsLoading(true)
+    try {
+      const response = await fetch(`/api/admin/users/${user.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: newRole })
+      })
+      
+      if (!response.ok) throw new Error('Failed to update role')
+      
+      const { user: updatedUser } = await response.json()
+      setUsers(prev => prev.map(u => u.id === user.id ? updatedUser : u))
+      toast.success('User role updated successfully')
+    } catch (error) {
+      console.error('Error updating role:', error)
+      toast.error('Failed to update user role')
+    } finally {
+      setIsLoading(false)
+      setIsRoleDialogOpen(false)
+    }
+  }
+
+  const handleDeleteUser = async (user: typeof initialUsers[0]) => {
+    setIsLoading(true)
+    try {
+      const response = await fetch(`/api/admin/users/${user.id}`, {
+        method: 'DELETE'
+      })
+      
+      if (!response.ok) throw new Error('Failed to delete user')
+      
+      setUsers(prev => prev.filter(u => u.id !== user.id))
+      toast.success('User deleted successfully')
+    } catch (error) {
+      console.error('Error deleting user:', error)
+      toast.error('Failed to delete user')
+    } finally {
+      setIsLoading(false)
+      setIsDeleteDialogOpen(false)
+    }
   }
 
   return (
+    <>
     <Card>
       <CardHeader>
         <div className={cn("flex flex-col gap-4")}>
@@ -310,83 +294,23 @@ export function UsersTable() {
                 </TableRow>
               ) : (
                 paginatedUsers.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell>
-                      <div className={cn("flex items-center gap-3")}>
-                        <Avatar className={cn("h-10 w-10")}>
-                          <AvatarImage src={user.avatar_url || ''} />
-                          <AvatarFallback>
-                            {user.full_name?.split(' ').map(n => n[0]).join('') || user.email?.substring(0, 2).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <div className={cn("font-medium")}>
-                            {user.full_name || 'Unnamed User'}
-                          </div>
-                          <div className={cn("text-sm text-muted-foreground")}>
-                            ID: {user.id.substring(0, 8)}...
-                          </div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className={cn("flex items-center gap-2")}>
-                        <Mail className={cn("h-4 w-4 text-muted-foreground")} />
-                        {user.email}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={getRoleBadgeVariant(user.role || 'customer')}>
-                        {getRoleLabel(user.role || 'customer')}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className={cn("text-sm")}>
-                        {new Date(user.created_at).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric'
-                        })}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className={cn("gap-1")}>
-                        <UserCheck className={cn("h-3 w-3")} />
-                        Active
-                      </Badge>
-                    </TableCell>
-                    <TableCell className={cn("text-right")}>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className={cn("h-8 w-8")}>
-                            <MoreHorizontal className={cn("h-4 w-4")} />
-                            <span className={cn("sr-only")}>Open menu</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className={cn("w-48")}>
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem>
-                            <Edit className={cn("mr-2 h-4 w-4")} />
-                            Edit User
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Shield className={cn("mr-2 h-4 w-4")} />
-                            Change Role
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Mail className={cn("mr-2 h-4 w-4")} />
-                            Send Email
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className={cn("text-destructive")}>
-                            <Ban className={cn("mr-2 h-4 w-4")} />
-                            Suspend User
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
+                  <UsersTableRow 
+                    key={user.id} 
+                    user={user}
+                    onEdit={handleEditUser}
+                    onChangeRole={(user) => {
+                      setSelectedUser(user)
+                      setIsRoleDialogOpen(true)
+                    }}
+                    onSendEmail={(_user) => {
+                      // TODO: Implement send email functionality
+                      toast.info('Email functionality will be available soon')
+                    }}
+                    onSuspend={(user) => {
+                      setSelectedUser(user)
+                      setIsDeleteDialogOpen(true)
+                    }}
+                  />
                 ))
               )}
             </TableBody>
@@ -395,65 +319,82 @@ export function UsersTable() {
         
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className={cn("flex items-center justify-between px-2 py-4")}>
-            <div className={cn("text-sm text-muted-foreground")}>
-              Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredAndSortedUsers.length)} of {filteredAndSortedUsers.length} users
-            </div>
-            <div className={cn("flex items-center gap-2")}>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(1)}
-                disabled={currentPage === 1}
-              >
-                <ChevronsLeft className={cn("h-4 w-4")} />
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(currentPage - 1)}
-                disabled={currentPage === 1}
-              >
-                <ChevronLeft className={cn("h-4 w-4")} />
-              </Button>
-              <div className={cn("flex items-center gap-1")}>
-                <Input
-                  type="number"
-                  value={currentPage}
-                  onChange={(e) => {
-                    const page = parseInt(e.target.value)
-                    if (page >= 1 && page <= totalPages) {
-                      setCurrentPage(page)
-                    }
-                  }}
-                  className={cn("h-8 w-12 text-center")}
-                  min={1}
-                  max={totalPages}
-                />
-                <span className={cn("text-sm text-muted-foreground")}>
-                  of {totalPages}
-                </span>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(currentPage + 1)}
-                disabled={currentPage === totalPages}
-              >
-                <ChevronRight className={cn("h-4 w-4")} />
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(totalPages)}
-                disabled={currentPage === totalPages}
-              >
-                <ChevronsRight className={cn("h-4 w-4")} />
-              </Button>
-            </div>
-          </div>
+          <UsersPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            itemsPerPage={itemsPerPage}
+            totalItems={filteredAndSortedUsers.length}
+            onPageChange={setCurrentPage}
+          />
         )}
       </CardContent>
     </Card>
+
+    {/* Role Change Dialog */}
+    <Dialog open={isRoleDialogOpen} onOpenChange={setIsRoleDialogOpen}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Change User Role</DialogTitle>
+          <DialogDescription>
+            Update the role for {selectedUser?.full_name || selectedUser?.email}
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4">
+          <Select
+            defaultValue={selectedUser?.role || 'customer'}
+            onValueChange={(value) => {
+              if (selectedUser) {
+                handleChangeRole(selectedUser, value)
+              }
+            }}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select a role" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="super_admin">Super Admin</SelectItem>
+              <SelectItem value="salon_owner">Salon Owner</SelectItem>
+              <SelectItem value="salon_manager">Salon Manager</SelectItem>
+              <SelectItem value="location_manager">Location Manager</SelectItem>
+              <SelectItem value="staff">Staff</SelectItem>
+              <SelectItem value="customer">Customer</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setIsRoleDialogOpen(false)}>
+            Cancel
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+
+    {/* Delete Confirmation Dialog */}
+    <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. This will permanently delete the user
+            &quot;{selectedUser?.full_name || selectedUser?.email}&quot; and remove all their data
+            from the system.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={() => {
+              if (selectedUser) {
+                handleDeleteUser(selectedUser)
+              }
+            }}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          >
+            Delete User
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+    </>
   )
 }

@@ -2,9 +2,9 @@
 
 import { SalonSettings } from './salon-settings'
 import { EmailSettings as NotificationSettings } from './email'
-import { PaymentSettings } from './payment'
-import { SettingsIntegrations as IntegrationSettings } from './integrations-settings'
-import { SecuritySettings } from './security'
+import { SettingsPayment as PaymentSettings } from './business/payment-settings'
+import { IntegrationSettings } from './business/integrations'
+import { SettingsSecurity as SecuritySettings } from './security/security-settings'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useState } from 'react'
 

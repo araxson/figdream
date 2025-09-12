@@ -342,7 +342,7 @@ useEffect(() => {
 - **FOLLOW:** Use security definer functions for complex RLS logic
 - **AVOID:** Never trust `supabase.auth.getSession()` in Server Components
 - **AVOID:** Exposing service role key in any client code
-- **AVOID:** Using `raw_app_meta_data` in RLS policies (use `raw_app_meta_data` instead)
+- **AVOID:** Using `raw_user_meta_data` in RLS policies (use `raw_app_meta_data` instead)
 - **AVOID:** Creating security definer functions in exposed schemas
 - **AVOID:** Direct database access without RLS enabled
 
@@ -570,7 +570,7 @@ useEffect(() => {
 - **FOLLOW:** Create comprehensive RLS policies for all CRUD operations
 - **FOLLOW:** Review RLS policies thoroughly with different user roles
 - **FOLLOW:** Use `raw_app_meta_data` for authorization data (cannot be modified by users)
-- **FOLLOW:** Never use `raw_app_meta_data` in RLS policies - it can be modified by authenticated users
+- **FOLLOW:** Never use `raw_user_meta_data` in RLS policies - it can be modified by authenticated users
 - **FOLLOW:** Implement proper role-based access control (RBAC) patterns
 - **FOLLOW:** Use MFA verification in sensitive RLS policies when needed
 - **FOLLOW:** Audit RLS policies regularly for security gaps
@@ -580,7 +580,7 @@ useEffect(() => {
 - **FOLLOW:** Implement proper error handling with raise exception in database functions
 - **FOLLOW:** Create triggers for automated data validation and logging
 - **AVOID:** Bypassing RLS without proper security review
-- **AVOID:** Using user-modifiable data (`raw_app_meta_data`) in security-critical policies
+- **AVOID:** Using user-modifiable data (`raw_user_meta_data`) in security-critical policies
 - **AVOID:** Creating overly permissive policies without proper justification
 - **AVOID:** Creating views without considering RLS bypass (use security_invoker)
 - **AVOID:** Database functions without proper input validation and error handling
@@ -614,10 +614,10 @@ useEffect(() => {
 - **FOLLOW:** Use initPlan optimization by wrapping functions in SELECT: `(select auth.uid())`
 - **FOLLOW:** Create indexes on all columns used in RLS policies for 100x+ performance gains
 - **FOLLOW:** Reorganize queries to get values into arrays first, then use IN/ANY operations
-- **FOLLOW:** Use `raw_app_meta_data` instead of `raw_app_meta_data` for authorization data
+- **FOLLOW:** Use `raw_app_meta_data` instead of `raw_user_meta_data` for authorization data
 - **FOLLOW:** Cache function results that don't change based on row data using wrapped SELECTs
 - **FOLLOW:** Monitor RLS policy performance using EXPLAIN ANALYZE
-- **AVOID:** Using `raw_app_meta_data` in RLS policies (can be modified by users)
+- **AVOID:** Using `raw_user_meta_data` in RLS policies (can be modified by users)
 - **AVOID:** Complex joins in RLS policies without proper optimization
 - **AVOID:** Calling functions on each row without initPlan optimization
 
@@ -898,7 +898,7 @@ useEffect(() => {
 
 - **FOLLOW:** Middleware is no longer safe for authentication (CVE-2025-29927)
 - **FOLLOW:** Data Access Layer (DAL) is now the mandatory approach for authentication
-- **FOLLOW:** Always use `raw_app_meta_data` instead of `raw_app_meta_data` in RLS policies
+- **FOLLOW:** Always use `raw_app_meta_data` instead of `raw_user_meta_data` in RLS policies
 - **FOLLOW:** SearchParams must never be used for authorization decisions
 - **FOLLOW:** Implement the Proximity Principle - auth checks closest to data access
 - **FOLLOW:** Use Data Transfer Objects (DTOs) to prevent data leakage

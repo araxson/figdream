@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Calendar, CheckCircle, Clock } from 'lucide-react'
-import { TimeOffStats } from './time-off-types'
+import { TimeOffStats } from '@/types/features/time-off-types'
 
 interface TimeOffStatsCardProps {
   stats: TimeOffStats

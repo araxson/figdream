@@ -1,5 +1,5 @@
 import { Suspense } from 'react'
-import { CardGridSkeleton } from '@/components/ui/skeleton-variants'
+import { CardGridSkeleton } from '@/components/shared/ui-helpers/skeleton-patterns'
 import { Skeleton } from '@/components/ui/skeleton'
 // import { LocationsHeader } from '@/components/sections/locations/header'
 // import { LocationsList } from '@/components/sections/locations/list'

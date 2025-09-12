@@ -14,9 +14,9 @@ import {
 } from '@/components/ui/dialog'
 import { UserPlus } from 'lucide-react'
 import { toast } from 'sonner'
-import { WalkInFormData, WalkInFormProps } from './walk-in-types'
+import { WalkInFormData, WalkInFormProps } from '@/types/features/walk-in-types'
 import { WalkInFormFields } from './walk-in-form-fields'
-import { createWalkInAppointment, calculateTotal, calculateDuration } from './walk-in-service'
+import { createWalkInAppointment, calculateTotal, calculateDuration } from '@/lib/api/services/walk-in-service'
 
 export function WalkInForm({ salonId, staffMembers = [], services = [] }: WalkInFormProps) {
   const router = useRouter()

@@ -18,7 +18,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { MoreHorizontal, Edit, Eye, Power, Trash } from 'lucide-react'
+import { MoreHorizontal, Edit, Eye, Power, Trash, LogIn } from 'lucide-react'
 import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Database } from '@/types/database.types'
@@ -148,6 +148,14 @@ export function SalonsTable() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
+                        <DropdownMenuItem 
+                          onClick={() => window.location.href = `/admin/salons/${salon.id}/manage`}
+                          className="font-semibold"
+                        >
+                          <LogIn className="mr-2 h-4 w-4" />
+                          Manage Salon
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem>
                           <Eye className="mr-2 h-4 w-4" />
                           View Details

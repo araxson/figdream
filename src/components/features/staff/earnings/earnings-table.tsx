@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Calendar } from 'lucide-react'
 import { formatCurrency, formatDate } from '@/lib/utils/format'
-import { StaffEarning } from './earnings-types'
+import { StaffEarning } from '@/types/features/earnings-types'
 
 interface EarningsTableProps {
   earnings: StaffEarning[]

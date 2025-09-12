@@ -55,7 +55,7 @@ export function TopPerformers() {
           .select(`
             id,
             name,
-            users!inner (email),
+            profiles!inner (email),
             appointments (
               status,
               start_time,
@@ -90,7 +90,7 @@ export function TopPerformers() {
             const avgRating = salon.reviews?.length ? 
               salon.reviews.reduce((sum, r) => sum + r.rating, 0) / salon.reviews.length : 0
 
-            const user = Array.isArray(salon.users) ? salon.users[0] as UserData : salon.users as UserData
+            const user = Array.isArray(salon.profiles) ? salon.profiles[0] as UserData : salon.profiles as UserData
             const ownerEmail = user?.email || ''
             
             return {
@@ -114,7 +114,7 @@ export function TopPerformers() {
             id,
             user_id,
             salon_id,
-            users!inner (email),
+            profiles!inner (email),
             salons (name),
             appointments (
               status,
@@ -141,7 +141,7 @@ export function TopPerformers() {
             const avgRating = member.reviews?.length ? 
               member.reviews.reduce((sum, r) => sum + r.rating, 0) / member.reviews.length : 0
 
-            const user = Array.isArray(member.users) ? member.users[0] as UserData : member.users as UserData
+            const user = Array.isArray(member.profiles) ? member.profiles[0] as UserData : member.profiles as UserData
             const userEmail = user?.email || ''
             const salonData = member.salons as SalonData | null
             

@@ -12,7 +12,7 @@ import { useEffect, useCallback, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Database } from '@/types/database.types'
 import { useRouter } from 'next/navigation'
-import { useToast } from '@/hooks/ui/use-toast'
+import { useToast } from '@/hooks/use-toast'
 
 const salonSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -29,7 +29,7 @@ export function SalonSettings() {
   const [loading, setLoading] = useState(false)
   const supabase = createClient()
   const router = useRouter()
-  const toast = useToast()
+  const { toast } = useToast()
 
   const form = useForm<z.infer<typeof salonSchema>>({
     resolver: zodResolver(salonSchema),

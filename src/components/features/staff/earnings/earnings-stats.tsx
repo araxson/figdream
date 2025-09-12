@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { TrendingUp } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils/format'
-import { EarningsStats } from './earnings-types'
+import { EarningsStats } from '@/types/features/earnings-types'
 
 interface EarningsStatsCardsProps {
   stats: EarningsStats | null

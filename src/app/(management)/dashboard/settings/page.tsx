@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { Suspense } from 'react'
-import { SettingsPage } from '@/components/features/settings/settings-page'
-import { FormSkeleton } from '@/components/ui/skeleton-variants'
+import { SettingsPage } from '@/components/features/settings/settings-content'
+import { FormSkeleton } from '@/components/shared/ui-helpers/skeleton-patterns'
 
 export const metadata: Metadata = {
   title: 'Settings',

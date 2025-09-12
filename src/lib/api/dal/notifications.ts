@@ -15,6 +15,7 @@ export type NotificationDTO = {
   is_read: boolean;
   data: Record<string, unknown> | null;
   created_at: string;
+  updated_at: string;
   read_at: string | null;
 };
 
@@ -45,6 +46,7 @@ export const getUserNotifications = cache(async (): Promise<NotificationDTO[]> =
     is_read: notification.is_read ?? false,
     data: notification.data as Record<string, unknown> | null,
     created_at: notification.created_at,
+    updated_at: notification.updated_at,
     read_at: notification.read_at,
   }));
 });
@@ -137,6 +139,7 @@ export const createNotification = async (notification: NotificationInsert): Prom
     is_read: data.is_read ?? false,
     data: data.data as Record<string, unknown> | null,
     created_at: data.created_at,
+    updated_at: data.updated_at || data.created_at,
     read_at: data.read_at,
   };
 };

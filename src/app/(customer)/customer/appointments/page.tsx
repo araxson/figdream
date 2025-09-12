@@ -1,18 +1,14 @@
 import { Suspense } from 'react'
-import { AppointmentCardSkeleton } from '@/components/ui/skeleton-variants'
+import { AppointmentCardSkeleton } from '@/components/shared/ui-helpers/skeleton-patterns'
 import { Skeleton } from '@/components/ui/skeleton'
-// import { AppointmentsHeader } from '@/components/sections/appointments/header'
-// import { AppointmentsList } from '@/components/sections/appointments/list'
+import { AppointmentHeader } from '@/components/features/appointments/appointment-header'
+import { AppointmentList } from '@/components/features/appointments/appointment-list'
 
 export default function AppointmentsPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <Suspense fallback={<div className="space-y-2"><Skeleton className="h-8 w-48" /><Skeleton className="h-4 w-96" /></div>}>
-        {/* <AppointmentsHeader /> */}
-        <div>
-          <h1 className="text-3xl font-bold">My Appointments</h1>
-          <p className="text-muted-foreground">View and manage your appointments</p>
-        </div>
+        <AppointmentHeader userRole="customer" />
       </Suspense>
       
       <Suspense fallback={
@@ -22,10 +18,11 @@ export default function AppointmentsPage() {
           ))}
         </div>
       }>
-        {/* <AppointmentsList /> */}
-        <div className="border rounded-lg p-6">
-          <p className="text-muted-foreground text-center">Your appointments will appear here</p>
-        </div>
+        <AppointmentList 
+          userRole="customer" 
+          view="upcoming" 
+          displayMode="card"
+        />
       </Suspense>
     </div>
   )

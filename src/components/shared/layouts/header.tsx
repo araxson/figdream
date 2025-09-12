@@ -1,10 +1,20 @@
 'use client'
 
-import React from 'react'
+import * as React from 'react'
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
+import { cn } from '@/lib/utils'
+import { ROLE_ROUTES } from '@/lib/auth/constants'
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from '@/components/ui/navigation-menu'
 import { Button } from '@/components/ui/button'
-import { Menu, Bell, User, Search, Calendar, LogOut, Settings, Home, BookOpen, Users, BarChart3, Shield } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,13 +26,13 @@ import {
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
+import { Menu, LogOut, Settings, Calendar } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
@@ -36,90 +46,58 @@ interface HeaderProps {
   }
 }
 
-// Navigation items based on role
-const getNavigationItems = (role?: string) => {
-  if (!role) {
-    return [
-      { title: 'Home', href: '/', icon: Home },
-      { title: 'Browse Salons', href: '/browse', icon: Search },
-      { title: 'Services', href: '/services', icon: BookOpen },
-      { title: 'About', href: '/about', icon: Users },
-    ]
-  }
+const services: { title: string; href: string; description: string }[] = [
+  {
+    title: "Hair Services",
+    href: "/services/hair",
+    description: "Professional haircuts, coloring, and styling services.",
+  },
+  {
+    title: "Nail Services",
+    href: "/services/nails",
+    description: "Manicures, pedicures, and nail art by expert technicians.",
+  },
+  {
+    title: "Spa & Wellness",
+    href: "/services/spa",
+    description: "Relaxing massages, facials, and body treatments.",
+  },
+  {
+    title: "Beauty Treatments",
+    href: "/services/beauty",
+    description: "Makeup, eyebrows, lashes, and skincare services.",
+  },
+]
 
-  switch (role) {
-    case 'customer':
-      return [
-        { title: 'Dashboard', href: '/customer', icon: Home },
-        { title: 'Book Appointment', href: '/customer/book', icon: Calendar },
-        { title: 'My Appointments', href: '/customer/appointments', icon: BookOpen },
-        { title: 'Favorites', href: '/customer/favorites', icon: Users },
-        { title: 'Preferences', href: '/customer/preferences', icon: Settings },
-      ]
-    case 'staff':
-      return [
-        { title: 'Dashboard', href: '/staff', icon: Home },
-        { title: 'Schedule', href: '/staff/schedule', icon: Calendar },
-        { title: 'Appointments', href: '/staff/appointments', icon: BookOpen },
-        { title: 'Clients', href: '/staff/clients', icon: Users },
-        { title: 'Analytics', href: '/staff/analytics', icon: BarChart3 },
-      ]
-    case 'admin':
-      return [
-        { title: 'Dashboard', href: '/admin', icon: Home },
-        { title: 'Salon Management', href: '/admin/salon', icon: Settings },
-        { title: 'Staff', href: '/admin/staff', icon: Users },
-        { title: 'Services', href: '/admin/services', icon: BookOpen },
-        { title: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
-      ]
-    case 'super_admin':
-      return [
-        { title: 'Dashboard', href: '/admin', icon: Home },
-        { title: 'Platform Overview', href: '/admin/platform', icon: Shield },
-        { title: 'Salons', href: '/admin/salons', icon: Settings },
-        { title: 'Users', href: '/admin/users', icon: Users },
-        { title: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
-      ]
-    default:
-      return []
-  }
-}
-
-// Quick actions based on role
-const getQuickActions = (role?: string) => {
-  if (!role) {
-    return [
-      { title: 'Sign In', href: '/login', icon: User, variant: 'ghost' as const },
-      { title: 'Sign Up', href: '/register', icon: User, variant: 'default' as const },
-    ]
-  }
-
-  switch (role) {
-    case 'customer':
-      return [
-        { title: 'Book Now', href: '/customer/book', icon: Calendar, variant: 'default' as const },
-      ]
-    case 'staff':
-      return [
-        { title: 'View Schedule', href: '/staff/schedule', icon: Calendar, variant: 'default' as const },
-      ]
-    case 'admin':
-    case 'super_admin':
-      return [
-        { title: 'Manage', href: '/admin', icon: Settings, variant: 'default' as const },
-      ]
-    default:
-      return []
-  }
-}
+const ListItem = React.forwardRef<
+  React.ElementRef<"a">,
+  React.ComponentPropsWithoutRef<"a">
+>(({ className, title, children, ...props }, ref) => {
+  return (
+    <li>
+      <NavigationMenuLink asChild>
+        <a
+          ref={ref}
+          className={cn(
+            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+            className
+          )}
+          {...props}
+        >
+          <div className="text-sm font-medium leading-none">{title}</div>
+          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+            {children}
+          </p>
+        </a>
+      </NavigationMenuLink>
+    </li>
+  )
+})
+ListItem.displayName = "ListItem"
 
 export function Header({ user }: HeaderProps) {
-  const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
-  
-  const navigationItems = getNavigationItems(user?.role)
-  const quickActions = getQuickActions(user?.role)
   
   const handleSignOut = async () => {
     try {
@@ -132,209 +110,209 @@ export function Header({ user }: HeaderProps) {
     }
   }
 
-  // Determine if search should be shown
-  const showSearch = !user || user.role === 'customer'
-  
-  // Get display name
   const displayName = user?.name || user?.email?.split('@')[0] || 'User'
   const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
-          {/* Logo and Mobile Menu */}
-          <div className="flex items-center gap-4">
-            <Sheet>
-              <SheetTrigger asChild className="lg:hidden">
-                <Button variant="ghost" size="icon">
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-72">
-                <SheetHeader>
-                  <SheetTitle>Menu</SheetTitle>
-                </SheetHeader>
-                <nav className="mt-6 space-y-1">
-                  {navigationItems.map((item) => {
-                    const Icon = item.icon
-                    const isActive = pathname === item.href
-                    return (
-                      <Link
-                        key={item.title}
-                        href={item.href}
-                        className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                          isActive 
-                            ? 'bg-primary text-primary-foreground' 
-                            : 'hover:bg-accent'
-                        }`}
-                      >
-                        <Icon className="h-4 w-4" />
-                        {item.title}
-                      </Link>
-                    )
-                  })}
-                  {user && (
-                    <>
-                      <div className="my-2 border-t" />
-                      <button
-                        onClick={handleSignOut}
-                        className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-destructive hover:bg-accent"
-                      >
-                        <LogOut className="h-4 w-4" />
-                        Sign Out
-                      </button>
-                    </>
-                  )}
-                </nav>
-              </SheetContent>
-            </Sheet>
-
-            <Link href={user ? `/${user.role}` : '/'} className="flex items-center gap-2">
-              <Calendar className="h-6 w-6 text-primary" />
-              <span className="font-bold text-xl hidden sm:inline">FigDream</span>
-            </Link>
-          </div>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-6">
-            {navigationItems.slice(0, 5).map((item) => {
-              const isActive = pathname === item.href
-              return (
-                <Link
-                  key={item.title}
-                  href={item.href}
-                  className={`text-sm font-medium transition-colors ${
-                    isActive 
-                      ? 'text-primary' 
-                      : 'text-muted-foreground hover:text-primary'
-                  }`}
-                >
-                  {item.title}
-                </Link>
-              )
-            })}
-          </nav>
-
-          {/* Search Bar */}
-          {showSearch && (
-            <div className="hidden md:flex flex-1 max-w-md mx-8">
-              <div className="relative w-full">
-                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search salons, services..."
-                  className="pl-10"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Right Actions */}
-          <div className="flex items-center gap-2">
-            {/* Quick Actions */}
-            {!user && quickActions.length > 0 && (
-              <div className="hidden sm:flex gap-2">
-                {quickActions.map((action) => {
-                  const Icon = action.icon
-                  return (
-                    <Button
-                      key={action.title}
-                      variant={action.variant}
-                      size="sm"
-                      asChild
-                    >
-                      <Link href={action.href}>
-                        <Icon className="h-4 w-4 mr-2" />
-                        {action.title}
-                      </Link>
+    <header className="sticky top-0 z-50 w-full border-b bg-background">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex h-16 items-center">
+        {/* Mobile Menu */}
+        <Sheet>
+          <SheetTrigger asChild className="md:hidden">
+            <Button variant="ghost" size="icon">
+              <Menu className="h-5 w-5" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left">
+            <SheetHeader>
+              <SheetTitle>Menu</SheetTitle>
+              <SheetDescription>
+                Navigate our platform
+              </SheetDescription>
+            </SheetHeader>
+            <div className="grid gap-4 py-4">
+              <Link href="/" className="text-sm font-medium">
+                Home
+              </Link>
+              <Link href="/services" className="text-sm font-medium">
+                Services
+              </Link>
+              <Link href="/customer/book" className="text-sm font-medium">
+                Browse Salons
+              </Link>
+              <Link href="/about" className="text-sm font-medium">
+                About
+              </Link>
+              {!user ? (
+                <>
+                  <Link href="/login">
+                    <Button className="w-full" variant="outline">
+                      Sign In
                     </Button>
-                  )
-                })}
-              </div>
-            )}
-
-            {/* Notifications (for authenticated users) */}
-            {user && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="relative">
-                    <Bell className="h-5 w-5" />
-                    <Badge className="absolute -right-1 -top-1 h-5 w-5 rounded-full p-0 text-[10px]">
-                      3
-                    </Badge>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-80">
-                  <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <div className="flex flex-col gap-1">
-                      <span className="text-sm font-medium">Welcome to FigDream!</span>
-                      <span className="text-xs text-muted-foreground">
-                        Complete your profile to get started
-                      </span>
-                    </div>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-
-            {/* User Menu */}
-            {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={user.avatar} />
-                      <AvatarFallback>{initials}</AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel>
-                    <div className="flex flex-col">
-                      <span>{displayName}</span>
-                      <span className="text-xs text-muted-foreground">{user.email}</span>
-                      <Badge variant="outline" className="mt-1 w-fit text-xs">
-                        {user.role.replace('_', ' ')}
-                      </Badge>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href={`/${user.role}`}>Dashboard</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href={`/${user.role}/settings`}>Settings</Link>
-                  </DropdownMenuItem>
-                  {user.role === 'customer' && (
-                    <>
-                      <DropdownMenuItem asChild>
-                        <Link href="/customer/appointments">My Appointments</Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link href="/customer/favorites">Favorites</Link>
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem 
-                    className="text-destructive cursor-pointer"
-                    onClick={handleSignOut}
-                  >
-                    <LogOut className="h-4 w-4 mr-2" />
+                  </Link>
+                  <Link href="/register">
+                    <Button className="w-full">
+                      Sign Up
+                    </Button>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href={user.role && user.role in ROLE_ROUTES ? ROLE_ROUTES[user.role as keyof typeof ROLE_ROUTES] : '/customer'} className="text-sm font-medium">
+                    Dashboard
+                  </Link>
+                  <Button onClick={handleSignOut} variant="outline" className="w-full">
                     Sign Out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <Button variant="ghost" size="icon" asChild>
-                <Link href="/login">
-                  <User className="h-5 w-5" />
+                  </Button>
+                </>
+              )}
+            </div>
+          </SheetContent>
+        </Sheet>
+
+        {/* Logo */}
+        <Link href="/" className="mr-6 flex items-center space-x-2">
+          <Calendar className="h-6 w-6" />
+          <span className="hidden font-bold sm:inline-block">
+            Book Now
+          </span>
+        </Link>
+
+        {/* Desktop Navigation */}
+        <NavigationMenu className="hidden md:flex">
+          <NavigationMenuList>
+            <NavigationMenuItem>
+              <Link href="/" legacyBehavior passHref>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                  Home
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+
+            <NavigationMenuItem>
+              <NavigationMenuTrigger>Services</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                  {services.map((service) => (
+                    <ListItem
+                      key={service.title}
+                      title={service.title}
+                      href={service.href}
+                    >
+                      {service.description}
+                    </ListItem>
+                  ))}
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+
+            <NavigationMenuItem>
+              <NavigationMenuTrigger>Browse</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                  <li className="row-span-3">
+                    <NavigationMenuLink asChild>
+                      <Link
+                        className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                        href="/customer/book"
+                      >
+                        <Calendar className="h-6 w-6" />
+                        <div className="mb-2 mt-4 text-lg font-medium">
+                          Find Salons
+                        </div>
+                        <p className="text-sm leading-tight text-muted-foreground">
+                          Discover top-rated beauty salons in your area
+                        </p>
+                      </Link>
+                    </NavigationMenuLink>
+                  </li>
+                  <ListItem href="/customer/book?filter=near-me" title="Near Me">
+                    Find salons based on your current location
+                  </ListItem>
+                  <ListItem href="/customer/book?filter=top-rated" title="Top Rated">
+                    Browse highest-rated salons and services
+                  </ListItem>
+                  <ListItem href="/customer/book?filter=categories" title="By Category">
+                    Search by service type and specialization
+                  </ListItem>
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+
+            <NavigationMenuItem>
+              <Link href="/about" legacyBehavior passHref>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                  About
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+
+            {user && (
+              <NavigationMenuItem>
+                <Link href={user.role && user.role in ROLE_ROUTES ? ROLE_ROUTES[user.role as keyof typeof ROLE_ROUTES] : '/customer'} legacyBehavior passHref>
+                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                    Dashboard
+                  </NavigationMenuLink>
                 </Link>
-              </Button>
+              </NavigationMenuItem>
             )}
-          </div>
+          </NavigationMenuList>
+        </NavigationMenu>
+
+        {/* Right Side Actions */}
+        <div className="ml-auto flex items-center space-x-4">
+          {!user ? (
+            <>
+              <Link href="/login">
+                <Button variant="ghost" size="sm">
+                  Sign In
+                </Button>
+              </Link>
+              <Link href="/register">
+                <Button size="sm">
+                  Sign Up
+                </Button>
+              </Link>
+            </>
+          ) : (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={user.avatar} alt={displayName} />
+                    <AvatarFallback>{initials}</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{displayName}</p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {user.email}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href={user.role && user.role in ROLE_ROUTES ? ROLE_ROUTES[user.role as keyof typeof ROLE_ROUTES] : '/customer'}>
+                    Dashboard
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href={user.role === 'customer' ? '/customer/preferences' : user.role === 'staff' ? '/staff/profile' : `${user.role && user.role in ROLE_ROUTES ? ROLE_ROUTES[user.role as keyof typeof ROLE_ROUTES] : '/customer'}/settings`}>
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSignOut}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
       </div>
     </header>

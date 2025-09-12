@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Clock, Coffee } from 'lucide-react'
 import Link from 'next/link'
-import { ScheduleItem } from './dashboard-types'
+import { ScheduleItem } from '@/types/features/dashboard-types'
 
 interface DashboardScheduleProps {
   schedule: ScheduleItem[]

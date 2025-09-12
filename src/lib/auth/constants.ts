@@ -4,7 +4,6 @@
 export const USER_ROLES = {
   SUPER_ADMIN: 'super_admin',
   SALON_OWNER: 'salon_owner', 
-  LOCATION_MANAGER: 'location_manager',
   SALON_MANAGER: 'salon_manager',
   STAFF: 'staff',
   CUSTOMER: 'customer'
@@ -16,8 +15,7 @@ export type UserRole = typeof USER_ROLES[keyof typeof USER_ROLES];
 export const ROLE_HIERARCHY: Record<UserRole, number> = {
   [USER_ROLES.SUPER_ADMIN]: 100,
   [USER_ROLES.SALON_OWNER]: 80,
-  [USER_ROLES.SALON_MANAGER]: 70,
-  [USER_ROLES.LOCATION_MANAGER]: 60,
+  [USER_ROLES.SALON_MANAGER]: 60,
   [USER_ROLES.STAFF]: 40,
   [USER_ROLES.CUSTOMER]: 20
 };
@@ -27,7 +25,6 @@ export const ROLE_ROUTES: Record<UserRole, string> = {
   [USER_ROLES.SUPER_ADMIN]: '/admin',
   [USER_ROLES.SALON_OWNER]: '/dashboard',
   [USER_ROLES.SALON_MANAGER]: '/dashboard',
-  [USER_ROLES.LOCATION_MANAGER]: '/dashboard',
   [USER_ROLES.STAFF]: '/staff',
   [USER_ROLES.CUSTOMER]: '/customer'
 };
@@ -41,8 +38,7 @@ export const ADMIN_ROLES: UserRole[] = [
 export const DASHBOARD_ROLES: UserRole[] = [
   USER_ROLES.SUPER_ADMIN,
   USER_ROLES.SALON_OWNER,
-  USER_ROLES.SALON_MANAGER,
-  USER_ROLES.LOCATION_MANAGER
+  USER_ROLES.SALON_MANAGER
 ];
 
 // Roles that can access staff area
@@ -50,7 +46,6 @@ export const STAFF_ROLES: UserRole[] = [
   USER_ROLES.SUPER_ADMIN,
   USER_ROLES.SALON_OWNER,
   USER_ROLES.SALON_MANAGER,
-  USER_ROLES.LOCATION_MANAGER,
   USER_ROLES.STAFF
 ];
 

@@ -28,7 +28,7 @@ const faqSchema = z.object({
   answer: z.string().min(1, 'Answer is required'),
   category_id: z.string().nullable().optional(),
   sort_order: z.number().min(0),
-  is_active: z.boolean().nullable(),
+  is_active: z.boolean(),
 })
 
 type FAQFormData = z.infer<typeof faqSchema>
@@ -75,10 +75,15 @@ export function FAQForm({ categories, question, onSuccess }: FAQFormProps) {
   const onSubmit = async (data: FAQFormData) => {
     setIsLoading(true)
     try {
+      const submitData = {
+        ...data,
+        is_active: data.is_active
+      }
+      
       if (question) {
         const { error } = await supabase
           .from('faq_questions')
-          .update(data)
+          .update(submitData)
           .eq('id', question.id)
 
         if (error) throw error
@@ -86,7 +91,7 @@ export function FAQForm({ categories, question, onSuccess }: FAQFormProps) {
       } else {
         const { error } = await supabase
           .from('faq_questions')
-          .insert(data)
+          .insert(submitData)
 
         if (error) throw error
         toast.success('Question added successfully')

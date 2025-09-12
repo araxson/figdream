@@ -1,7 +1,7 @@
 'use client'
 
 import { Suspense } from 'react'
-import { CardGridSkeleton } from '@/components/ui/skeleton-variants'
+import { CardGridSkeleton } from '@/components/shared/ui-helpers/skeleton-patterns'
 import { Card, CardContent } from '@/components/ui/card'
 import { Store, MapPin, Search } from 'lucide-react'
 import { Input } from '@/components/ui/input'

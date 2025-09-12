@@ -1,29 +1,26 @@
 import { Suspense } from 'react'
-import { PlatformSubscriptionsClient } from './client'
-import { Skeleton } from '@/components/ui/skeleton'
+import { requireRole } from '@/lib/api/dal/auth'
+import { USER_ROLES } from '@/lib/auth/constants'
+import { SubscriptionsServer } from '@/components/features/subscriptions/subscriptions-server'
+import { CardGridSkeleton } from '@/components/shared/ui-helpers/skeleton-patterns'
 
 export const metadata = {
   title: 'Platform Subscriptions',
   description: 'Manage platform subscription plans and billing'
 }
 
-export default function PlatformSubscriptionsPage() {
+export default async function PlatformSubscriptionsPage() {
+  await requireRole([USER_ROLES.SUPER_ADMIN])
+  
   return (
-    <Suspense fallback={<SubscriptionsSkeleton />}>
-      <PlatformSubscriptionsClient />
-    </Suspense>
-  )
-}
-
-function SubscriptionsSkeleton() {
-  return (
-    <div className="space-y-6">
-      <Skeleton className="h-10 w-64" />
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <Skeleton key={i} className="h-48" />
-        ))}
+    <Suspense fallback={
+      <div className="space-y-6">
+        <div className="h-10 w-64 bg-muted animate-pulse rounded" />
+        <CardGridSkeleton count={4} />
+        <div className="h-[400px] bg-muted animate-pulse rounded" />
       </div>
-    </div>
+    }>
+      <SubscriptionsServer />
+    </Suspense>
   )
 }

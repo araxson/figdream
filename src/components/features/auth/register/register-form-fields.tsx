@@ -11,7 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Eye, EyeOff } from "lucide-react"
+import { Eye, EyeOff, User, Mail, Phone, Lock } from "lucide-react"
 import { RegisterFormValues } from "./register-schema"
 
 interface RegisterFormFieldsProps {
@@ -38,7 +38,17 @@ export function RegisterFormFields({
           <FormItem>
             <FormLabel>Full Name</FormLabel>
             <FormControl>
-              <Input placeholder="John Doe" {...field} />
+              <div className="relative flex">
+                <div className="absolute left-0 top-0 h-full w-10 flex items-center justify-center">
+                  <User className="h-4 w-4 text-muted-foreground" />
+                  <div className="absolute right-0 top-1/4 h-1/2 w-px bg-border" />
+                </div>
+                <Input 
+                  placeholder="John Doe" 
+                  className="pl-12 bg-muted/30 hover:bg-muted/40 transition-colors"
+                  {...field} 
+                />
+              </div>
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -52,7 +62,18 @@ export function RegisterFormFields({
           <FormItem>
             <FormLabel>Email</FormLabel>
             <FormControl>
-              <Input type="email" placeholder="john@example.com" {...field} />
+              <div className="relative flex">
+                <div className="absolute left-0 top-0 h-full w-10 flex items-center justify-center">
+                  <Mail className="h-4 w-4 text-muted-foreground" />
+                  <div className="absolute right-0 top-1/4 h-1/2 w-px bg-border" />
+                </div>
+                <Input 
+                  type="email" 
+                  placeholder="john@example.com" 
+                  className="pl-12 bg-muted/30 hover:bg-muted/40 transition-colors"
+                  {...field} 
+                />
+              </div>
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -66,7 +87,18 @@ export function RegisterFormFields({
           <FormItem>
             <FormLabel>Phone Number (Optional)</FormLabel>
             <FormControl>
-              <Input type="tel" placeholder="+1 (555) 000-0000" {...field} />
+              <div className="relative flex">
+                <div className="absolute left-0 top-0 h-full w-10 flex items-center justify-center">
+                  <Phone className="h-4 w-4 text-muted-foreground" />
+                  <div className="absolute right-0 top-1/4 h-1/2 w-px bg-border" />
+                </div>
+                <Input 
+                  type="tel" 
+                  placeholder="+1 (555) 000-0000" 
+                  className="pl-12 bg-muted/30 hover:bg-muted/40 transition-colors"
+                  {...field} 
+                />
+              </div>
             </FormControl>
             <FormDescription>
               We&apos;ll use this to send appointment reminders
@@ -83,23 +115,28 @@ export function RegisterFormFields({
           <FormItem>
             <FormLabel>Password</FormLabel>
             <FormControl>
-              <div className="relative">
+              <div className="relative flex">
+                <div className="absolute left-0 top-0 h-full w-10 flex items-center justify-center z-10">
+                  <Lock className="h-4 w-4 text-muted-foreground" />
+                  <div className="absolute right-0 top-1/4 h-1/2 w-px bg-border" />
+                </div>
                 <Input
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
+                  className="pl-12 pr-10 bg-muted/30 hover:bg-muted/40 transition-colors"
                   {...field}
                 />
                 <Button
                   type="button"
                   variant="ghost"
-                  size="sm"
-                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  size="icon"
+                  className="absolute right-1 top-1 h-7 w-7 hover:bg-muted/60"
                   onClick={onTogglePassword}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
+                    <EyeOff className="h-4 w-4 text-muted-foreground" />
                   ) : (
-                    <Eye className="h-4 w-4" />
+                    <Eye className="h-4 w-4 text-muted-foreground" />
                   )}
                 </Button>
               </div>
@@ -119,23 +156,28 @@ export function RegisterFormFields({
           <FormItem>
             <FormLabel>Confirm Password</FormLabel>
             <FormControl>
-              <div className="relative">
+              <div className="relative flex">
+                <div className="absolute left-0 top-0 h-full w-10 flex items-center justify-center z-10">
+                  <Lock className="h-4 w-4 text-muted-foreground" />
+                  <div className="absolute right-0 top-1/4 h-1/2 w-px bg-border" />
+                </div>
                 <Input
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="••••••••"
+                  className="pl-12 pr-10 bg-muted/30 hover:bg-muted/40 transition-colors"
                   {...field}
                 />
                 <Button
                   type="button"
                   variant="ghost"
-                  size="sm"
-                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  size="icon"
+                  className="absolute right-1 top-1 h-7 w-7 hover:bg-muted/60"
                   onClick={onToggleConfirmPassword}
                 >
                   {showConfirmPassword ? (
-                    <EyeOff className="h-4 w-4" />
+                    <EyeOff className="h-4 w-4 text-muted-foreground" />
                   ) : (
-                    <Eye className="h-4 w-4" />
+                    <Eye className="h-4 w-4 text-muted-foreground" />
                   )}
                 </Button>
               </div>

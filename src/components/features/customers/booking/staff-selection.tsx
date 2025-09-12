@@ -6,59 +6,23 @@ import { Label } from '@/components/ui/label'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Star } from 'lucide-react'
-import { useEffect, useState, useCallback } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { Database } from '@/types/database.types'
+import { useState } from 'react'
+import { StaffDTO } from '@/lib/api/dal/staff'
 
-type StaffProfile = Database['public']['Tables']['staff_profiles']['Row'] & {
-  profiles: Database['public']['Tables']['profiles']['Row']
+interface StaffSelectionClientProps {
+  initialStaff: StaffDTO[]
+  onStaffSelect?: (staffId: string) => void
 }
 
-export function StaffSelection() {
-  const [staff, setStaff] = useState<StaffProfile[]>([])
+export function StaffSelectionClient({ 
+  initialStaff,
+  onStaffSelect 
+}: StaffSelectionClientProps) {
   const [selectedStaff, setSelectedStaff] = useState<string>('any')
-  const [loading, setLoading] = useState(true)
-  const supabase = createClient()
 
-  const fetchStaff = useCallback(async () => {
-    try {
-      // In a real app, this would filter by selected salon and available services
-      const { data, error } = await supabase
-        .from('staff_profiles')
-        .select(`
-          *,
-          profiles!staff_profiles_user_id_fkey(*)
-        `)
-        .eq('is_active', true)
-        .eq('is_bookable', true)
-
-      if (error) throw error
-      setStaff(data || [])
-    } catch (error) {
-      console.error('Error fetching staff:', error)
-    } finally {
-      setLoading(false)
-    }
-  }, [supabase])
-
-  useEffect(() => {
-    fetchStaff()
-  }, [fetchStaff])
-
-  if (loading) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Select Staff Member</CardTitle>
-          <CardDescription>Choose your preferred stylist or select any available</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-center py-8">
-            Loading staff...
-          </div>
-        </CardContent>
-      </Card>
-    )
+  const handleStaffChange = (value: string) => {
+    setSelectedStaff(value)
+    onStaffSelect?.(value)
   }
 
   return (
@@ -68,7 +32,7 @@ export function StaffSelection() {
         <CardDescription>Choose your preferred stylist or select any available</CardDescription>
       </CardHeader>
       <CardContent>
-        <RadioGroup value={selectedStaff} onValueChange={setSelectedStaff}>
+        <RadioGroup value={selectedStaff} onValueChange={handleStaffChange}>
           <div className="space-y-4">
             <div className="flex items-start space-x-3">
               <RadioGroupItem value="any" id="any" className="mt-1" />
@@ -82,9 +46,9 @@ export function StaffSelection() {
               </Label>
             </div>
             
-            {staff.map((member) => {
-              const name = member.profiles?.full_name || member.profiles?.email || 'Staff Member'
-              const initials = name.split(' ').map(n => n[0]).join('').toUpperCase()
+            {initialStaff.map((member) => {
+              const name = 'Staff Member'
+              const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
               
               return (
                 <div key={member.id} className="flex items-start space-x-3">
@@ -92,7 +56,7 @@ export function StaffSelection() {
                   <Label htmlFor={member.id} className="flex-1 cursor-pointer">
                     <div className="flex items-start gap-3">
                       <Avatar>
-                        <AvatarImage src={member.profiles?.avatar_url || ''} />
+                        <AvatarImage src={''} />
                         <AvatarFallback>{initials}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 space-y-1">
@@ -103,12 +67,6 @@ export function StaffSelection() {
                             <span className="text-sm">4.9</span>
                           </div>
                         </div>
-                        {member.title && (
-                          <p className="text-sm text-muted-foreground">{member.title}</p>
-                        )}
-                        {member.bio && (
-                          <p className="text-sm text-muted-foreground line-clamp-2">{member.bio}</p>
-                        )}
                         {member.specialties && member.specialties.length > 0 && (
                           <div className="flex flex-wrap gap-1 mt-2">
                             {member.specialties.slice(0, 3).map((specialty, i) => (
@@ -129,6 +87,12 @@ export function StaffSelection() {
                 </div>
               )
             })}
+            
+            {initialStaff.length === 0 && (
+              <p className="text-center text-muted-foreground py-4">
+                No staff members available at this time
+              </p>
+            )}
           </div>
         </RadioGroup>
       </CardContent>

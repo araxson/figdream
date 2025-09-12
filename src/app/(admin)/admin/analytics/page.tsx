@@ -1,19 +1,21 @@
-// import { AnalyticsHeader } from '@/components/sections/admin/analytics/header'
-// import { PlatformMetrics } from '@/components/sections/admin/analytics/metrics'
-// import { RevenueChart } from '@/components/sections/admin/analytics/revenue'
-// import { UserGrowth } from '@/components/sections/admin/analytics/growth'
-// import { TopPerformers } from '@/components/sections/admin/analytics/performers'
+import { Suspense } from 'react'
+import { requireRole } from '@/lib/api/dal/auth'
+import { USER_ROLES } from '@/lib/auth/constants'
+import { PlatformAnalyticsServer } from '@/components/features/analytics/platform-analytics-server'
+import { CardGridSkeleton, ChartSkeleton } from '@/components/shared/ui-helpers/skeleton-patterns'
 
-export default function AdminAnalyticsPage() {
+export default async function AdminAnalyticsPage() {
+  await requireRole([USER_ROLES.SUPER_ADMIN])
+  
   return (
-    <div className="flex-1 space-y-8 p-8">
-      {/* <AnalyticsHeader /> */}
-      {/* <PlatformMetrics /> */}
-      <div className="grid md:grid-cols-2 gap-6">
-        {/* <RevenueChart /> */}
-        {/* <UserGrowth /> */}
+    <Suspense fallback={
+      <div className="space-y-6">
+        <CardGridSkeleton count={4} />
+        <ChartSkeleton />
+        <ChartSkeleton />
       </div>
-      {/* <TopPerformers /> */}
-    </div>
+    }>
+      <PlatformAnalyticsServer />
+    </Suspense>
   )
 }

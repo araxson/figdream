@@ -19,7 +19,7 @@ export async function MyAppointments() {
             <div className="flex-1 space-y-1">
               <div className="flex items-center gap-2">
                 <User className="h-4 w-4 text-muted-foreground" />
-                <p className="font-medium">{apt.customer ? `${apt.customer.first_name} ${apt.customer.last_name}` : 'Unknown'}</p>
+                <p className="font-medium">{apt.customer && Array.isArray(apt.customer) && apt.customer[0] ? `${apt.customer[0].first_name} ${apt.customer[0].last_name}` : 'Unknown'}</p>
               </div>
               <p className="text-sm text-muted-foreground">{apt.appointment_services?.[0]?.services?.name || 'Service'}</p>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">

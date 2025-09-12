@@ -1,8 +1,8 @@
 'use client'
 
-import { ReviewsList } from './reviews-list'
-import { ReviewMetrics } from './reviews-metrics'
-import { ReviewResponses } from './reviews-responses'
+import { ReviewsListClient } from './reviews-list'
+import { ReviewMetricsClient } from './reviews-metrics'
+import { ReviewResponsesClient } from './reviews-responses'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useState } from 'react'
 
@@ -16,7 +16,12 @@ export function OwnerReviews() {
         <p className="text-muted-foreground">Manage customer reviews and feedback</p>
       </div>
 
-      <ReviewMetrics />
+      <ReviewMetricsClient initialMetrics={{
+        totalReviews: 0,
+        averageRating: 0,
+        ratingDistribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+        recentReviews: []
+      }} />
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
@@ -26,11 +31,11 @@ export function OwnerReviews() {
         </TabsList>
         
         <TabsContent value="reviews" className="mt-6">
-          <ReviewsList />
+          <ReviewsListClient initialReviews={[]} />
         </TabsContent>
         
         <TabsContent value="pending" className="mt-6">
-          <ReviewResponses />
+          <ReviewResponsesClient initialReviews={[]} />
         </TabsContent>
         
         <TabsContent value="insights" className="mt-6">

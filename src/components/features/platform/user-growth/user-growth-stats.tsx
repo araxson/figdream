@@ -6,7 +6,7 @@ import {
   TrendingUp,
   TrendingDown
 } from 'lucide-react'
-import { GrowthData, TimeRange } from './user-growth-types'
+import { GrowthData, TimeRange } from '@/types/features/user-growth-types'
 
 interface UserGrowthStatsProps {
   data: GrowthData

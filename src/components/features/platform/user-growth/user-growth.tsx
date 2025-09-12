@@ -2,8 +2,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useEffect, useState, useCallback } from 'react'
-import { GrowthData, TimeRange } from './user-growth-types'
-import { fetchGrowthData } from './user-growth-service'
+import { GrowthData, TimeRange } from '@/types/features/user-growth-types'
+import { fetchGrowthData } from '@/lib/api/services/user-growth-service'
 import { UserGrowthStats } from './user-growth-stats'
 import { UserGrowthDetails } from './user-growth-details'
 

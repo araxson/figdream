@@ -1,80 +1,105 @@
-'use client'
-
-import { Star, Quote } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
+import { Star, Quote, ChevronRight } from 'lucide-react'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { createClient } from '@/lib/supabase/server'
 
-const testimonials = [
-  {
-    name: 'Sarah Johnson',
-    role: 'Regular Customer',
-    content: 'FigDream has completely changed how I book salon appointments. The real-time availability feature is a game-changer!',
-    rating: 5,
-    avatar: 'SJ'
-  },
-  {
-    name: 'Michael Chen',
-    role: 'Salon Owner',
-    content: 'As a salon owner, this platform has helped us reach more customers and manage bookings efficiently. Our revenue has increased by 40%!',
-    rating: 5,
-    avatar: 'MC'
-  },
-  {
-    name: 'Emily Rodriguez',
-    role: 'Beauty Enthusiast',
-    content: 'Love the variety of salons and services available. The reviews help me make informed decisions every time.',
-    rating: 5,
-    avatar: 'ER'
+async function getTopReviews() {
+  const supabase = await createClient()
+  
+  const { data: reviews } = await supabase
+    .from('reviews')
+    .select(`
+      *,
+      profiles:customer_id (
+        first_name,
+        last_name
+      ),
+      salons (
+        name
+      )
+    `)
+    .eq('is_published', true)
+    .gte('rating', 4)
+    .order('rating', { ascending: false })
+    .order('created_at', { ascending: false })
+    .limit(6)
+  
+  return reviews || []
+}
+
+export default async function Testimonials() {
+  const reviews = await getTopReviews()
+  
+  if (reviews.length === 0) {
+    return null
   }
-]
-
-export function TestimonialsSection() {
+  
   return (
-    <section className="py-24 sm:py-32 bg-muted/30">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            Loved by Thousands
+    <section className="py-20 bg-gradient-to-b from-background to-muted/50">
+      <div className="container mx-auto max-w-7xl px-4">
+        <div className="text-center mb-12">
+          <Badge className="mb-4" variant="secondary">
+            Testimonials
+          </Badge>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            What Our Customers Say
           </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
-            See what our customers and partners have to say
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            Discover why thousands of customers trust us for their beauty and wellness needs
           </p>
         </div>
         
-        <div className="mx-auto mt-16 max-w-7xl">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {testimonials.map((testimonial, index) => (
-              <div
-                key={testimonial.name}
-                className={`animate-in fade-in slide-in-from-bottom-4 duration-500 [animation-delay:${index * 100}ms]`}
-              >
-                <Card className="h-full">
-                  <CardContent className="p-6">
-                    <div className="mb-4 flex">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <Star key={i} className="h-5 w-5 fill-primary text-primary" />
-                      ))}
-                    </div>
-                    <Quote className="h-8 w-8 text-muted-foreground/20 mb-4" />
-                    <p className="text-muted-foreground mb-6">
-                      {testimonial.content}
-                    </p>
-                    <div className="flex items-center gap-4">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {reviews.map((review) => {
+            const initials = `${review.profiles?.first_name?.[0] || ''}${review.profiles?.last_name?.[0] || ''}`
+            
+            return (
+              <Card key={review.id} className="relative overflow-hidden">
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-3">
                       <Avatar>
-                        <AvatarFallback>{testimonial.avatar}</AvatarFallback>
+                        <AvatarFallback>{initials}</AvatarFallback>
                       </Avatar>
                       <div>
-                        <div className="font-semibold">{testimonial.name}</div>
-                        <div className="text-sm text-muted-foreground">
-                          {testimonial.role}
-                        </div>
+                        <p className="font-semibold">
+                          {review.profiles?.first_name} {review.profiles?.last_name?.[0]}.
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {review.salons?.name}
+                        </p>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              </div>
-            ))}
-          </div>
+                    <Quote className="h-5 w-5 text-muted-foreground/20" />
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex mb-3">
+                    {[...Array(5)].map((_, i) => (
+                      <Star 
+                        key={i} 
+                        className={`h-4 w-4 ${i < review.rating ? 'fill-primary text-primary' : 'text-muted'}`} 
+                      />
+                    ))}
+                  </div>
+                  <p className="text-muted-foreground">
+                    {review.comment}
+                  </p>
+                </CardContent>
+              </Card>
+            )
+          })}
+        </div>
+        
+        <div className="text-center mt-12">
+          <Button variant="outline" size="lg" asChild>
+            <a href="/reviews">
+              Read More Reviews
+              <ChevronRight className="ml-2 h-4 w-4" />
+            </a>
+          </Button>
         </div>
       </div>
     </section>

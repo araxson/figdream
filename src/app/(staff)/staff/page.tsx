@@ -1,16 +1,16 @@
 import { Suspense } from 'react'
-import { StaffDashboard } from '@/components/features/analytics/dashboard/staff-dashboard'
-import { CardGridSkeleton, AppointmentCardSkeleton, CalendarSkeleton } from '@/components/ui/skeleton-variants'
+import { Dashboard } from '@/components/features/analytics/dashboard/dashboard'
+import { DashboardHeader } from '@/components/features/analytics/dashboard/dashboard-header'
+import { CardGridSkeleton, AppointmentCardSkeleton, CalendarSkeleton } from '@/components/shared/ui-helpers/skeleton-patterns'
+import { requireRole } from '@/lib/api/dal/auth'
+import { USER_ROLES } from '@/lib/auth/constants'
 
-export default function StaffDashboardPage() {
+export default async function StaffDashboardPage() {
+  await requireRole([USER_ROLES.STAFF])
+  
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Staff Dashboard</h1>
-        <p className="text-muted-foreground">
-          Manage your appointments and schedule
-        </p>
-      </div>
+      <DashboardHeader userRole="staff" />
       
       <Suspense fallback={
         <div className="space-y-6">
@@ -25,7 +25,7 @@ export default function StaffDashboardPage() {
           </div>
         </div>
       }>
-        <StaffDashboard />
+        <Dashboard userRole="staff" />
       </Suspense>
     </div>
   )

@@ -5,8 +5,8 @@ export { useServices } from './queries/use-services'
 export { useDataFetch } from './queries/use-data-fetch'
 
 // UI hooks
-export { useToast, toast } from './ui/use-toast'
-export { useIsMobile } from './ui/use-mobile'
+export { useToast, toast } from './use-toast'
+export { useIsMobile } from './use-mobile'
 
 // Utility hooks
 export { useDebounce } from './utils/use-debounce'

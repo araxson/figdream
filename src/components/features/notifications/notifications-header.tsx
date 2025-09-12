@@ -2,67 +2,80 @@
 
 import { Button } from '@/components/ui/button'
 import { Bell, Settings, CheckCheck } from 'lucide-react'
-import { useState, useEffect, useCallback } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import { useState } from 'react'
 import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
+import { useRouter } from 'next/navigation'
+import { toast } from '@/hooks/use-toast'
 
-export function NotificationHeader() {
-  const [unreadCount, setUnreadCount] = useState(0)
-  const supabase = createClient()
+interface NotificationHeaderProps {
+  initialUnreadCount: number
+  onSettingsClick?: () => void
+}
 
-  const fetchUnreadCount = useCallback(async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-
-    const { count } = await supabase
-      .from('notifications')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', user.id)
-      .eq('is_read', false)
-
-    setUnreadCount(count || 0)
-  }, [supabase])
-
-  useEffect(() => {
-    fetchUnreadCount()
-  }, [fetchUnreadCount])
+export function NotificationHeader({ initialUnreadCount, onSettingsClick }: NotificationHeaderProps) {
+  const [unreadCount, setUnreadCount] = useState(initialUnreadCount)
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
   async function markAllAsRead() {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
+    setLoading(true)
+    try {
+      const response = await fetch('/api/notifications/mark-all-read', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
 
-    await supabase
-      .from('notifications')
-      .update({ is_read: true, read_at: new Date().toISOString() })
-      .eq('user_id', user.id)
-      .eq('is_read', false)
-
-    setUnreadCount(0)
+      if (response.ok) {
+        setUnreadCount(0)
+        toast({
+          title: 'Success',
+          description: 'All notifications marked as read'
+        })
+        router.refresh()
+      } else {
+        throw new Error('Failed to mark all as read')
+      }
+    } catch (_error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to mark all notifications as read',
+        variant: 'destructive'
+      })
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center space-x-2">
-        <Bell className="h-6 w-6" />
-        <h1 className="text-3xl font-bold tracking-tight">Notifications</h1>
+    <div className={cn("flex items-center justify-between")}>
+      <div className={cn("flex items-center space-x-2")}>
+        <Bell className={cn("h-6 w-6")} />
+        <h1 className={cn("text-3xl font-bold tracking-tight")}>Notifications</h1>
         {unreadCount > 0 && (
-          <Badge variant="destructive" className="ml-2">
+          <Badge variant="destructive" className={cn("ml-2")}>
             {unreadCount} unread
           </Badge>
         )}
       </div>
       
-      <div className="flex items-center space-x-2">
+      <div className={cn("flex items-center space-x-2")}>
         <Button
           variant="outline"
           onClick={markAllAsRead}
-          disabled={unreadCount === 0}
+          disabled={unreadCount === 0 || loading}
         >
-          <CheckCheck className="mr-2 h-4 w-4" />
-          Mark all as read
+          <CheckCheck className={cn("mr-2 h-4 w-4")} />
+          {loading ? 'Marking...' : 'Mark all as read'}
         </Button>
-        <Button variant="outline" size="icon">
-          <Settings className="h-4 w-4" />
+        <Button 
+          variant="outline" 
+          size="icon"
+          onClick={onSettingsClick}
+        >
+          <Settings className={cn("h-4 w-4")} />
         </Button>
       </div>
     </div>

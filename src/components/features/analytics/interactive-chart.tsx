@@ -3,10 +3,9 @@
 import * as React from "react"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 
-import { useIsMobile } from "@/hooks/ui/use-mobile"
+import { useIsMobile } from "@/hooks/use-mobile"
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
   CardHeader,
@@ -174,7 +173,9 @@ export function ChartAreaInteractive() {
           </span>
           <span className="@[540px]/card:hidden">Last 3 months</span>
         </CardDescription>
-        <CardAction>
+      </CardHeader>
+      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+        <div className="mb-4 flex justify-end">
           <ToggleGroup
             type="single"
             value={timeRange}
@@ -189,7 +190,6 @@ export function ChartAreaInteractive() {
           <Select value={timeRange} onValueChange={setTimeRange}>
             <SelectTrigger
               className="flex w-40 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate @[767px]/card:hidden"
-              size="sm"
               aria-label="Select a value"
             >
               <SelectValue placeholder="Last 3 months" />
@@ -206,9 +206,7 @@ export function ChartAreaInteractive() {
               </SelectItem>
             </SelectContent>
           </Select>
-        </CardAction>
-      </CardHeader>
-      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+        </div>
         <ChartContainer
           config={chartConfig}
           className="aspect-auto h-[250px] w-full"

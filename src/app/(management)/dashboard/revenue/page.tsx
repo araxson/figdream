@@ -1,5 +1,5 @@
 import { Suspense } from 'react'
-import { CardGridSkeleton, ChartSkeleton, TableSkeleton } from '@/components/ui/skeleton-variants'
+import { CardGridSkeleton, ChartSkeleton, TableSkeleton } from '@/components/shared/ui-helpers/skeleton-patterns'
 // import { RevenueManagement } from '@/components/sections/owner/revenue/revenue-management'
 
 export default function RevenuePage() {

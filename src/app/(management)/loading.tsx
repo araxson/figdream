@@ -1,4 +1,4 @@
-import { CardGridSkeleton, TableSkeleton } from '@/components/ui/skeleton-variants'
+import { CardGridSkeleton, TableSkeleton } from '@/components/shared/ui-helpers/skeleton-patterns'
 import { Skeleton } from '@/components/ui/skeleton'
 
 export default function Loading() {

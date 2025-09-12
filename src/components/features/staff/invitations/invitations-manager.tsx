@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { UserPlus, Mail } from 'lucide-react'
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { useToast } from '@/hooks/ui/use-toast'
+import { useToast } from '@/hooks/use-toast'
 import { Database } from '@/types/database.types'
 import { InviteDialog, CancelInvitationDialog } from './invitation-dialogs'
 import { InvitationList } from './invitation-list'
@@ -27,7 +27,7 @@ export function StaffInvitationsManager() {
     message: ''
   })
   const supabase = createClient()
-  const toast = useToast()
+  const { toast } = useToast()
 
   const fetchInvitations = useCallback(async () => {
     try {

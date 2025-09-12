@@ -14,6 +14,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Separator } from '@/components/ui/separator'
 import { Mail, Lock, Eye, EyeOff, Loader2, ArrowRight, Chrome, Github } from 'lucide-react'
 import { toast } from 'sonner'
+import { signInWithEmail, signInWithOAuth } from '@/lib/actions/auth'
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -40,20 +41,48 @@ export function LoginForm() {
   async function onSubmit(data: LoginFormData) {
     setIsLoading(true)
     try {
-      // Simulate API call - in production, this would call your auth API
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      const result = await signInWithEmail(data.email, data.password)
       
-      // Use the form data for authentication
-      // In production, pass data to auth API
-      void data // Acknowledge form data (will be used when auth is implemented)
+      if (result.error) {
+        toast.error(result.error)
+        return
+      }
       
-      // Role-based redirect logic
-      // In production, the role would come from the auth response
-      // For now, we'll redirect to dashboard which handles role-based routing
-      toast.success('Welcome back!')
-      router.push('/dashboard')
-    } catch {
-      toast.error('Invalid credentials. Please try again.')
+      if (result.success && result.role) {
+        toast.success('Welcome back!')
+        
+        // Role-based redirect logic
+        const roleRedirects = {
+          'super_admin': '/admin',
+          'salon_owner': '/dashboard',
+          'salon_manager': '/dashboard',
+          'location_manager': '/dashboard',
+          'staff': '/staff',
+          'customer': '/customer'
+        }
+        
+        const redirectPath = roleRedirects[result.role] || '/dashboard'
+        router.push(redirectPath)
+        router.refresh() // Force refresh to update auth state
+      }
+    } catch (error) {
+      console.error('Login error:', error)
+      toast.error('An unexpected error occurred. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  async function handleOAuthLogin(provider: 'google' | 'github') {
+    setIsLoading(true)
+    try {
+      const result = await signInWithOAuth(provider)
+      if (result?.error) {
+        toast.error(result.error)
+      }
+    } catch (error) {
+      console.error('OAuth error:', error)
+      toast.error('Failed to sign in with ' + provider)
     } finally {
       setIsLoading(false)
     }
@@ -77,12 +106,15 @@ export function LoginForm() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <div className="relative flex">
+                      <div className="absolute left-0 top-0 h-full w-10 flex items-center justify-center">
+                        <Mail className="h-4 w-4 text-muted-foreground" />
+                        <div className="absolute right-0 top-1/4 h-1/2 w-px bg-border" />
+                      </div>
                       <Input
                         type="email"
                         placeholder="you@example.com"
-                        className="pl-10"
+                        className="pl-12 bg-muted/30 hover:bg-muted/40 transition-colors"
                         disabled={isLoading}
                         {...field}
                       />
@@ -99,27 +131,30 @@ export function LoginForm() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <div className="relative flex">
+                      <div className="absolute left-0 top-0 h-full w-10 flex items-center justify-center z-10">
+                        <Lock className="h-4 w-4 text-muted-foreground" />
+                        <div className="absolute right-0 top-1/4 h-1/2 w-px bg-border" />
+                      </div>
                       <Input
                         type={showPassword ? 'text' : 'password'}
                         placeholder="••••••••"
-                        className="pl-10 pr-10"
+                        className="pl-12 pr-10 bg-muted/30 hover:bg-muted/40 transition-colors"
                         disabled={isLoading}
                         {...field}
                       />
                       <Button
                         type="button"
                         variant="ghost"
-                        size="sm"
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                        size="icon"
+                        className="absolute right-1 top-1 h-7 w-7 hover:bg-muted/60"
                         onClick={() => setShowPassword(!showPassword)}
                         disabled={isLoading}
                       >
                         {showPassword ? (
-                          <EyeOff className="h-4 w-4" />
+                          <EyeOff className="h-4 w-4 text-muted-foreground" />
                         ) : (
-                          <Eye className="h-4 w-4" />
+                          <Eye className="h-4 w-4 text-muted-foreground" />
                         )}
                       </Button>
                     </div>
@@ -182,11 +217,21 @@ export function LoginForm() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <Button variant="outline" type="button" disabled={isLoading}>
+              <Button 
+                variant="outline" 
+                type="button" 
+                disabled={isLoading}
+                onClick={() => handleOAuthLogin('google')}
+              >
                 <Chrome className="mr-2 h-4 w-4" />
                 Google
               </Button>
-              <Button variant="outline" type="button" disabled={isLoading}>
+              <Button 
+                variant="outline" 
+                type="button" 
+                disabled={isLoading}
+                onClick={() => handleOAuthLogin('github')}
+              >
                 <Github className="mr-2 h-4 w-4" />
                 GitHub
               </Button>

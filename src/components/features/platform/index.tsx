@@ -1,6 +1,6 @@
 'use client'
 
-import { UsersList } from './list'
+import { UsersTableClient as UsersList } from './users-table'
 import { UserActivity } from './activity'
 import { UserPermissions } from './permissions'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -38,7 +38,7 @@ export function AdminUsers() {
         </TabsList>
         
         <TabsContent value="users" className="mt-6">
-          <UsersList />
+          <UsersList initialUsers={[]} />
         </TabsContent>
         
         <TabsContent value="activity" className="mt-6">
@@ -46,7 +46,7 @@ export function AdminUsers() {
         </TabsContent>
         
         <TabsContent value="permissions" className="mt-6">
-          <UserPermissions />
+          <UserPermissions initialPermissions={[]} />
         </TabsContent>
       </Tabs>
     </div>

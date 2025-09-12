@@ -6,7 +6,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useEffect, useState, useCallback } from 'react'
 import { ChartDataItem } from './revenue-types'
-import { fetchRevenueData } from './revenue-api'
+import { fetchRevenueData } from '@/lib/api/services/revenue-api'
 import { RevenueStats } from './revenue-stats'
 import { RevenueBarChart } from './revenue-bar-chart'
 import { RevenueLineChart } from './revenue-line-chart'

@@ -1,17 +1,18 @@
 import { Suspense } from 'react'
-import { AdminDashboard } from '@/components/features/analytics/dashboard/admin-dashboard'
-import { CardGridSkeleton, ChartSkeleton, TableSkeleton } from '@/components/ui/skeleton-variants'
+import { DashboardHeader } from '@/components/features/analytics/dashboard/dashboard-header'
+import { CardGridSkeleton, ChartSkeleton, TableSkeleton } from '@/components/shared/ui-helpers/skeleton-patterns'
 import { cn } from '@/lib/utils'
+import { requireRole } from '@/lib/api/dal/auth'
+import { USER_ROLES } from '@/lib/auth/constants'
+import { AdminDashboardServer } from '@/components/features/analytics/dashboard/admin-dashboard-server'
 
-export default function AdminDashboardPage() {
+export default async function AdminDashboardPage() {
+  const session = await requireRole([USER_ROLES.SUPER_ADMIN])
+  const userRole = session.user.role
+  
   return (
     <div className={cn("space-y-6")}>
-      <div>
-        <h1 className={cn("text-3xl font-bold tracking-tight")}>Admin Dashboard</h1>
-        <p className={cn("text-muted-foreground")}>
-          System overview and management tools
-        </p>
-      </div>
+      <DashboardHeader userRole={userRole} />
       
       <Suspense fallback={
         <div className={cn("space-y-6")}>
@@ -20,7 +21,7 @@ export default function AdminDashboardPage() {
           <TableSkeleton count={5} />
         </div>
       }>
-        <AdminDashboard />
+        <AdminDashboardServer />
       </Suspense>
     </div>
   )

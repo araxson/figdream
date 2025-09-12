@@ -6,154 +6,110 @@ import { Textarea } from '@/components/ui/textarea'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Star, MessageSquare, Send } from 'lucide-react'
-import { useState, useEffect, useCallback } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { Database } from '@/types/database.types'
+import { useState } from 'react'
+import { cn } from '@/lib/utils'
+import { ReviewDTO } from '@/lib/api/dal/reviews'
+import { useRouter } from 'next/navigation'
+import { toast } from '@/hooks/use-toast'
 
-type Review = Database['public']['Tables']['reviews']['Row'] & {
-  profiles?: Database['public']['Tables']['profiles']['Row']
-  staff_profiles?: Database['public']['Tables']['staff_profiles']['Row'] | null
+interface ReviewResponsesClientProps {
+  initialReviews: ReviewDTO[]
 }
 
-export function ReviewResponses() {
-  const [reviews, setReviews] = useState<Review[]>([])
-  const [loading, setLoading] = useState(true)
+export function ReviewResponsesClient({ initialReviews }: ReviewResponsesClientProps) {
+  const [reviews, setReviews] = useState<ReviewDTO[]>(initialReviews)
   const [respondingTo, setRespondingTo] = useState<string | null>(null)
   const [responseText, setResponseText] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const supabase = createClient()
-
-  const fetchReviews = useCallback(async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-
-      const { data: salon } = await supabase
-        .from('salons')
-        .select('id')
-        .eq('created_by', user.id)
-        .single()
-
-      if (!salon) return
-
-      const { data, error } = await supabase
-        .from('reviews')
-        .select(`
-          *,
-          profiles!reviews_customer_id_fkey(*),
-          staff_profiles(*)
-        `)
-        .eq('salon_id', salon.id)
-        .order('created_at', { ascending: false })
-        .limit(20)
-
-      if (error) throw error
-      setReviews(data || [])
-    } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Error fetching reviews:', error)
-      }
-    } finally {
-      setLoading(false)
-    }
-  }, [supabase])
-
-  useEffect(() => {
-    fetchReviews()
-  }, [fetchReviews])
+  const router = useRouter()
 
   async function submitResponse(reviewId: string) {
     if (!responseText.trim()) return
 
     setSubmitting(true)
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-
-      const { data: salon } = await supabase
-        .from('salons')
-        .select('id')
-        .eq('created_by', user.id)
-        .single()
-
-      if (!salon) return
-
-      const { error } = await supabase
-        .from('reviews')
-        .update({
-          response: responseText.trim(),
-          responded_at: new Date().toISOString()
+      const response = await fetch('/api/reviews/respond', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          reviewId,
+          response: responseText.trim()
         })
-        .eq('id', reviewId)
+      })
 
-      if (error) throw error
+      const data = await response.json()
 
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to submit response')
+      }
+
+      // Update local state
+      setReviews(prev => prev.map(review => 
+        review.id === reviewId 
+          ? { ...review, response: responseText.trim(), responded_at: new Date().toISOString() }
+          : review
+      ))
+      
       setResponseText('')
       setRespondingTo(null)
-      await fetchReviews()
+      
+      toast({
+        title: 'Response sent',
+        description: 'Your response has been posted successfully.'
+      })
+      
+      // Refresh to get latest data
+      router.refresh()
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Error submitting response:', error)
-      }
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Failed to submit response',
+        variant: 'destructive'
+      })
     } finally {
       setSubmitting(false)
     }
-  }
-
-  if (loading) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Review Management</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-center py-8">
-            Loading reviews...
-          </div>
-        </CardContent>
-      </Card>
-    )
   }
 
   const pendingResponses = reviews.filter(r => !r.response)
   const respondedReviews = reviews.filter(r => !!r.response)
 
   return (
-    <div className="space-y-6">
+    <div className={cn("space-y-6")}>
       {pendingResponses.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle>Pending Responses ({pendingResponses.length})</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className={cn("space-y-4")}>
             {pendingResponses.map((review) => {
-              const customerName = `${review.profiles?.first_name || ''} ${review.profiles?.last_name || ''}`.trim() || 
-                                 review.profiles?.email || 'Customer'
-              const initials = customerName.split(' ').map((n: string) => n[0]).join('').toUpperCase()
+              const initials = review.customer_id.slice(0, 2).toUpperCase()
               
               return (
-                <div key={review.id} className="border rounded-lg p-4 space-y-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
+                <div key={review.id} className={cn("border rounded-lg p-4 space-y-3")}>
+                  <div className={cn("flex items-start justify-between")}>
+                    <div className={cn("flex items-center gap-3")}>
                       <Avatar>
-                        <AvatarFallback>{initials || 'C'}</AvatarFallback>
+                        <AvatarFallback>{initials}</AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="font-medium">{customerName}</p>
-                        <div className="flex items-center gap-2">
-                          <div className="flex items-center gap-1">
+                        <p className={cn("font-medium")}>Customer</p>
+                        <div className={cn("flex items-center gap-2")}>
+                          <div className={cn("flex items-center gap-1")}>
                             {[...Array(5)].map((_, i) => (
                               <Star
                                 key={i}
-                                className={`h-3 w-3 ${
+                                className={cn(`h-3 w-3 ${
                                   i < review.rating
                                     ? 'fill-yellow-500 text-yellow-500'
                                     : 'text-gray-300'
-                                }`}
+                                }`)}
                               />
                             ))}
                           </div>
-                          <span className="text-sm text-muted-foreground">
+                          <span className={cn("text-sm text-muted-foreground")}>
                             {new Date(review.created_at).toLocaleDateString()}
                           </span>
                         </div>
@@ -165,24 +121,24 @@ export function ReviewResponses() {
                   </div>
 
                   {review.comment && (
-                    <p className="text-sm">{review.comment}</p>
+                    <p className={cn("text-sm")}>{review.comment}</p>
                   )}
 
                   {respondingTo === review.id ? (
-                    <div className="space-y-2">
+                    <div className={cn("space-y-2")}>
                       <Textarea
                         placeholder="Write your response..."
                         value={responseText}
                         onChange={(e) => setResponseText(e.target.value)}
                         rows={3}
                       />
-                      <div className="flex gap-2">
+                      <div className={cn("flex gap-2")}>
                         <Button
                           size="sm"
                           onClick={() => submitResponse(review.id)}
                           disabled={submitting || !responseText.trim()}
                         >
-                          <Send className="h-4 w-4 mr-2" />
+                          <Send className={cn("h-4 w-4 mr-2")} />
                           {submitting ? 'Sending...' : 'Send Response'}
                         </Button>
                         <Button
@@ -203,7 +159,7 @@ export function ReviewResponses() {
                       variant="outline"
                       onClick={() => setRespondingTo(review.id)}
                     >
-                      <MessageSquare className="h-4 w-4 mr-2" />
+                      <MessageSquare className={cn("h-4 w-4 mr-2")} />
                       Respond
                     </Button>
                   )}
@@ -220,39 +176,37 @@ export function ReviewResponses() {
         </CardHeader>
         <CardContent>
           {respondedReviews.length === 0 ? (
-            <p className="text-center py-8 text-muted-foreground">
+            <p className={cn("text-center py-8 text-muted-foreground")}>
               No responded reviews yet
             </p>
           ) : (
-            <div className="space-y-4">
+            <div className={cn("space-y-4")}>
               {respondedReviews.map((review) => {
-                const customerName = `${review.profiles?.first_name || ''} ${review.profiles?.last_name || ''}`.trim() || 
-                                   review.profiles?.email || 'Customer'
-                const initials = customerName.split(' ').map((n: string) => n[0]).join('').toUpperCase()
+                const initials = review.customer_id.slice(0, 2).toUpperCase()
                 
                 return (
-                  <div key={review.id} className="border rounded-lg p-4 space-y-3">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-3">
+                  <div key={review.id} className={cn("border rounded-lg p-4 space-y-3")}>
+                    <div className={cn("flex items-start justify-between")}>
+                      <div className={cn("flex items-center gap-3")}>
                         <Avatar>
-                          <AvatarFallback>{initials || 'C'}</AvatarFallback>
+                          <AvatarFallback>{initials}</AvatarFallback>
                         </Avatar>
                         <div>
-                          <p className="font-medium">{customerName}</p>
-                          <div className="flex items-center gap-2">
-                            <div className="flex items-center gap-1">
+                          <p className={cn("font-medium")}>Customer</p>
+                          <div className={cn("flex items-center gap-2")}>
+                            <div className={cn("flex items-center gap-1")}>
                               {[...Array(5)].map((_, i) => (
                                 <Star
                                   key={i}
-                                  className={`h-3 w-3 ${
+                                  className={cn(`h-3 w-3 ${
                                     i < review.rating
                                       ? 'fill-yellow-500 text-yellow-500'
                                       : 'text-gray-300'
-                                  }`}
+                                  }`)}
                                 />
                               ))}
                             </div>
-                            <span className="text-sm text-muted-foreground">
+                            <span className={cn("text-sm text-muted-foreground")}>
                               {new Date(review.created_at).toLocaleDateString()}
                             </span>
                           </div>
@@ -262,13 +216,13 @@ export function ReviewResponses() {
                     </div>
 
                     {review.comment && (
-                      <p className="text-sm">{review.comment}</p>
+                      <p className={cn("text-sm")}>{review.comment}</p>
                     )}
 
                     {review.response && (
-                      <div className="bg-muted rounded-lg p-3 mt-2">
-                        <p className="text-sm font-medium mb-1">Your Response:</p>
-                        <p className="text-sm">{review.response}</p>
+                      <div className={cn("bg-muted rounded-lg p-3 mt-2")}>
+                        <p className={cn("text-sm font-medium mb-1")}>Your Response:</p>
+                        <p className={cn("text-sm")}>{review.response}</p>
                       </div>
                     )}
                   </div>

@@ -19,7 +19,7 @@ export function HeroSection() {
               <Link href="/register">Start Free Trial</Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <Link href="/demo">Watch Demo</Link>
+              <Link href="/about">Learn More</Link>
             </Button>
           </div>
         </div>

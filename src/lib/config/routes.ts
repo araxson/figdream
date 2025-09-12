@@ -7,11 +7,13 @@ export const ROUTES = {
   RESET_PASSWORD: '/reset-password',
   
   // Customer routes
-  BOOK: '/book',
-  BOOK_SALON: (slug: string) => `/book/${slug}`,
-  APPOINTMENTS: '/appointments',
-  PROFILE: '/profile',
-  REVIEWS: '/reviews',
+  CUSTOMER: '/customer',
+  CUSTOMER_BOOK: '/customer/book',
+  CUSTOMER_BOOK_SALON: (slug: string) => `/customer/book/${slug}`,
+  CUSTOMER_APPOINTMENTS: '/customer/appointments',
+  CUSTOMER_PROFILE: '/customer/profile',
+  CUSTOMER_FAVORITES: '/customer/favorites',
+  CUSTOMER_REVIEWS: '/customer/reviews',
   
   // Admin routes
   ADMIN: '/admin',
@@ -50,7 +52,7 @@ export const PUBLIC_ROUTES = [
   ROUTES.REGISTER,
   ROUTES.FORGOT_PASSWORD,
   ROUTES.RESET_PASSWORD,
-  ROUTES.BOOK,
+  ROUTES.CUSTOMER_BOOK,
 ]
 
 export const PROTECTED_ROUTES = {
@@ -81,9 +83,11 @@ export const PROTECTED_ROUTES = {
     ROUTES.STAFF_PROFILE,
   ],
   customer: [
-    ROUTES.BOOK,
-    ROUTES.APPOINTMENTS,
-    ROUTES.PROFILE,
-    ROUTES.REVIEWS,
+    ROUTES.CUSTOMER,
+    ROUTES.CUSTOMER_BOOK,
+    ROUTES.CUSTOMER_APPOINTMENTS,
+    ROUTES.CUSTOMER_PROFILE,
+    ROUTES.CUSTOMER_FAVORITES,
+    ROUTES.CUSTOMER_REVIEWS,
   ],
 }

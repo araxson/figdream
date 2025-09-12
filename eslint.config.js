@@ -14,7 +14,11 @@ const eslintConfig = [
       
       // TypeScript Rules - ALL ERRORS
       '@typescript-eslint/no-explicit-any': 'error',
-      '@typescript-eslint/no-unused-vars': 'error',
+      '@typescript-eslint/no-unused-vars': ['error', { 
+        'argsIgnorePattern': '^_',
+        'varsIgnorePattern': '^_',
+        'caughtErrorsIgnorePattern': '^_'
+      }],
       '@typescript-eslint/no-unsafe-function-type': 'error',
       '@typescript-eslint/ban-ts-comment': 'error',
       '@typescript-eslint/no-require-imports': 'error',

@@ -159,10 +159,6 @@ export const hasFeaturePermission = cache(async (permission: string): Promise<bo
       'manage_salon', 'view_reports', 'manage_staff', 'manage_services',
       'manage_appointments', 'manage_customers'
     ],
-    [USER_ROLES.LOCATION_MANAGER]: [
-      'manage_location', 'view_reports', 'manage_staff', 'manage_services',
-      'manage_appointments', 'manage_customers'
-    ],
     [USER_ROLES.STAFF]: [
       'view_appointments', 'manage_own_schedule', 'view_customers',
       'update_appointment_status'

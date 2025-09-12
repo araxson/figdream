@@ -1,4 +1,4 @@
-import { AppointmentCardSkeleton } from '@/components/ui/skeleton-variants'
+import { AppointmentCardSkeleton } from '@/components/shared/ui-helpers/skeleton-patterns'
 import { Skeleton } from '@/components/ui/skeleton'
 
 export default function Loading() {

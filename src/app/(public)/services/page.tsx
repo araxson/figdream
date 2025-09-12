@@ -17,7 +17,7 @@ export default function ServicesPage() {
                 Discover our wide range of beauty and wellness services delivered 
                 by experienced professionals.
               </p>
-              <Link href="/book">
+              <Link href="/customer/book">
                 <Button size="lg">Book Now</Button>
               </Link>
             </div>

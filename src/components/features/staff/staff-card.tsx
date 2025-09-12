@@ -1,11 +1,11 @@
 'use client'
 
 import * as React from 'react'
-import { Card, CardFooter } from '@/components/ui/card'
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Mail, Phone } from 'lucide-react'
-import { StaffCardHeader } from './staff-card-header'
-import { StaffCardStats } from './staff-card-stats'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import { Mail, Phone, Star, Calendar, Clock, DollarSign } from 'lucide-react'
 import { StaffEditDialog } from './staff-edit-dialog'
 import { StaffDeleteDialog } from './staff-delete-dialog'
 
@@ -40,23 +40,10 @@ interface StaffCardProps {
   onViewDetails?: (staff: StaffMember) => void
 }
 
-export function StaffCard({ staff, onEdit, onDelete, onViewDetails }: StaffCardProps) {
+export function StaffCard({ staff, onEdit, onDelete }: StaffCardProps) {
   const [editOpen, setEditOpen] = React.useState(false)
   const [deleteOpen, setDeleteOpen] = React.useState(false)
 
-  const handleEdit = () => {
-    setEditOpen(true)
-  }
-
-  const handleDelete = () => {
-    setDeleteOpen(true)
-  }
-
-  const handleToggleActive = () => {
-    if (onEdit) {
-      onEdit({ ...staff, isActive: !staff.isActive })
-    }
-  }
 
   const handleSaveEdit = (updatedStaff: StaffMember) => {
     if (onEdit) {
@@ -75,22 +62,58 @@ export function StaffCard({ staff, onEdit, onDelete, onViewDetails }: StaffCardP
   return (
     <>
       <Card className="overflow-hidden">
-        <StaffCardHeader
-          staff={staff}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onViewDetails={() => onViewDetails?.(staff)}
-          onToggleActive={handleToggleActive}
-        />
+        <CardHeader>
+          <div className="flex items-start justify-between">
+            <div className="flex items-center space-x-4">
+              <Avatar className="h-12 w-12">
+                <AvatarImage src={staff.avatar} alt={staff.name} />
+                <AvatarFallback>{staff.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+              </Avatar>
+              <div>
+                <h3 className="font-semibold">{staff.name}</h3>
+                <p className="text-sm text-muted-foreground">{staff.role}</p>
+                <Badge variant={staff.isActive ? "default" : "secondary"}>
+                  {staff.isActive ? 'Active' : 'Inactive'}
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </CardHeader>
         
-        <StaffCardStats
-          rating={staff.rating}
-          totalBookings={staff.totalBookings}
-          revenue={staff.revenue}
-          performance={staff.performance}
-          schedule={staff.schedule}
-          services={staff.services}
-        />
+        <CardContent>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex items-center space-x-2">
+              <Star className="h-4 w-4 text-yellow-500" />
+              <span className="text-sm">
+                {staff.rating.toFixed(1)} Rating
+              </span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Calendar className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm">
+                {staff.totalBookings} Bookings
+              </span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Clock className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm">
+                Today: {staff.schedule.today}
+              </span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm">
+                ${staff.revenue.toLocaleString()}
+              </span>
+            </div>
+          </div>
+          
+          <div className="mt-4">
+            <p className="text-sm text-muted-foreground">
+              Services: {staff.services.join(', ')}
+            </p>
+          </div>
+        </CardContent>
 
         <CardFooter className="flex justify-between">
           <Button variant="outline" size="sm" asChild>

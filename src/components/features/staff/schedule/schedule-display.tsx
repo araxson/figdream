@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Clock, Coffee, XCircle } from 'lucide-react'
 import { format } from 'date-fns'
-import { ScheduleData } from './schedule-types'
+import { ScheduleData } from '@/types/features/schedule-types'
 
 interface ScheduleDisplayProps {
   selectedDate: Date

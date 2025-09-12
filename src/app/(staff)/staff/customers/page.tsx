@@ -1,5 +1,5 @@
 import { Suspense } from 'react'
-import { CardGridSkeleton, TableSkeleton, ListItemSkeleton } from '@/components/ui/skeleton-variants'
+import { CardGridSkeleton, TableSkeleton, ListItemSkeleton } from '@/components/shared/ui-helpers/skeleton-patterns'
 import { Skeleton } from '@/components/ui/skeleton'
 // import { StaffCustomersHeader } from '@/components/sections/staff/customers/header'
 // import { MyCustomers } from '@/components/sections/staff/customers/list'

@@ -1,4 +1,4 @@
-import { SalonSelection } from '@/core/customer/components/salon-selection';
+import { SalonSearchWrapper } from '@/core/customer/components';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function SalonSelectionPage() {
-  return <SalonSelection />;
+  return <SalonSearchWrapper />;
 }

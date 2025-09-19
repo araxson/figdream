@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 import { Metadata } from 'next'
-import { AppointmentsPageServer } from '@/core/appointments/components/appointments-page-server'
+import { AppointmentsPageServer } from '@/core/salon/components/appointments'
 import { AppointmentsLoadingSkeleton } from '@/core/shared/components/loading/appointments-skeleton'
 
 export const metadata: Metadata = {

@@ -1,4 +1,4 @@
-import { CustomerProfile } from '@/core/customer/components/profile/customer-profile';
+import { CustomerProfile } from '@/core/customer/components';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {

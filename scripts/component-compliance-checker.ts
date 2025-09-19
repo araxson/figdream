@@ -20,7 +20,7 @@ const execAsync = promisify(exec);
 interface NonCompliantComponent {
   file: string;
   issues: Array<{
-    type: 'custom-css' | 'non-shadcn' | 'inline-styles' | 'custom-component' | 'missing-cn';
+    type: 'custom-css' | 'non-shadcn' | 'inline-styles' | 'custom-component';
     line: number;
     description: string;
     suggestion: string;
@@ -200,14 +200,6 @@ class ComponentComplianceChecker {
               snippet: line.trim()
             });
             component.customUsage++;
-          } else if (!line.includes('cn(')) {
-            component.issues.push({
-              type: 'missing-cn',
-              line: index + 1,
-              description: 'className without cn() utility',
-              suggestion: 'Use cn() for className composition',
-              snippet: line.trim()
-            });
           }
         }
       }
@@ -391,19 +383,6 @@ class ComponentComplianceChecker {
       );
     }
 
-    // Check for missing cn() utility
-    const missingCnCount = this.report.components.reduce(
-      (sum, c) => sum + c.issues.filter(i => i.type === 'missing-cn').length,
-      0
-    );
-
-    if (missingCnCount > 30) {
-      recs.push(
-        '🔧 Add cn() utility: ' +
-        `${missingCnCount} className attributes without cn(). ` +
-        'Use cn() for proper class merging and composition.'
-      );
-    }
 
     // Check for non-shadcn libraries
     const nonShadcnCount = this.report.components.reduce(

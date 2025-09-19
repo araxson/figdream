@@ -1,1 +1,0 @@
-export { useCustomerManagement } from './use-customer-management'

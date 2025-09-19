@@ -1,4 +1,4 @@
-import { SalonsManagement } from "@/core/salons/components";
+import { SalonsManagement } from "@/core/salon/components";
 
 export default function DashboardSalonsPage() {
   return <SalonsManagement />;

@@ -1,8 +1,10 @@
 /**
  * Database Adapters for handling missing tables and type mismatches
  * This module provides type-safe adapters for tables that don't exist in database.types.ts
+ * Merged with database compatibility layer
  */
 
+import { createServerClient } from '@/lib/supabase/server';
 import type { Database } from '@/types/database.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
@@ -241,4 +243,180 @@ export function getTable(
   }
 
   return supabase.from(tableName as any);
+}
+
+// ============================================
+// ENHANCED DATABASE ADAPTERS
+// ============================================
+
+// Type definitions for adapter responses
+export interface UserAdapter {
+  id: string;
+  email: string;
+  full_name?: string;
+  role?: string;
+  created_at: string;
+}
+
+export interface SubscriptionAdapter {
+  id: string;
+  user_id: string;
+  plan_id: string;
+  status: 'active' | 'canceled' | 'past_due';
+  current_period_end: string;
+}
+
+export interface RevenueMetrics {
+  total_revenue: number;
+  monthly_revenue: number;
+  average_order_value: number;
+  growth_rate: number;
+}
+
+/**
+ * Advanced database adapters for handling schema mismatches
+ */
+export const databaseAdapters = {
+  /**
+   * User adapter - maps auth.users references to profiles table
+   */
+  users: {
+    async findById(id: string): Promise<UserAdapter | null> {
+      const supabase = createServerClient();
+      const { data } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (!data) return null;
+
+      return {
+        id: data.id,
+        email: data.email || '',
+        full_name: data.full_name,
+        role: data.role,
+        created_at: data.created_at
+      };
+    },
+
+    async findAll(filters?: { role?: string }): Promise<UserAdapter[]> {
+      const supabase = createServerClient();
+      let query = supabase.from('profiles').select('*');
+
+      if (filters?.role) {
+        query = query.eq('role', filters.role);
+      }
+
+      const { data } = await query;
+
+      return (data || []).map(profile => ({
+        id: profile.id,
+        email: profile.email || '',
+        full_name: profile.full_name,
+        role: profile.role,
+        created_at: profile.created_at
+      }));
+    },
+
+    async findByEmail(email: string): Promise<UserAdapter | null> {
+      const supabase = createServerClient();
+      const { data } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('email', email)
+        .single();
+
+      if (!data) return null;
+
+      return {
+        id: data.id,
+        email: data.email || '',
+        full_name: data.full_name,
+        role: data.role,
+        created_at: data.created_at
+      };
+    }
+  },
+
+  /**
+   * Revenue analytics adapter - calculates metrics from existing tables
+   */
+  revenue_analytics: {
+    async getMetrics(salonId: string, period?: { start: Date; end: Date }): Promise<RevenueMetrics> {
+      const supabase = createServerClient();
+
+      // Calculate from appointments table
+      const { data: appointments } = await supabase
+        .from('appointments')
+        .select('total_amount, created_at')
+        .eq('salon_id', salonId)
+        .eq('status', 'completed');
+
+      const total = appointments?.reduce((sum, apt) => sum + (apt.total_amount || 0), 0) || 0;
+      const count = appointments?.length || 0;
+
+      return {
+        total_revenue: total,
+        monthly_revenue: total / 12, // Simplified calculation
+        average_order_value: count > 0 ? total / count : 0,
+        growth_rate: 0 // Would need historical data
+      };
+    },
+
+    async getDailyRevenue(salonId: string, days: number = 30): Promise<Array<{ date: string; amount: number }>> {
+      const supabase = createServerClient();
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - days);
+
+      const { data } = await supabase
+        .from('appointments')
+        .select('total_amount, created_at')
+        .eq('salon_id', salonId)
+        .eq('status', 'completed')
+        .gte('created_at', startDate.toISOString());
+
+      // Group by date
+      const revenueByDate = new Map<string, number>();
+
+      data?.forEach(apt => {
+        const date = new Date(apt.created_at).toISOString().split('T')[0];
+        const current = revenueByDate.get(date) || 0;
+        revenueByDate.set(date, current + (apt.total_amount || 0));
+      });
+
+      return Array.from(revenueByDate.entries()).map(([date, amount]) => ({
+        date,
+        amount
+      }));
+    }
+  }
+};
+
+/**
+ * Helper function to get table or adapter
+ */
+export function getTableOrAdapter(tableName: string) {
+  const supabase = createServerClient();
+
+  // Map common table references to adapters
+  const adapterMap: Record<string, any> = {
+    'auth.users': databaseAdapters.users,
+    'users': databaseAdapters.users,
+    'revenue_analytics': databaseAdapters.revenue_analytics,
+  };
+
+  return adapterMap[tableName] || supabase.from(tableName as keyof Database['public']['Views']);
+}
+
+/**
+ * Create adapted Supabase client with fallback support
+ */
+export function createAdaptedClient() {
+  const supabase = createServerClient();
+
+  return {
+    ...supabase,
+    from: (table: string) => getTableOrAdapter(table)
+  };
 }

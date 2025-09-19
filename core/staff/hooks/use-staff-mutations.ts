@@ -26,7 +26,7 @@ import type {
   TimeOffRequestUpdate,
   BlockedTimeInsert,
   BlockedTimeUpdate,
-} from "../dal/staff-types";
+} from "../dal/staff.types";
 
 export function useCreateStaffProfile() {
   const queryClient = useQueryClient();

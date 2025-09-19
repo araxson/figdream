@@ -1,9 +1,4 @@
-// Public API exports ONLY
-export { ServicesManagement } from "./services";
-export { ServicesList } from "./list";
-export { ServicesHeader } from "./header";
-export { ServicesStats } from "./stats";
-export { CategoriesSidebar } from "./categories";
+// Services Components - Barrel Exports
+// Re-export from the salon services location
 
-// Export types
-export type * from "../types";
+export { default as ServicesManagement } from '../../salon/components/services/service-services'

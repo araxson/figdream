@@ -1,14 +1,35 @@
-export { StaffManagement } from "./staff";
-export { StaffHeader } from "./header";
-export { StaffStats } from "./stats";
-export { StaffGrid } from "./grid";
-export { StaffList } from "./list";
+/**
+ * Staff Components - Public API
+ *
+ * Organized barrel exports for all staff components
+ */
 
-// Staff Profile Components
-export { StaffProfileView } from "./staff-profile-view";
-export { StaffProfileHeader } from "./staff-profile-header";
-export { StaffBasicInfo } from "./staff-basic-info";
-export { StaffProfessionalInfo } from "./staff-professional-info";
-export { StaffPerformanceMetrics } from "./staff-performance-metrics";
-export { StaffReviews } from "./staff-reviews";
-export { StaffCustomers } from "./staff-customers";
+// Dashboard components
+export * from './dashboard'
+
+// Schedule management components
+export * from './schedule'
+
+// Form and onboarding components
+export * from './forms'
+
+// Modal and dialog components
+export * from './modals'
+
+// Earnings and time tracking components
+export * from './earnings'
+
+// Appointment-related components
+export * from './appointments'
+
+// Customer-related components
+export * from './customers'
+
+// Profile-related components
+export * from './profile'
+
+// Common/shared components
+export * from './common'
+
+// Main management components (from salon module)
+export { StaffManagementList as StaffManagement } from '../../salon/components/staff/management-list'

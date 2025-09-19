@@ -1,5 +1,5 @@
 // Ultra-thin booking page
-import { BookingWizard } from '@/core/booking/components'
+import { BookingWizard } from '@/core/customer/components/booking'
 
 export default function BookingPage() {
   // In production, get salonId from context or params

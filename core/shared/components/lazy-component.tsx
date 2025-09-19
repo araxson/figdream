@@ -87,7 +87,7 @@ export const LazyFeatures = {
 
   // Customer components
   CustomerPortal: createLazyComponent(
-    () => import("@/core/customer/components/customer-portal"),
+    () => import("@/core/customers/components/portal/customer-portal"),
     { featureName: "Customer Portal" }
   ),
 

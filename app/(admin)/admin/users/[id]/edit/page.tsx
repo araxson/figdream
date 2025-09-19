@@ -1,5 +1,5 @@
 import { UserProfileEditor } from "@/core/users/components";
-import { getUserById, getUserActivity, getAvailableRoles } from "@/core/users/dal/users-queries";
+import { getUserById, getUserActivity, getAvailableRoles } from "@/core/users/dal";
 import { notFound } from "next/navigation";
 
 interface PageProps {

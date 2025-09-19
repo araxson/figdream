@@ -1,19 +1,19 @@
-// Loading Skeletons - Centralized Loading States
-// ULTRATHINK: Eliminated duplication across 50+ components
+// Loading Components - Modular loading states and skeleton screens
 
+// Skeleton components
 export { AppointmentsLoadingSkeleton } from './appointments-skeleton';
 export { StaffDetailSkeleton } from './staff-detail-skeleton';
+export * from './skeleton-loader';
 
-// TODO: Extract additional loading states from components:
-// - DashboardSkeleton
-// - CustomersSkeleton
-// - ServicesSkeleton
-// - AnalyticsSkeleton
-// - InventorySkeleton
-// - BillingSkeleton
+// Progressive loading components
+export * from './progressive-list';
+export * from './lazy-load';
+export * from './progressive-image';
+export * from './content-placeholder';
 
-// Architecture achievement:
-// ✅ Centralized loading states
-// ✅ Eliminated duplicate skeleton patterns
-// ✅ Consistent loading experience
-// ✅ Reusable across all pages
+// Prefetch utilities
+export * from './prefetch-manager';
+export * from './prefetch-link';
+
+// Hooks
+export * from './use-background-refresh';

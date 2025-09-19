@@ -1,18 +1,120 @@
-// Customer Portal Module Barrel Export
+/**
+ * Customer Module - Public API
+ * Customer-facing functionality for the booking platform
+ */
 
-// Types
-export type * from './types'
+// Actions - Server actions for customer operations
+export {
+  // Profile actions
+  profileActions
+} from './actions/profile-actions';
 
-// DAL
-// DAL functions are available via ./dal/* imports for server-side use only
+export {
+  // Booking actions
+  createBookingAction,
+  updateBookingStatusAction,
+  rescheduleBookingAction,
+  cancelBookingAction,
+  quickBookingAction
+} from './actions/booking-actions';
 
-// Actions
-export * from './actions'
+export {
+  // Loyalty enrollment actions
+  enrollCustomerInProgram,
+  unenrollCustomerFromProgram,
+  updateCustomerLoyaltyDetails
+} from './actions/customer-loyalty-enrollment-actions';
 
-// Components
-export * from './components/booking'
-export * from './components/profile'
+export {
+  // Loyalty points actions
+  awardPointsForAppointmentAction,
+  getCustomerLoyaltyInfo,
+  addLoyaltyTransactionAction
+} from './actions/customer-loyalty-points-actions';
 
-// Re-export commonly used components
-export { SalonSearch, ServiceSelection, StaffSelection, TimeSelection, BookingConfirmation } from './components/booking'
-export { ProfileHeader, PersonalInfoForm, PreferencesForm } from './components/profile'
+// Hooks - React hooks for data fetching and state management
+export {
+  useBookings,
+  useBookingFeed,
+  useCalendarLogic,
+  useBookingWebsocket
+} from './hooks';
+
+export {
+  useFavorites,
+  useFavoritesMutations
+} from './hooks';
+
+export {
+  useGiftCards,
+  usePackages
+} from './hooks';
+
+export {
+  useReviews,
+  useReviewsMutations
+} from './hooks';
+
+// Components - React components for customer interfaces
+export {
+  CustomerDashboard,
+  BookingWizard,
+  BookingConfirmation,
+  AppointmentHistory,
+  AvailabilityCalendar,
+  ServiceSelection,
+  StaffSelection,
+  TimeSelection,
+  BookingManager,
+  FavoritesList
+} from './components';
+
+export {
+  CustomerProfile,
+  CustomerPreferences,
+  PersonalInfoForm,
+  PreferencesForm
+} from './components';
+
+export {
+  LoyaltyDashboard,
+  LoyaltyAnalytics,
+  MembersList,
+  TransactionsList,
+  PointsDialog
+} from './components';
+
+// Data Access Layer - Database operations
+export {
+  getCustomerProfile,
+  getCustomerAppointments,
+  getCustomerFavorites,
+  getCustomerReviews,
+  getAvailableSalons,
+  getSalonServices,
+  getAvailableStaff,
+  getCustomerLoyaltyPoints,
+  getCustomerGiftCards
+} from './dal';
+
+export {
+  updateCustomerProfile,
+  createAppointment,
+  cancelAppointment,
+  rescheduleAppointment,
+  addToFavorites,
+  removeFromFavorites,
+  createReview,
+  updateLoyaltyPoints
+} from './dal';
+
+// Types - TypeScript interfaces and types
+export type {
+  CustomerPortalTypes,
+  BookingTypes,
+  LoyaltyTypes,
+  FavoritesTypes,
+  ReviewsTypes,
+  GiftCardTypes,
+  PackageTypes
+} from './types';

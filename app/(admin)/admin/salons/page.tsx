@@ -1,5 +1,5 @@
-import { SalonManagement } from "@/core/admin/components/salon-management";
-import { getPlatformSalons } from "@/core/admin/dal";
+import { SalonManagement } from "@/core/platform/components";
+import { getPlatformSalons } from "@/core/platform/dal";
 import { redirect } from "next/navigation";
 
 export default async function AdminSalonsPage({

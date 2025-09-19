@@ -1,21 +1,30 @@
-import type { Database } from '@/types/database.types';
+// Staff Types - Barrel Exports
+// This module exports all TypeScript types for the staff domain
 
-// Database types
-export type StaffProfile = Database['organization']['Tables']['staff_profiles']['Row'];
-export type StaffSchedule = Database['scheduling']['Tables']['staff_schedules']['Row'];
-export type TimeOffRequest = Database['scheduling']['Tables']['time_off_requests']['Row'];
-export type StaffService = Database['catalog']['Tables']['staff_services']['Row'];
-export type StaffPerformance = Database['analytics']['Tables']['staff_performance']['Row'];
+// Re-export database types for staff domain
+export type {
+  StaffProfile,
+  StaffProfileInsert,
+  StaffProfileUpdate,
+  StaffSchedule,
+  StaffScheduleInsert,
+  StaffScheduleUpdate,
+  TimeOffRequest,
+  TimeOffRequestInsert,
+  TimeOffRequestUpdate,
+  StaffService,
+  StaffServiceInsert,
+  StaffServiceUpdate,
+  StaffPerformance,
+  StaffPerformanceInsert,
+  StaffPerformanceUpdate,
+  StaffStatus,
+  ProficiencyLevel,
+  DayOfWeek,
+  TimeOffStatus,
+} from '../dal/staff.types';
 
-// Enums
-export enum StaffStatus {
-  AVAILABLE = 'available',
-  ON_BREAK = 'on_break',
-  OFF_DUTY = 'off_duty',
-  ON_VACATION = 'on_vacation',
-  TERMINATED = 'terminated'
-}
-
+// Domain-specific enums for UI (not in database)
 export enum EmploymentType {
   FULL_TIME = 'full_time',
   PART_TIME = 'part_time',
@@ -33,44 +42,8 @@ export enum TimeOffType {
   OTHER = 'other'
 }
 
-export enum TimeOffStatus {
-  PENDING = 'pending',
-  APPROVED = 'approved',
-  DENIED = 'denied',
-  CANCELLED = 'cancelled'
-}
-
-export enum ProficiencyLevel {
-  BEGINNER = 'beginner',
-  INTERMEDIATE = 'intermediate',
-  ADVANCED = 'advanced',
-  EXPERT = 'expert'
-}
-
-export enum DayOfWeek {
-  MONDAY = 'monday',
-  TUESDAY = 'tuesday',
-  WEDNESDAY = 'wednesday',
-  THURSDAY = 'thursday',
-  FRIDAY = 'friday',
-  SATURDAY = 'saturday',
-  SUNDAY = 'sunday'
-}
-
-// Extended types
-export interface StaffProfileWithDetails extends StaffProfile {
-  user?: {
-    id: string;
-    email: string;
-    full_name: string;
-    phone?: string;
-    avatar_url?: string;
-  };
-  services?: StaffService[];
-  schedules?: StaffSchedule[];
-  performance?: StaffPerformance;
-  upcoming_time_off?: TimeOffRequest[];
-}
+// Use StaffProfileWithRelations from dal/staff.types for consistency
+export type { StaffProfileWithRelations as StaffProfileWithDetails } from '../dal/staff.types';
 
 export interface StaffScheduleTemplate {
   id: string;
@@ -386,3 +359,12 @@ export interface PayrollSummary {
     failed: number;
   };
 }
+
+// Component props types
+export * from './component-props.types';
+
+// Schedule types
+export * from './schedule.types';
+
+// Time-off types
+export * from './time-off.types';

@@ -1,60 +1,25 @@
 /**
- * Staff Actions Module Index
+ * Staff Actions - Organized server actions for staff management
  *
- * Successful modular refactoring:
- * - Original: 1,009 lines in single file
- * - Refactored: 5 focused modules
- * - Benefits: Better maintainability, clear separation of concerns
+ * Organized structure:
+ * - CRUD operations in /crud
+ * - Scheduling operations in /scheduling
+ * - Bulk operations in /bulk
+ * - Type definitions in /types
+ * - Schema validations in /schemas
  */
 
-// CRUD Operations (342 lines)
-export {
-  createStaffMemberAction,
-  updateStaffMemberAction,
-  deleteStaffMemberAction,
-  getStaffAction,
-  getStaffByIdAction,
-  getStaffProfileByIdAction,
-  getStaffProfilesAction
-} from './staff-crud-actions'
+// CRUD Operations
+export * from './crud'
 
-// Schedule Management (173 lines)
-export {
-  updateStaffScheduleAction,
-  toggleStaffAvailabilityAction,
-  createTimeOffRequestAction
-} from './staff-schedule-actions'
+// Scheduling and service management
+export * from './scheduling'
 
-// Service Management (153 lines)
-export {
-  assignServicesToStaffAction,
-  removeServiceFromStaffAction,
-  updateStaffServicePricingAction
-} from './staff-service-actions'
+// Bulk operations
+export * from './bulk'
 
-// Bulk Operations (274 lines)
-export {
-  bulkActivateStaffAction,
-  bulkDeactivateStaffAction,
-  bulkUpdateStaffRoleAction,
-  bulkDeleteStaffAction,
-  bulkUpdateCommissionRatesAction
-} from './staff-bulk-actions'
+// Type definitions
+export * from './types'
 
-// Shared Types & Schemas (107 lines)
-export type {
-  ActionResponse,
-  CreateStaffInput,
-  UpdateStaffInput,
-  StaffScheduleInput,
-  ServiceAssignmentInput,
-  StaffStatusInput
-} from './staff-action-types'
-
-export {
-  CreateStaffSchema,
-  UpdateStaffSchema,
-  StaffScheduleSchema,
-  ServiceAssignmentSchema,
-  StaffStatusSchema
-} from './staff-action-types'
+// Schema validations
+export * from './schemas'

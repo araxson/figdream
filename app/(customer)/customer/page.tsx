@@ -1,4 +1,4 @@
-import { CustomerDashboardWrapper } from '@/core/customer/components/dashboard/customer-dashboard-wrapper';
+import { CustomerDashboard } from '@/core/customer/components';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function CustomerDashboardPage() {
-  return <CustomerDashboardWrapper />;
+  return <CustomerDashboard />;
 }

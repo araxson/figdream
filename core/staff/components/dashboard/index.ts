@@ -1,0 +1,12 @@
+// Dashboard components exports
+export { default as PerformanceDashboard } from './performance-dashboard'
+export { default as PerformanceMetrics } from './performance-metrics'
+export { default as StaffAnalytics } from './staff-analytics'
+export { default as StaffAnalyticsComparison } from './staff-analytics-comparison'
+export { default as StaffAnalyticsHeader } from './staff-analytics-header'
+export { default as StaffAnalyticsInsights } from './staff-analytics-insights'
+export { default as StaffAnalyticsMetrics } from './staff-analytics-metrics'
+export { default as StaffAnalyticsTrends } from './staff-analytics-trends'
+export { default as StaffPerformanceMetrics } from './staff-performance-metrics'
+export { default as StaffPerformanceTable } from './staff-performance-table'
+export { default as StaffTopPerformers } from './staff-top-performers'

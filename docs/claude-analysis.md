@@ -1,6 +1,6 @@
 # Claude Agent Analysis Report
 
-Generated: 2025-09-19T02:02:03.869Z
+Generated: 2025-09-19T11:42:16.767Z
 
 ## Project Health
 
@@ -11,9 +11,9 @@ Generated: 2025-09-19T02:02:03.869Z
 
 ## Error Summary
 
-- **Total Errors**: 3638
-- **TypeScript Errors**: 1808
-- **ESLint Errors**: 1829
+- **Total Errors**: 3334
+- **TypeScript Errors**: 2250
+- **ESLint Errors**: 1083
 - **Build Errors**: 1
 
 ## Structure Issues
@@ -29,91 +29,21 @@ Generated: 2025-09-19T02:02:03.869Z
 ### Files to Fix (Top Priority):
 
 
-#### core/loyalty/dal/loyalty.ts (76 errors)
-- Line 173: No overload matches this call.
-  Fix: Review error and fix accordingly
-- Line 180: Conversion of type 'Error' to type 'Record<string, unknown>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
-  Fix: Review error and fix accordingly
-- Line 187: Type '{}' is not assignable to type 'string'.
-  Fix: Fix type mismatch - ensure assigned value matches expected type
-- Line 188: Type '{}' is not assignable to type 'string'.
-  Fix: Fix type mismatch - ensure assigned value matches expected type
-- Line 189: Type '{}' is not assignable to type 'string'.
-  Fix: Fix type mismatch - ensure assigned value matches expected type
+#### core/customer/components/booking/manager.tsx (49 errors)
+- Line 12: Cannot find module './booking-utils/booking-manager-types' or its corresponding type declarations.
+  Fix: Add missing import or install missing package
+- Line 13: Cannot find module '../types' or its corresponding type declarations.
+  Fix: Add missing import or install missing package
+- Line 14: Cannot find module './booking-sections/booking-actions-toolbar' or its corresponding type declarations.
+  Fix: Add missing import or install missing package
+- Line 15: Cannot find module './booking-sections/booking-filters-section' or its corresponding type declarations.
+  Fix: Add missing import or install missing package
+- Line 16: Cannot find module './booking-sections/booking-list-section' or its corresponding type declarations.
+  Fix: Add missing import or install missing package
 
-#### core/inventory/dal/queries.ts (64 errors)
-- Line 27: No overload matches this call.
-  Fix: Review error and fix accordingly
-- Line 32: Property 'search' does not exist on type 'ProductFilters'.
-  Fix: Property does not exist - add property or fix typo
-- Line 33: Property 'search' does not exist on type 'ProductFilters'.
-  Fix: Property does not exist - add property or fix typo
-- Line 33: Property 'search' does not exist on type 'ProductFilters'.
-  Fix: Property does not exist - add property or fix typo
-- Line 33: Property 'search' does not exist on type 'ProductFilters'.
-  Fix: Property does not exist - add property or fix typo
-
-#### core/campaigns/dal/campaigns-queries.ts (60 errors)
-- Line 36: Property 'current_salon_id' does not exist on type 'SelectQueryError<"column 'current_salon_id' does not exist on 'profiles'.">'.
-  Fix: Property does not exist - add property or fix typo
-- Line 49: Property 'current_salon_id' does not exist on type 'SelectQueryError<"column 'current_salon_id' does not exist on 'profiles'.">'.
-  Fix: Property does not exist - add property or fix typo
-- Line 80: Property 'current_salon_id' does not exist on type 'SelectQueryError<"column 'current_salon_id' does not exist on 'profiles'.">'.
-  Fix: Property does not exist - add property or fix typo
-- Line 94: Property 'current_salon_id' does not exist on type 'SelectQueryError<"column 'current_salon_id' does not exist on 'profiles'.">'.
-  Fix: Property does not exist - add property or fix typo
-- Line 171: Property 'current_salon_id' does not exist on type 'SelectQueryError<"column 'current_salon_id' does not exist on 'profiles'.">'.
-  Fix: Property does not exist - add property or fix typo
-
-#### core/billing/dal/index.ts (48 errors)
-- Line 23: No overload matches this call.
-  Fix: Review error and fix accordingly
-- Line 67: No overload matches this call.
-  Fix: Review error and fix accordingly
-- Line 92: No overload matches this call.
-  Fix: Review error and fix accordingly
-- Line 93: No overload matches this call.
-  Fix: Review error and fix accordingly
-- Line 110: No overload matches this call.
-  Fix: Review error and fix accordingly
-
-#### core/customer/dal/bookings.ts (47 errors)
-- Line 20: Property 'from' does not exist on type 'Promise<SupabaseClient<Database, "public", "public", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...'.
-  Fix: Property does not exist - add property or fix typo
-- Line 48: Property 'from' does not exist on type 'Promise<SupabaseClient<Database, "public", "public", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...'.
-  Fix: Property does not exist - add property or fix typo
-- Line 63: Parameter 'salon' implicitly has an 'any' type.
-  Fix: Review error and fix accordingly
-- Line 89: Property 'from' does not exist on type 'Promise<SupabaseClient<Database, "public", "public", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...'.
-  Fix: Property does not exist - add property or fix typo
-- Line 115: Property 'from' does not exist on type 'Promise<SupabaseClient<Database, "public", "public", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...'.
-  Fix: Property does not exist - add property or fix typo
-
-#### core/loyalty/dal/mutations.ts (47 errors)
-- Line 32: No overload matches this call.
-  Fix: Review error and fix accordingly
-- Line 37: Property 'salon_id' does not exist on type 'never'.
-  Fix: Property does not exist - add property or fix typo
-- Line 75: No overload matches this call.
-  Fix: Review error and fix accordingly
-- Line 80: Property 'salon_id' does not exist on type 'never'.
-  Fix: Property does not exist - add property or fix typo
-- Line 116: No overload matches this call.
-  Fix: Review error and fix accordingly
-
-#### core/appointments/components/appointment-details-modal.tsx (44 errors)
-- Line 127: Property 'payment_status' does not exist on type 'AppointmentWithRelations'.
-  Fix: Property does not exist - add property or fix typo
-- Line 128: Property 'start_time' does not exist on type 'AppointmentWithRelations'.
-  Fix: Property does not exist - add property or fix typo
-- Line 129: Property 'end_time' does not exist on type 'AppointmentWithRelations'.
-  Fix: Property does not exist - add property or fix typo
-- Line 218: Property 'confirmation_code' does not exist on type 'AppointmentWithRelations'.
-  Fix: Property does not exist - add property or fix typo
-- Line 219: Property 'confirmation_code' does not exist on type 'AppointmentWithRelations'.
-  Fix: Property does not exist - add property or fix typo
-
-#### core/billing/actions/refund-actions.ts (44 errors)
+#### core/salon/actions/billing/refund.action.ts (44 errors)
+- Line 4: Cannot find module '../dal/billing-types' or its corresponding type declarations.
+  Fix: Add missing import or install missing package
 - Line 31: No overload matches this call.
   Fix: Review error and fix accordingly
 - Line 40: Property 'stripe_payment_intent_id' does not exist on type 'never'.
@@ -122,22 +52,10 @@ Generated: 2025-09-19T02:02:03.869Z
   Fix: Property does not exist - add property or fix typo
 - Line 65: Property 'metadata' does not exist on type 'never'.
   Fix: Property does not exist - add property or fix typo
-- Line 73: No overload matches this call.
-  Fix: Review error and fix accordingly
 
-#### core/security/dal/secure-dal-patterns.ts (44 errors)
-- Line 163: 'data' is of type 'unknown'.
-  Fix: Review error and fix accordingly
-- Line 164: 'data' is of type 'unknown'.
-  Fix: Review error and fix accordingly
-- Line 165: 'data' is of type 'unknown'.
-  Fix: Review error and fix accordingly
-- Line 166: 'data' is of type 'unknown'.
-  Fix: Review error and fix accordingly
-- Line 167: 'data' is of type 'unknown'.
-  Fix: Review error and fix accordingly
-
-#### core/billing/actions/invoice-actions.ts (40 errors)
+#### core/salon/actions/billing/invoice.action.ts (42 errors)
+- Line 4: Cannot find module '../dal/billing-types' or its corresponding type declarations.
+  Fix: Add missing import or install missing package
 - Line 36: No overload matches this call.
   Fix: Review error and fix accordingly
 - Line 47: No overload matches this call.
@@ -146,5 +64,87 @@ Generated: 2025-09-19T02:02:03.869Z
   Fix: Property does not exist - add property or fix typo
 - Line 54: No overload matches this call.
   Fix: Review error and fix accordingly
-- Line 69: Spread types may only be created from object types.
+
+#### core/staff/components/schedule/manager.tsx (42 errors)
+- Line 56: Cannot find module '../actions' or its corresponding type declarations.
+  Fix: Add missing import or install missing package
+- Line 57: Cannot find module '../dal/staff-types' or its corresponding type declarations.
+  Fix: Add missing import or install missing package
+- Line 58: Cannot find module './schedule-pattern-dialog' or its corresponding type declarations.
+  Fix: Add missing import or install missing package
+- Line 59: Cannot find module './timeoff-request-dialog' or its corresponding type declarations.
+  Fix: Add missing import or install missing package
+- Line 3: 'useOptimistic' is defined but never used. Allowed unused vars must match /^_/u.
+  Fix: Remove unused variable or add underscore prefix
+
+#### core/customer/hooks/use-bookings.ts (38 errors)
+- Line 6: Module '"../types"' has no exported member 'BookingWizardState'.
+  Fix: Review error and fix accordingly
+- Line 7: Module '"../types"' has no exported member 'BookingListItem'.
+  Fix: Review error and fix accordingly
+- Line 8: Module '"../types"' has no exported member 'BookingFilters'.
+  Fix: Review error and fix accordingly
+- Line 9: Module '"../types"' has no exported member 'TimeSlot'.
+  Fix: Review error and fix accordingly
+- Line 10: Module '"../types"' has no exported member 'Service'.
+  Fix: Review error and fix accordingly
+
+#### core/salon/dal/billing/billing.queries.ts (37 errors)
+- Line 9: Cannot find module './billing-types' or its corresponding type declarations.
+  Fix: Add missing import or install missing package
+- Line 23: No overload matches this call.
+  Fix: Review error and fix accordingly
+- Line 80: No overload matches this call.
+  Fix: Review error and fix accordingly
+- Line 101: No overload matches this call.
+  Fix: Review error and fix accordingly
+- Line 112: No overload matches this call.
+  Fix: Review error and fix accordingly
+
+#### core/salon/components/dashboard/service-catalog.tsx (34 errors)
+- Line 103: 'service.sale_price' is possibly 'undefined'.
+  Fix: Review error and fix accordingly
+- Line 4: 'CardDescription' is defined but never used. Allowed unused vars must match /^_/u.
+  Fix: Remove unused variable or add underscore prefix
+- Line 8: 'Tabs' is defined but never used. Allowed unused vars must match /^_/u.
+  Fix: Remove unused variable or add underscore prefix
+- Line 8: 'TabsContent' is defined but never used. Allowed unused vars must match /^_/u.
+  Fix: Remove unused variable or add underscore prefix
+- Line 8: 'TabsList' is defined but never used. Allowed unused vars must match /^_/u.
+  Fix: Remove unused variable or add underscore prefix
+
+#### core/customer/index.ts (32 errors)
+- Line 10: Cannot find module './actions/profile-actions' or its corresponding type declarations.
+  Fix: Add missing import or install missing package
+- Line 19: Cannot find module './actions/booking-actions' or its corresponding type declarations.
+  Fix: Add missing import or install missing package
+- Line 26: Cannot find module './actions/customer-loyalty-enrollment-actions' or its corresponding type declarations.
+  Fix: Add missing import or install missing package
+- Line 33: Cannot find module './actions/customer-loyalty-points-actions' or its corresponding type declarations.
+  Fix: Add missing import or install missing package
+- Line 37: Module '"./hooks"' has no exported member 'useBookings'.
+  Fix: Review error and fix accordingly
+
+#### core/salon/dal/inventory/inventory.queries.ts (32 errors)
+- Line 15: Cannot find module './types' or its corresponding type declarations.
+  Fix: Add missing import or install missing package
+- Line 27: No overload matches this call.
+  Fix: Review error and fix accordingly
+- Line 66: No overload matches this call.
+  Fix: Review error and fix accordingly
+- Line 86: No overload matches this call.
+  Fix: Review error and fix accordingly
+- Line 109: No overload matches this call.
+  Fix: Review error and fix accordingly
+
+#### core/salon/dal/inventory/purchase-order.mutations.ts (31 errors)
+- Line 5: Cannot find module './types' or its corresponding type declarations.
+  Fix: Add missing import or install missing package
+- Line 6: Cannot find module './stock-mutations' or its corresponding type declarations.
+  Fix: Add missing import or install missing package
+- Line 18: Parameter 'sum' implicitly has an 'any' type.
+  Fix: Review error and fix accordingly
+- Line 18: Parameter 'item' implicitly has an 'any' type.
+  Fix: Review error and fix accordingly
+- Line 24: No overload matches this call.
   Fix: Review error and fix accordingly

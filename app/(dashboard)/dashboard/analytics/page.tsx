@@ -1,4 +1,4 @@
-import { AnalyticsManagement } from "@/core/analytics/components";
+import { AnalyticsManagement } from "@/core/platform/components/analytics";
 
 export default function DashboardAnalyticsPage() {
   return <AnalyticsManagement role="owner" />;

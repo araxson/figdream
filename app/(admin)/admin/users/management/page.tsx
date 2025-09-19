@@ -1,8 +1,8 @@
-import { UsersDashboard } from "@/core/users/components";
+import { UsersDashboardMain } from "@/core/users/components";
 import {
   getUsersWithRoles,
   getUserManagementStats
-} from "@/core/users/dal/users-queries";
+} from "@/core/users/dal";
 
 /**
  * Ultra-thin page for user management dashboard
@@ -15,5 +15,5 @@ export default async function UserManagementPage() {
     getUserManagementStats()
   ]);
 
-  return <UsersDashboard initialUsers={users} initialStats={stats} />;
+  return <UsersDashboardMain initialUsers={users} initialStats={stats} />;
 }

@@ -1,20 +1,55 @@
-// Types
-export type * from './types';
+/**
+ * Staff Module - Public API
+ * Staff-facing functionality for work and schedule management
+ */
 
-// DAL
-// DAL functions are available via ./dal/* imports for server-side use only
+// Staff portal actions
+export {
+  getStaffDashboard,
+  getStaffSchedule,
+  updateStaffSchedule,
+  requestTimeOff,
+  getStaffAppointments,
+  checkInAppointment,
+  completeAppointment,
+  getStaffCustomers,
+  updateCustomerNotes,
+  getStaffEarnings,
+  getStaffPerformance,
+  updateStaffProfile,
+  updateStaffAvailability
+} from './actions';
 
-// Actions
-export * from './actions';
+// Staff hooks
+export {
+  useStaffDashboard,
+  useStaffSchedule,
+  useStaffAppointments,
+  useStaffCustomers,
+  useStaffEarnings,
+  useStaffProfile
+} from './hooks';
 
-// Components
-export { StaffProfileCard } from './components/staff-profile-card';
-export { StaffManagementList } from './components/staff-management-list';
-export { ScheduleManager } from './components/schedule-manager';
-export { PerformanceDashboard } from './components/performance-dashboard';
-export { PayrollManager } from './components/payroll-manager';
-export { TimeAttendanceTracker } from './components/time-attendance-tracker';
-export { StaffDetailPage } from './components/staff-detail-page';
+// Staff portal components
+export {
+  StaffDashboard,
+  StaffScheduleManager,
+  StaffAppointmentList,
+  StaffCustomerView,
+  StaffEarningsReport,
+  StaffProfileEditor,
+  TimeOffRequest,
+  StaffCalendar
+} from './components';
 
-// Analytics Components (from refactoring)
-export * from './components/analytics';
+// Staff types
+export type {
+  StaffMember,
+  StaffSchedule,
+  StaffAppointment,
+  StaffCustomer,
+  StaffEarnings,
+  StaffPerformance,
+  TimeOffRequest as TimeOffRequestType,
+  StaffAvailability
+} from './types';

@@ -1,5 +1,5 @@
-import { UserManagement } from "@/core/admin/components/user-management";
-import { getPlatformUsers } from "@/core/admin/dal";
+import { UserManagement } from "@/core/platform/components";
+import { getPlatformUsers } from "@/core/platform/dal";
 import { redirect } from "next/navigation";
 
 export default async function AdminUsersPage({

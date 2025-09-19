@@ -1,57 +1,37 @@
-// Dashboard layout
-import { Sidebar } from '@/core/layouts/components/sidebar'
-import { Header } from '@/core/layouts/components'
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
-import { salonOwnerNavigation } from '@/core/layouts/config/navigation/salon-owner'
-import { salonManagerNavigation } from '@/core/layouts/config/navigation/salon-manager'
-import type { RoleType } from '@/core/shared/types/enums.types'
-
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children
 }: {
   children: React.ReactNode
 }) {
-  const supabase = await createClient()
-
-  // Check authentication
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) {
-    redirect('/login')
-  }
-
-  // Check user role
-  const { data: userRole } = await supabase
-    .from('user_roles')
-    .select('role')
-    .eq('user_id', user.id)
-    .single()
-
-  // Only allow salon owners and managers
-  const role = userRole?.role
-  if (!role || !['salon_owner', 'salon_manager'].includes(role)) {
-    redirect('/unauthorized')
-  }
-
-  // Get navigation items based on role
-  const navigationItems = role === 'salon_owner' ? salonOwnerNavigation : salonManagerNavigation
-
   return (
-    <div className="h-full relative">
-      <div className="hidden h-full md:flex md:w-72 md:flex-col md:fixed md:inset-y-0 z-50">
-        <Sidebar
-          items={navigationItems}
-          isCollapsed={false}
-          onToggleCollapse={() => {}}
-          userRole={role}
-        />
+    <div className="min-h-screen bg-background">
+      <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <h1 className="text-xl font-semibold">Salon Dashboard</h1>
+            <div className="flex items-center gap-4">
+              <nav className="flex items-center gap-6">
+                <a href="/dashboard" className="text-sm font-medium hover:text-primary transition-colors">
+                  Dashboard
+                </a>
+                <a href="/dashboard/appointments" className="text-sm font-medium hover:text-primary transition-colors">
+                  Appointments
+                </a>
+                <a href="/dashboard/customers" className="text-sm font-medium hover:text-primary transition-colors">
+                  Customers
+                </a>
+                <a href="/dashboard/staff" className="text-sm font-medium hover:text-primary transition-colors">
+                  Staff
+                </a>
+                <a href="/dashboard/services" className="text-sm font-medium hover:text-primary transition-colors">
+                  Services
+                </a>
+              </nav>
+            </div>
+          </div>
+        </div>
       </div>
-      <main className="md:pl-72 h-full">
-        <Header
-          userRole={role}
-          userName={user.user_metadata?.full_name || user.email || 'User'}
-          userEmail={user.email || ''}
-        />
+      <main className="container mx-auto">
         {children}
       </main>
     </div>

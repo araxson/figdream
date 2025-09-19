@@ -1,4 +1,4 @@
-import { SalonDashboard } from '@/core/salons/components'
+import { SalonDashboard } from '@/core/salon/dashboard/components'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 

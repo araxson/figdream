@@ -1,11 +1,5 @@
-// Customer DAL Barrel Export
-export * from './profile'
-export * from './bookings'
-export * from './appointments'
-export * from './favorites'
-export * from './loyalty'
-export * from './reviews'
-export * from './notifications'
-
-// Re-export types for convenience
-export type * from '../types'
+// Customer Data Access Layer - Public API
+export * from './queries'
+export * from './mutations'
+export * from './relationships.queries'
+export * from './analytics.queries'

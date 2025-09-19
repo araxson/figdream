@@ -1,5 +1,5 @@
 // Ultra-thin booking management page
-import { BookingManager, BookingLiveFeed } from '@/core/booking/components'
+import { BookingManager, BookingLiveFeed } from '@/core/customer/components/booking'
 
 export default function BookingManagementPage() {
   // In production, get salonId from context or params

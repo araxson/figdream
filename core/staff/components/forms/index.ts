@@ -1,0 +1,12 @@
+// Form components exports
+export { default as AccessStep } from './access-step'
+export { default as CompensationStep } from './compensation-step'
+export { default as DocumentsStep } from './documents-step'
+export { default as PersonalInfoStep } from './personal-info-step'
+export { default as ProfessionalStep } from './professional-step'
+export { default as ReviewStep } from './review-step'
+export { default as ScheduleStep } from './schedule-step'
+export { default as ServicesStep } from './services-step'
+export { default as SkillsStep } from './skills-step'
+export { StaffOnboarding } from './staff-onboarding-wizard'
+export { default as StaffOnboardingBasic } from './staff-onboarding'

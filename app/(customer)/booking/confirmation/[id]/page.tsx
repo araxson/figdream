@@ -1,6 +1,6 @@
 // Ultra-thin booking confirmation page
-import { BookingConfirmation } from '@/core/booking/components'
-import { getBookingById } from '@/core/booking/dal'
+import { BookingConfirmation } from '@/core/customer/components/booking'
+import { getBookingById } from '@/core/customer/dal'
 
 interface PageProps {
   params: Promise<{
@@ -13,18 +13,19 @@ export default async function BookingConfirmationPage({ params }: PageProps) {
   // Fetch booking data server-side
   const booking = await getBookingById(resolvedParams.id)
 
-  // Transform to confirmation format
+  // Transform to confirmation format with type safety
+  const salonData = booking.salon as any // Type assertion for joined data
   const confirmation = {
     confirmationCode: booking.confirmation_code || '',
     appointment: booking,
     services: booking.appointment_services || [],
     staff: booking.staff,
     salon: {
-      id: booking.salon?.id || '',
-      name: booking.salon?.name || '',
-      address: booking.salon?.address || '',
-      phone: booking.salon?.phone || '',
-      email: booking.salon?.email || ''
+      id: salonData?.id || '',
+      name: salonData?.name || '',
+      address: salonData?.address || '',
+      phone: salonData?.phone || '',
+      email: salonData?.email || ''
     },
     totalAmount: booking.total_amount || 0,
     depositAmount: booking.deposit_amount,

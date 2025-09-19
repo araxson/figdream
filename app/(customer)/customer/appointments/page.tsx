@@ -1,5 +1,8 @@
-import { AppointmentsManagement } from "@/core/appointments/components/appointments";
+import { AppointmentHistory } from "@/core/customer/components";
 
 export default function CustomerAppointmentsPage() {
-  return <AppointmentsManagement />;
+  return <AppointmentHistory
+    appointments={[]}
+    onViewDetails={(id) => console.log('View:', id)}
+  />;
 }

@@ -1,13 +1,13 @@
 # Error Priority Report
 
-Generated: 2025-09-19T02:01:11.660Z
+Generated: 2025-09-19T11:43:50.538Z
 
 ## Summary
 
-- **Total Errors**: 3632
+- **Total Errors**: 3314
 - **Error Groups**: 7
-- **Quick Wins Available**: 715 errors
-- **Complex Issues**: 969 errors
+- **Quick Wins Available**: 474 errors
+- **Complex Issues**: 1144 errors
 
 ## Recommended Fix Order
 
@@ -21,179 +21,178 @@ Generated: 2025-09-19T02:01:11.660Z
 
 ## Error Groups (Sorted by Priority)
 
-### Missing properties on types (798 errors)
-
-- **Pattern**: `missing-property`
-- **Impact**: high
-- **Fix Strategy**: Add missing properties to type definitions or fix property names
-- **Files Affected**: 118
-
-**Top Files:**
-
-- `core/inventory/dal/queries.ts` (41 errors)
-- `core/appointments/components/appointment-details-modal.tsx` (38 errors)
-- `core/booking/components/booking-sections/booking-list-section.tsx` (31 errors)
-- `core/campaigns/dal/campaigns-mutations.ts` (27 errors)
-- `core/users/components/users-dashboard.tsx` (27 errors)
-
-**Examples:**
-
-- Line 37: Property 'role' does not exist on type 'SelectQueryError<"column 'role' does not exist on 'profiles'.">'.
-- Line 425: Property 'logo_url' does not exist on type 'PlatformSalon'.
-- Line 504: Property 'payload' does not exist on type 'never'.
-
-### Type mismatches (146 errors)
-
-- **Pattern**: `type-mismatch`
-- **Impact**: high
-- **Fix Strategy**: Fix type assignments or add type guards
-- **Files Affected**: 53
-
-**Top Files:**
-
-- `core/loyalty/dal/loyalty.ts` (48 errors)
-- `core/inventory/components/products/product-form.tsx` (20 errors)
-- `core/booking/components/booking-wizard-optimized.tsx` (6 errors)
-- `core/auth/actions/session-actions.ts` (5 errors)
-- `core/monitoring/lib/cache-manager.ts` (4 errors)
-
-**Examples:**
-
-- Line 31: Type '{ confirmationCode: string; appointment: ExtendedAppointment; services: any[]; staff: any; salon: { id: string; name: string; address?: string; } | undefined; totalAmount: number; depositAmount: number | undefined; cancellationPolicy: string; }' is not assignable to type 'BookingConfirmation'.
-- Line 48: Type 'string | null' is not assignable to type 'string'.
-- Line 15: Type 'RevenueReport | null | undefined' is not assignable to type 'RevenueReport | null'.
-
-### Missing modules or type declarations (25 errors)
+### Missing modules or type declarations (899 errors)
 
 - **Pattern**: `missing-module`
 - **Impact**: high
 - **Fix Strategy**: Install missing packages or add type declarations
-- **Files Affected**: 16
+- **Files Affected**: 414
 
 **Top Files:**
 
-- `core/shared/components/lazy-component.tsx` (6 errors)
-- `core/staff/components/staff-batch-optimistic.tsx` (5 errors)
-- `app/(dashboard)/layout.tsx` (1 errors)
-- `core/analytics/dal/analytics-types.ts` (1 errors)
-- `core/appointments/dal/appointments-types.ts` (1 errors)
+- `core/salon/components/staff/index.ts` (30 errors)
+- `core/platform/components/admin/index.ts` (28 errors)
+- `core/salon/components/dashboard/index.ts` (23 errors)
+- `core/salon/components/salon-customers/index.ts` (23 errors)
+- `core/public/components/index.ts` (14 errors)
 
 **Examples:**
 
-- Line 8: Cannot find module '@/types/extended.types' or its corresponding type declarations.
-- Line 2: Cannot find module '@/types/extended.types' or its corresponding type declarations.
-- Line 2: Cannot find module '@/types/extended.types' or its corresponding type declarations.
+- Line 1: Cannot find module '@/core/customers/components/management' or its corresponding type declarations.
+- Line 2: Cannot find module '@/core/customers/dal/management-queries' or its corresponding type declarations.
+- Line 3: Cannot find module '@/core/shared/ui/components/error-boundary' or its corresponding type declarations.
 
-### Uncategorized errors (1913 errors)
+### Missing properties on types (219 errors)
+
+- **Pattern**: `missing-property`
+- **Impact**: high
+- **Fix Strategy**: Add missing properties to type definitions or fix property names
+- **Files Affected**: 43
+
+**Top Files:**
+
+- `core/customer/components/dashboard/dashboard-container.tsx` (22 errors)
+- `core/salon/actions/billing/refund.action.ts` (16 errors)
+- `core/auth/actions/security/security-audit.action.ts` (13 errors)
+- `core/salon/actions/billing/financial-reporting.action.ts` (13 errors)
+- `core/users/dal/queries.ts` (13 errors)
+
+**Examples:**
+
+- Line 281: Property 'role' does not exist on type 'SelectQueryError<"column 'role' does not exist on 'profiles'.">'.
+- Line 107: Property 'errors' does not exist on type 'ZodError<unknown>'.
+- Line 230: Property 'id' does not exist on type 'never'.
+
+### Type mismatches (26 errors)
+
+- **Pattern**: `type-mismatch`
+- **Impact**: high
+- **Fix Strategy**: Fix type assignments or add type guards
+- **Files Affected**: 22
+
+**Top Files:**
+
+- `core/salon/components/appointments/availability-checker.tsx` (3 errors)
+- `core/salon/components/appointments/page-client.tsx` (2 errors)
+- `core/salon/components/inventory/product-list.tsx` (2 errors)
+- `core/customer/components/booking/calendar-conflicts.tsx` (1 errors)
+- `core/customer/components/common/salon-selection.tsx` (1 errors)
+
+**Examples:**
+
+- Line 69: Type '"default" | "destructive" | "secondary"' is not assignable to type '"default" | "destructive" | null | undefined'.
+- Line 158: Type 'string | null' is not assignable to type 'string | number | readonly string[] | undefined'.
+- Line 186: Type '{ profile: any; upcomingAppointments: AppointmentHistoryItem[]; recentAppointments: AppointmentHistoryItem[]; favorites: any[]; loyaltyPrograms: CustomerLoyalty[]; notifications: Notification[]; }' is not assignable to type 'IntrinsicAttributes'.
+
+### Uncategorized errors (1686 errors)
 
 - **Pattern**: `uncategorized`
 - **Impact**: medium
 - **Fix Strategy**: Manual review required
-- **Files Affected**: 368
+- **Files Affected**: 334
 
 **Top Files:**
 
-- `core/campaigns/dal/campaigns-queries.ts` (52 errors)
-- `core/loyalty/dal/mutations.ts` (36 errors)
-- `core/billing/dal/billing-queries.ts` (31 errors)
-- `core/loyalty/dal/queries.ts` (31 errors)
-- `core/billing/actions/invoice-actions.ts` (28 errors)
+- `core/customer/components/booking/manager.tsx` (39 errors)
+- `core/customer/hooks/use-bookings.ts` (33 errors)
+- `core/salon/dal/billing/billing.queries.ts` (31 errors)
+- `core/salon/actions/billing/invoice.action.ts` (29 errors)
+- `core/staff/index.ts` (29 errors)
 
 **Examples:**
 
-- Line 469: No overload matches this call.
-- Line 206: Export declaration conflicts with exported declaration of 'Tables'.
-- Line 207: Export declaration conflicts with exported declaration of 'Enums'.
+- Line 10: Type '{}' is missing the following properties from type 'SalonSearchProps': onSalonSelect, searchSalons
+- Line 1: '"@/core/customer/components"' has no exported member named 'CustomerDashboardWrapper'. Did you mean 'CustomerDashboard'?
+- Line 1: Module '"@/core/salon/components"' has no exported member 'SalonsManagement'.
 
-### Unknown types needing assertion (25 errors)
+### Unknown types needing assertion (4 errors)
 
 - **Pattern**: `unknown-type`
 - **Impact**: medium
 - **Fix Strategy**: Add proper type assertions or type guards
-- **Files Affected**: 3
+- **Files Affected**: 2
 
 **Top Files:**
 
-- `core/security/dal/secure-dal-patterns.ts` (22 errors)
-- `core/schedules/dal/schedules-queries.ts` (2 errors)
-- `core/shared/tools/architecture-orchestrator.ts` (1 errors)
+- `core/customer/components/booking/service-selection.tsx` (2 errors)
+- `core/staff/dal/schedule/queries.ts` (2 errors)
 
 **Examples:**
 
+- Line 230: 'categoryServices' is of type 'unknown'.
+- Line 234: 'categoryServices' is of type 'unknown'.
 - Line 282: 'timeOff.start_date' is of type 'unknown'.
-- Line 282: 'timeOff.end_date' is of type 'unknown'.
-- Line 163: 'data' is of type 'unknown'.
 
-### Unused imports (715 errors)
+### Unused imports (474 errors)
 
 - **Pattern**: `unused-import`
 - **Impact**: low
 - **Fix Strategy**: Remove unused imports
-- **Files Affected**: 240
+- **Files Affected**: 151
 
 **Top Files:**
 
-- `core/salons/components/service-catalog.tsx` (30 errors)
-- `core/staff/components/staff-schedule-manager.tsx` (21 errors)
-- `core/gift-cards/dal/gift-cards-mutations.ts` (20 errors)
-- `core/appointments/components/appointments-page-client.tsx` (18 errors)
-- `core/salons/components/location-manager.tsx` (16 errors)
+- `core/staff/components/schedule/manager.tsx` (31 errors)
+- `core/salon/components/dashboard/service-catalog.tsx` (30 errors)
+- `core/salon/components/appointments/page-client.tsx` (18 errors)
+- `core/salon/components/dashboard/location-manager.tsx` (16 errors)
+- `core/salon/components/staff/dashboard.tsx` (13 errors)
 
 **Examples:**
 
-- Line 4: 'useRouter' is defined but never used. Allowed unused vars must match /^_/u.
 - Line 3: 'Search' is defined but never used. Allowed unused vars must match /^_/u.
-- Line 3: 'useEffect' is defined but never used. Allowed unused vars must match /^_/u.
+- Line 4: 'redirect' is defined but never used. Allowed unused vars must match /^_/u.
+- Line 5: 'requireSalonContext' is defined but never used. Allowed unused vars must match /^_/u.
 
-### Console.log statements (10 errors)
+### Console.log statements (6 errors)
 
 - **Pattern**: `console-log`
 - **Impact**: low
 - **Fix Strategy**: Remove console.log or replace with proper logging
-- **Files Affected**: 7
+- **Files Affected**: 5
 
 **Top Files:**
 
-- `core/integration/components/performance-monitor.tsx` (3 errors)
-- `core/performance/providers/performance-provider.tsx` (2 errors)
-- `core/dashboard/components/dashboard-optimized.tsx` (1 errors)
-- `core/monitoring/actions/error-actions.ts` (1 errors)
-- `core/performance/utils/metrics.ts` (1 errors)
+- `core/platform/dal/admin/admin.queries.ts` (2 errors)
+- `app/(customer)/customer/appointments/page.tsx` (1 errors)
+- `app/(customer)/customer/preferences/page.tsx` (1 errors)
+- `core/customer/hooks/use-booking-websocket.ts` (1 errors)
+- `core/staff/components/dashboard/analytics.tsx` (1 errors)
 
 **Examples:**
 
-- Line 58: Unexpected console statement. Only these console methods are allowed: warn, error, info.
-- Line 108: Unexpected console statement. Only these console methods are allowed: warn, error, info.
-- Line 144: Unexpected console statement. Only these console methods are allowed: warn, error, info.
+- Line 6: Unexpected console statement. Only these console methods are allowed: warn, error, info.
+- Line 25: Unexpected console statement. Only these console methods are allowed: warn, error, info.
+- Line 42: Unexpected console statement. Only these console methods are allowed: warn, error, info.
 
 ## Files with Most Errors
 
-### core/loyalty/dal/loyalty.ts (76 errors)
-Error types: uncategorized
-
-### core/inventory/dal/queries.ts (64 errors)
-Error types: uncategorized
-
-### core/campaigns/dal/campaigns-queries.ts (60 errors)
+### core/customer/components/booking/manager.tsx (49 errors)
 Error types: 
 
-### core/billing/dal/index.ts (48 errors)
-Error types: uncategorized
-
-### core/customer/dal/bookings.ts (47 errors)
-Error types: uncategorized
-
-### core/loyalty/dal/mutations.ts (47 errors)
-Error types: uncategorized
-
-### core/appointments/components/appointment-details-modal.tsx (44 errors)
+### core/salon/actions/billing/refund.action.ts (44 errors)
 Error types: 
 
-### core/billing/actions/refund-actions.ts (44 errors)
-Error types: uncategorized
+### core/salon/actions/billing/invoice.action.ts (42 errors)
+Error types: missing-property
 
-### core/security/dal/secure-dal-patterns.ts (44 errors)
-Error types: unknown-type
+### core/staff/components/schedule/manager.tsx (42 errors)
+Error types: 
 
-### core/billing/actions/invoice-actions.ts (40 errors)
-Error types: uncategorized
+### core/customer/hooks/use-bookings.ts (38 errors)
+Error types: 
+
+### core/salon/dal/billing/billing.queries.ts (37 errors)
+Error types: missing-property
+
+### core/salon/components/dashboard/service-catalog.tsx (34 errors)
+Error types: 
+
+### core/customer/index.ts (32 errors)
+Error types: 
+
+### core/salon/dal/inventory/inventory.queries.ts (32 errors)
+Error types: missing-property
+
+### core/salon/dal/inventory/purchase-order.mutations.ts (31 errors)
+Error types: missing-property

@@ -1,4 +1,4 @@
-import { BookingWizard } from '@/core/booking/components';
+import { BookingWizard } from '@/core/customer/components/booking';
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
@@ -41,7 +41,7 @@ export default async function SalonBookingPage({ params }: PageProps) {
     .eq('slug', resolvedParams.salonSlug)
     .single();
 
-  if (error || !salon) {
+  if (error || !salon || !salon.id) {
     notFound();
   }
 

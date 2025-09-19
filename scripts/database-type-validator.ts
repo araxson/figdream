@@ -136,7 +136,7 @@ class DatabaseTypeValidator {
     const allErrors = analysis.criticalErrors.typeScript || [];
 
     // Filter out errors from files we don't need to analyze
-    const errors = allErrors.filter(error => {
+    const errors = allErrors.filter((error: any) => {
       // Exclude components/ui (shadcn/ui library)
       if (error.file.includes('components/ui/')) return false;
 

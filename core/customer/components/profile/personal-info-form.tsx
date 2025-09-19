@@ -30,12 +30,12 @@ const US_STATES = [
 
 export function PersonalInfoForm({ profile, onSave, isLoading = false }: PersonalInfoFormProps) {
   const [formData, setFormData] = useState<ProfileFormData>({
-    firstName: profile.firstName,
-    lastName: profile.lastName,
-    email: profile.email,
+    firstName: profile.first_name || '',
+    lastName: profile.last_name || '',
+    email: profile.email || '',
     phone: profile.phone || '',
-    dateOfBirth: profile.dateOfBirth?.toISOString().split('T')[0] || '',
-    address: profile.address || {
+    dateOfBirth: profile.date_of_birth || '',
+    address: {
       street: '',
       city: '',
       state: '',

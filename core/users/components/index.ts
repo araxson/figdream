@@ -1,11 +1,10 @@
-// Existing components
-export { UsersManagement } from "./users-management";
-export { UsersList } from "./users-list";
-export { UserForm } from "./user-form";
+// Users Components - Barrel Exports
+// Re-export from the actual location in platform/components/admin
 
-// New comprehensive user management components
-export { UsersDashboard } from "./users-dashboard";
-export { UserProfileEditor } from "./user-profile-editor";
-export { RoleManager } from "./role-manager";
-export { UserOnboardingFlow } from "./user-onboarding-flow";
-export { SecurityCenter } from "./security-center";
+export { default as UserManagement } from '../../platform/components/admin/user-management'
+export { default as UsersManagement } from '../../platform/components/admin/users-management'
+export { default as UsersDashboardMain } from '../../platform/components/admin/users-management'
+export { default as UserProfileEditor } from '../../platform/components/admin/user-form'
+export { default as SecurityCenter } from '../../platform/components/admin/user-security'
+export { default as RoleManager } from '../../platform/components/admin/role-manager'
+export { default as UserOnboardingFlow } from '../../platform/components/admin/onboarding-flow'

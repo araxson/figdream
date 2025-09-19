@@ -1,5 +1,5 @@
 import { SecurityCenter } from "@/core/users/components";
-import { getUserSecuritySettings } from "@/core/users/dal/users-queries";
+import { getUserSecuritySettings } from "@/core/users/dal";
 
 interface PageProps {
   params: Promise<{ id: string }>;

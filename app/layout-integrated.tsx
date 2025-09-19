@@ -27,14 +27,14 @@ export default async function IntegratedRootLayout({
     const { createClient } = await import('@/lib/supabase/server')
     const supabase = await createClient()
 
-    const { data: profile } = await supabase
-      .from('profiles')
+    const { data: userRoleData } = await supabase
+      .from('user_roles')
       .select('role')
-      .eq('id', session.userId)
+      .eq('user_id', session.userId)
       .single()
 
-    if (profile) {
-      userRole = profile.role
+    if (userRoleData && userRoleData.role) {
+      userRole = userRoleData.role
     }
   }
 

@@ -1,4 +1,6 @@
-// Profile Management Components Barrel Export
-export { ProfileHeader } from './profile-header'
-export { PersonalInfoForm } from './personal-info-form'
-export { PreferencesForm } from './preferences-form'
+// Profile Components - Barrel exports
+export * from './main';
+export * from './header';
+export * from './personal-info-form';
+export * from './preferences';
+export * from './preferences-form';

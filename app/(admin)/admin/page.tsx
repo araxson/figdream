@@ -1,5 +1,5 @@
-import { AdminDashboard } from "@/core/admin/components";
-import { getAdminDashboardStats, getSystemHealthMetrics } from "@/core/admin/dal";
+import { AdminDashboard } from "@/core/platform/components";
+import { getAdminDashboardStats, getSystemHealthMetrics } from "@/core/platform/dal";
 import { redirect } from "next/navigation";
 
 export default async function AdminPage() {

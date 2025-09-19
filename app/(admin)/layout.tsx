@@ -1,4 +1,4 @@
-import { RootProvider } from "@/core/providers/components";
+import { RootProvider } from "@/core/shared/providers/components";
 
 export default function AdminLayout({
   children,

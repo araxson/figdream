@@ -1,0 +1,7203 @@
+{
+  "timestamp": "2025-09-19T02:01:15.241Z",
+  "totalFiles": 892,
+  "compliantFiles": 0,
+  "oversizedFiles": 159,
+  "criticalFiles": 105,
+  "files": [
+    {
+      "path": "core/staff/components/staff-management-list.tsx",
+      "type": "component",
+      "currentLines": 769,
+      "maxLines": 300,
+      "excessLines": 469,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: StaffManagementList"
+      ],
+      "functions": [
+        {
+          "name": "StaffManagementList",
+          "startLine": 83,
+          "endLine": 769,
+          "lines": 686
+        }
+      ]
+    },
+    {
+      "path": "core/staff/components/staff-analytics.tsx",
+      "type": "component",
+      "currentLines": 727,
+      "maxLines": 300,
+      "excessLines": 427,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: StaffAnalytics"
+      ],
+      "functions": [
+        {
+          "name": "StaffAnalytics",
+          "startLine": 78,
+          "endLine": 727,
+          "lines": 649
+        }
+      ]
+    },
+    {
+      "path": "core/customers/components/customer-create-form.tsx",
+      "type": "component",
+      "currentLines": 701,
+      "maxLines": 300,
+      "excessLines": 401,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: CustomerCreateForm"
+      ],
+      "functions": [
+        {
+          "name": "CustomerCreateForm",
+          "startLine": 110,
+          "endLine": 701,
+          "lines": 591
+        },
+        {
+          "name": "FORM_STEPS",
+          "startLine": 67,
+          "endLine": 69,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/appointments/components/appointment-list-enhanced.tsx",
+      "type": "component",
+      "currentLines": 683,
+      "maxLines": 300,
+      "excessLines": 383,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: AppointmentListEnhanced"
+      ],
+      "functions": [
+        {
+          "name": "AppointmentListEnhanced",
+          "startLine": 98,
+          "endLine": 683,
+          "lines": 585
+        }
+      ]
+    },
+    {
+      "path": "core/campaigns/components/steps/audience-selector.tsx",
+      "type": "component",
+      "currentLines": 674,
+      "maxLines": 300,
+      "excessLines": 374,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: AudienceSelector"
+      ],
+      "functions": [
+        {
+          "name": "AudienceSelector",
+          "startLine": 76,
+          "endLine": 671,
+          "lines": 595
+        },
+        {
+          "name": "PREDEFINED_SEGMENTS",
+          "startLine": 38,
+          "endLine": 45,
+          "lines": 7
+        }
+      ]
+    },
+    {
+      "path": "core/appointments/components/appointment-details-modal.tsx",
+      "type": "component",
+      "currentLines": 668,
+      "maxLines": 300,
+      "excessLines": 368,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: AppointmentDetailsModal"
+      ],
+      "functions": [
+        {
+          "name": "AppointmentDetailsModal",
+          "startLine": 107,
+          "endLine": 668,
+          "lines": 561
+        }
+      ]
+    },
+    {
+      "path": "core/booking/components/booking-live-feed.tsx",
+      "type": "component",
+      "currentLines": 662,
+      "maxLines": 300,
+      "excessLines": 362,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: BookingLiveFeed"
+      ],
+      "functions": [
+        {
+          "name": "BookingLiveFeed",
+          "startLine": 60,
+          "endLine": 662,
+          "lines": 602
+        }
+      ]
+    },
+    {
+      "path": "core/admin/dal/index.ts",
+      "type": "dal",
+      "currentLines": 652,
+      "maxLines": 500,
+      "excessLines": 152,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Split by domain (queries.ts, mutations.ts)",
+        "Extract complex queries to separate files",
+        "Create repository pattern classes",
+        "Extract large functions: getPlatformSalons, getPlatformUsers, getAdminDashboardStats"
+      ],
+      "functions": [
+        {
+          "name": "getPlatformSalons",
+          "startLine": 301,
+          "endLine": 427,
+          "lines": 126
+        },
+        {
+          "name": "getPlatformUsers",
+          "startLine": 185,
+          "endLine": 296,
+          "lines": 111
+        },
+        {
+          "name": "getAdminDashboardStats",
+          "startLine": 85,
+          "endLine": 180,
+          "lines": 95
+        },
+        {
+          "name": "getAdminAuditLogs",
+          "startLine": 454,
+          "endLine": 537,
+          "lines": 83
+        },
+        {
+          "name": "verifySuperAdmin",
+          "startLine": 25,
+          "endLine": 46,
+          "lines": 21
+        },
+        {
+          "name": "getSystemHealthMetrics",
+          "startLine": 432,
+          "endLine": 449,
+          "lines": 17
+        },
+        {
+          "name": "logAdminAction",
+          "startLine": 51,
+          "endLine": 53,
+          "lines": 2
+        },
+        {
+          "name": "updateUserStatus",
+          "startLine": 542,
+          "endLine": 544,
+          "lines": 2
+        },
+        {
+          "name": "updateSalonStatus",
+          "startLine": 601,
+          "endLine": 603,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/users/components/users-dashboard.tsx",
+      "type": "component",
+      "currentLines": 648,
+      "maxLines": 300,
+      "excessLines": 348,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: UsersDashboard"
+      ],
+      "functions": [
+        {
+          "name": "UsersDashboard",
+          "startLine": 80,
+          "endLine": 648,
+          "lines": 568
+        }
+      ]
+    },
+    {
+      "path": "core/staff/components/staff-schedule-manager.tsx",
+      "type": "component",
+      "currentLines": 646,
+      "maxLines": 300,
+      "excessLines": 346,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: StaffScheduleManager"
+      ],
+      "functions": [
+        {
+          "name": "StaffScheduleManager",
+          "startLine": 84,
+          "endLine": 646,
+          "lines": 562
+        }
+      ]
+    },
+    {
+      "path": "core/staff/components/time-attendance-tracker.tsx",
+      "type": "component",
+      "currentLines": 644,
+      "maxLines": 300,
+      "excessLines": 344,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: TimeAttendanceTracker"
+      ],
+      "functions": [
+        {
+          "name": "TimeAttendanceTracker",
+          "startLine": 56,
+          "endLine": 644,
+          "lines": 588
+        }
+      ]
+    },
+    {
+      "path": "core/admin/components/salon-management.tsx",
+      "type": "component",
+      "currentLines": 642,
+      "maxLines": 300,
+      "excessLines": 342,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: SalonManagement"
+      ],
+      "functions": [
+        {
+          "name": "SalonManagement",
+          "startLine": 77,
+          "endLine": 642,
+          "lines": 565
+        }
+      ]
+    },
+    {
+      "path": "core/shared/tools/dev-experience-optimizer.ts",
+      "type": "other",
+      "currentLines": 628,
+      "maxLines": 400,
+      "excessLines": 228,
+      "severity": "critical",
+      "splitSuggestions": [],
+      "functions": [
+        {
+          "name": "createDevExperienceOptimizer",
+          "startLine": 626,
+          "endLine": 628,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/inventory/components/products/product-form.tsx",
+      "type": "component",
+      "currentLines": 619,
+      "maxLines": 300,
+      "excessLines": 319,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: ProductForm"
+      ],
+      "functions": [
+        {
+          "name": "ProductForm",
+          "startLine": 63,
+          "endLine": 619,
+          "lines": 556
+        },
+        {
+          "name": "productSchema",
+          "startLine": 33,
+          "endLine": 53,
+          "lines": 20
+        }
+      ]
+    },
+    {
+      "path": "core/salons/components/service-catalog.tsx",
+      "type": "component",
+      "currentLines": 617,
+      "maxLines": 300,
+      "excessLines": 317,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: ServiceCatalog, ServiceCard"
+      ],
+      "functions": [
+        {
+          "name": "ServiceCatalog",
+          "startLine": 227,
+          "endLine": 617,
+          "lines": 390
+        },
+        {
+          "name": "ServiceCard",
+          "startLine": 95,
+          "endLine": 225,
+          "lines": 130
+        }
+      ]
+    },
+    {
+      "path": "core/salons/components/location-manager.tsx",
+      "type": "component",
+      "currentLines": 613,
+      "maxLines": 300,
+      "excessLines": 313,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: LocationManager, LocationCard"
+      ],
+      "functions": [
+        {
+          "name": "LocationManager",
+          "startLine": 142,
+          "endLine": 613,
+          "lines": 471
+        },
+        {
+          "name": "LocationCard",
+          "startLine": 73,
+          "endLine": 140,
+          "lines": 67
+        }
+      ]
+    },
+    {
+      "path": "core/staff/components/payroll-manager.tsx",
+      "type": "component",
+      "currentLines": 600,
+      "maxLines": 300,
+      "excessLines": 300,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: PayrollManager"
+      ],
+      "functions": [
+        {
+          "name": "PayrollManager",
+          "startLine": 48,
+          "endLine": 600,
+          "lines": 552
+        }
+      ]
+    },
+    {
+      "path": "core/customer/dal/reviews.ts",
+      "type": "dal",
+      "currentLines": 599,
+      "maxLines": 500,
+      "excessLines": 99,
+      "severity": "medium",
+      "splitSuggestions": [
+        "Split by domain (queries.ts, mutations.ts)",
+        "Extract complex queries to separate files",
+        "Create repository pattern classes",
+        "Extract large functions: getPendingReviews"
+      ],
+      "functions": [
+        {
+          "name": "getPendingReviews",
+          "startLine": 529,
+          "endLine": 599,
+          "lines": 70
+        },
+        {
+          "name": "getCustomerReviews",
+          "startLine": 4,
+          "endLine": 6,
+          "lines": 2
+        },
+        {
+          "name": "submitReview",
+          "startLine": 140,
+          "endLine": 142,
+          "lines": 2
+        },
+        {
+          "name": "updateReview",
+          "startLine": 315,
+          "endLine": 317,
+          "lines": 2
+        },
+        {
+          "name": "deleteReview",
+          "startLine": 447,
+          "endLine": 449,
+          "lines": 2
+        },
+        {
+          "name": "voteOnReview",
+          "startLine": 470,
+          "endLine": 472,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/customers/components/list-enhanced.tsx",
+      "type": "component",
+      "currentLines": 598,
+      "maxLines": 300,
+      "excessLines": 298,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: CustomersListEnhanced, CustomerTableSkeleton"
+      ],
+      "functions": [
+        {
+          "name": "CustomersListEnhanced",
+          "startLine": 125,
+          "endLine": 598,
+          "lines": 473
+        },
+        {
+          "name": "CustomerTableSkeleton",
+          "startLine": 64,
+          "endLine": 123,
+          "lines": 59
+        }
+      ]
+    },
+    {
+      "path": "core/users/components/security-center.tsx",
+      "type": "component",
+      "currentLines": 598,
+      "maxLines": 300,
+      "excessLines": 298,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: SecurityCenter"
+      ],
+      "functions": [
+        {
+          "name": "SecurityCenter",
+          "startLine": 69,
+          "endLine": 598,
+          "lines": 529
+        }
+      ]
+    },
+    {
+      "path": "core/staff/components/schedule-manager.tsx",
+      "type": "component",
+      "currentLines": 597,
+      "maxLines": 300,
+      "excessLines": 297,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: ScheduleManager"
+      ],
+      "functions": [
+        {
+          "name": "ScheduleManager",
+          "startLine": 62,
+          "endLine": 597,
+          "lines": 535
+        }
+      ]
+    },
+    {
+      "path": "core/shared/tools/performance-optimizer.ts",
+      "type": "other",
+      "currentLines": 592,
+      "maxLines": 400,
+      "excessLines": 192,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions: VirtualScroll"
+      ],
+      "functions": [
+        {
+          "name": "VirtualScroll",
+          "startLine": 392,
+          "endLine": 443,
+          "lines": 51
+        },
+        {
+          "name": "PreloadCriticalResources",
+          "startLine": 302,
+          "endLine": 335,
+          "lines": 33
+        },
+        {
+          "name": "useLazyImage",
+          "startLine": 338,
+          "endLine": 364,
+          "lines": 26
+        },
+        {
+          "name": "usePrefetchOnHover",
+          "startLine": 367,
+          "endLine": 373,
+          "lines": 6
+        },
+        {
+          "name": "withPerformanceTracking",
+          "startLine": 277,
+          "endLine": 279,
+          "lines": 2
+        },
+        {
+          "name": "useInfiniteScroll",
+          "startLine": 446,
+          "endLine": 448,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/loyalty/dal/queries.ts",
+      "type": "dal",
+      "currentLines": 591,
+      "maxLines": 500,
+      "excessLines": 91,
+      "severity": "medium",
+      "splitSuggestions": [
+        "Split by domain (queries.ts, mutations.ts)",
+        "Extract complex queries to separate files",
+        "Create repository pattern classes",
+        "Extract large functions: getLoyaltyDashboard, getLoyaltyStatistics, getCustomerLoyalties"
+      ],
+      "functions": [
+        {
+          "name": "getLoyaltyDashboard",
+          "startLine": 216,
+          "endLine": 296,
+          "lines": 80
+        },
+        {
+          "name": "getLoyaltyStatistics",
+          "startLine": 463,
+          "endLine": 525,
+          "lines": 62
+        },
+        {
+          "name": "getCustomerLoyalties",
+          "startLine": 349,
+          "endLine": 400,
+          "lines": 51
+        },
+        {
+          "name": "getLoyaltyProgram",
+          "startLine": 18,
+          "endLine": 56,
+          "lines": 38
+        },
+        {
+          "name": "getLoyaltyTiers",
+          "startLine": 572,
+          "endLine": 591,
+          "lines": 19
+        },
+        {
+          "name": "getCustomerRewards",
+          "startLine": 556,
+          "endLine": 567,
+          "lines": 11
+        },
+        {
+          "name": "getCustomerLoyalty",
+          "startLine": 61,
+          "endLine": 63,
+          "lines": 2
+        },
+        {
+          "name": "getProgramMembers",
+          "startLine": 105,
+          "endLine": 107,
+          "lines": 2
+        },
+        {
+          "name": "getCustomerTransactions",
+          "startLine": 166,
+          "endLine": 168,
+          "lines": 2
+        },
+        {
+          "name": "searchLoyaltyMembers",
+          "startLine": 301,
+          "endLine": 303,
+          "lines": 2
+        },
+        {
+          "name": "getLoyaltyTransactions",
+          "startLine": 405,
+          "endLine": 407,
+          "lines": 2
+        },
+        {
+          "name": "calculatePointsForPurchase",
+          "startLine": 530,
+          "endLine": 532,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/billing/actions/webhook-handlers.ts",
+      "type": "action",
+      "currentLines": 579,
+      "maxLines": 250,
+      "excessLines": 329,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules",
+        "Extract large functions: processStripeEvent"
+      ],
+      "functions": [
+        {
+          "name": "processStripeEvent",
+          "startLine": 145,
+          "endLine": 199,
+          "lines": 54
+        },
+        {
+          "name": "handleStripeWebhook",
+          "startLine": 100,
+          "endLine": 143,
+          "lines": 43
+        },
+        {
+          "name": "verifyWebhookEvent",
+          "startLine": 565,
+          "endLine": 579,
+          "lines": 14
+        },
+        {
+          "name": "STRIPE_WEBHOOK_SECRET",
+          "startLine": 7,
+          "endLine": 9,
+          "lines": 2
+        },
+        {
+          "name": "handlePaymentIntentSucceeded",
+          "startLine": 201,
+          "endLine": 203,
+          "lines": 2
+        },
+        {
+          "name": "handlePaymentIntentFailed",
+          "startLine": 231,
+          "endLine": 233,
+          "lines": 2
+        },
+        {
+          "name": "handleInvoicePaymentSucceeded",
+          "startLine": 259,
+          "endLine": 261,
+          "lines": 2
+        },
+        {
+          "name": "handleInvoicePaymentFailed",
+          "startLine": 289,
+          "endLine": 291,
+          "lines": 2
+        },
+        {
+          "name": "handleSubscriptionCreated",
+          "startLine": 316,
+          "endLine": 318,
+          "lines": 2
+        },
+        {
+          "name": "handleSubscriptionUpdated",
+          "startLine": 362,
+          "endLine": 364,
+          "lines": 2
+        },
+        {
+          "name": "handleSubscriptionDeleted",
+          "startLine": 395,
+          "endLine": 397,
+          "lines": 2
+        },
+        {
+          "name": "handleInvoiceCreated",
+          "startLine": 422,
+          "endLine": 424,
+          "lines": 2
+        },
+        {
+          "name": "handlePaymentMethodAttached",
+          "startLine": 434,
+          "endLine": 436,
+          "lines": 2
+        },
+        {
+          "name": "handlePaymentMethodDetached",
+          "startLine": 478,
+          "endLine": 480,
+          "lines": 2
+        },
+        {
+          "name": "handleChargeDisputeCreated",
+          "startLine": 499,
+          "endLine": 501,
+          "lines": 2
+        },
+        {
+          "name": "updateRevenueAnalytics",
+          "startLine": 527,
+          "endLine": 529,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/booking/dal/queries.ts",
+      "type": "dal",
+      "currentLines": 576,
+      "maxLines": 500,
+      "excessLines": 76,
+      "severity": "medium",
+      "splitSuggestions": [
+        "Split by domain (queries.ts, mutations.ts)",
+        "Extract complex queries to separate files",
+        "Create repository pattern classes"
+      ],
+      "functions": [
+        {
+          "name": "getBookingById",
+          "startLine": 352,
+          "endLine": 395,
+          "lines": 43
+        },
+        {
+          "name": "getAvailableStaff",
+          "startLine": 78,
+          "endLine": 112,
+          "lines": 34
+        },
+        {
+          "name": "getAvailableServices",
+          "startLine": 22,
+          "endLine": 51,
+          "lines": 29
+        },
+        {
+          "name": "getServiceCategories",
+          "startLine": 54,
+          "endLine": 75,
+          "lines": 21
+        },
+        {
+          "name": "getWaitingList",
+          "startLine": 398,
+          "endLine": 404,
+          "lines": 6
+        },
+        {
+          "name": "getStaffSchedules",
+          "startLine": 115,
+          "endLine": 117,
+          "lines": 2
+        },
+        {
+          "name": "getExistingAppointments",
+          "startLine": 146,
+          "endLine": 148,
+          "lines": 2
+        },
+        {
+          "name": "getAvailableTimeSlots",
+          "startLine": 192,
+          "endLine": 194,
+          "lines": 2
+        },
+        {
+          "name": "getBookings",
+          "startLine": 280,
+          "endLine": 282,
+          "lines": 2
+        },
+        {
+          "name": "getCapacityInfo",
+          "startLine": 419,
+          "endLine": 421,
+          "lines": 2
+        },
+        {
+          "name": "getBookingAnalytics",
+          "startLine": 463,
+          "endLine": 465,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/schedules/dal/schedules-mutations.ts",
+      "type": "dal",
+      "currentLines": 570,
+      "maxLines": 500,
+      "excessLines": 70,
+      "severity": "medium",
+      "splitSuggestions": [
+        "Split by domain (queries.ts, mutations.ts)",
+        "Extract complex queries to separate files",
+        "Create repository pattern classes"
+      ],
+      "functions": [
+        {
+          "name": "rescheduleAppointment",
+          "startLine": 341,
+          "endLine": 384,
+          "lines": 43
+        },
+        {
+          "name": "reassignStaff",
+          "startLine": 386,
+          "endLine": 426,
+          "lines": 40
+        },
+        {
+          "name": "autoAssignAppointments",
+          "startLine": 175,
+          "endLine": 214,
+          "lines": 39
+        },
+        {
+          "name": "calculateCurrentMetrics",
+          "startLine": 471,
+          "endLine": 493,
+          "lines": 22
+        },
+        {
+          "name": "cancelAppointment",
+          "startLine": 443,
+          "endLine": 464,
+          "lines": 21
+        },
+        {
+          "name": "updateTimeOffRequest",
+          "startLine": 315,
+          "endLine": 335,
+          "lines": 20
+        },
+        {
+          "name": "updateStaffSchedule",
+          "startLine": 241,
+          "endLine": 255,
+          "lines": 14
+        },
+        {
+          "name": "updateBlockedTime",
+          "startLine": 278,
+          "endLine": 292,
+          "lines": 14
+        },
+        {
+          "name": "createStaffSchedule",
+          "startLine": 223,
+          "endLine": 236,
+          "lines": 13
+        },
+        {
+          "name": "createBlockedTime",
+          "startLine": 260,
+          "endLine": 273,
+          "lines": 13
+        },
+        {
+          "name": "createTimeOffRequest",
+          "startLine": 297,
+          "endLine": 310,
+          "lines": 13
+        },
+        {
+          "name": "createschedules",
+          "startLine": 532,
+          "endLine": 542,
+          "lines": 10
+        },
+        {
+          "name": "deleteschedules",
+          "startLine": 559,
+          "endLine": 569,
+          "lines": 10
+        },
+        {
+          "name": "splitAppointment",
+          "startLine": 428,
+          "endLine": 431,
+          "lines": 3
+        },
+        {
+          "name": "extendWorkingHours",
+          "startLine": 433,
+          "endLine": 436,
+          "lines": 3
+        },
+        {
+          "name": "addStaffBreak",
+          "startLine": 438,
+          "endLine": 441,
+          "lines": 3
+        },
+        {
+          "name": "bookDifferentResource",
+          "startLine": 466,
+          "endLine": 469,
+          "lines": 3
+        },
+        {
+          "name": "getAllScheduleConflicts",
+          "startLine": 495,
+          "endLine": 498,
+          "lines": 3
+        },
+        {
+          "name": "calculateOptimizationScore",
+          "startLine": 518,
+          "endLine": 521,
+          "lines": 3
+        },
+        {
+          "name": "findOptimalAssignment",
+          "startLine": 523,
+          "endLine": 526,
+          "lines": 3
+        },
+        {
+          "name": "resolveScheduleConflict",
+          "startLine": 28,
+          "endLine": 30,
+          "lines": 2
+        },
+        {
+          "name": "optimizeSchedule",
+          "startLine": 97,
+          "endLine": 99,
+          "lines": 2
+        },
+        {
+          "name": "generateOptimizationChanges",
+          "startLine": 500,
+          "endLine": 502,
+          "lines": 2
+        },
+        {
+          "name": "calculateOptimizationImprovements",
+          "startLine": 509,
+          "endLine": 511,
+          "lines": 2
+        },
+        {
+          "name": "updateschedules",
+          "startLine": 544,
+          "endLine": 546,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/schedules/components/schedule-optimizer.tsx",
+      "type": "component",
+      "currentLines": 567,
+      "maxLines": 300,
+      "excessLines": 267,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: ScheduleOptimizer"
+      ],
+      "functions": [
+        {
+          "name": "ScheduleOptimizer",
+          "startLine": 66,
+          "endLine": 567,
+          "lines": 501
+        }
+      ]
+    },
+    {
+      "path": "core/loyalty/dal/mutations.ts",
+      "type": "dal",
+      "currentLines": 555,
+      "maxLines": 500,
+      "excessLines": 55,
+      "severity": "medium",
+      "splitSuggestions": [
+        "Split by domain (queries.ts, mutations.ts)",
+        "Extract complex queries to separate files",
+        "Create repository pattern classes",
+        "Extract large functions: addLoyaltyTransaction"
+      ],
+      "functions": [
+        {
+          "name": "addLoyaltyTransaction",
+          "startLine": 224,
+          "endLine": 298,
+          "lines": 74
+        },
+        {
+          "name": "enrollCustomer",
+          "startLine": 136,
+          "endLine": 171,
+          "lines": 35
+        },
+        {
+          "name": "deleteLoyaltyProgram",
+          "startLine": 99,
+          "endLine": 131,
+          "lines": 32
+        },
+        {
+          "name": "createLoyaltyProgram",
+          "startLine": 21,
+          "endLine": 50,
+          "lines": 29
+        },
+        {
+          "name": "unenrollCustomer",
+          "startLine": 176,
+          "endLine": 191,
+          "lines": 15
+        },
+        {
+          "name": "deleteLoyaltyTier",
+          "startLine": 542,
+          "endLine": 555,
+          "lines": 13
+        },
+        {
+          "name": "createLoyaltyTier",
+          "startLine": 465,
+          "endLine": 472,
+          "lines": 7
+        },
+        {
+          "name": "updateLoyaltyTier",
+          "startLine": 509,
+          "endLine": 516,
+          "lines": 7
+        },
+        {
+          "name": "updateLoyaltyProgram",
+          "startLine": 55,
+          "endLine": 57,
+          "lines": 2
+        },
+        {
+          "name": "updateCustomerLoyalty",
+          "startLine": 196,
+          "endLine": 198,
+          "lines": 2
+        },
+        {
+          "name": "awardPointsForAppointment",
+          "startLine": 303,
+          "endLine": 305,
+          "lines": 2
+        },
+        {
+          "name": "redeemPoints",
+          "startLine": 358,
+          "endLine": 360,
+          "lines": 2
+        },
+        {
+          "name": "adjustPoints",
+          "startLine": 384,
+          "endLine": 386,
+          "lines": 2
+        },
+        {
+          "name": "addPoints",
+          "startLine": 406,
+          "endLine": 408,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/schedules/components/availability-manager.tsx",
+      "type": "component",
+      "currentLines": 554,
+      "maxLines": 300,
+      "excessLines": 254,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: AvailabilityManager"
+      ],
+      "functions": [
+        {
+          "name": "AvailabilityManager",
+          "startLine": 53,
+          "endLine": 554,
+          "lines": 501
+        }
+      ]
+    },
+    {
+      "path": "core/campaigns/dal/campaigns-mutations.ts",
+      "type": "dal",
+      "currentLines": 553,
+      "maxLines": 500,
+      "excessLines": 53,
+      "severity": "medium",
+      "splitSuggestions": [
+        "Split by domain (queries.ts, mutations.ts)",
+        "Extract complex queries to separate files",
+        "Create repository pattern classes"
+      ],
+      "functions": [
+        {
+          "name": "createCampaign",
+          "startLine": 12,
+          "endLine": 58,
+          "lines": 46
+        },
+        {
+          "name": "deleteCampaign",
+          "startLine": 119,
+          "endLine": 161,
+          "lines": 42
+        },
+        {
+          "name": "saveCampaignTemplate",
+          "startLine": 354,
+          "endLine": 396,
+          "lines": 42
+        },
+        {
+          "name": "sendCampaign",
+          "startLine": 228,
+          "endLine": 269,
+          "lines": 41
+        },
+        {
+          "name": "pauseCampaign",
+          "startLine": 478,
+          "endLine": 514,
+          "lines": 36
+        },
+        {
+          "name": "duplicateCampaign",
+          "startLine": 317,
+          "endLine": 349,
+          "lines": 32
+        },
+        {
+          "name": "deleteCampaignTemplate",
+          "startLine": 401,
+          "endLine": 428,
+          "lines": 27
+        },
+        {
+          "name": "updateCampaign",
+          "startLine": 63,
+          "endLine": 65,
+          "lines": 2
+        },
+        {
+          "name": "updateCampaignStatus",
+          "startLine": 166,
+          "endLine": 168,
+          "lines": 2
+        },
+        {
+          "name": "sendTestCampaign",
+          "startLine": 274,
+          "endLine": 276,
+          "lines": 2
+        },
+        {
+          "name": "scheduleCampaign",
+          "startLine": 433,
+          "endLine": 435,
+          "lines": 2
+        },
+        {
+          "name": "testCampaign",
+          "startLine": 519,
+          "endLine": 521,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/users/dal/users-queries.ts",
+      "type": "dal",
+      "currentLines": 549,
+      "maxLines": 500,
+      "excessLines": 49,
+      "severity": "low",
+      "splitSuggestions": [
+        "Split by domain (queries.ts, mutations.ts)",
+        "Extract complex queries to separate files",
+        "Create repository pattern classes",
+        "Extract large functions: getAvailableRoles, getUserManagementStats, getUsers"
+      ],
+      "functions": [
+        {
+          "name": "getAvailableRoles",
+          "startLine": 320,
+          "endLine": 427,
+          "lines": 107
+        },
+        {
+          "name": "getUserManagementStats",
+          "startLine": 177,
+          "endLine": 246,
+          "lines": 69
+        },
+        {
+          "name": "getUsers",
+          "startLine": 20,
+          "endLine": 71,
+          "lines": 51
+        },
+        {
+          "name": "getUserMetrics",
+          "startLine": 491,
+          "endLine": 533,
+          "lines": 42
+        },
+        {
+          "name": "getUsersWithRoles",
+          "startLine": 134,
+          "endLine": 172,
+          "lines": 38
+        },
+        {
+          "name": "getUserById",
+          "startLine": 76,
+          "endLine": 107,
+          "lines": 31
+        },
+        {
+          "name": "getUserSecuritySettings",
+          "startLine": 251,
+          "endLine": 282,
+          "lines": 31
+        },
+        {
+          "name": "getUserActivity",
+          "startLine": 287,
+          "endLine": 315,
+          "lines": 28
+        },
+        {
+          "name": "getUserRole",
+          "startLine": 460,
+          "endLine": 486,
+          "lines": 26
+        },
+        {
+          "name": "getUserByEmail",
+          "startLine": 432,
+          "endLine": 455,
+          "lines": 23
+        },
+        {
+          "name": "getCurrentUser",
+          "startLine": 112,
+          "endLine": 129,
+          "lines": 17
+        },
+        {
+          "name": "calculateProfileCompletion",
+          "startLine": 535,
+          "endLine": 548,
+          "lines": 13
+        }
+      ]
+    },
+    {
+      "path": "core/security/dal/auth-verification.ts",
+      "type": "dal",
+      "currentLines": 548,
+      "maxLines": 500,
+      "excessLines": 48,
+      "severity": "low",
+      "splitSuggestions": [
+        "Split by domain (queries.ts, mutations.ts)",
+        "Extract complex queries to separate files",
+        "Create repository pattern classes",
+        "Extract large functions: buildPermissions, verifySession"
+      ],
+      "functions": [
+        {
+          "name": "buildPermissions",
+          "startLine": 280,
+          "endLine": 377,
+          "lines": 97
+        },
+        {
+          "name": "verifySession",
+          "startLine": 89,
+          "endLine": 155,
+          "lines": 66
+        },
+        {
+          "name": "verifyPKCEFlow",
+          "startLine": 505,
+          "endLine": 532,
+          "lines": 27
+        },
+        {
+          "name": "sanitizeInput",
+          "startLine": 448,
+          "endLine": 471,
+          "lines": 23
+        },
+        {
+          "name": "logSecurityEvent",
+          "startLine": 382,
+          "endLine": 401,
+          "lines": 19
+        },
+        {
+          "name": "SecurityGuardian",
+          "startLine": 537,
+          "endLine": 546,
+          "lines": 9
+        },
+        {
+          "name": "checkPermission",
+          "startLine": 160,
+          "endLine": 162,
+          "lines": 2
+        },
+        {
+          "name": "verifyResourceAccess",
+          "startLine": 210,
+          "endLine": 212,
+          "lines": 2
+        },
+        {
+          "name": "checkRateLimit",
+          "startLine": 406,
+          "endLine": 408,
+          "lines": 2
+        },
+        {
+          "name": "createSecureDTO",
+          "startLine": 476,
+          "endLine": 478,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/campaigns/components/steps/campaign-settings.tsx",
+      "type": "component",
+      "currentLines": 543,
+      "maxLines": 300,
+      "excessLines": 243,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: CampaignSettings"
+      ],
+      "functions": [
+        {
+          "name": "CampaignSettings",
+          "startLine": 38,
+          "endLine": 543,
+          "lines": 505
+        }
+      ]
+    },
+    {
+      "path": "core/favorites/actions/index.ts",
+      "type": "action",
+      "currentLines": 542,
+      "maxLines": 250,
+      "excessLines": 292,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules",
+        "Extract large functions: createFavorite, bulkDeleteFavorites, toggleFavorite"
+      ],
+      "functions": [
+        {
+          "name": "createFavorite",
+          "startLine": 61,
+          "endLine": 147,
+          "lines": 86
+        },
+        {
+          "name": "bulkDeleteFavorites",
+          "startLine": 419,
+          "endLine": 495,
+          "lines": 76
+        },
+        {
+          "name": "toggleFavorite",
+          "startLine": 301,
+          "endLine": 371,
+          "lines": 70
+        },
+        {
+          "name": "deleteFavorite",
+          "startLine": 233,
+          "endLine": 298,
+          "lines": 65
+        },
+        {
+          "name": "checkFavorite",
+          "startLine": 498,
+          "endLine": 542,
+          "lines": 44
+        },
+        {
+          "name": "getFavorites",
+          "startLine": 374,
+          "endLine": 416,
+          "lines": 42
+        },
+        {
+          "name": "CreateFavoriteSchema",
+          "startLine": 36,
+          "endLine": 41,
+          "lines": 5
+        },
+        {
+          "name": "ToggleFavoriteSchema",
+          "startLine": 50,
+          "endLine": 55,
+          "lines": 5
+        },
+        {
+          "name": "UpdateFavoriteSchema",
+          "startLine": 46,
+          "endLine": 48,
+          "lines": 2
+        },
+        {
+          "name": "updateFavorite",
+          "startLine": 150,
+          "endLine": 152,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/booking/components/booking-confirmation.tsx",
+      "type": "component",
+      "currentLines": 536,
+      "maxLines": 300,
+      "excessLines": 236,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: BookingConfirmationComponent"
+      ],
+      "functions": [
+        {
+          "name": "BookingConfirmationComponent",
+          "startLine": 52,
+          "endLine": 536,
+          "lines": 484
+        }
+      ]
+    },
+    {
+      "path": "core/customers/dal/customers-queries.ts",
+      "type": "dal",
+      "currentLines": 530,
+      "maxLines": 500,
+      "excessLines": 30,
+      "severity": "low",
+      "splitSuggestions": [
+        "Split by domain (queries.ts, mutations.ts)",
+        "Extract complex queries to separate files",
+        "Create repository pattern classes",
+        "Extract large functions: getCustomerInsights, getCustomerMetrics"
+      ],
+      "functions": [
+        {
+          "name": "getCustomerInsights",
+          "startLine": 326,
+          "endLine": 444,
+          "lines": 118
+        },
+        {
+          "name": "getCustomerMetrics",
+          "startLine": 263,
+          "endLine": 321,
+          "lines": 58
+        },
+        {
+          "name": "getCustomers",
+          "startLine": 16,
+          "endLine": 58,
+          "lines": 42
+        },
+        {
+          "name": "getCustomerFavorites",
+          "startLine": 162,
+          "endLine": 204,
+          "lines": 42
+        },
+        {
+          "name": "getCustomerById",
+          "startLine": 63,
+          "endLine": 91,
+          "lines": 28
+        },
+        {
+          "name": "searchCustomers",
+          "startLine": 449,
+          "endLine": 469,
+          "lines": 20
+        },
+        {
+          "name": "getCustomerByEmail",
+          "startLine": 474,
+          "endLine": 491,
+          "lines": 17
+        },
+        {
+          "name": "getCustomerPreferences",
+          "startLine": 143,
+          "endLine": 157,
+          "lines": 14
+        },
+        {
+          "name": "getCustomerNotes",
+          "startLine": 209,
+          "endLine": 221,
+          "lines": 12
+        },
+        {
+          "name": "getCustomerLoyaltyPoints",
+          "startLine": 226,
+          "endLine": 238,
+          "lines": 12
+        },
+        {
+          "name": "getCustomerAppointments",
+          "startLine": 496,
+          "endLine": 501,
+          "lines": 5
+        },
+        {
+          "name": "getCustomerWithAppointments",
+          "startLine": 96,
+          "endLine": 98,
+          "lines": 2
+        },
+        {
+          "name": "getCustomerLoyaltyTransactions",
+          "startLine": 243,
+          "endLine": 245,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/staff/dal/index.ts",
+      "type": "dal",
+      "currentLines": 527,
+      "maxLines": 500,
+      "excessLines": 27,
+      "severity": "low",
+      "splitSuggestions": [
+        "Split by domain (queries.ts, mutations.ts)",
+        "Extract complex queries to separate files",
+        "Create repository pattern classes",
+        "Extract large functions: getStaffProfiles, checkStaffAvailability"
+      ],
+      "functions": [
+        {
+          "name": "getStaffProfiles",
+          "startLine": 15,
+          "endLine": 69,
+          "lines": 54
+        },
+        {
+          "name": "checkStaffAvailability",
+          "startLine": 476,
+          "endLine": 527,
+          "lines": 51
+        },
+        {
+          "name": "getTimeOffRequests",
+          "startLine": 239,
+          "endLine": 277,
+          "lines": 38
+        },
+        {
+          "name": "getStaffProfileById",
+          "startLine": 71,
+          "endLine": 100,
+          "lines": 29
+        },
+        {
+          "name": "getStaffServices",
+          "startLine": 389,
+          "endLine": 414,
+          "lines": 25
+        },
+        {
+          "name": "getStaffSchedules",
+          "startLine": 158,
+          "endLine": 182,
+          "lines": 24
+        },
+        {
+          "name": "getStaffPerformance",
+          "startLine": 342,
+          "endLine": 366,
+          "lines": 24
+        },
+        {
+          "name": "approveTimeOffRequest",
+          "startLine": 295,
+          "endLine": 316,
+          "lines": 21
+        },
+        {
+          "name": "denyTimeOffRequest",
+          "startLine": 318,
+          "endLine": 339,
+          "lines": 21
+        },
+        {
+          "name": "assignServiceToStaff",
+          "startLine": 416,
+          "endLine": 435,
+          "lines": 19
+        },
+        {
+          "name": "updateStaffProfile",
+          "startLine": 118,
+          "endLine": 136,
+          "lines": 18
+        },
+        {
+          "name": "updateStaffSchedule",
+          "startLine": 200,
+          "endLine": 218,
+          "lines": 18
+        },
+        {
+          "name": "updateStaffPerformance",
+          "startLine": 368,
+          "endLine": 386,
+          "lines": 18
+        },
+        {
+          "name": "updateStaffService",
+          "startLine": 437,
+          "endLine": 455,
+          "lines": 18
+        },
+        {
+          "name": "deleteStaffProfile",
+          "startLine": 138,
+          "endLine": 155,
+          "lines": 17
+        },
+        {
+          "name": "deleteStaffSchedule",
+          "startLine": 220,
+          "endLine": 236,
+          "lines": 16
+        },
+        {
+          "name": "removeServiceFromStaff",
+          "startLine": 457,
+          "endLine": 473,
+          "lines": 16
+        },
+        {
+          "name": "createStaffProfile",
+          "startLine": 102,
+          "endLine": 116,
+          "lines": 14
+        },
+        {
+          "name": "createStaffSchedule",
+          "startLine": 184,
+          "endLine": 198,
+          "lines": 14
+        },
+        {
+          "name": "createTimeOffRequest",
+          "startLine": 279,
+          "endLine": 293,
+          "lines": 14
+        }
+      ]
+    },
+    {
+      "path": "core/campaigns/components/steps/schedule-settings.tsx",
+      "type": "component",
+      "currentLines": 524,
+      "maxLines": 300,
+      "excessLines": 224,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: ScheduleSettings"
+      ],
+      "functions": [
+        {
+          "name": "ScheduleSettings",
+          "startLine": 50,
+          "endLine": 524,
+          "lines": 474
+        },
+        {
+          "name": "TIMEZONES",
+          "startLine": 31,
+          "endLine": 33,
+          "lines": 2
+        },
+        {
+          "name": "DAYS_OF_WEEK",
+          "startLine": 40,
+          "endLine": 42,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/staff/components/staff-dashboard.tsx",
+      "type": "component",
+      "currentLines": 524,
+      "maxLines": 300,
+      "excessLines": 224,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: StaffDashboard"
+      ],
+      "functions": [
+        {
+          "name": "StaffDashboard",
+          "startLine": 66,
+          "endLine": 473,
+          "lines": 407
+        },
+        {
+          "name": "ServiceAssignmentMatrix",
+          "startLine": 476,
+          "endLine": 524,
+          "lines": 48
+        }
+      ]
+    },
+    {
+      "path": "core/appointments/components/calendar-enhanced.tsx",
+      "type": "component",
+      "currentLines": 523,
+      "maxLines": 300,
+      "excessLines": 223,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: CalendarEnhanced"
+      ],
+      "functions": [
+        {
+          "name": "CalendarEnhanced",
+          "startLine": 61,
+          "endLine": 523,
+          "lines": 462
+        },
+        {
+          "name": "timeSlots",
+          "startLine": 56,
+          "endLine": 59,
+          "lines": 3
+        }
+      ]
+    },
+    {
+      "path": "core/inventory/dal/queries.ts",
+      "type": "dal",
+      "currentLines": 516,
+      "maxLines": 500,
+      "excessLines": 16,
+      "severity": "low",
+      "splitSuggestions": [
+        "Split by domain (queries.ts, mutations.ts)",
+        "Extract complex queries to separate files",
+        "Create repository pattern classes",
+        "Extract large functions: getInventoryMetrics"
+      ],
+      "functions": [
+        {
+          "name": "getInventoryMetrics",
+          "startLine": 459,
+          "endLine": 516,
+          "lines": 57
+        },
+        {
+          "name": "getProducts",
+          "startLine": 19,
+          "endLine": 56,
+          "lines": 37
+        },
+        {
+          "name": "getPurchaseOrders",
+          "startLine": 285,
+          "endLine": 319,
+          "lines": 34
+        },
+        {
+          "name": "getStockAlerts",
+          "startLine": 392,
+          "endLine": 426,
+          "lines": 34
+        },
+        {
+          "name": "getActiveAlerts",
+          "startLine": 428,
+          "endLine": 455,
+          "lines": 27
+        },
+        {
+          "name": "getStockLevels",
+          "startLine": 219,
+          "endLine": 242,
+          "lines": 23
+        },
+        {
+          "name": "getProductBySku",
+          "startLine": 78,
+          "endLine": 97,
+          "lines": 19
+        },
+        {
+          "name": "getDefaultStockLocation",
+          "startLine": 196,
+          "endLine": 215,
+          "lines": 19
+        },
+        {
+          "name": "getStockLevelById",
+          "startLine": 244,
+          "endLine": 263,
+          "lines": 19
+        },
+        {
+          "name": "getProductById",
+          "startLine": 58,
+          "endLine": 76,
+          "lines": 18
+        },
+        {
+          "name": "getCategoryById",
+          "startLine": 118,
+          "endLine": 136,
+          "lines": 18
+        },
+        {
+          "name": "getSupplierById",
+          "startLine": 157,
+          "endLine": 175,
+          "lines": 18
+        },
+        {
+          "name": "getPurchaseOrderById",
+          "startLine": 321,
+          "endLine": 339,
+          "lines": 18
+        },
+        {
+          "name": "getLowStockProducts",
+          "startLine": 265,
+          "endLine": 281,
+          "lines": 16
+        },
+        {
+          "name": "getCategories",
+          "startLine": 101,
+          "endLine": 116,
+          "lines": 15
+        },
+        {
+          "name": "getSuppliers",
+          "startLine": 140,
+          "endLine": 155,
+          "lines": 15
+        },
+        {
+          "name": "getStockLocations",
+          "startLine": 179,
+          "endLine": 194,
+          "lines": 15
+        },
+        {
+          "name": "getPurchaseOrderItems",
+          "startLine": 341,
+          "endLine": 356,
+          "lines": 15
+        },
+        {
+          "name": "getStockMovements",
+          "startLine": 360,
+          "endLine": 362,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/customer/types/index.ts",
+      "type": "other",
+      "currentLines": 514,
+      "maxLines": 400,
+      "excessLines": 114,
+      "severity": "critical",
+      "splitSuggestions": [],
+      "functions": []
+    },
+    {
+      "path": "core/staff/dal/staff-mutations.ts",
+      "type": "dal",
+      "currentLines": 514,
+      "maxLines": 500,
+      "excessLines": 14,
+      "severity": "low",
+      "splitSuggestions": [
+        "Split by domain (queries.ts, mutations.ts)",
+        "Extract complex queries to separate files",
+        "Create repository pattern classes"
+      ],
+      "functions": [
+        {
+          "name": "toggleStaffBookable",
+          "startLine": 99,
+          "endLine": 126,
+          "lines": 27
+        },
+        {
+          "name": "toggleStaffFeatured",
+          "startLine": 326,
+          "endLine": 353,
+          "lines": 27
+        },
+        {
+          "name": "createBlockedTime",
+          "startLine": 387,
+          "endLine": 413,
+          "lines": 26
+        },
+        {
+          "name": "createStaffProfile",
+          "startLine": 20,
+          "endLine": 44,
+          "lines": 24
+        },
+        {
+          "name": "createStaffSchedule",
+          "startLine": 131,
+          "endLine": 155,
+          "lines": 24
+        },
+        {
+          "name": "createTimeOffRequest",
+          "startLine": 207,
+          "endLine": 231,
+          "lines": 24
+        },
+        {
+          "name": "deleteStaffProfile",
+          "startLine": 74,
+          "endLine": 94,
+          "lines": 20
+        },
+        {
+          "name": "deleteStaffSchedule",
+          "startLine": 185,
+          "endLine": 202,
+          "lines": 17
+        },
+        {
+          "name": "cancelTimeOffRequest",
+          "startLine": 365,
+          "endLine": 382,
+          "lines": 17
+        },
+        {
+          "name": "removeBlockedTime",
+          "startLine": 443,
+          "endLine": 460,
+          "lines": 17
+        },
+        {
+          "name": "updateStaffProfile",
+          "startLine": 49,
+          "endLine": 51,
+          "lines": 2
+        },
+        {
+          "name": "updateStaffSchedule",
+          "startLine": 160,
+          "endLine": 162,
+          "lines": 2
+        },
+        {
+          "name": "updateTimeOffRequest",
+          "startLine": 236,
+          "endLine": 238,
+          "lines": 2
+        },
+        {
+          "name": "approveTimeOffRequest",
+          "startLine": 261,
+          "endLine": 263,
+          "lines": 2
+        },
+        {
+          "name": "rejectTimeOffRequest",
+          "startLine": 290,
+          "endLine": 292,
+          "lines": 2
+        },
+        {
+          "name": "deactivateStaffMember",
+          "startLine": 358,
+          "endLine": 360,
+          "lines": 2
+        },
+        {
+          "name": "updateBlockedTime",
+          "startLine": 418,
+          "endLine": 420,
+          "lines": 2
+        },
+        {
+          "name": "updateStaffCommission",
+          "startLine": 465,
+          "endLine": 467,
+          "lines": 2
+        },
+        {
+          "name": "assignServiceToStaff",
+          "startLine": 490,
+          "endLine": 492,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/customer/dal/bookings.ts",
+      "type": "dal",
+      "currentLines": 512,
+      "maxLines": 500,
+      "excessLines": 12,
+      "severity": "low",
+      "splitSuggestions": [
+        "Split by domain (queries.ts, mutations.ts)",
+        "Extract complex queries to separate files",
+        "Create repository pattern classes"
+      ],
+      "functions": [
+        {
+          "name": "searchSalons",
+          "startLine": 13,
+          "endLine": 15,
+          "lines": 2
+        },
+        {
+          "name": "getSalonBookingData",
+          "startLine": 81,
+          "endLine": 83,
+          "lines": 2
+        },
+        {
+          "name": "getAvailableTimeSlots",
+          "startLine": 231,
+          "endLine": 233,
+          "lines": 2
+        },
+        {
+          "name": "createBooking",
+          "startLine": 331,
+          "endLine": 333,
+          "lines": 2
+        },
+        {
+          "name": "cancelBooking",
+          "startLine": 399,
+          "endLine": 401,
+          "lines": 2
+        },
+        {
+          "name": "rescheduleBooking",
+          "startLine": 453,
+          "endLine": 455,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/admin/components/user-management.tsx",
+      "type": "component",
+      "currentLines": 503,
+      "maxLines": 300,
+      "excessLines": 203,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: UserManagement"
+      ],
+      "functions": [
+        {
+          "name": "UserManagement",
+          "startLine": 72,
+          "endLine": 503,
+          "lines": 431
+        }
+      ]
+    },
+    {
+      "path": "core/campaigns/components/campaigns-page.tsx",
+      "type": "component",
+      "currentLines": 503,
+      "maxLines": 300,
+      "excessLines": 203,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: CampaignsPage"
+      ],
+      "functions": [
+        {
+          "name": "CampaignsPage",
+          "startLine": 43,
+          "endLine": 454,
+          "lines": 411
+        },
+        {
+          "name": "CampaignsPageSkeleton",
+          "startLine": 457,
+          "endLine": 503,
+          "lines": 46
+        }
+      ]
+    },
+    {
+      "path": "core/booking/hooks/use-bookings.ts",
+      "type": "hook",
+      "currentLines": 501,
+      "maxLines": 150,
+      "excessLines": 351,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Split into multiple specialized hooks",
+        "Extract utility functions to helpers"
+      ],
+      "functions": [
+        {
+          "name": "useUpdateBookingStatus",
+          "startLine": 207,
+          "endLine": 256,
+          "lines": 49
+        },
+        {
+          "name": "useBookingConfirmation",
+          "startLine": 461,
+          "endLine": 501,
+          "lines": 40
+        },
+        {
+          "name": "useServices",
+          "startLine": 44,
+          "endLine": 75,
+          "lines": 31
+        },
+        {
+          "name": "useRescheduleBooking",
+          "startLine": 259,
+          "endLine": 289,
+          "lines": 30
+        },
+        {
+          "name": "useCreateBooking",
+          "startLine": 175,
+          "endLine": 204,
+          "lines": 29
+        },
+        {
+          "name": "useBookingsList",
+          "startLine": 144,
+          "endLine": 172,
+          "lines": 28
+        },
+        {
+          "name": "useRecurringBookings",
+          "startLine": 402,
+          "endLine": 430,
+          "lines": 28
+        },
+        {
+          "name": "useStaff",
+          "startLine": 78,
+          "endLine": 103,
+          "lines": 25
+        },
+        {
+          "name": "useGroupBooking",
+          "startLine": 433,
+          "endLine": 458,
+          "lines": 25
+        },
+        {
+          "name": "useWaitingList",
+          "startLine": 355,
+          "endLine": 361,
+          "lines": 6
+        },
+        {
+          "name": "useAvailability",
+          "startLine": 106,
+          "endLine": 108,
+          "lines": 2
+        },
+        {
+          "name": "useBookingAnalytics",
+          "startLine": 292,
+          "endLine": 294,
+          "lines": 2
+        },
+        {
+          "name": "useCapacityInfo",
+          "startLine": 324,
+          "endLine": 326,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/campaigns/dal/campaigns-queries.ts",
+      "type": "dal",
+      "currentLines": 501,
+      "maxLines": 500,
+      "excessLines": 1,
+      "severity": "low",
+      "splitSuggestions": [
+        "Split by domain (queries.ts, mutations.ts)",
+        "Extract complex queries to separate files",
+        "Create repository pattern classes",
+        "Extract large functions: getCampaigns, getCampaignTemplates, getAudiencePreview"
+      ],
+      "functions": [
+        {
+          "name": "getCampaigns",
+          "startLine": 18,
+          "endLine": 150,
+          "lines": 132
+        },
+        {
+          "name": "getCampaignTemplates",
+          "startLine": 183,
+          "endLine": 288,
+          "lines": 105
+        },
+        {
+          "name": "getAudiencePreview",
+          "startLine": 293,
+          "endLine": 378,
+          "lines": 85
+        },
+        {
+          "name": "getCampaignAnalytics",
+          "startLine": 383,
+          "endLine": 466,
+          "lines": 83
+        },
+        {
+          "name": "getCampaignStats",
+          "startLine": 471,
+          "endLine": 500,
+          "lines": 29
+        },
+        {
+          "name": "getCampaignById",
+          "startLine": 155,
+          "endLine": 178,
+          "lines": 23
+        }
+      ]
+    },
+    {
+      "path": "core/shared/hooks/use-realtime-sync.ts",
+      "type": "hook",
+      "currentLines": 494,
+      "maxLines": 150,
+      "excessLines": 344,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Split into multiple specialized hooks",
+        "Extract utility functions to helpers",
+        "Extract large functions: useRealtimeSync"
+      ],
+      "functions": [
+        {
+          "name": "useRealtimeSync",
+          "startLine": 57,
+          "endLine": 391,
+          "lines": 334
+        },
+        {
+          "name": "subscriptionManager",
+          "startLine": 468,
+          "endLine": 470,
+          "lines": 2
+        },
+        {
+          "name": "reconcileOptimisticUpdate",
+          "startLine": 471,
+          "endLine": 473,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/auth/actions/user-management.ts",
+      "type": "action",
+      "currentLines": 492,
+      "maxLines": 250,
+      "excessLines": 242,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules",
+        "Extract large functions: register, updateEmail"
+      ],
+      "functions": [
+        {
+          "name": "register",
+          "startLine": 52,
+          "endLine": 158,
+          "lines": 106
+        },
+        {
+          "name": "updateEmail",
+          "startLine": 379,
+          "endLine": 443,
+          "lines": 64
+        },
+        {
+          "name": "updateProfile",
+          "startLine": 257,
+          "endLine": 306,
+          "lines": 49
+        },
+        {
+          "name": "forgotPassword",
+          "startLine": 161,
+          "endLine": 207,
+          "lines": 46
+        },
+        {
+          "name": "deleteAccount",
+          "startLine": 446,
+          "endLine": 492,
+          "lines": 46
+        },
+        {
+          "name": "resetPassword",
+          "startLine": 210,
+          "endLine": 254,
+          "lines": 44
+        },
+        {
+          "name": "RegisterSchema",
+          "startLine": 8,
+          "endLine": 25,
+          "lines": 17
+        },
+        {
+          "name": "ResetPasswordSchema",
+          "startLine": 31,
+          "endLine": 41,
+          "lines": 10
+        },
+        {
+          "name": "ForgotPasswordSchema",
+          "startLine": 27,
+          "endLine": 29,
+          "lines": 2
+        },
+        {
+          "name": "changePassword",
+          "startLine": 309,
+          "endLine": 311,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/users/components/user-onboarding-flow.tsx",
+      "type": "component",
+      "currentLines": 489,
+      "maxLines": 300,
+      "excessLines": 189,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: UserOnboardingFlow"
+      ],
+      "functions": [
+        {
+          "name": "UserOnboardingFlow",
+          "startLine": 100,
+          "endLine": 489,
+          "lines": 389
+        }
+      ]
+    },
+    {
+      "path": "core/shared/tools/security-analyzer.ts",
+      "type": "other",
+      "currentLines": 483,
+      "maxLines": 400,
+      "excessLines": 83,
+      "severity": "medium",
+      "splitSuggestions": [],
+      "functions": []
+    },
+    {
+      "path": "core/campaigns/components/campaign-analytics.tsx",
+      "type": "component",
+      "currentLines": 476,
+      "maxLines": 300,
+      "excessLines": 176,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: CampaignAnalyticsView"
+      ],
+      "functions": [
+        {
+          "name": "CampaignAnalyticsView",
+          "startLine": 64,
+          "endLine": 476,
+          "lines": 412
+        },
+        {
+          "name": "COLORS",
+          "startLine": 62,
+          "endLine": 63,
+          "lines": 1
+        }
+      ]
+    },
+    {
+      "path": "core/staff/components/performance-dashboard.tsx",
+      "type": "component",
+      "currentLines": 476,
+      "maxLines": 300,
+      "excessLines": 176,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: PerformanceDashboard"
+      ],
+      "functions": [
+        {
+          "name": "PerformanceDashboard",
+          "startLine": 38,
+          "endLine": 476,
+          "lines": 438
+        }
+      ]
+    },
+    {
+      "path": "core/salons/components/salon-dashboard.tsx",
+      "type": "component",
+      "currentLines": 471,
+      "maxLines": 300,
+      "excessLines": 171,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: SalonDashboard"
+      ],
+      "functions": [
+        {
+          "name": "SalonDashboard",
+          "startLine": 105,
+          "endLine": 471,
+          "lines": 366
+        },
+        {
+          "name": "MetricCard",
+          "startLine": 47,
+          "endLine": 75,
+          "lines": 28
+        },
+        {
+          "name": "LoadingState",
+          "startLine": 77,
+          "endLine": 103,
+          "lines": 26
+        }
+      ]
+    },
+    {
+      "path": "core/inventory/components/products/product-list.tsx",
+      "type": "component",
+      "currentLines": 469,
+      "maxLines": 300,
+      "excessLines": 169,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: ProductList"
+      ],
+      "functions": [
+        {
+          "name": "ProductList",
+          "startLine": 78,
+          "endLine": 469,
+          "lines": 391
+        },
+        {
+          "name": "ProductDetail",
+          "startLine": 56,
+          "endLine": 58,
+          "lines": 2
+        },
+        {
+          "name": "StockAdjustmentForm",
+          "startLine": 63,
+          "endLine": 65,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/users/components/role-manager.tsx",
+      "type": "component",
+      "currentLines": 469,
+      "maxLines": 300,
+      "excessLines": 169,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: RoleManager"
+      ],
+      "functions": [
+        {
+          "name": "RoleManager",
+          "startLine": 185,
+          "endLine": 469,
+          "lines": 284
+        },
+        {
+          "name": "actions",
+          "startLine": 177,
+          "endLine": 183,
+          "lines": 6
+        },
+        {
+          "name": "resources",
+          "startLine": 164,
+          "endLine": 166,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/billing/components/subscription-dashboard.tsx",
+      "type": "component",
+      "currentLines": 467,
+      "maxLines": 300,
+      "excessLines": 167,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: SubscriptionDashboard, SubscriptionDetails"
+      ],
+      "functions": [
+        {
+          "name": "SubscriptionDashboard",
+          "startLine": 56,
+          "endLine": 298,
+          "lines": 242
+        },
+        {
+          "name": "SubscriptionDetails",
+          "startLine": 301,
+          "endLine": 467,
+          "lines": 166
+        }
+      ]
+    },
+    {
+      "path": "core/admin/actions/index.ts",
+      "type": "action",
+      "currentLines": 466,
+      "maxLines": 250,
+      "excessLines": 216,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules",
+        "Extract large functions: bulkUserActionAction"
+      ],
+      "functions": [
+        {
+          "name": "bulkUserActionAction",
+          "startLine": 197,
+          "endLine": 260,
+          "lines": 63
+        },
+        {
+          "name": "sendNotificationAction",
+          "startLine": 265,
+          "endLine": 307,
+          "lines": 42
+        },
+        {
+          "name": "updateUserStatusAction",
+          "startLine": 131,
+          "endLine": 159,
+          "lines": 28
+        },
+        {
+          "name": "updateSalonStatusAction",
+          "startLine": 164,
+          "endLine": 192,
+          "lines": 28
+        },
+        {
+          "name": "exportPlatformDataAction",
+          "startLine": 312,
+          "endLine": 339,
+          "lines": 27
+        },
+        {
+          "name": "generatePlatformReportAction",
+          "startLine": 344,
+          "endLine": 370,
+          "lines": 26
+        },
+        {
+          "name": "toggleFeatureFlagAction",
+          "startLine": 399,
+          "endLine": 419,
+          "lines": 20
+        },
+        {
+          "name": "setMaintenanceModeAction",
+          "startLine": 424,
+          "endLine": 444,
+          "lines": 20
+        },
+        {
+          "name": "updatePlatformSettingsAction",
+          "startLine": 375,
+          "endLine": 394,
+          "lines": 19
+        },
+        {
+          "name": "clearSystemCacheAction",
+          "startLine": 449,
+          "endLine": 466,
+          "lines": 17
+        },
+        {
+          "name": "getAdminDashboardStatsAction",
+          "startLine": 19,
+          "endLine": 30,
+          "lines": 11
+        },
+        {
+          "name": "getSystemHealthMetricsAction",
+          "startLine": 35,
+          "endLine": 46,
+          "lines": 11
+        },
+        {
+          "name": "getPlatformUsersAction",
+          "startLine": 51,
+          "endLine": 62,
+          "lines": 11
+        },
+        {
+          "name": "getPlatformSalonsAction",
+          "startLine": 67,
+          "endLine": 78,
+          "lines": 11
+        },
+        {
+          "name": "getAdminAuditLogsAction",
+          "startLine": 83,
+          "endLine": 94,
+          "lines": 11
+        },
+        {
+          "name": "UpdateSalonStatusSchema",
+          "startLine": 103,
+          "endLine": 111,
+          "lines": 8
+        },
+        {
+          "name": "SendNotificationSchema",
+          "startLine": 119,
+          "endLine": 126,
+          "lines": 7
+        },
+        {
+          "name": "UpdateUserStatusSchema",
+          "startLine": 97,
+          "endLine": 101,
+          "lines": 4
+        },
+        {
+          "name": "BulkUserActionSchema",
+          "startLine": 113,
+          "endLine": 117,
+          "lines": 4
+        }
+      ]
+    },
+    {
+      "path": "core/customers/components/customer-segments.tsx",
+      "type": "component",
+      "currentLines": 466,
+      "maxLines": 300,
+      "excessLines": 166,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: CustomerSegments"
+      ],
+      "functions": [
+        {
+          "name": "CustomerSegments",
+          "startLine": 57,
+          "endLine": 466,
+          "lines": 409
+        }
+      ]
+    },
+    {
+      "path": "core/schedules/components/conflict-resolver.tsx",
+      "type": "component",
+      "currentLines": 460,
+      "maxLines": 300,
+      "excessLines": 160,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: ConflictResolver"
+      ],
+      "functions": [
+        {
+          "name": "ConflictResolver",
+          "startLine": 74,
+          "endLine": 460,
+          "lines": 386
+        }
+      ]
+    },
+    {
+      "path": "core/campaigns/components/template-selector.tsx",
+      "type": "component",
+      "currentLines": 458,
+      "maxLines": 300,
+      "excessLines": 158,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: TemplateSelector"
+      ],
+      "functions": [
+        {
+          "name": "TemplateSelector",
+          "startLine": 206,
+          "endLine": 458,
+          "lines": 252
+        },
+        {
+          "name": "TEMPLATE_CATEGORIES",
+          "startLine": 37,
+          "endLine": 39,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/auth/components/register.tsx",
+      "type": "component",
+      "currentLines": 457,
+      "maxLines": 300,
+      "excessLines": 157,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: RegisterForm"
+      ],
+      "functions": [
+        {
+          "name": "RegisterForm",
+          "startLine": 59,
+          "endLine": 457,
+          "lines": 398
+        },
+        {
+          "name": "calculatePasswordStrength",
+          "startLine": 39,
+          "endLine": 57,
+          "lines": 18
+        }
+      ]
+    },
+    {
+      "path": "core/shared/tools/architecture-orchestrator.ts",
+      "type": "other",
+      "currentLines": 457,
+      "maxLines": 400,
+      "excessLines": 57,
+      "severity": "medium",
+      "splitSuggestions": [],
+      "functions": [
+        {
+          "name": "quickStartOptimization",
+          "startLine": 447,
+          "endLine": 457,
+          "lines": 10
+        },
+        {
+          "name": "createArchitectureOrchestrator",
+          "startLine": 440,
+          "endLine": 442,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/monitoring/performance-monitor.tsx",
+      "type": "component",
+      "currentLines": 452,
+      "maxLines": 300,
+      "excessLines": 152,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: PerformanceMonitor"
+      ],
+      "functions": [
+        {
+          "name": "PerformanceMonitor",
+          "startLine": 48,
+          "endLine": 452,
+          "lines": 404
+        }
+      ]
+    },
+    {
+      "path": "core/staff/components/staff-batch-optimistic.tsx",
+      "type": "component",
+      "currentLines": 452,
+      "maxLines": 300,
+      "excessLines": 152,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: StaffBatchOptimistic"
+      ],
+      "functions": [
+        {
+          "name": "StaffBatchOptimistic",
+          "startLine": 47,
+          "endLine": 452,
+          "lines": 405
+        }
+      ]
+    },
+    {
+      "path": "core/shared/components/optimized-loading.tsx",
+      "type": "component",
+      "currentLines": 447,
+      "maxLines": 300,
+      "excessLines": 147,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Split into multiple smaller components",
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: SkeletonLoader"
+      ],
+      "functions": [
+        {
+          "name": "SkeletonLoader",
+          "startLine": 16,
+          "endLine": 109,
+          "lines": 93
+        },
+        {
+          "name": "ProgressiveImage",
+          "startLine": 407,
+          "endLine": 447,
+          "lines": 40
+        },
+        {
+          "name": "ProgressiveList",
+          "startLine": 121,
+          "endLine": 156,
+          "lines": 35
+        },
+        {
+          "name": "LazyLoad",
+          "startLine": 167,
+          "endLine": 200,
+          "lines": 33
+        },
+        {
+          "name": "PrefetchLink",
+          "startLine": 279,
+          "endLine": 312,
+          "lines": 33
+        },
+        {
+          "name": "ContentPlaceholder",
+          "startLine": 375,
+          "endLine": 396,
+          "lines": 21
+        },
+        {
+          "name": "useBackgroundRefresh",
+          "startLine": 315,
+          "endLine": 322,
+          "lines": 7
+        },
+        {
+          "name": "prefetchManager",
+          "startLine": 268,
+          "endLine": 270,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/schedules/components/schedule-calendar.tsx",
+      "type": "component",
+      "currentLines": 446,
+      "maxLines": 300,
+      "excessLines": 146,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: ScheduleCalendar"
+      ],
+      "functions": [
+        {
+          "name": "ScheduleCalendar",
+          "startLine": 53,
+          "endLine": 446,
+          "lines": 393
+        }
+      ]
+    },
+    {
+      "path": "core/audit/components/audit-log-viewer.tsx",
+      "type": "component",
+      "currentLines": 444,
+      "maxLines": 300,
+      "excessLines": 144,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: AuditLogViewer"
+      ],
+      "functions": [
+        {
+          "name": "AuditLogViewer",
+          "startLine": 52,
+          "endLine": 444,
+          "lines": 392
+        }
+      ]
+    },
+    {
+      "path": "core/types/database.ts",
+      "type": "other",
+      "currentLines": 444,
+      "maxLines": 400,
+      "excessLines": 44,
+      "severity": "low",
+      "splitSuggestions": [],
+      "functions": []
+    },
+    {
+      "path": "core/campaigns/components/campaigns-list.tsx",
+      "type": "component",
+      "currentLines": 441,
+      "maxLines": 300,
+      "excessLines": 141,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: CampaignsList"
+      ],
+      "functions": [
+        {
+          "name": "CampaignsList",
+          "startLine": 61,
+          "endLine": 441,
+          "lines": 380
+        }
+      ]
+    },
+    {
+      "path": "core/shared/components/error-recovery.tsx",
+      "type": "component",
+      "currentLines": 435,
+      "maxLines": 300,
+      "excessLines": 135,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Split into multiple smaller components",
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: ConflictResolution, ErrorRecovery"
+      ],
+      "functions": [
+        {
+          "name": "ConflictResolution",
+          "startLine": 281,
+          "endLine": 379,
+          "lines": 98
+        },
+        {
+          "name": "ErrorRecovery",
+          "startLine": 173,
+          "endLine": 266,
+          "lines": 93
+        },
+        {
+          "name": "SyncStatus",
+          "startLine": 389,
+          "endLine": 432,
+          "lines": 43
+        },
+        {
+          "name": "useNetworkStatus",
+          "startLine": 143,
+          "endLine": 170,
+          "lines": 27
+        },
+        {
+          "name": "retryWithBackoff",
+          "startLine": 37,
+          "endLine": 39,
+          "lines": 2
+        },
+        {
+          "name": "offlineQueue",
+          "startLine": 140,
+          "endLine": 142,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/campaigns/components/steps/review-send.tsx",
+      "type": "component",
+      "currentLines": 430,
+      "maxLines": 300,
+      "excessLines": 130,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: ReviewAndSend"
+      ],
+      "functions": [
+        {
+          "name": "ReviewAndSend",
+          "startLine": 38,
+          "endLine": 430,
+          "lines": 392
+        }
+      ]
+    },
+    {
+      "path": "core/settings/components/settings-form-optimistic.tsx",
+      "type": "component",
+      "currentLines": 423,
+      "maxLines": 300,
+      "excessLines": 123,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: SettingsFormOptimistic"
+      ],
+      "functions": [
+        {
+          "name": "SettingsFormOptimistic",
+          "startLine": 41,
+          "endLine": 423,
+          "lines": 382
+        },
+        {
+          "name": "SalonSettingsSchema",
+          "startLine": 19,
+          "endLine": 32,
+          "lines": 13
+        }
+      ]
+    },
+    {
+      "path": "core/appointments/components/appointments-page-client.tsx",
+      "type": "component",
+      "currentLines": 420,
+      "maxLines": 300,
+      "excessLines": 120,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: AppointmentsPageClient"
+      ],
+      "functions": [
+        {
+          "name": "AppointmentsPageClient",
+          "startLine": 54,
+          "endLine": 420,
+          "lines": 366
+        }
+      ]
+    },
+    {
+      "path": "core/monitoring/lib/connection-pool.ts",
+      "type": "util",
+      "currentLines": 420,
+      "maxLines": 200,
+      "excessLines": 220,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group utilities by functionality",
+        "Create specialized utility modules"
+      ],
+      "functions": [
+        {
+          "name": "usePooledConnection",
+          "startLine": 390,
+          "endLine": 402,
+          "lines": 12
+        },
+        {
+          "name": "executeWithPool",
+          "startLine": 407,
+          "endLine": 411,
+          "lines": 4
+        },
+        {
+          "name": "transactionWithPool",
+          "startLine": 416,
+          "endLine": 420,
+          "lines": 4
+        },
+        {
+          "name": "connectionPool",
+          "startLine": 385,
+          "endLine": 387,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/auth/actions/security-audit.ts",
+      "type": "action",
+      "currentLines": 419,
+      "maxLines": 250,
+      "excessLines": 169,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules",
+        "Extract large functions: checkSuspiciousPatterns"
+      ],
+      "functions": [
+        {
+          "name": "checkSuspiciousPatterns",
+          "startLine": 289,
+          "endLine": 356,
+          "lines": 67
+        },
+        {
+          "name": "logSecurityEvent",
+          "startLine": 33,
+          "endLine": 64,
+          "lines": 31
+        },
+        {
+          "name": "logAuthenticationAttempt",
+          "startLine": 67,
+          "endLine": 69,
+          "lines": 2
+        },
+        {
+          "name": "logLogout",
+          "startLine": 90,
+          "endLine": 92,
+          "lines": 2
+        },
+        {
+          "name": "logPasswordChange",
+          "startLine": 108,
+          "endLine": 110,
+          "lines": 2
+        },
+        {
+          "name": "logRoleChange",
+          "startLine": 126,
+          "endLine": 128,
+          "lines": 2
+        },
+        {
+          "name": "logDataAccess",
+          "startLine": 150,
+          "endLine": 152,
+          "lines": 2
+        },
+        {
+          "name": "logFailedAuthorization",
+          "startLine": 173,
+          "endLine": 175,
+          "lines": 2
+        },
+        {
+          "name": "logSuspiciousActivity",
+          "startLine": 194,
+          "endLine": 196,
+          "lines": 2
+        },
+        {
+          "name": "getUserSecurityEvents",
+          "startLine": 217,
+          "endLine": 219,
+          "lines": 2
+        },
+        {
+          "name": "getRecentSecurityEvents",
+          "startLine": 246,
+          "endLine": 248,
+          "lines": 2
+        },
+        {
+          "name": "generateSecurityReport",
+          "startLine": 359,
+          "endLine": 361,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/security/dtos/index.ts",
+      "type": "other",
+      "currentLines": 415,
+      "maxLines": 400,
+      "excessLines": 15,
+      "severity": "low",
+      "splitSuggestions": [],
+      "functions": [
+        {
+          "name": "createSalonPublicDTO",
+          "startLine": 364,
+          "endLine": 387,
+          "lines": 23
+        },
+        {
+          "name": "createStaffPublicDTO",
+          "startLine": 389,
+          "endLine": 401,
+          "lines": 12
+        },
+        {
+          "name": "createUserProfileDTO",
+          "startLine": 344,
+          "endLine": 354,
+          "lines": 10
+        },
+        {
+          "name": "SecureDTOs",
+          "startLine": 406,
+          "endLine": 413,
+          "lines": 7
+        },
+        {
+          "name": "createPublicProfileDTO",
+          "startLine": 356,
+          "endLine": 362,
+          "lines": 6
+        },
+        {
+          "name": "createAppointmentDTO",
+          "startLine": 324,
+          "endLine": 326,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/appointments/components/availability-checker.tsx",
+      "type": "component",
+      "currentLines": 414,
+      "maxLines": 300,
+      "excessLines": 114,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: AvailabilityChecker"
+      ],
+      "functions": [
+        {
+          "name": "AvailabilityChecker",
+          "startLine": 44,
+          "endLine": 414,
+          "lines": 370
+        }
+      ]
+    },
+    {
+      "path": "core/billing/components/revenue-analytics.tsx",
+      "type": "component",
+      "currentLines": 412,
+      "maxLines": 300,
+      "excessLines": 112,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: RevenueAnalytics"
+      ],
+      "functions": [
+        {
+          "name": "RevenueAnalytics",
+          "startLine": 62,
+          "endLine": 412,
+          "lines": 350
+        }
+      ]
+    },
+    {
+      "path": "core/shared/tools/dependency-analyzer.ts",
+      "type": "other",
+      "currentLines": 412,
+      "maxLines": 400,
+      "excessLines": 12,
+      "severity": "low",
+      "splitSuggestions": [],
+      "functions": [
+        {
+          "name": "createDependencyAnalyzer",
+          "startLine": 328,
+          "endLine": 335,
+          "lines": 7
+        }
+      ]
+    },
+    {
+      "path": "core/customer/components/booking/time-selection.tsx",
+      "type": "component",
+      "currentLines": 398,
+      "maxLines": 300,
+      "excessLines": 98,
+      "severity": "medium",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: TimeSelection"
+      ],
+      "functions": [
+        {
+          "name": "TimeSelection",
+          "startLine": 23,
+          "endLine": 398,
+          "lines": 375
+        }
+      ]
+    },
+    {
+      "path": "core/billing/components/analytics/revenue-analytics.tsx",
+      "type": "component",
+      "currentLines": 392,
+      "maxLines": 300,
+      "excessLines": 92,
+      "severity": "medium",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: RevenueAnalytics"
+      ],
+      "functions": [
+        {
+          "name": "RevenueAnalytics",
+          "startLine": 54,
+          "endLine": 392,
+          "lines": 338
+        }
+      ]
+    },
+    {
+      "path": "core/integration/lib/feature-registry.ts",
+      "type": "util",
+      "currentLines": 392,
+      "maxLines": 200,
+      "excessLines": 192,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group utilities by functionality",
+        "Create specialized utility modules"
+      ],
+      "functions": [
+        {
+          "name": "featureRegistry",
+          "startLine": 392,
+          "endLine": 392,
+          "lines": 0
+        }
+      ]
+    },
+    {
+      "path": "core/schedules/actions/scheduling-actions.ts",
+      "type": "action",
+      "currentLines": 389,
+      "maxLines": 250,
+      "excessLines": 139,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules"
+      ],
+      "functions": [
+        {
+          "name": "autoAssignAppointmentsAction",
+          "startLine": 78,
+          "endLine": 91,
+          "lines": 13
+        },
+        {
+          "name": "suggestOptimalSlotsAction",
+          "startLine": 143,
+          "endLine": 156,
+          "lines": 13
+        },
+        {
+          "name": "createStaffScheduleAction",
+          "startLine": 165,
+          "endLine": 176,
+          "lines": 11
+        },
+        {
+          "name": "createBlockedTimeAction",
+          "startLine": 200,
+          "endLine": 211,
+          "lines": 11
+        },
+        {
+          "name": "createTimeOffRequestAction",
+          "startLine": 235,
+          "endLine": 246,
+          "lines": 11
+        },
+        {
+          "name": "detectConflictsAction",
+          "startLine": 119,
+          "endLine": 126,
+          "lines": 7
+        },
+        {
+          "name": "batchScheduleOperationsAction",
+          "startLine": 274,
+          "endLine": 279,
+          "lines": 5
+        },
+        {
+          "name": "resolveConflictAction",
+          "startLine": 39,
+          "endLine": 41,
+          "lines": 2
+        },
+        {
+          "name": "optimizeScheduleAction",
+          "startLine": 58,
+          "endLine": 60,
+          "lines": 2
+        },
+        {
+          "name": "getStaffAvailabilityAction",
+          "startLine": 100,
+          "endLine": 102,
+          "lines": 2
+        },
+        {
+          "name": "updateStaffScheduleAction",
+          "startLine": 181,
+          "endLine": 183,
+          "lines": 2
+        },
+        {
+          "name": "updateBlockedTimeAction",
+          "startLine": 216,
+          "endLine": 218,
+          "lines": 2
+        },
+        {
+          "name": "updateTimeOffRequestAction",
+          "startLine": 251,
+          "endLine": 253,
+          "lines": 2
+        },
+        {
+          "name": "syncScheduleChangesAction",
+          "startLine": 340,
+          "endLine": 342,
+          "lines": 2
+        },
+        {
+          "name": "broadcastScheduleUpdateAction",
+          "startLine": 370,
+          "endLine": 372,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/customer/components/appointments/appointment-history.tsx",
+      "type": "component",
+      "currentLines": 387,
+      "maxLines": 300,
+      "excessLines": 87,
+      "severity": "medium",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: AppointmentHistory"
+      ],
+      "functions": [
+        {
+          "name": "AppointmentHistory",
+          "startLine": 26,
+          "endLine": 387,
+          "lines": 361
+        }
+      ]
+    },
+    {
+      "path": "core/appointments/components/appointment-list-optimistic.tsx",
+      "type": "component",
+      "currentLines": 386,
+      "maxLines": 300,
+      "excessLines": 86,
+      "severity": "medium",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: AppointmentListOptimistic"
+      ],
+      "functions": [
+        {
+          "name": "AppointmentListOptimistic",
+          "startLine": 48,
+          "endLine": 386,
+          "lines": 338
+        }
+      ]
+    },
+    {
+      "path": "core/customer/components/booking/salon-search.tsx",
+      "type": "component",
+      "currentLines": 386,
+      "maxLines": 300,
+      "excessLines": 86,
+      "severity": "medium",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: SalonSearch"
+      ],
+      "functions": [
+        {
+          "name": "SalonSearch",
+          "startLine": 24,
+          "endLine": 386,
+          "lines": 362
+        }
+      ]
+    },
+    {
+      "path": "core/billing/actions/invoice-actions.ts",
+      "type": "action",
+      "currentLines": 384,
+      "maxLines": 250,
+      "excessLines": 134,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules",
+        "Extract large functions: generateInvoicePDF"
+      ],
+      "functions": [
+        {
+          "name": "generateInvoicePDF",
+          "startLine": 26,
+          "endLine": 87,
+          "lines": 61
+        },
+        {
+          "name": "voidInvoice",
+          "startLine": 277,
+          "endLine": 309,
+          "lines": 32
+        },
+        {
+          "name": "generatePDFBuffer",
+          "startLine": 336,
+          "endLine": 366,
+          "lines": 30
+        },
+        {
+          "name": "generateInvoiceNumber",
+          "startLine": 312,
+          "endLine": 334,
+          "lines": 22
+        },
+        {
+          "name": "sendEmailWithAttachment",
+          "startLine": 368,
+          "endLine": 384,
+          "lines": 16
+        },
+        {
+          "name": "createInvoice",
+          "startLine": 89,
+          "endLine": 91,
+          "lines": 2
+        },
+        {
+          "name": "markInvoiceAsPaid",
+          "startLine": 174,
+          "endLine": 176,
+          "lines": 2
+        },
+        {
+          "name": "sendInvoiceEmail",
+          "startLine": 213,
+          "endLine": 215,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/customer/components/booking/booking-confirmation.tsx",
+      "type": "component",
+      "currentLines": 379,
+      "maxLines": 300,
+      "excessLines": 79,
+      "severity": "medium",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: BookingConfirmation"
+      ],
+      "functions": [
+        {
+          "name": "BookingConfirmation",
+          "startLine": 25,
+          "endLine": 379,
+          "lines": 354
+        }
+      ]
+    },
+    {
+      "path": "core/loyalty/actions/customer-loyalty-actions.ts",
+      "type": "action",
+      "currentLines": 369,
+      "maxLines": 250,
+      "excessLines": 119,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules",
+        "Extract large functions: enrollCustomerInProgram, unenrollCustomerFromProgram"
+      ],
+      "functions": [
+        {
+          "name": "enrollCustomerInProgram",
+          "startLine": 31,
+          "endLine": 119,
+          "lines": 88
+        },
+        {
+          "name": "unenrollCustomerFromProgram",
+          "startLine": 124,
+          "endLine": 177,
+          "lines": 53
+        },
+        {
+          "name": "addLoyaltyTransactionAction",
+          "startLine": 336,
+          "endLine": 369,
+          "lines": 33
+        },
+        {
+          "name": "getCustomerLoyaltyInfo",
+          "startLine": 265,
+          "endLine": 295,
+          "lines": 30
+        },
+        {
+          "name": "updateCustomerLoyaltyAction",
+          "startLine": 182,
+          "endLine": 184,
+          "lines": 2
+        },
+        {
+          "name": "awardPointsForAppointmentAction",
+          "startLine": 221,
+          "endLine": 223,
+          "lines": 2
+        },
+        {
+          "name": "getCustomerTransactionHistory",
+          "startLine": 300,
+          "endLine": 302,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/campaigns/actions/campaign-operations.ts",
+      "type": "action",
+      "currentLines": 363,
+      "maxLines": 250,
+      "excessLines": 113,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules",
+        "Extract large functions: sendCampaign, pauseCampaign"
+      ],
+      "functions": [
+        {
+          "name": "sendCampaign",
+          "startLine": 35,
+          "endLine": 130,
+          "lines": 95
+        },
+        {
+          "name": "pauseCampaign",
+          "startLine": 217,
+          "endLine": 280,
+          "lines": 63
+        },
+        {
+          "name": "TestCampaignSchema",
+          "startLine": 29,
+          "endLine": 32,
+          "lines": 3
+        },
+        {
+          "name": "ScheduleCampaignSchema",
+          "startLine": 25,
+          "endLine": 27,
+          "lines": 2
+        },
+        {
+          "name": "scheduleCampaign",
+          "startLine": 133,
+          "endLine": 135,
+          "lines": 2
+        },
+        {
+          "name": "testCampaign",
+          "startLine": 283,
+          "endLine": 285,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/performance/utils/cache.ts",
+      "type": "util",
+      "currentLines": 362,
+      "maxLines": 200,
+      "excessLines": 162,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group utilities by functionality",
+        "Create specialized utility modules"
+      ],
+      "functions": [
+        {
+          "name": "cache",
+          "startLine": 292,
+          "endLine": 294,
+          "lines": 2
+        },
+        {
+          "name": "useCachedData",
+          "startLine": 303,
+          "endLine": 305,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/customer/components/profile/preferences-form.tsx",
+      "type": "component",
+      "currentLines": 360,
+      "maxLines": 300,
+      "excessLines": 60,
+      "severity": "medium",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: PreferencesForm"
+      ],
+      "functions": [
+        {
+          "name": "PreferencesForm",
+          "startLine": 51,
+          "endLine": 360,
+          "lines": 309
+        },
+        {
+          "name": "TIMEZONES",
+          "startLine": 21,
+          "endLine": 23,
+          "lines": 2
+        },
+        {
+          "name": "LANGUAGES",
+          "startLine": 30,
+          "endLine": 32,
+          "lines": 2
+        },
+        {
+          "name": "TIME_SLOTS",
+          "startLine": 43,
+          "endLine": 45,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/admin/components/admin-dashboard.tsx",
+      "type": "component",
+      "currentLines": 359,
+      "maxLines": 300,
+      "excessLines": 59,
+      "severity": "medium",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: AdminDashboard"
+      ],
+      "functions": [
+        {
+          "name": "AdminDashboard",
+          "startLine": 32,
+          "endLine": 358,
+          "lines": 326
+        }
+      ]
+    },
+    {
+      "path": "core/audit/components/audit-filters.tsx",
+      "type": "component",
+      "currentLines": 358,
+      "maxLines": 300,
+      "excessLines": 58,
+      "severity": "medium",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: AuditFilters"
+      ],
+      "functions": [
+        {
+          "name": "AuditFilters",
+          "startLine": 45,
+          "endLine": 358,
+          "lines": 313
+        }
+      ]
+    },
+    {
+      "path": "core/inventory/actions/actions.ts",
+      "type": "action",
+      "currentLines": 355,
+      "maxLines": 250,
+      "excessLines": 105,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules"
+      ],
+      "functions": [
+        {
+          "name": "bulkUpdateProductStatusAction",
+          "startLine": 331,
+          "endLine": 343,
+          "lines": 12
+        },
+        {
+          "name": "updateProductAction",
+          "startLine": 51,
+          "endLine": 62,
+          "lines": 11
+        },
+        {
+          "name": "adjustStockAction",
+          "startLine": 192,
+          "endLine": 203,
+          "lines": 11
+        },
+        {
+          "name": "transferStockAction",
+          "startLine": 205,
+          "endLine": 216,
+          "lines": 11
+        },
+        {
+          "name": "updatePurchaseOrderAction",
+          "startLine": 232,
+          "endLine": 243,
+          "lines": 11
+        },
+        {
+          "name": "updatePurchaseOrderStatusAction",
+          "startLine": 245,
+          "endLine": 256,
+          "lines": 11
+        },
+        {
+          "name": "createProductAction",
+          "startLine": 39,
+          "endLine": 49,
+          "lines": 10
+        },
+        {
+          "name": "deleteProductAction",
+          "startLine": 64,
+          "endLine": 74,
+          "lines": 10
+        },
+        {
+          "name": "createCategoryAction",
+          "startLine": 78,
+          "endLine": 88,
+          "lines": 10
+        },
+        {
+          "name": "updateCategoryAction",
+          "startLine": 90,
+          "endLine": 100,
+          "lines": 10
+        },
+        {
+          "name": "deleteCategoryAction",
+          "startLine": 102,
+          "endLine": 112,
+          "lines": 10
+        },
+        {
+          "name": "createSupplierAction",
+          "startLine": 116,
+          "endLine": 126,
+          "lines": 10
+        },
+        {
+          "name": "updateSupplierAction",
+          "startLine": 128,
+          "endLine": 138,
+          "lines": 10
+        },
+        {
+          "name": "deleteSupplierAction",
+          "startLine": 140,
+          "endLine": 150,
+          "lines": 10
+        },
+        {
+          "name": "createStockLocationAction",
+          "startLine": 154,
+          "endLine": 164,
+          "lines": 10
+        },
+        {
+          "name": "updateStockLocationAction",
+          "startLine": 166,
+          "endLine": 176,
+          "lines": 10
+        },
+        {
+          "name": "deleteStockLocationAction",
+          "startLine": 178,
+          "endLine": 188,
+          "lines": 10
+        },
+        {
+          "name": "createPurchaseOrderAction",
+          "startLine": 220,
+          "endLine": 230,
+          "lines": 10
+        },
+        {
+          "name": "deletePurchaseOrderAction",
+          "startLine": 275,
+          "endLine": 285,
+          "lines": 10
+        },
+        {
+          "name": "resolveStockAlertAction",
+          "startLine": 289,
+          "endLine": 299,
+          "lines": 10
+        },
+        {
+          "name": "bulkDeleteProductsAction",
+          "startLine": 345,
+          "endLine": 355,
+          "lines": 10
+        },
+        {
+          "name": "receivePurchaseOrderItemAction",
+          "startLine": 258,
+          "endLine": 260,
+          "lines": 2
+        },
+        {
+          "name": "createStockAlertAction",
+          "startLine": 301,
+          "endLine": 303,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/loyalty/hooks/use-mutations.ts",
+      "type": "hook",
+      "currentLines": 354,
+      "maxLines": 150,
+      "excessLines": 204,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Split into multiple specialized hooks",
+        "Extract utility functions to helpers"
+      ],
+      "functions": [
+        {
+          "name": "useRedeemPoints",
+          "startLine": 266,
+          "endLine": 309,
+          "lines": 43
+        },
+        {
+          "name": "useAdjustPoints",
+          "startLine": 314,
+          "endLine": 354,
+          "lines": 40
+        },
+        {
+          "name": "useAwardPointsForAppointment",
+          "startLine": 226,
+          "endLine": 261,
+          "lines": 35
+        },
+        {
+          "name": "useAddLoyaltyTransaction",
+          "startLine": 187,
+          "endLine": 221,
+          "lines": 34
+        },
+        {
+          "name": "useUpdateLoyaltyProgram",
+          "startLine": 64,
+          "endLine": 92,
+          "lines": 28
+        },
+        {
+          "name": "useUpdateCustomerLoyalty",
+          "startLine": 154,
+          "endLine": 182,
+          "lines": 28
+        },
+        {
+          "name": "useCreateLoyaltyProgram",
+          "startLine": 35,
+          "endLine": 59,
+          "lines": 24
+        },
+        {
+          "name": "useEnrollCustomer",
+          "startLine": 125,
+          "endLine": 149,
+          "lines": 24
+        },
+        {
+          "name": "useDeleteLoyaltyProgram",
+          "startLine": 97,
+          "endLine": 120,
+          "lines": 23
+        }
+      ]
+    },
+    {
+      "path": "core/shared/hooks/optimistic/use-optimistic-list.ts",
+      "type": "hook",
+      "currentLines": 353,
+      "maxLines": 150,
+      "excessLines": 203,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Split into multiple specialized hooks",
+        "Extract utility functions to helpers"
+      ],
+      "functions": [
+        {
+          "name": "useOptimisticList",
+          "startLine": 19,
+          "endLine": 21,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/campaigns/actions/campaign-crud.ts",
+      "type": "action",
+      "currentLines": 346,
+      "maxLines": 250,
+      "excessLines": 96,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules",
+        "Extract large functions: createCampaign, duplicateCampaign, deleteCampaign"
+      ],
+      "functions": [
+        {
+          "name": "createCampaign",
+          "startLine": 51,
+          "endLine": 142,
+          "lines": 91
+        },
+        {
+          "name": "duplicateCampaign",
+          "startLine": 285,
+          "endLine": 346,
+          "lines": 61
+        },
+        {
+          "name": "deleteCampaign",
+          "startLine": 222,
+          "endLine": 282,
+          "lines": 60
+        },
+        {
+          "name": "CreateCampaignSchema",
+          "startLine": 29,
+          "endLine": 46,
+          "lines": 17
+        },
+        {
+          "name": "UpdateCampaignSchema",
+          "startLine": 48,
+          "endLine": 50,
+          "lines": 2
+        },
+        {
+          "name": "updateCampaign",
+          "startLine": 145,
+          "endLine": 147,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/appointments/components/list.tsx",
+      "type": "component",
+      "currentLines": 345,
+      "maxLines": 300,
+      "excessLines": 45,
+      "severity": "low",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: AppointmentsList"
+      ],
+      "functions": [
+        {
+          "name": "AppointmentsList",
+          "startLine": 41,
+          "endLine": 344,
+          "lines": 303
+        }
+      ]
+    },
+    {
+      "path": "core/audit/actions/audit-actions.ts",
+      "type": "action",
+      "currentLines": 345,
+      "maxLines": 250,
+      "excessLines": 95,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules"
+      ],
+      "functions": [
+        {
+          "name": "reportSecurityIncident",
+          "startLine": 155,
+          "endLine": 173,
+          "lines": 18
+        },
+        {
+          "name": "fetchSecurityIncidents",
+          "startLine": 78,
+          "endLine": 95,
+          "lines": 17
+        },
+        {
+          "name": "performAuditCleanup",
+          "startLine": 329,
+          "endLine": 345,
+          "lines": 16
+        },
+        {
+          "name": "trackResourceAccess",
+          "startLine": 200,
+          "endLine": 215,
+          "lines": 15
+        },
+        {
+          "name": "createAuditEvent",
+          "startLine": 140,
+          "endLine": 153,
+          "lines": 13
+        },
+        {
+          "name": "fetchAuditEvents",
+          "startLine": 36,
+          "endLine": 48,
+          "lines": 12
+        },
+        {
+          "name": "fetchAuditEvent",
+          "startLine": 50,
+          "endLine": 62,
+          "lines": 12
+        },
+        {
+          "name": "fetchDataChanges",
+          "startLine": 64,
+          "endLine": 76,
+          "lines": 12
+        },
+        {
+          "name": "fetchAccessLogs",
+          "startLine": 97,
+          "endLine": 109,
+          "lines": 12
+        },
+        {
+          "name": "fetchAuditStats",
+          "startLine": 111,
+          "endLine": 123,
+          "lines": 12
+        },
+        {
+          "name": "fetchRelatedEvents",
+          "startLine": 125,
+          "endLine": 137,
+          "lines": 12
+        },
+        {
+          "name": "exportAuditData",
+          "startLine": 315,
+          "endLine": 327,
+          "lines": 12
+        },
+        {
+          "name": "updateIncidentStatus",
+          "startLine": 175,
+          "endLine": 181,
+          "lines": 6
+        },
+        {
+          "name": "trackAuthEvent",
+          "startLine": 218,
+          "endLine": 220,
+          "lines": 2
+        },
+        {
+          "name": "trackDataChange",
+          "startLine": 236,
+          "endLine": 238,
+          "lines": 2
+        },
+        {
+          "name": "trackPermissionChange",
+          "startLine": 264,
+          "endLine": 266,
+          "lines": 2
+        },
+        {
+          "name": "trackConfigChange",
+          "startLine": 294,
+          "endLine": 296,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/staff/actions/staff-crud-actions.ts",
+      "type": "action",
+      "currentLines": 342,
+      "maxLines": 250,
+      "excessLines": 92,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules",
+        "Extract large functions: createStaffMemberAction"
+      ],
+      "functions": [
+        {
+          "name": "createStaffMemberAction",
+          "startLine": 32,
+          "endLine": 152,
+          "lines": 120
+        },
+        {
+          "name": "deleteStaffMemberAction",
+          "startLine": 232,
+          "endLine": 268,
+          "lines": 36
+        },
+        {
+          "name": "getStaffAction",
+          "startLine": 273,
+          "endLine": 295,
+          "lines": 22
+        },
+        {
+          "name": "getStaffByIdAction",
+          "startLine": 300,
+          "endLine": 322,
+          "lines": 22
+        },
+        {
+          "name": "getStaffProfileByIdAction",
+          "startLine": 328,
+          "endLine": 332,
+          "lines": 4
+        },
+        {
+          "name": "getStaffProfilesAction",
+          "startLine": 338,
+          "endLine": 342,
+          "lines": 4
+        },
+        {
+          "name": "updateStaffMemberAction",
+          "startLine": 157,
+          "endLine": 159,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/campaigns/components/steps/campaign-content.tsx",
+      "type": "component",
+      "currentLines": 339,
+      "maxLines": 300,
+      "excessLines": 39,
+      "severity": "low",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: CampaignContent"
+      ],
+      "functions": [
+        {
+          "name": "CampaignContent",
+          "startLine": 49,
+          "endLine": 339,
+          "lines": 290
+        },
+        {
+          "name": "PERSONALIZATION_TOKENS",
+          "startLine": 36,
+          "endLine": 38,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/integration/components/context-orchestrator.tsx",
+      "type": "component",
+      "currentLines": 339,
+      "maxLines": 300,
+      "excessLines": 39,
+      "severity": "low",
+      "splitSuggestions": [
+        "Split into multiple smaller components",
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: ContextOrchestrator"
+      ],
+      "functions": [
+        {
+          "name": "ContextOrchestrator",
+          "startLine": 26,
+          "endLine": 314,
+          "lines": 288
+        },
+        {
+          "name": "ActionsContext",
+          "startLine": 15,
+          "endLine": 24,
+          "lines": 9
+        },
+        {
+          "name": "useAppContext",
+          "startLine": 317,
+          "endLine": 323,
+          "lines": 6
+        },
+        {
+          "name": "useGlobalState",
+          "startLine": 325,
+          "endLine": 331,
+          "lines": 6
+        },
+        {
+          "name": "useActions",
+          "startLine": 333,
+          "endLine": 339,
+          "lines": 6
+        },
+        {
+          "name": "AppStateContext",
+          "startLine": 13,
+          "endLine": 13,
+          "lines": 0
+        },
+        {
+          "name": "GlobalStateContext",
+          "startLine": 14,
+          "endLine": 14,
+          "lines": 0
+        }
+      ]
+    },
+    {
+      "path": "core/shared/hooks/use-optimistic-updates.ts",
+      "type": "hook",
+      "currentLines": 336,
+      "maxLines": 150,
+      "excessLines": 186,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Split into multiple specialized hooks",
+        "Extract utility functions to helpers"
+      ],
+      "functions": [
+        {
+          "name": "useOptimisticForm",
+          "startLine": 284,
+          "endLine": 289,
+          "lines": 5
+        },
+        {
+          "name": "useOptimisticUpdates",
+          "startLine": 20,
+          "endLine": 22,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/billing/actions/index.ts",
+      "type": "action",
+      "currentLines": 335,
+      "maxLines": 250,
+      "excessLines": 85,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules",
+        "Extract large functions: exportRevenueReportToCSV"
+      ],
+      "functions": [
+        {
+          "name": "exportRevenueReportToCSV",
+          "startLine": 236,
+          "endLine": 297,
+          "lines": 61
+        },
+        {
+          "name": "exportInvoicesToCSV",
+          "startLine": 198,
+          "endLine": 234,
+          "lines": 36
+        },
+        {
+          "name": "createNewInvoice",
+          "startLine": 69,
+          "endLine": 89,
+          "lines": 20
+        },
+        {
+          "name": "recordInvoicePayment",
+          "startLine": 137,
+          "endLine": 155,
+          "lines": 18
+        },
+        {
+          "name": "markMultipleInvoicesAsPaid",
+          "startLine": 300,
+          "endLine": 317,
+          "lines": 17
+        },
+        {
+          "name": "markInvoiceAsPaid",
+          "startLine": 91,
+          "endLine": 107,
+          "lines": 16
+        },
+        {
+          "name": "cancelInvoice",
+          "startLine": 109,
+          "endLine": 125,
+          "lines": 16
+        },
+        {
+          "name": "sendInvoiceReminders",
+          "startLine": 319,
+          "endLine": 335,
+          "lines": 16
+        },
+        {
+          "name": "createInvoiceSchema",
+          "startLine": 52,
+          "endLine": 67,
+          "lines": 15
+        },
+        {
+          "name": "fetchInvoices",
+          "startLine": 26,
+          "endLine": 37,
+          "lines": 11
+        },
+        {
+          "name": "fetchInvoiceById",
+          "startLine": 39,
+          "endLine": 50,
+          "lines": 11
+        },
+        {
+          "name": "fetchPaymentMethods",
+          "startLine": 157,
+          "endLine": 168,
+          "lines": 11
+        },
+        {
+          "name": "fetchRevenueAnalytics",
+          "startLine": 171,
+          "endLine": 182,
+          "lines": 11
+        },
+        {
+          "name": "fetchRevenueReport",
+          "startLine": 184,
+          "endLine": 195,
+          "lines": 11
+        },
+        {
+          "name": "recordPaymentSchema",
+          "startLine": 128,
+          "endLine": 135,
+          "lines": 7
+        }
+      ]
+    },
+    {
+      "path": "core/schedules/hooks/use-optimization.ts",
+      "type": "hook",
+      "currentLines": 334,
+      "maxLines": 150,
+      "excessLines": 184,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Split into multiple specialized hooks",
+        "Extract utility functions to helpers",
+        "Extract large functions: useOptimization"
+      ],
+      "functions": [
+        {
+          "name": "useOptimization",
+          "startLine": 65,
+          "endLine": 334,
+          "lines": 269
+        }
+      ]
+    },
+    {
+      "path": "core/booking/actions/actions.ts",
+      "type": "action",
+      "currentLines": 332,
+      "maxLines": 250,
+      "excessLines": 82,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules"
+      ],
+      "functions": [
+        {
+          "name": "quickBookingAction",
+          "startLine": 282,
+          "endLine": 332,
+          "lines": 50
+        },
+        {
+          "name": "addToWaitingListAction",
+          "startLine": 260,
+          "endLine": 279,
+          "lines": 19
+        },
+        {
+          "name": "createBookingAction",
+          "startLine": 22,
+          "endLine": 39,
+          "lines": 17
+        },
+        {
+          "name": "cancelBookingAction",
+          "startLine": 91,
+          "endLine": 108,
+          "lines": 17
+        },
+        {
+          "name": "checkInCustomerAction",
+          "startLine": 111,
+          "endLine": 128,
+          "lines": 17
+        },
+        {
+          "name": "completeAppointmentAction",
+          "startLine": 131,
+          "endLine": 148,
+          "lines": 17
+        },
+        {
+          "name": "markNoShowAction",
+          "startLine": 151,
+          "endLine": 168,
+          "lines": 17
+        },
+        {
+          "name": "createGroupBookingAction",
+          "startLine": 216,
+          "endLine": 232,
+          "lines": 16
+        },
+        {
+          "name": "updateBookingStatusAction",
+          "startLine": 42,
+          "endLine": 44,
+          "lines": 2
+        },
+        {
+          "name": "rescheduleBookingAction",
+          "startLine": 66,
+          "endLine": 68,
+          "lines": 2
+        },
+        {
+          "name": "addAppointmentNotesAction",
+          "startLine": 171,
+          "endLine": 173,
+          "lines": 2
+        },
+        {
+          "name": "createRecurringBookingsAction",
+          "startLine": 194,
+          "endLine": 196,
+          "lines": 2
+        },
+        {
+          "name": "updatePaymentStatusAction",
+          "startLine": 235,
+          "endLine": 237,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/customer/actions/index.ts",
+      "type": "action",
+      "currentLines": 331,
+      "maxLines": 250,
+      "excessLines": 81,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules"
+      ],
+      "functions": [
+        {
+          "name": "updatePreferencesAction",
+          "startLine": 69,
+          "endLine": 101,
+          "lines": 32
+        },
+        {
+          "name": "submitReviewAction",
+          "startLine": 234,
+          "endLine": 264,
+          "lines": 30
+        },
+        {
+          "name": "updateProfileAction",
+          "startLine": 41,
+          "endLine": 67,
+          "lines": 26
+        },
+        {
+          "name": "updateReviewAction",
+          "startLine": 266,
+          "endLine": 291,
+          "lines": 25
+        },
+        {
+          "name": "createBookingAction",
+          "startLine": 122,
+          "endLine": 143,
+          "lines": 21
+        },
+        {
+          "name": "uploadProfileImageAction",
+          "startLine": 103,
+          "endLine": 119,
+          "lines": 16
+        },
+        {
+          "name": "cancelBookingAction",
+          "startLine": 145,
+          "endLine": 156,
+          "lines": 11
+        },
+        {
+          "name": "removeFromFavoritesAction",
+          "startLine": 193,
+          "endLine": 204,
+          "lines": 11
+        },
+        {
+          "name": "joinLoyaltyProgramAction",
+          "startLine": 207,
+          "endLine": 218,
+          "lines": 11
+        },
+        {
+          "name": "redeemRewardAction",
+          "startLine": 220,
+          "endLine": 231,
+          "lines": 11
+        },
+        {
+          "name": "deleteReviewAction",
+          "startLine": 293,
+          "endLine": 304,
+          "lines": 11
+        },
+        {
+          "name": "markNotificationReadAction",
+          "startLine": 307,
+          "endLine": 318,
+          "lines": 11
+        },
+        {
+          "name": "markAllNotificationsReadAction",
+          "startLine": 320,
+          "endLine": 331,
+          "lines": 11
+        },
+        {
+          "name": "rescheduleBookingAction",
+          "startLine": 158,
+          "endLine": 160,
+          "lines": 2
+        },
+        {
+          "name": "addToFavoritesAction",
+          "startLine": 176,
+          "endLine": 178,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/shared/hooks/optimistic/use-optimistic-batch.ts",
+      "type": "hook",
+      "currentLines": 328,
+      "maxLines": 150,
+      "excessLines": 178,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Split into multiple specialized hooks",
+        "Extract utility functions to helpers",
+        "Extract large functions: useOptimisticBatch"
+      ],
+      "functions": [
+        {
+          "name": "useOptimisticBatch",
+          "startLine": 33,
+          "endLine": 276,
+          "lines": 243
+        },
+        {
+          "name": "useOptimisticBulkDelete",
+          "startLine": 301,
+          "endLine": 328,
+          "lines": 27
+        },
+        {
+          "name": "useOptimisticBulkUpdate",
+          "startLine": 279,
+          "endLine": 298,
+          "lines": 19
+        }
+      ]
+    },
+    {
+      "path": "core/gift-cards/components/gift-card-form.tsx",
+      "type": "component",
+      "currentLines": 327,
+      "maxLines": 300,
+      "excessLines": 27,
+      "severity": "low",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: GiftCardForm"
+      ],
+      "functions": [
+        {
+          "name": "GiftCardForm",
+          "startLine": 56,
+          "endLine": 326,
+          "lines": 270
+        },
+        {
+          "name": "formSchema",
+          "startLine": 30,
+          "endLine": 43,
+          "lines": 13
+        }
+      ]
+    },
+    {
+      "path": "core/appointments/components/schedule-selection.tsx",
+      "type": "component",
+      "currentLines": 325,
+      "maxLines": 300,
+      "excessLines": 25,
+      "severity": "low",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: ScheduleSelection"
+      ],
+      "functions": [
+        {
+          "name": "ScheduleSelection",
+          "startLine": 36,
+          "endLine": 325,
+          "lines": 289
+        }
+      ]
+    },
+    {
+      "path": "core/booking/components/booking-sections/booking-list-section.tsx",
+      "type": "component",
+      "currentLines": 325,
+      "maxLines": 300,
+      "excessLines": 25,
+      "severity": "low",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: BookingListSection"
+      ],
+      "functions": [
+        {
+          "name": "BookingListSection",
+          "startLine": 48,
+          "endLine": 325,
+          "lines": 277
+        }
+      ]
+    },
+    {
+      "path": "core/auth/actions/authentication.ts",
+      "type": "action",
+      "currentLines": 323,
+      "maxLines": 250,
+      "excessLines": 73,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules",
+        "Extract large functions: login, verifyOTP"
+      ],
+      "functions": [
+        {
+          "name": "login",
+          "startLine": 27,
+          "endLine": 116,
+          "lines": 89
+        },
+        {
+          "name": "verifyOTP",
+          "startLine": 200,
+          "endLine": 270,
+          "lines": 70
+        },
+        {
+          "name": "sendOTP",
+          "startLine": 149,
+          "endLine": 197,
+          "lines": 48
+        },
+        {
+          "name": "logout",
+          "startLine": 119,
+          "endLine": 146,
+          "lines": 27
+        },
+        {
+          "name": "refreshSession",
+          "startLine": 273,
+          "endLine": 297,
+          "lines": 24
+        },
+        {
+          "name": "validateSession",
+          "startLine": 299,
+          "endLine": 323,
+          "lines": 24
+        },
+        {
+          "name": "LoginSchema",
+          "startLine": 8,
+          "endLine": 11,
+          "lines": 3
+        },
+        {
+          "name": "OTPSchema",
+          "startLine": 13,
+          "endLine": 16,
+          "lines": 3
+        }
+      ]
+    },
+    {
+      "path": "core/monitoring/lib/cache-manager.ts",
+      "type": "util",
+      "currentLines": 323,
+      "maxLines": 200,
+      "excessLines": 123,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group utilities by functionality",
+        "Create specialized utility modules"
+      ],
+      "functions": [
+        {
+          "name": "cached",
+          "startLine": 303,
+          "endLine": 323,
+          "lines": 20
+        },
+        {
+          "name": "cacheManager",
+          "startLine": 268,
+          "endLine": 270,
+          "lines": 2
+        },
+        {
+          "name": "createCachedFunction",
+          "startLine": 273,
+          "endLine": 275,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/billing/actions/billing-actions.ts",
+      "type": "action",
+      "currentLines": 320,
+      "maxLines": 250,
+      "excessLines": 70,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules"
+      ],
+      "functions": [
+        {
+          "name": "STRIPE_SECRET_KEY",
+          "startLine": 7,
+          "endLine": 9,
+          "lines": 2
+        },
+        {
+          "name": "createSubscription",
+          "startLine": 10,
+          "endLine": 12,
+          "lines": 2
+        },
+        {
+          "name": "cancelSubscription",
+          "startLine": 132,
+          "endLine": 134,
+          "lines": 2
+        },
+        {
+          "name": "updateSubscription",
+          "startLine": 227,
+          "endLine": 229,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/monitoring/lib/batch-processor.ts",
+      "type": "util",
+      "currentLines": 320,
+      "maxLines": 200,
+      "excessLines": 120,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group utilities by functionality",
+        "Create specialized utility modules"
+      ],
+      "functions": [
+        {
+          "name": "batched",
+          "startLine": 260,
+          "endLine": 277,
+          "lines": 17
+        },
+        {
+          "name": "batchProcessor",
+          "startLine": 255,
+          "endLine": 257,
+          "lines": 2
+        },
+        {
+          "name": "batchMap",
+          "startLine": 282,
+          "endLine": 284,
+          "lines": 2
+        },
+        {
+          "name": "batchFilter",
+          "startLine": 301,
+          "endLine": 303,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/customer/components/profile/personal-info-form.tsx",
+      "type": "component",
+      "currentLines": 318,
+      "maxLines": 300,
+      "excessLines": 18,
+      "severity": "low",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: PersonalInfoForm"
+      ],
+      "functions": [
+        {
+          "name": "PersonalInfoForm",
+          "startLine": 31,
+          "endLine": 318,
+          "lines": 287
+        },
+        {
+          "name": "US_STATES",
+          "startLine": 23,
+          "endLine": 25,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/auth/actions/auth-helpers.ts",
+      "type": "action",
+      "currentLines": 314,
+      "maxLines": 250,
+      "excessLines": 64,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules",
+        "Extract large functions: getUserContext"
+      ],
+      "functions": [
+        {
+          "name": "getUserContext",
+          "startLine": 50,
+          "endLine": 137,
+          "lines": 87
+        },
+        {
+          "name": "requireAdminRole",
+          "startLine": 265,
+          "endLine": 290,
+          "lines": 25
+        },
+        {
+          "name": "getSalonId",
+          "startLine": 241,
+          "endLine": 259,
+          "lines": 18
+        },
+        {
+          "name": "hasRole",
+          "startLine": 170,
+          "endLine": 179,
+          "lines": 9
+        },
+        {
+          "name": "isStaff",
+          "startLine": 211,
+          "endLine": 220,
+          "lines": 9
+        },
+        {
+          "name": "redirectIfNotAuthenticated",
+          "startLine": 226,
+          "endLine": 235,
+          "lines": 9
+        },
+        {
+          "name": "requireAuth",
+          "startLine": 143,
+          "endLine": 151,
+          "lines": 8
+        },
+        {
+          "name": "requireSalonContext",
+          "startLine": 157,
+          "endLine": 165,
+          "lines": 8
+        },
+        {
+          "name": "requireRole",
+          "startLine": 184,
+          "endLine": 192,
+          "lines": 8
+        },
+        {
+          "name": "isAdmin",
+          "startLine": 197,
+          "endLine": 199,
+          "lines": 2
+        },
+        {
+          "name": "isSalonOwner",
+          "startLine": 204,
+          "endLine": 206,
+          "lines": 2
+        },
+        {
+          "name": "logSecurityEvent",
+          "startLine": 295,
+          "endLine": 297,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/billing/components/payment-form.tsx",
+      "type": "component",
+      "currentLines": 314,
+      "maxLines": 300,
+      "excessLines": 14,
+      "severity": "low",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: PaymentForm"
+      ],
+      "functions": [
+        {
+          "name": "PaymentForm",
+          "startLine": 69,
+          "endLine": 314,
+          "lines": 245
+        },
+        {
+          "name": "paymentSchema",
+          "startLine": 52,
+          "endLine": 58,
+          "lines": 6
+        }
+      ]
+    },
+    {
+      "path": "core/customers/components/list.tsx",
+      "type": "component",
+      "currentLines": 307,
+      "maxLines": 300,
+      "excessLines": 7,
+      "severity": "low",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: CustomersList"
+      ],
+      "functions": [
+        {
+          "name": "CustomersList",
+          "startLine": 37,
+          "endLine": 306,
+          "lines": 269
+        }
+      ]
+    },
+    {
+      "path": "core/monitoring/lib/query-optimizer.ts",
+      "type": "util",
+      "currentLines": 307,
+      "maxLines": 200,
+      "excessLines": 107,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group utilities by functionality",
+        "Create specialized utility modules"
+      ],
+      "functions": [
+        {
+          "name": "queryOptimizer",
+          "startLine": 307,
+          "endLine": 307,
+          "lines": 0
+        }
+      ]
+    },
+    {
+      "path": "core/auth/actions/authorization.ts",
+      "type": "action",
+      "currentLines": 306,
+      "maxLines": 250,
+      "excessLines": 56,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules"
+      ],
+      "functions": [
+        {
+          "name": "getCurrentUser",
+          "startLine": 15,
+          "endLine": 48,
+          "lines": 33
+        },
+        {
+          "name": "hasSalonAccess",
+          "startLine": 93,
+          "endLine": 122,
+          "lines": 29
+        },
+        {
+          "name": "canAccessCustomerData",
+          "startLine": 233,
+          "endLine": 261,
+          "lines": 28
+        },
+        {
+          "name": "ownsSalon",
+          "startLine": 125,
+          "endLine": 152,
+          "lines": 27
+        },
+        {
+          "name": "canManageAppointments",
+          "startLine": 155,
+          "endLine": 178,
+          "lines": 23
+        },
+        {
+          "name": "canManageStaff",
+          "startLine": 181,
+          "endLine": 204,
+          "lines": 23
+        },
+        {
+          "name": "canViewFinancials",
+          "startLine": 207,
+          "endLine": 230,
+          "lines": 23
+        },
+        {
+          "name": "requireSalonAccess",
+          "startLine": 297,
+          "endLine": 306,
+          "lines": 9
+        },
+        {
+          "name": "hasRole",
+          "startLine": 51,
+          "endLine": 59,
+          "lines": 8
+        },
+        {
+          "name": "hasAnyRole",
+          "startLine": 62,
+          "endLine": 70,
+          "lines": 8
+        },
+        {
+          "name": "requireAuth",
+          "startLine": 264,
+          "endLine": 272,
+          "lines": 8
+        },
+        {
+          "name": "requireRole",
+          "startLine": 275,
+          "endLine": 283,
+          "lines": 8
+        },
+        {
+          "name": "requireAnyRole",
+          "startLine": 286,
+          "endLine": 294,
+          "lines": 8
+        },
+        {
+          "name": "isAdmin",
+          "startLine": 73,
+          "endLine": 75,
+          "lines": 2
+        },
+        {
+          "name": "isStaffOrHigher",
+          "startLine": 78,
+          "endLine": 80,
+          "lines": 2
+        },
+        {
+          "name": "isManagerOrHigher",
+          "startLine": 83,
+          "endLine": 85,
+          "lines": 2
+        },
+        {
+          "name": "isOwnerOrAdmin",
+          "startLine": 88,
+          "endLine": 90,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/billing/actions/refund-actions.ts",
+      "type": "action",
+      "currentLines": 304,
+      "maxLines": 250,
+      "excessLines": 54,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules"
+      ],
+      "functions": [
+        {
+          "name": "getRefundStatus",
+          "startLine": 209,
+          "endLine": 246,
+          "lines": 37
+        },
+        {
+          "name": "STRIPE_SECRET_KEY",
+          "startLine": 7,
+          "endLine": 9,
+          "lines": 2
+        },
+        {
+          "name": "refundPayment",
+          "startLine": 10,
+          "endLine": 12,
+          "lines": 2
+        },
+        {
+          "name": "partialRefund",
+          "startLine": 109,
+          "endLine": 111,
+          "lines": 2
+        },
+        {
+          "name": "processDispute",
+          "startLine": 249,
+          "endLine": 251,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/gift-cards/hooks/use-gift-cards.ts",
+      "type": "hook",
+      "currentLines": 304,
+      "maxLines": 150,
+      "excessLines": 154,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Split into multiple specialized hooks",
+        "Extract utility functions to helpers"
+      ],
+      "functions": [
+        {
+          "name": "useRefundToGiftCard",
+          "startLine": 176,
+          "endLine": 201,
+          "lines": 25
+        },
+        {
+          "name": "useAdjustGiftCardBalance",
+          "startLine": 203,
+          "endLine": 226,
+          "lines": 23
+        },
+        {
+          "name": "useExtendGiftCardValidity",
+          "startLine": 263,
+          "endLine": 284,
+          "lines": 21
+        },
+        {
+          "name": "useRedeemGiftCard",
+          "startLine": 155,
+          "endLine": 174,
+          "lines": 19
+        },
+        {
+          "name": "useSendGiftCardNotification",
+          "startLine": 286,
+          "endLine": 303,
+          "lines": 17
+        },
+        {
+          "name": "useUpdateGiftCard",
+          "startLine": 137,
+          "endLine": 153,
+          "lines": 16
+        },
+        {
+          "name": "useDeactivateGiftCard",
+          "startLine": 228,
+          "endLine": 244,
+          "lines": 16
+        },
+        {
+          "name": "useCreateGiftCard",
+          "startLine": 120,
+          "endLine": 135,
+          "lines": 15
+        },
+        {
+          "name": "useReactivateGiftCard",
+          "startLine": 246,
+          "endLine": 261,
+          "lines": 15
+        },
+        {
+          "name": "useGiftCardTransactions",
+          "startLine": 66,
+          "endLine": 73,
+          "lines": 7
+        },
+        {
+          "name": "useGiftCardsByPurchaser",
+          "startLine": 75,
+          "endLine": 82,
+          "lines": 7
+        },
+        {
+          "name": "useGiftCardsByRecipient",
+          "startLine": 84,
+          "endLine": 91,
+          "lines": 7
+        },
+        {
+          "name": "useGiftCard",
+          "startLine": 42,
+          "endLine": 48,
+          "lines": 6
+        },
+        {
+          "name": "useGiftCardByCode",
+          "startLine": 50,
+          "endLine": 56,
+          "lines": 6
+        },
+        {
+          "name": "useValidateGiftCard",
+          "startLine": 58,
+          "endLine": 64,
+          "lines": 6
+        },
+        {
+          "name": "useGiftCards",
+          "startLine": 35,
+          "endLine": 40,
+          "lines": 5
+        },
+        {
+          "name": "useGiftCardStats",
+          "startLine": 93,
+          "endLine": 98,
+          "lines": 5
+        },
+        {
+          "name": "useExpiringGiftCards",
+          "startLine": 100,
+          "endLine": 105,
+          "lines": 5
+        },
+        {
+          "name": "useSearchGiftCards",
+          "startLine": 107,
+          "endLine": 109,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/customer/components/booking/staff-selection.tsx",
+      "type": "component",
+      "currentLines": 303,
+      "maxLines": 300,
+      "excessLines": 3,
+      "severity": "low",
+      "splitSuggestions": [
+        "Extract large functions to custom hooks",
+        "Consider component composition pattern",
+        "Extract large functions: StaffSelection"
+      ],
+      "functions": [
+        {
+          "name": "StaffSelection",
+          "startLine": 25,
+          "endLine": 303,
+          "lines": 278
+        }
+      ]
+    },
+    {
+      "path": "core/campaigns/actions/campaign-queries.ts",
+      "type": "action",
+      "currentLines": 300,
+      "maxLines": 250,
+      "excessLines": 50,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules",
+        "Extract large functions: getCampaigns, getCampaignAnalytics, getCampaignStats"
+      ],
+      "functions": [
+        {
+          "name": "getCampaigns",
+          "startLine": 34,
+          "endLine": 90,
+          "lines": 56
+        },
+        {
+          "name": "getCampaignAnalytics",
+          "startLine": 187,
+          "endLine": 243,
+          "lines": 56
+        },
+        {
+          "name": "getCampaignStats",
+          "startLine": 246,
+          "endLine": 300,
+          "lines": 54
+        },
+        {
+          "name": "getAudiencePreview",
+          "startLine": 137,
+          "endLine": 184,
+          "lines": 47
+        },
+        {
+          "name": "getCampaignTemplates",
+          "startLine": 93,
+          "endLine": 134,
+          "lines": 41
+        }
+      ]
+    },
+    {
+      "path": "core/customers/actions/customer-crud-actions.ts",
+      "type": "action",
+      "currentLines": 299,
+      "maxLines": 250,
+      "excessLines": 49,
+      "severity": "low",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules",
+        "Extract large functions: createCustomerAction, deleteCustomerAction"
+      ],
+      "functions": [
+        {
+          "name": "createCustomerAction",
+          "startLine": 25,
+          "endLine": 150,
+          "lines": 125
+        },
+        {
+          "name": "deleteCustomerAction",
+          "startLine": 235,
+          "endLine": 299,
+          "lines": 64
+        },
+        {
+          "name": "updateCustomerAction",
+          "startLine": 155,
+          "endLine": 157,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/loyalty/actions/program-actions.ts",
+      "type": "action",
+      "currentLines": 298,
+      "maxLines": 250,
+      "excessLines": 48,
+      "severity": "low",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules",
+        "Extract large functions: createProgram"
+      ],
+      "functions": [
+        {
+          "name": "createProgram",
+          "startLine": 28,
+          "endLine": 132,
+          "lines": 104
+        },
+        {
+          "name": "deleteProgram",
+          "startLine": 215,
+          "endLine": 263,
+          "lines": 48
+        },
+        {
+          "name": "getLoyaltyProgramStats",
+          "startLine": 268,
+          "endLine": 298,
+          "lines": 30
+        },
+        {
+          "name": "updateProgram",
+          "startLine": 137,
+          "endLine": 139,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/shared/hooks/optimistic/use-optimistic-form.ts",
+      "type": "hook",
+      "currentLines": 296,
+      "maxLines": 150,
+      "excessLines": 146,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Split into multiple specialized hooks",
+        "Extract utility functions to helpers"
+      ],
+      "functions": [
+        {
+          "name": "useOptimisticForm",
+          "startLine": 26,
+          "endLine": 28,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/billing/actions/payment-processing.ts",
+      "type": "action",
+      "currentLines": 291,
+      "maxLines": 250,
+      "excessLines": 41,
+      "severity": "low",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules",
+        "Extract large functions: retryFailedPayment"
+      ],
+      "functions": [
+        {
+          "name": "retryFailedPayment",
+          "startLine": 165,
+          "endLine": 233,
+          "lines": 68
+        },
+        {
+          "name": "STRIPE_SECRET_KEY",
+          "startLine": 7,
+          "endLine": 9,
+          "lines": 2
+        },
+        {
+          "name": "createPaymentIntent",
+          "startLine": 10,
+          "endLine": 12,
+          "lines": 2
+        },
+        {
+          "name": "processPayment",
+          "startLine": 71,
+          "endLine": 73,
+          "lines": 2
+        },
+        {
+          "name": "addPaymentMethod",
+          "startLine": 236,
+          "endLine": 238,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/staff/actions/staff-bulk-actions.ts",
+      "type": "action",
+      "currentLines": 286,
+      "maxLines": 250,
+      "excessLines": 36,
+      "severity": "low",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules",
+        "Extract large functions: bulkDeleteStaffAction"
+      ],
+      "functions": [
+        {
+          "name": "bulkDeleteStaffAction",
+          "startLine": 171,
+          "endLine": 233,
+          "lines": 62
+        },
+        {
+          "name": "bulkActivateStaffAction",
+          "startLine": 22,
+          "endLine": 66,
+          "lines": 44
+        },
+        {
+          "name": "bulkDeactivateStaffAction",
+          "startLine": 71,
+          "endLine": 115,
+          "lines": 44
+        },
+        {
+          "name": "BulkUpdateRoleSchema",
+          "startLine": 14,
+          "endLine": 17,
+          "lines": 3
+        },
+        {
+          "name": "BulkStaffIdsSchema",
+          "startLine": 10,
+          "endLine": 12,
+          "lines": 2
+        },
+        {
+          "name": "bulkUpdateStaffRoleAction",
+          "startLine": 120,
+          "endLine": 122,
+          "lines": 2
+        },
+        {
+          "name": "bulkUpdateCommissionRatesAction",
+          "startLine": 238,
+          "endLine": 240,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/customers/hooks/use-customers-optimistic.ts",
+      "type": "hook",
+      "currentLines": 285,
+      "maxLines": 150,
+      "excessLines": 135,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Split into multiple specialized hooks",
+        "Extract utility functions to helpers",
+        "Extract large functions: useCustomersOptimistic"
+      ],
+      "functions": [
+        {
+          "name": "useCustomersOptimistic",
+          "startLine": 20,
+          "endLine": 285,
+          "lines": 265
+        }
+      ]
+    },
+    {
+      "path": "core/loyalty/actions/points-actions.ts",
+      "type": "action",
+      "currentLines": 284,
+      "maxLines": 250,
+      "excessLines": 34,
+      "severity": "low",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules"
+      ],
+      "functions": [
+        {
+          "name": "addLoyaltyTransactionAction",
+          "startLine": 216,
+          "endLine": 249,
+          "lines": 33
+        },
+        {
+          "name": "addLoyaltyPoints",
+          "startLine": 20,
+          "endLine": 29,
+          "lines": 9
+        },
+        {
+          "name": "awardPointsForAppointmentAction",
+          "startLine": 112,
+          "endLine": 114,
+          "lines": 2
+        },
+        {
+          "name": "adjustPointsAction",
+          "startLine": 155,
+          "endLine": 157,
+          "lines": 2
+        },
+        {
+          "name": "calculatePurchasePoints",
+          "startLine": 254,
+          "endLine": 256,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/billing/actions/financial-reporting.ts",
+      "type": "action",
+      "currentLines": 280,
+      "maxLines": 250,
+      "excessLines": 30,
+      "severity": "low",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules",
+        "Extract large functions: getSubscriptionAnalytics, getPaymentMethodAnalytics"
+      ],
+      "functions": [
+        {
+          "name": "getSubscriptionAnalytics",
+          "startLine": 85,
+          "endLine": 149,
+          "lines": 64
+        },
+        {
+          "name": "getPaymentMethodAnalytics",
+          "startLine": 152,
+          "endLine": 203,
+          "lines": 51
+        },
+        {
+          "name": "getRevenueAnalytics",
+          "startLine": 8,
+          "endLine": 10,
+          "lines": 2
+        },
+        {
+          "name": "generateFinancialReport",
+          "startLine": 206,
+          "endLine": 208,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/staff/hooks/use-staff-mutations.ts",
+      "type": "hook",
+      "currentLines": 276,
+      "maxLines": 150,
+      "excessLines": 126,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Split into multiple specialized hooks",
+        "Extract utility functions to helpers"
+      ],
+      "functions": [
+        {
+          "name": "useUpdateStaffSchedule",
+          "startLine": 118,
+          "endLine": 138,
+          "lines": 20
+        },
+        {
+          "name": "useUpdateStaffProfile",
+          "startLine": 47,
+          "endLine": 65,
+          "lines": 18
+        },
+        {
+          "name": "useUpdateStaffCommission",
+          "startLine": 257,
+          "endLine": 275,
+          "lines": 18
+        },
+        {
+          "name": "useCreateBlockedTime",
+          "startLine": 206,
+          "endLine": 222,
+          "lines": 16
+        },
+        {
+          "name": "useDeactivateStaff",
+          "startLine": 67,
+          "endLine": 82,
+          "lines": 15
+        },
+        {
+          "name": "useToggleStaffFeatured",
+          "startLine": 84,
+          "endLine": 99,
+          "lines": 15
+        },
+        {
+          "name": "useToggleStaffBookable",
+          "startLine": 101,
+          "endLine": 116,
+          "lines": 15
+        },
+        {
+          "name": "useApproveTimeOff",
+          "startLine": 156,
+          "endLine": 171,
+          "lines": 15
+        },
+        {
+          "name": "useRejectTimeOff",
+          "startLine": 173,
+          "endLine": 188,
+          "lines": 15
+        },
+        {
+          "name": "useUpdateBlockedTime",
+          "startLine": 224,
+          "endLine": 239,
+          "lines": 15
+        },
+        {
+          "name": "useCreateStaffProfile",
+          "startLine": 31,
+          "endLine": 45,
+          "lines": 14
+        },
+        {
+          "name": "useCreateTimeOffRequest",
+          "startLine": 140,
+          "endLine": 154,
+          "lines": 14
+        },
+        {
+          "name": "useCancelTimeOff",
+          "startLine": 190,
+          "endLine": 204,
+          "lines": 14
+        },
+        {
+          "name": "useRemoveBlockedTime",
+          "startLine": 241,
+          "endLine": 255,
+          "lines": 14
+        }
+      ]
+    },
+    {
+      "path": "core/monitoring/lib/performance-tracker.ts",
+      "type": "util",
+      "currentLines": 272,
+      "maxLines": 200,
+      "excessLines": 72,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group utilities by functionality",
+        "Create specialized utility modules"
+      ],
+      "functions": [
+        {
+          "name": "measureWebVitals",
+          "startLine": 255,
+          "endLine": 272,
+          "lines": 17
+        },
+        {
+          "name": "trackPerformance",
+          "startLine": 239,
+          "endLine": 250,
+          "lines": 11
+        },
+        {
+          "name": "performanceTracker",
+          "startLine": 234,
+          "endLine": 236,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/reviews/actions/review-moderation-actions.ts",
+      "type": "action",
+      "currentLines": 269,
+      "maxLines": 250,
+      "excessLines": 19,
+      "severity": "low",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules",
+        "Extract large functions: bulkDeleteReviews, toggleReviewFeatured, verifyReview"
+      ],
+      "functions": [
+        {
+          "name": "bulkDeleteReviews",
+          "startLine": 203,
+          "endLine": 269,
+          "lines": 66
+        },
+        {
+          "name": "toggleReviewFeatured",
+          "startLine": 77,
+          "endLine": 142,
+          "lines": 65
+        },
+        {
+          "name": "verifyReview",
+          "startLine": 145,
+          "endLine": 200,
+          "lines": 55
+        },
+        {
+          "name": "updateReviewStatus",
+          "startLine": 17,
+          "endLine": 19,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/monitoring/lib/streaming-utils.ts",
+      "type": "util",
+      "currentLines": 261,
+      "maxLines": 200,
+      "excessLines": 61,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Group utilities by functionality",
+        "Create specialized utility modules"
+      ],
+      "functions": [
+        {
+          "name": "createSSEStream",
+          "startLine": 211,
+          "endLine": 241,
+          "lines": 30
+        },
+        {
+          "name": "createNDJSONStream",
+          "startLine": 186,
+          "endLine": 206,
+          "lines": 20
+        },
+        {
+          "name": "createReadableStream",
+          "startLine": 11,
+          "endLine": 26,
+          "lines": 15
+        },
+        {
+          "name": "createStreamingResponse",
+          "startLine": 74,
+          "endLine": 79,
+          "lines": 5
+        },
+        {
+          "name": "aggregateStream",
+          "startLine": 131,
+          "endLine": 133,
+          "lines": 2
+        },
+        {
+          "name": "consumeStream",
+          "startLine": 246,
+          "endLine": 248,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/loyalty/actions/redemption-actions.ts",
+      "type": "action",
+      "currentLines": 257,
+      "maxLines": 250,
+      "excessLines": 7,
+      "severity": "low",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules"
+      ],
+      "functions": [
+        {
+          "name": "getAvailableRewards",
+          "startLine": 103,
+          "endLine": 133,
+          "lines": 30
+        },
+        {
+          "name": "redeemLoyaltyPoints",
+          "startLine": 15,
+          "endLine": 22,
+          "lines": 7
+        },
+        {
+          "name": "applyRewardToAppointment",
+          "startLine": 138,
+          "endLine": 144,
+          "lines": 6
+        },
+        {
+          "name": "cancelRedemption",
+          "startLine": 206,
+          "endLine": 208,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/customers/hooks/use-customers-mutations.ts",
+      "type": "hook",
+      "currentLines": 256,
+      "maxLines": 150,
+      "excessLines": 106,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Split into multiple specialized hooks",
+        "Extract utility functions to helpers"
+      ],
+      "functions": [
+        {
+          "name": "useRedeemLoyaltyPoints",
+          "startLine": 197,
+          "endLine": 230,
+          "lines": 33
+        },
+        {
+          "name": "useAddLoyaltyPoints",
+          "startLine": 166,
+          "endLine": 195,
+          "lines": 29
+        },
+        {
+          "name": "useRemoveCustomerFavorite",
+          "startLine": 88,
+          "endLine": 113,
+          "lines": 25
+        },
+        {
+          "name": "useUpsertCustomerPreferences",
+          "startLine": 44,
+          "endLine": 67,
+          "lines": 23
+        },
+        {
+          "name": "useToggleVIPStatus",
+          "startLine": 232,
+          "endLine": 255,
+          "lines": 23
+        },
+        {
+          "name": "useAddCustomerFavorite",
+          "startLine": 69,
+          "endLine": 86,
+          "lines": 17
+        },
+        {
+          "name": "useUpdateCustomerProfile",
+          "startLine": 26,
+          "endLine": 42,
+          "lines": 16
+        },
+        {
+          "name": "useAddCustomerNote",
+          "startLine": 115,
+          "endLine": 131,
+          "lines": 16
+        },
+        {
+          "name": "useUpdateCustomerNote",
+          "startLine": 133,
+          "endLine": 148,
+          "lines": 15
+        },
+        {
+          "name": "useDeleteCustomerNote",
+          "startLine": 150,
+          "endLine": 164,
+          "lines": 14
+        }
+      ]
+    },
+    {
+      "path": "core/appointments/actions/crud.ts",
+      "type": "action",
+      "currentLines": 251,
+      "maxLines": 250,
+      "excessLines": 1,
+      "severity": "low",
+      "splitSuggestions": [
+        "Group related actions into separate files",
+        "Extract validation to validators/",
+        "Move business logic to core modules",
+        "Extract large functions: createAppointmentAction"
+      ],
+      "functions": [
+        {
+          "name": "createAppointmentAction",
+          "startLine": 44,
+          "endLine": 136,
+          "lines": 92
+        },
+        {
+          "name": "CreateAppointmentSchema",
+          "startLine": 21,
+          "endLine": 35,
+          "lines": 14
+        },
+        {
+          "name": "UpdateAppointmentSchema",
+          "startLine": 37,
+          "endLine": 39,
+          "lines": 2
+        },
+        {
+          "name": "updateAppointmentAction",
+          "startLine": 141,
+          "endLine": 143,
+          "lines": 2
+        },
+        {
+          "name": "cancelAppointmentAction",
+          "startLine": 205,
+          "endLine": 207,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/salons/hooks/use-salon-data.ts",
+      "type": "hook",
+      "currentLines": 251,
+      "maxLines": 150,
+      "excessLines": 101,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Split into multiple specialized hooks",
+        "Extract utility functions to helpers",
+        "Extract large functions: useSalonData"
+      ],
+      "functions": [
+        {
+          "name": "useSalonData",
+          "startLine": 11,
+          "endLine": 136,
+          "lines": 125
+        },
+        {
+          "name": "useServiceCatalog",
+          "startLine": 175,
+          "endLine": 216,
+          "lines": 41
+        },
+        {
+          "name": "useSalonAnalytics",
+          "startLine": 139,
+          "endLine": 172,
+          "lines": 33
+        },
+        {
+          "name": "useLocations",
+          "startLine": 219,
+          "endLine": 251,
+          "lines": 32
+        }
+      ]
+    },
+    {
+      "path": "core/customers/hooks/use-customer-management.ts",
+      "type": "hook",
+      "currentLines": 250,
+      "maxLines": 150,
+      "excessLines": 100,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Split into multiple specialized hooks",
+        "Extract utility functions to helpers",
+        "Extract large functions: useCustomerManagement"
+      ],
+      "functions": [
+        {
+          "name": "useCustomerManagement",
+          "startLine": 25,
+          "endLine": 250,
+          "lines": 225
+        }
+      ]
+    },
+    {
+      "path": "core/integration/lib/route-guards.ts",
+      "type": "util",
+      "currentLines": 249,
+      "maxLines": 200,
+      "excessLines": 49,
+      "severity": "low",
+      "splitSuggestions": [
+        "Group utilities by functionality",
+        "Create specialized utility modules",
+        "Extract large functions: buildAppContext, checkRouteAccess"
+      ],
+      "functions": [
+        {
+          "name": "buildAppContext",
+          "startLine": 134,
+          "endLine": 195,
+          "lines": 61
+        },
+        {
+          "name": "checkRouteAccess",
+          "startLine": 61,
+          "endLine": 114,
+          "lines": 53
+        },
+        {
+          "name": "isPublicRoute",
+          "startLine": 197,
+          "endLine": 215,
+          "lines": 18
+        },
+        {
+          "name": "getAccessibleRoute",
+          "startLine": 116,
+          "endLine": 132,
+          "lines": 16
+        },
+        {
+          "name": "enforceRateLimit",
+          "startLine": 233,
+          "endLine": 249,
+          "lines": 16
+        },
+        {
+          "name": "validateSession",
+          "startLine": 217,
+          "endLine": 231,
+          "lines": 14
+        }
+      ]
+    },
+    {
+      "path": "core/reviews/hooks/use-reviews-mutations.ts",
+      "type": "hook",
+      "currentLines": 244,
+      "maxLines": 150,
+      "excessLines": 94,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Split into multiple specialized hooks",
+        "Extract utility functions to helpers"
+      ],
+      "functions": [
+        {
+          "name": "useUpdateReviewStatus",
+          "startLine": 62,
+          "endLine": 84,
+          "lines": 22
+        },
+        {
+          "name": "useCreateReview",
+          "startLine": 25,
+          "endLine": 42,
+          "lines": 17
+        },
+        {
+          "name": "useReviewVote",
+          "startLine": 173,
+          "endLine": 190,
+          "lines": 17
+        },
+        {
+          "name": "useUpdateReview",
+          "startLine": 44,
+          "endLine": 60,
+          "lines": 16
+        },
+        {
+          "name": "useAddReviewResponse",
+          "startLine": 86,
+          "endLine": 102,
+          "lines": 16
+        },
+        {
+          "name": "useUpdateReviewResponse",
+          "startLine": 104,
+          "endLine": 120,
+          "lines": 16
+        },
+        {
+          "name": "useRemoveReviewVote",
+          "startLine": 192,
+          "endLine": 208,
+          "lines": 16
+        },
+        {
+          "name": "useFlagReview",
+          "startLine": 210,
+          "endLine": 226,
+          "lines": 16
+        },
+        {
+          "name": "useRemoveReviewResponse",
+          "startLine": 122,
+          "endLine": 137,
+          "lines": 15
+        },
+        {
+          "name": "useToggleReviewFeatured",
+          "startLine": 139,
+          "endLine": 154,
+          "lines": 15
+        },
+        {
+          "name": "useToggleReviewVerified",
+          "startLine": 156,
+          "endLine": 171,
+          "lines": 15
+        },
+        {
+          "name": "useDeleteReview",
+          "startLine": 228,
+          "endLine": 243,
+          "lines": 15
+        }
+      ]
+    },
+    {
+      "path": "core/shared/hooks/optimistic/use-optimistic-crud.ts",
+      "type": "hook",
+      "currentLines": 242,
+      "maxLines": 150,
+      "excessLines": 92,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Split into multiple specialized hooks",
+        "Extract utility functions to helpers"
+      ],
+      "functions": [
+        {
+          "name": "useOptimisticCrud",
+          "startLine": 28,
+          "endLine": 30,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/booking/hooks/use-calendar-logic.ts",
+      "type": "hook",
+      "currentLines": 235,
+      "maxLines": 150,
+      "excessLines": 85,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Split into multiple specialized hooks",
+        "Extract utility functions to helpers",
+        "Extract large functions: useCalendarLogic"
+      ],
+      "functions": [
+        {
+          "name": "useCalendarLogic",
+          "startLine": 19,
+          "endLine": 235,
+          "lines": 216
+        }
+      ]
+    },
+    {
+      "path": "core/billing/hooks/use-billing.ts",
+      "type": "hook",
+      "currentLines": 234,
+      "maxLines": 150,
+      "excessLines": 84,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Split into multiple specialized hooks",
+        "Extract utility functions to helpers"
+      ],
+      "functions": [
+        {
+          "name": "useSetDefaultPaymentMethod",
+          "startLine": 206,
+          "endLine": 222,
+          "lines": 16
+        },
+        {
+          "name": "useProcessPayment",
+          "startLine": 132,
+          "endLine": 147,
+          "lines": 15
+        },
+        {
+          "name": "useRefundPayment",
+          "startLine": 149,
+          "endLine": 164,
+          "lines": 15
+        },
+        {
+          "name": "useAddPaymentMethod",
+          "startLine": 177,
+          "endLine": 192,
+          "lines": 15
+        },
+        {
+          "name": "useUpdateBilling",
+          "startLine": 109,
+          "endLine": 119,
+          "lines": 10
+        },
+        {
+          "name": "useRemovePaymentMethod",
+          "startLine": 194,
+          "endLine": 204,
+          "lines": 10
+        },
+        {
+          "name": "useCreateBilling",
+          "startLine": 98,
+          "endLine": 107,
+          "lines": 9
+        },
+        {
+          "name": "useDeleteBilling",
+          "startLine": 121,
+          "endLine": 130,
+          "lines": 9
+        },
+        {
+          "name": "useCreateInvoice",
+          "startLine": 166,
+          "endLine": 175,
+          "lines": 9
+        },
+        {
+          "name": "useRetryPayment",
+          "startLine": 224,
+          "endLine": 233,
+          "lines": 9
+        },
+        {
+          "name": "useBilling",
+          "startLine": 38,
+          "endLine": 44,
+          "lines": 6
+        },
+        {
+          "name": "useInvoices",
+          "startLine": 46,
+          "endLine": 52,
+          "lines": 6
+        },
+        {
+          "name": "usePaymentMethods",
+          "startLine": 54,
+          "endLine": 60,
+          "lines": 6
+        },
+        {
+          "name": "useDefaultPaymentMethod",
+          "startLine": 62,
+          "endLine": 68,
+          "lines": 6
+        },
+        {
+          "name": "useBillingStats",
+          "startLine": 70,
+          "endLine": 76,
+          "lines": 6
+        },
+        {
+          "name": "useUnpaidInvoices",
+          "startLine": 78,
+          "endLine": 84,
+          "lines": 6
+        },
+        {
+          "name": "useBillings",
+          "startLine": 31,
+          "endLine": 36,
+          "lines": 5
+        },
+        {
+          "name": "useRevenueData",
+          "startLine": 86,
+          "endLine": 88,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/shared/hooks/optimistic/use-optimistic-toggle.ts",
+      "type": "hook",
+      "currentLines": 228,
+      "maxLines": 150,
+      "excessLines": 78,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Split into multiple specialized hooks",
+        "Extract utility functions to helpers"
+      ],
+      "functions": [
+        {
+          "name": "useOptimisticToggle",
+          "startLine": 14,
+          "endLine": 16,
+          "lines": 2
+        },
+        {
+          "name": "useOptimisticMultiToggle",
+          "startLine": 117,
+          "endLine": 119,
+          "lines": 2
+        }
+      ]
+    },
+    {
+      "path": "core/schedules/hooks/use-conflict-detection.ts",
+      "type": "hook",
+      "currentLines": 225,
+      "maxLines": 150,
+      "excessLines": 75,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Split into multiple specialized hooks",
+        "Extract utility functions to helpers",
+        "Extract large functions: useConflictDetection"
+      ],
+      "functions": [
+        {
+          "name": "useConflictDetection",
+          "startLine": 49,
+          "endLine": 225,
+          "lines": 176
+        }
+      ]
+    },
+    {
+      "path": "core/audit-logs/hooks/use-audit-logs-mutations.ts",
+      "type": "hook",
+      "currentLines": 222,
+      "maxLines": 150,
+      "excessLines": 72,
+      "severity": "critical",
+      "splitSuggestions": [
+        "Split into multiple specialized hooks",
+        "Extract utility functions to helpers"
+      ],
+      "functions": [
+        {
+          "name": "useLogAuthenticationEvent",
+          "startLine": 138,
+          "endLine": 169,
+          "lines": 31
+        },
+        {
+          "name": "useLogPermissionChange",
+          "startLine": 171,
+          "endLine": 201,
+          "lines": 30
+        },
+        {
+          "name": "useResolveSecurityIncident",
+          "startLine": 85,
+          "endLine": 110,
+          "lines": 25
+        },
+        {
+          "name": "useReportSecurityIncident",
+          "startLine": 59,
+          "endLine": 83,
+          "lines": 24
+        },
+        {
+          "name": "useLogBulkOperation",
+          "startLine": 112,
+          "endLine": 136,
+          "lines": 24
+        },
+        {
+          "name": "useLogDataChange",
+          "startLine": 34,
+          "endLine": 57,
+          "lines": 23
+        },
+        {
+          "name": "useExportAuditLogs",
+          "startLine": 203,
+          "endLine": 221,
+          "lines": 18
+        },
+        {
+          "name": "useLogAuditEvent",
+          "startLine": 15,
+          "endLine": 32,
+          "lines": 17
+        }
+      ]
+    },
+    {
+      "path": "core/appointments/hooks/use-appointments-mutations.ts",
+      "type": "hook",
+      "currentLines": 196,
+      "maxLines": 150,
+      "excessLines": 46,
+      "severity": "low",
+      "splitSuggestions": [
+        "Split into multiple specialized hooks",
+        "Extract utility functions to helpers"
+      ],
+      "functions": [
+        {
+          "name": "useRescheduleAppointment",
+          "startLine": 135,
+          "endLine": 157,
+          "lines": 22
+        },
+        {
+          "name": "useAddAppointmentServices",
+          "startLine": 162,
+          "endLine": 180,
+          "lines": 18
+        },
+        {
+          "name": "useUpdateAppointment",
+          "startLine": 38,
+          "endLine": 54,
+          "lines": 16
+        },
+        {
+          "name": "useCancelAppointment",
+          "startLine": 59,
+          "endLine": 70,
+          "lines": 11
+        },
+        {
+          "name": "useCreateAppointment",
+          "startLine": 23,
+          "endLine": 33,
+          "lines": 10
+        },
+        {
+          "name": "useConfirmAppointment",
+          "startLine": 75,
+          "endLine": 85,
+          "lines": 10
+        },
+        {
+          "name": "useCheckInAppointment",
+          "startLine": 90,
+          "endLine": 100,
+          "lines": 10
+        },
+        {
+          "name": "useCompleteAppointment",
+          "startLine": 105,
+          "endLine": 115,
+          "lines": 10
+        },
+        {
+          "name": "useMarkNoShow",
+          "startLine": 120,
+          "endLine": 130,
+          "lines": 10
+        },
+        {
+          "name": "useRemoveAppointmentService",
+          "startLine": 185,
+          "endLine": 195,
+          "lines": 10
+        }
+      ]
+    },
+    {
+      "path": "core/schedules/hooks/use-schedule-sync.ts",
+      "type": "hook",
+      "currentLines": 193,
+      "maxLines": 150,
+      "excessLines": 43,
+      "severity": "low",
+      "splitSuggestions": [
+        "Split into multiple specialized hooks",
+        "Extract utility functions to helpers",
+        "Extract large functions: useScheduleSync"
+      ],
+      "functions": [
+        {
+          "name": "useScheduleSync",
+          "startLine": 31,
+          "endLine": 193,
+          "lines": 162
+        }
+      ]
+    },
+    {
+      "path": "core/services/hooks/use-services-mutations.ts",
+      "type": "hook",
+      "currentLines": 190,
+      "maxLines": 150,
+      "excessLines": 40,
+      "severity": "low",
+      "splitSuggestions": [
+        "Split into multiple specialized hooks",
+        "Extract utility functions to helpers"
+      ],
+      "functions": [
+        {
+          "name": "useUpdateStaffService",
+          "startLine": 138,
+          "endLine": 155,
+          "lines": 17
+        },
+        {
+          "name": "useRemoveServiceFromStaff",
+          "startLine": 160,
+          "endLine": 175,
+          "lines": 15
+        },
+        {
+          "name": "useUpdateService",
+          "startLine": 40,
+          "endLine": 51,
+          "lines": 11
+        },
+        {
+          "name": "useToggleServiceFeatured",
+          "startLine": 70,
+          "endLine": 81,
+          "lines": 11
+        },
+        {
+          "name": "useCreateServiceCategory",
+          "startLine": 86,
+          "endLine": 97,
+          "lines": 11
+        },
+        {
+          "name": "useDeleteServiceCategory",
+          "startLine": 108,
+          "endLine": 118,
+          "lines": 10
+        },
+        {
+          "name": "useAssignServiceToStaff",
+          "startLine": 123,
+          "endLine": 133,
+          "lines": 10
+        },
+        {
+          "name": "useCreateService",
+          "startLine": 26,
+          "endLine": 35,
+          "lines": 9
+        },
+        {
+          "name": "useDeleteService",
+          "startLine": 56,
+          "endLine": 65,
+          "lines": 9
+        },
+        {
+          "name": "useBulkUpdateServicePrices",
+          "startLine": 180,
+          "endLine": 189,
+          "lines": 9
+        }
+      ]
+    },
+    {
+      "path": "core/notifications/hooks/use-notifications-mutations.ts",
+      "type": "hook",
+      "currentLines": 178,
+      "maxLines": 150,
+      "excessLines": 28,
+      "severity": "low",
+      "splitSuggestions": [
+        "Split into multiple specialized hooks",
+        "Extract utility functions to helpers"
+      ],
+      "functions": [
+        {
+          "name": "useSendBulkNotifications",
+          "startLine": 154,
+          "endLine": 177,
+          "lines": 23
+        },
+        {
+          "name": "useUpdateNotificationPreferences",
+          "startLine": 114,
+          "endLine": 134,
+          "lines": 20
+        },
+        {
+          "name": "useCreateNotification",
+          "startLine": 18,
+          "endLine": 36,
+          "lines": 18
+        },
+        {
+          "name": "useMarkNotificationAsRead",
+          "startLine": 38,
+          "endLine": 56,
+          "lines": 18
+        },
+        {
+          "name": "useMarkAllNotificationsAsRead",
+          "startLine": 58,
+          "endLine": 76,
+          "lines": 18
+        },
+        {
+          "name": "useArchiveNotification",
+          "startLine": 78,
+          "endLine": 94,
+          "lines": 16
+        },
+        {
+          "name": "useDeleteNotification",
+          "startLine": 96,
+          "endLine": 112,
+          "lines": 16
+        },
+        {
+          "name": "useClearExpiredNotifications",
+          "startLine": 136,
+          "endLine": 152,
+          "lines": 16
+        }
+      ]
+    },
+    {
+      "path": "core/messages/hooks/use-messages.ts",
+      "type": "hook",
+      "currentLines": 162,
+      "maxLines": 150,
+      "excessLines": 12,
+      "severity": "low",
+      "splitSuggestions": [
+        "Split into multiple specialized hooks",
+        "Extract utility functions to helpers",
+        "Extract large functions: useMessages"
+      ],
+      "functions": [
+        {
+          "name": "useMessages",
+          "startLine": 31,
+          "endLine": 161,
+          "lines": 130
+        }
+      ]
+    },
+    {
+      "path": "core/inventory/hooks/use-inventory.ts",
+      "type": "hook",
+      "currentLines": 155,
+      "maxLines": 150,
+      "excessLines": 5,
+      "severity": "low",
+      "splitSuggestions": [
+        "Split into multiple specialized hooks",
+        "Extract utility functions to helpers",
+        "Extract large functions: useInventory"
+      ],
+      "functions": [
+        {
+          "name": "useInventory",
+          "startLine": 24,
+          "endLine": 154,
+          "lines": 130
+        }
+      ]
+    }
+  ],
+  "statistics": {
+    "averageFileSize": 75,
+    "largestFile": {
+      "path": "core/staff/components/staff-management-list.tsx",
+      "lines": 769
+    },
+    "byType": {}
+  },
+  "recommendations": [
+    "🚨 CRITICAL: 105 files are critically oversized. These need immediate refactoring to maintain code quality.",
+    "🧩 Components: 69 components exceed 300 lines. Split into smaller, focused components for better reusability.",
+    "🗄️ DAL: 15 DAL files exceed 500 lines. Split by operation type (queries/mutations) or by domain.",
+    "📊 Overall: Only 0.0% of files meet size limits. Implement a file size policy and regular refactoring."
+  ]
+}

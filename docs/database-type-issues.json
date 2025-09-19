@@ -1,0 +1,994 @@
+{
+  "timestamp": "2025-09-19T02:01:12.452Z",
+  "totalIssues": 117,
+  "typeMismatches": [
+    {
+      "file": "core/analytics/dal/customer-queries.ts",
+      "line": 25,
+      "property": "unknown_property",
+      "expectedType": "Set<string>",
+      "actualType": "Set<string | null>",
+      "suggestion": "Cast or convert Set<string | null> to Set<string>"
+    },
+    {
+      "file": "core/analytics/dal/customer-queries.ts",
+      "line": 31,
+      "property": "unknown_property",
+      "expectedType": "Set<string>",
+      "actualType": "Set<string | null>",
+      "suggestion": "Cast or convert Set<string | null> to Set<string>"
+    },
+    {
+      "file": "core/audit/dal/audit-queries.ts",
+      "line": 437,
+      "property": "unknown_property",
+      "expectedType": "{ userId: string; email?: string | undefined; eventCount: number; }[]",
+      "actualType": "string | number | true | { [key: string]: Json | undefined; } | Json[] | { channel: string; description: string; }[]",
+      "suggestion": "Cast or convert string | number | true | { [key: string]: Json | undefined; } | Json[] | { channel: string; description: string; }[] to { userId: string; email?: string | undefined; eventCount: number; }[]"
+    },
+    {
+      "file": "core/audit/dal/audit-queries.ts",
+      "line": 438,
+      "property": "unknown_property",
+      "expectedType": "{ resourceType: string; accessCount: number; }[]",
+      "actualType": "string | number | true | { [key: string]: Json | undefined; } | Json[] | { channel: string; description: string; }[]",
+      "suggestion": "Add null check or use optional chaining (?.)"
+    },
+    {
+      "file": "core/auth/actions/session-actions.ts",
+      "line": 78,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "string | null",
+      "suggestion": "Cast or convert string | null to string"
+    },
+    {
+      "file": "core/auth/actions/session-actions.ts",
+      "line": 81,
+      "property": "unknown_property",
+      "expectedType": "string | undefined",
+      "actualType": "string | null",
+      "suggestion": "Cast or convert string | null to string | undefined"
+    },
+    {
+      "file": "core/auth/actions/session-actions.ts",
+      "line": 82,
+      "property": "unknown_property",
+      "expectedType": "string | undefined",
+      "actualType": "string | null",
+      "suggestion": "Cast or convert string | null to string | undefined"
+    },
+    {
+      "file": "core/auth/actions/session-actions.ts",
+      "line": 83,
+      "property": "unknown_property",
+      "expectedType": "string | undefined",
+      "actualType": "string | null",
+      "suggestion": "Cast or convert string | null to string | undefined"
+    },
+    {
+      "file": "core/auth/actions/session-actions.ts",
+      "line": 88,
+      "property": "unknown_property",
+      "expectedType": "{ id: string; name: string; slug: string; settings?: any; } | null",
+      "actualType": "{ id: string | null; name: string | null; slug: string | null; settings: Json; } | null",
+      "suggestion": "Cast or convert { id: string | null; name: string | null; slug: string | null; settings: Json; } | null to { id: string; name: string; slug: string; settings?: any; } | null"
+    },
+    {
+      "file": "core/billing/actions/refund-actions.ts",
+      "line": 274,
+      "property": "unknown_property",
+      "expectedType": "\"pending\" | \"completed\" | \"failed\" | \"processing\" | \"refunded\" | undefined",
+      "actualType": "\"disputed\"",
+      "suggestion": "Cast or convert \"disputed\" to \"pending\" | \"completed\" | \"failed\" | \"processing\" | \"refunded\" | undefined"
+    },
+    {
+      "file": "core/billing/dal/index.ts",
+      "line": 421,
+      "property": "unknown_property",
+      "expectedType": "\"daily\" | \"weekly\" | \"monthly\" | \"yearly\" | \"custom\"",
+      "actualType": "\"custom\" | \"year\" | \"month\" | \"day\" | \"week\"",
+      "suggestion": "Cast or convert \"custom\" | \"year\" | \"month\" | \"day\" | \"week\" to \"daily\" | \"weekly\" | \"monthly\" | \"yearly\" | \"custom\""
+    },
+    {
+      "file": "core/campaigns/actions/campaign-queries.ts",
+      "line": 232,
+      "property": "unknown_property",
+      "expectedType": "CampaignAnalytics | undefined",
+      "actualType": "CampaignAnalytics | null",
+      "suggestion": "Cast or convert CampaignAnalytics | null to CampaignAnalytics | undefined"
+    },
+    {
+      "file": "core/customers/dal/customers-queries.ts",
+      "line": 318,
+      "property": "unknown_property",
+      "expectedType": "CustomerProfileWithRelations[]",
+      "actualType": "{ avatar_thumbnail_url: string | null; avatar_url: string | null; country_code: string | null; cover_image_url: string | null; created_at: string | null; currency_code: string | null; ... 33 more ...; username: string | null; }[]",
+      "suggestion": "Cast or convert { avatar_thumbnail_url: string | null; avatar_url: string | null; country_code: string | null; cover_image_url: string | null; created_at: string | null; currency_code: string | null; ... 33 more ...; username: string | null; }[] to CustomerProfileWithRelations[]"
+    },
+    {
+      "file": "core/customers/dal/customers-queries.ts",
+      "line": 319,
+      "property": "unknown_property",
+      "expectedType": "CustomerProfileWithRelations[]",
+      "actualType": "{ avatar_thumbnail_url: string | null; avatar_url: string | null; country_code: string | null; cover_image_url: string | null; created_at: string | null; currency_code: string | null; ... 33 more ...; username: string | null; }[]",
+      "suggestion": "Cast or convert { avatar_thumbnail_url: string | null; avatar_url: string | null; country_code: string | null; cover_image_url: string | null; created_at: string | null; currency_code: string | null; ... 33 more ...; username: string | null; }[] to CustomerProfileWithRelations[]"
+    },
+    {
+      "file": "core/dashboard/dal/index.ts",
+      "line": 145,
+      "property": "unknown_property",
+      "expectedType": "TopService[]",
+      "actualType": "{ id: string | null; name: string | null; bookings: number; revenue: number; }[]",
+      "suggestion": "Cast or convert { id: string | null; name: string | null; bookings: number; revenue: number; }[] to TopService[]"
+    },
+    {
+      "file": "core/dashboard/dal/index.ts",
+      "line": 176,
+      "property": "unknown_property",
+      "expectedType": "StaffPerformance[]",
+      "actualType": "{ id: string | null; name: any; appointments: number; revenue: number; rating: number; }[]",
+      "suggestion": "Cast or convert { id: string | null; name: any; appointments: number; revenue: number; rating: number; }[] to StaffPerformance[]"
+    },
+    {
+      "file": "core/loyalty/actions/customer-loyalty-actions.ts",
+      "line": 97,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "CustomerLoyalty",
+      "suggestion": "Cast or convert CustomerLoyalty to string"
+    },
+    {
+      "file": "core/loyalty/actions/points-actions.ts",
+      "line": 85,
+      "property": "unknown_property",
+      "expectedType": "number",
+      "actualType": "LoyaltyTransaction",
+      "suggestion": "Cast or convert LoyaltyTransaction to number"
+    },
+    {
+      "file": "core/loyalty/actions/redemption-actions.ts",
+      "line": 76,
+      "property": "unknown_property",
+      "expectedType": "number",
+      "actualType": "LoyaltyTransaction",
+      "suggestion": "Cast or convert LoyaltyTransaction to number"
+    },
+    {
+      "file": "core/loyalty/actions/redemption-actions.ts",
+      "line": 188,
+      "property": "unknown_property",
+      "expectedType": "number",
+      "actualType": "LoyaltyTransaction",
+      "suggestion": "Cast or convert LoyaltyTransaction to number"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 187,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to string"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 188,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to string"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 189,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to string"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 190,
+      "property": "unknown_property",
+      "expectedType": "number",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to number"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 191,
+      "property": "unknown_property",
+      "expectedType": "number",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to number"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 193,
+      "property": "unknown_property",
+      "expectedType": "number",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to number"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 194,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to string"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 196,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to string"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 197,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to string"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 233,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to string"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 234,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to string"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 235,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to string"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 236,
+      "property": "unknown_property",
+      "expectedType": "number",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to number"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 237,
+      "property": "unknown_property",
+      "expectedType": "number",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to number"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 239,
+      "property": "unknown_property",
+      "expectedType": "number",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to number"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 240,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to string"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 242,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to string"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 243,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to string"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 278,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to string"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 279,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to string"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 280,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to string"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 281,
+      "property": "unknown_property",
+      "expectedType": "number",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to number"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 282,
+      "property": "unknown_property",
+      "expectedType": "number",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to number"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 284,
+      "property": "unknown_property",
+      "expectedType": "number",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to number"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 285,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to string"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 287,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to string"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 288,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to string"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 356,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to string"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 357,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to string"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 358,
+      "property": "unknown_property",
+      "expectedType": "string | undefined",
+      "actualType": "{} | null",
+      "suggestion": "Cast or convert {} | null to string | undefined"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 360,
+      "property": "unknown_property",
+      "expectedType": "number",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to number"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 361,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "{} | undefined",
+      "suggestion": "Add null check or use optional chaining (?.)"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 362,
+      "property": "unknown_property",
+      "expectedType": "string | undefined",
+      "actualType": "{} | null",
+      "suggestion": "Cast or convert {} | null to string | undefined"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 363,
+      "property": "unknown_property",
+      "expectedType": "string | undefined",
+      "actualType": "ReferenceType | null",
+      "suggestion": "Cast or convert ReferenceType | null to string | undefined"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 364,
+      "property": "unknown_property",
+      "expectedType": "number",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to number"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 365,
+      "property": "unknown_property",
+      "expectedType": "string | undefined",
+      "actualType": "{} | null",
+      "suggestion": "Cast or convert {} | null to string | undefined"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 366,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to string"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 434,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to string"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 435,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to string"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 436,
+      "property": "unknown_property",
+      "expectedType": "string | undefined",
+      "actualType": "{} | null",
+      "suggestion": "Cast or convert {} | null to string | undefined"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 438,
+      "property": "unknown_property",
+      "expectedType": "number",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to number"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 439,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "{} | undefined",
+      "suggestion": "Add null check or use optional chaining (?.)"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 440,
+      "property": "unknown_property",
+      "expectedType": "string | undefined",
+      "actualType": "{} | null",
+      "suggestion": "Cast or convert {} | null to string | undefined"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 441,
+      "property": "unknown_property",
+      "expectedType": "string | undefined",
+      "actualType": "ReferenceType | null",
+      "suggestion": "Cast or convert ReferenceType | null to string | undefined"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 442,
+      "property": "unknown_property",
+      "expectedType": "number",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to number"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 443,
+      "property": "unknown_property",
+      "expectedType": "string | undefined",
+      "actualType": "{} | null",
+      "suggestion": "Cast or convert {} | null to string | undefined"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 444,
+      "property": "unknown_property",
+      "expectedType": "string",
+      "actualType": "{}",
+      "suggestion": "Cast or convert {} to string"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 472,
+      "property": "unknown_property",
+      "expectedType": "LoyaltyTransaction[]",
+      "actualType": "{ id: {}; customer_loyalty_id: {}; appointment_id: {} | null; transaction_type: TransactionType; points_amount: {}; description: {} | undefined; reference_id: {} | null; reference_type: ReferenceType | null; balance_after: {}; expires_at: {} | null; created_at: {}; }[]",
+      "suggestion": "Add null check or use optional chaining (?.)"
+    },
+    {
+      "file": "core/security/dal/auth-verification.ts",
+      "line": 234,
+      "property": "unknown_property",
+      "expectedType": "boolean",
+      "actualType": "string | boolean | undefined",
+      "suggestion": "Add null check or use optional chaining (?.)"
+    },
+    {
+      "file": "core/security/dal/auth-verification.ts",
+      "line": 266,
+      "property": "unknown_property",
+      "expectedType": "boolean",
+      "actualType": "string | boolean | undefined",
+      "suggestion": "Add null check or use optional chaining (?.)"
+    },
+    {
+      "file": "core/users/dal/users-queries.ts",
+      "line": 276,
+      "property": "unknown_property",
+      "expectedType": "string | undefined",
+      "actualType": "string | null",
+      "suggestion": "Cast or convert string | null to string | undefined"
+    }
+  ],
+  "missingProperties": [
+    {
+      "file": "core/analytics/dal/analytics-types.ts",
+      "line": 62,
+      "typeName": "Database",
+      "property": "organization",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'organization' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/appointments.ts",
+      "line": 15,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "auth",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'auth' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/appointments.ts",
+      "line": 25,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/appointments.ts",
+      "line": 181,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "auth",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'auth' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/appointments.ts",
+      "line": 187,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/appointments.ts",
+      "line": 284,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "auth",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'auth' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/appointments.ts",
+      "line": 290,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/appointments.ts",
+      "line": 319,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "auth",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'auth' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/appointments.ts",
+      "line": 332,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/bookings.ts",
+      "line": 20,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/bookings.ts",
+      "line": 48,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/bookings.ts",
+      "line": 89,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/bookings.ts",
+      "line": 115,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/bookings.ts",
+      "line": 137,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/bookings.ts",
+      "line": 163,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/bookings.ts",
+      "line": 243,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/bookings.ts",
+      "line": 255,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/bookings.ts",
+      "line": 272,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/bookings.ts",
+      "line": 338,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "auth",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'auth' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/bookings.ts",
+      "line": 345,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/bookings.ts",
+      "line": 361,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/bookings.ts",
+      "line": 389,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/bookings.ts",
+      "line": 407,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "auth",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'auth' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/bookings.ts",
+      "line": 414,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/bookings.ts",
+      "line": 439,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/bookings.ts",
+      "line": 462,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "auth",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'auth' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/bookings.ts",
+      "line": 469,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/bookings.ts",
+      "line": 501,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/favorites.ts",
+      "line": 8,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "auth",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'auth' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/favorites.ts",
+      "line": 14,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/favorites.ts",
+      "line": 94,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "auth",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'auth' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/favorites.ts",
+      "line": 101,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/favorites.ts",
+      "line": 122,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/favorites.ts",
+      "line": 148,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/favorites.ts",
+      "line": 159,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/favorites.ts",
+      "line": 170,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/favorites.ts",
+      "line": 201,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "auth",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'auth' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/favorites.ts",
+      "line": 207,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/favorites.ts",
+      "line": 225,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "auth",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'auth' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/favorites.ts",
+      "line": 231,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/favorites.ts",
+      "line": 249,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "auth",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'auth' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/favorites.ts",
+      "line": 255,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/favorites.ts",
+      "line": 272,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "auth",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'auth' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/customer/dal/favorites.ts",
+      "line": 278,
+      "typeName": "Promise<SupabaseClient<Database, \"public\", \"public\", { Tables: {}; Views: { appointment_services: { Row: { appointment_id: string | null; completed_at: string | null; created_at: string | null; ... 13 more ...; unit_price: number | null; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 18 more ...; u...",
+      "property": "from",
+      "usageContext": "DAL function",
+      "suggestion": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 264,
+      "typeName": "Partial<CustomerLoyaltyInsert>",
+      "property": "tier_id",
+      "usageContext": "DAL function",
+      "suggestion": "Try camelCase version: 'tierId'"
+    },
+    {
+      "file": "core/loyalty/dal/loyalty.ts",
+      "line": 265,
+      "typeName": "Partial<CustomerLoyaltyInsert>",
+      "property": "last_visit_at",
+      "usageContext": "DAL function",
+      "suggestion": "Try camelCase version: 'lastVisitAt'"
+    }
+  ],
+  "affectedTables": [],
+  "commonPatterns": [
+    {
+      "pattern": "missing_from",
+      "occurrences": 30,
+      "files": [
+        "core/customer/dal/appointments.ts",
+        "core/customer/dal/bookings.ts",
+        "core/customer/dal/favorites.ts"
+      ],
+      "fixStrategy": "Add 'from' to type definition or check if property name is correct"
+    },
+    {
+      "pattern": "missing_auth",
+      "occurrences": 13,
+      "files": [
+        "core/customer/dal/appointments.ts",
+        "core/customer/dal/bookings.ts",
+        "core/customer/dal/favorites.ts"
+      ],
+      "fixStrategy": "Add 'auth' to type definition or check if property name is correct"
+    },
+    {
+      "pattern": "missing_organization",
+      "occurrences": 1,
+      "files": [
+        "core/analytics/dal/analytics-types.ts"
+      ],
+      "fixStrategy": "Add 'organization' to type definition or check if property name is correct"
+    },
+    {
+      "pattern": "missing_tier_id",
+      "occurrences": 1,
+      "files": [
+        "core/loyalty/dal/loyalty.ts"
+      ],
+      "fixStrategy": "Try camelCase version: 'tierId'"
+    },
+    {
+      "pattern": "missing_last_visit_at",
+      "occurrences": 1,
+      "files": [
+        "core/loyalty/dal/loyalty.ts"
+      ],
+      "fixStrategy": "Try camelCase version: 'lastVisitAt'"
+    }
+  ],
+  "recommendations": [
+    "⚠️ Type Safety: Many type mismatches detected. Run TypeScript strict mode and fix all any types."
+  ]
+}

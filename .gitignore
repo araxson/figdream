@@ -39,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Claude Code configuration
+.claude/settings.local.json
+.claude/agents/
+.claude/commands/*.local.md
+
+# Deprecated config files
+.mcp.json
+.claude/mcp-config.json
+.claude/mcp-config-alternative.json

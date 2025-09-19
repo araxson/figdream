@@ -1,0 +1,36 @@
+import { Suspense } from 'react'
+import { getNotifications, getNotificationStats } from '@/lib/api/dal/notifications/notifications-queries'
+import type { NotificationFilters } from '@/lib/api/dal/notifications/notifications-types'
+import { NotificationsHeader } from './components/header'
+import { NotificationsList } from './components/list'
+import { NotificationsStats } from './components/stats'
+import { LoadingState } from '@/components/shared/ui-helpers/loading-states'
+
+interface NotificationsManagementProps {
+  role: 'admin' | 'owner' | 'staff' | 'customer'
+  filters?: NotificationFilters
+}
+
+export async function NotificationsManagement({ role, filters = {} }: NotificationsManagementProps) {
+  const [notifications, stats] = await Promise.all([
+    getNotifications(filters),
+    getNotificationStats()
+  ])
+
+  return (
+    <div className="space-y-6">
+      <NotificationsHeader role={role} stats={stats} />
+      
+      <Suspense fallback={<LoadingState />}>
+        <NotificationsStats stats={stats} />
+      </Suspense>
+
+      <Suspense fallback={<LoadingState />}>
+        <NotificationsList 
+          notifications={notifications}
+          role={role}
+        />
+      </Suspense>
+    </div>
+  )
+}

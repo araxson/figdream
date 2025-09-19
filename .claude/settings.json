@@ -1,0 +1,30 @@
+{
+  "projectName": "FigDream Salon Platform",
+  "permissions": {
+    "deny": [
+      "Read(./.env*)",
+      "Read(./secrets/**)",
+      "Read(./config/credentials.json)",
+      "Write(./.env*)",
+      "Edit(./.env*)"
+    ]
+  },
+  "codeStyle": {
+    "preferredLanguage": "typescript",
+    "indentSize": 2,
+    "useTabs": false,
+    "lineEndings": "lf"
+  },
+  "defaultBehaviors": {
+    "alwaysUseTypeScript": true,
+    "preferServerComponents": true,
+    "useStrictMode": true
+  },
+  "projectContext": {
+    "framework": "next",
+    "version": "15",
+    "database": "supabase",
+    "ui": "shadcn-ui",
+    "architecture": "core-module-pattern"
+  }
+}

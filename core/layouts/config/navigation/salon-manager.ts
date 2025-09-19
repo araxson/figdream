@@ -1,0 +1,92 @@
+import type { NavigationItem } from "./types";
+
+// Salon Manager has similar navigation to Salon Owner but with some restrictions
+export const salonManagerNavigation: NavigationItem[] = [
+  {
+    id: "dashboard",
+    label: "Dashboard",
+    href: "/dashboard",
+    icon: "home",
+  },
+  {
+    id: "separator-business",
+    label: "Daily Operations",
+    href: "#",
+    icon: "",
+    type: "separator",
+  },
+  {
+    id: "appointments",
+    label: "Appointments",
+    href: "/dashboard/appointments",
+    icon: "calendar",
+  },
+  {
+    id: "customers",
+    label: "Customers",
+    href: "/dashboard/customers",
+    icon: "users",
+  },
+  {
+    id: "staff",
+    label: "Staff",
+    href: "/dashboard/staff",
+    icon: "userCheck",
+  },
+  {
+    id: "services",
+    label: "Services",
+    href: "/dashboard/services",
+    icon: "scissors",
+  },
+  {
+    id: "separator-operations",
+    label: "Management",
+    href: "#",
+    icon: "",
+    type: "separator",
+  },
+  {
+    id: "schedules",
+    label: "Staff Schedules",
+    href: "/dashboard/staff-schedules",
+    icon: "clock",
+  },
+  {
+    id: "inventory",
+    label: "Inventory",
+    href: "/dashboard/inventory",
+    icon: "package",
+  },
+  {
+    id: "separator-analytics",
+    label: "Reports",
+    href: "#",
+    icon: "",
+    type: "separator",
+  },
+  {
+    id: "analytics",
+    label: "Analytics",
+    href: "/dashboard/analytics",
+    icon: "chart",
+  },
+  {
+    id: "reviews",
+    label: "Reviews",
+    href: "/dashboard/reviews",
+    icon: "star",
+  },
+  {
+    id: "campaigns",
+    label: "Marketing",
+    href: "/dashboard/campaigns",
+    icon: "message",
+  },
+  {
+    id: "reports",
+    label: "Reports",
+    href: "/dashboard/reports",
+    icon: "file",
+  },
+];

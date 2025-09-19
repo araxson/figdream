@@ -1,1 +1,0 @@
-export { PermissionsManagement as Permissions, PermissionsManagement as UserPermissions } from './permissions-manager'
